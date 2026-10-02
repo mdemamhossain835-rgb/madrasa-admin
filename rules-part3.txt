@@ -1,0 +1,80 @@
+     ".read": "((auth!=null && root.child('users/'+auth.uid+'/mid').val()==$mid && root.child('licenses/'+$mid+'/suspended').val()!=true && (root.child('licenses/'+$mid+'/trialEnd').val()>now || root.child('licenses/'+$mid+'/subEnd').val()>now)) && ((auth!=null && root.child('users/'+auth.uid+'/role').val()=='admin') || (auth!=null && root.child('users/'+auth.uid+'/role').val()=='teacher')))",
+     "$sid": {
+      ".read": "((auth!=null && root.child('users/'+auth.uid+'/mid').val()==$mid && root.child('licenses/'+$mid+'/suspended').val()!=true && (root.child('licenses/'+$mid+'/trialEnd').val()>now || root.child('licenses/'+$mid+'/subEnd').val()>now)) && (auth!=null && root.child('users/'+auth.uid+'/role').val()=='guardian' && root.child('users/'+auth.uid+'/ref').val()==$sid))",
+      ".write": "((auth!=null && root.child('users/'+auth.uid+'/mid').val()==$mid && root.child('licenses/'+$mid+'/suspended').val()!=true && (root.child('licenses/'+$mid+'/trialEnd').val()>now || root.child('licenses/'+$mid+'/subEnd').val()>now)) && ((auth!=null && root.child('users/'+auth.uid+'/role').val()=='admin') || (auth!=null && root.child('users/'+auth.uid+'/role').val()=='teacher')))"
+     }
+    },
+    "notices": {
+     ".read": "((auth!=null && root.child('users/'+auth.uid+'/mid').val()==$mid && root.child('licenses/'+$mid+'/suspended').val()!=true && (root.child('licenses/'+$mid+'/trialEnd').val()>now || root.child('licenses/'+$mid+'/subEnd').val()>now)) && (auth!=null && root.child('users/'+auth.uid).exists()))",
+     "$id": {
+      ".write": "((auth!=null && root.child('users/'+auth.uid+'/mid').val()==$mid && root.child('licenses/'+$mid+'/suspended').val()!=true && (root.child('licenses/'+$mid+'/trialEnd').val()>now || root.child('licenses/'+$mid+'/subEnd').val()>now)) && ((!data.exists() && newData.exists() && (auth!=null && (root.child('users/'+auth.uid+'/role').val()=='admin' || (root.child('madrasas/'+$mid+'/teacherPerms/'+root.child('users/'+auth.uid+'/ref').val()+'/not_add').val()==true)))) || (data.exists() && newData.exists() && (auth!=null && (root.child('users/'+auth.uid+'/role').val()=='admin' || (root.child('madrasas/'+$mid+'/teacherPerms/'+root.child('users/'+auth.uid+'/ref').val()+'/not_edit').val()==true)))) || (!newData.exists() && (auth!=null && (root.child('users/'+auth.uid+'/role').val()=='admin' || (root.child('madrasas/'+$mid+'/teacherPerms/'+root.child('users/'+auth.uid+'/ref').val()+'/not_del').val()==true))))))"
+     }
+    },
+    "homework": {
+     "$cls": {
+      ".read": "((auth!=null && root.child('users/'+auth.uid+'/mid').val()==$mid && root.child('licenses/'+$mid+'/suspended').val()!=true && (root.child('licenses/'+$mid+'/trialEnd').val()>now || root.child('licenses/'+$mid+'/subEnd').val()>now)) && ((auth!=null && root.child('users/'+auth.uid+'/role').val()=='admin') || (auth!=null && root.child('users/'+auth.uid+'/role').val()=='teacher') || (auth!=null && root.child('users/'+auth.uid+'/role').val()=='guardian' && root.child('madrasas/'+$mid+'/students/'+root.child('users/'+auth.uid+'/ref').val()+'/c').val()==$cls)))",
+      "$d": {
+       "$sj": {
+        ".write": "((auth!=null && root.child('users/'+auth.uid+'/mid').val()==$mid && root.child('licenses/'+$mid+'/suspended').val()!=true && (root.child('licenses/'+$mid+'/trialEnd').val()>now || root.child('licenses/'+$mid+'/subEnd').val()>now)) && (auth!=null && root.child('users/'+auth.uid+'/role').val()=='teacher' && root.child('madrasas/'+$mid+'/teacherPerms/'+root.child('users/'+auth.uid+'/ref').val()+'/hw_edit').val()==true && root.child('madrasas/'+$mid+'/routineIdx/'+$cls+'/'+root.child('users/'+auth.uid+'/ref').val()+'/'+$sj).exists()))",
+        ".validate": "newData.hasChildren(['t','by','tid']) && newData.child('tid').val()==root.child('users/'+auth.uid+'/ref').val()"
+       }
+      }
+     }
+    },
+    "homeLog": {
+     ".read": "((auth!=null && root.child('users/'+auth.uid+'/mid').val()==$mid && root.child('licenses/'+$mid+'/suspended').val()!=true && (root.child('licenses/'+$mid+'/trialEnd').val()>now || root.child('licenses/'+$mid+'/subEnd').val()>now)) && ((auth!=null && (root.child('users/'+auth.uid+'/role').val()=='admin' || root.child('madrasas/'+$mid+'/teacherPerms/'+root.child('users/'+auth.uid+'/ref').val()+'/g22').val()==true))))",
+     "$date": {
+      "$sid": {
+       ".read": "((auth!=null && root.child('users/'+auth.uid+'/mid').val()==$mid && root.child('licenses/'+$mid+'/suspended').val()!=true && (root.child('licenses/'+$mid+'/trialEnd').val()>now || root.child('licenses/'+$mid+'/subEnd').val()>now)) && (auth!=null && root.child('users/'+auth.uid+'/role').val()=='guardian' && root.child('users/'+auth.uid+'/ref').val()==$sid))",
+       ".write": "((auth!=null && root.child('users/'+auth.uid+'/mid').val()==$mid && root.child('licenses/'+$mid+'/suspended').val()!=true && (root.child('licenses/'+$mid+'/trialEnd').val()>now || root.child('licenses/'+$mid+'/subEnd').val()>now)) && (auth!=null && root.child('users/'+auth.uid+'/role').val()=='guardian' && root.child('users/'+auth.uid+'/ref').val()==$sid))"
+      },
+      ".write": "((auth!=null && root.child('users/'+auth.uid+'/mid').val()==$mid && root.child('licenses/'+$mid+'/suspended').val()!=true && (root.child('licenses/'+$mid+'/trialEnd').val()>now || root.child('licenses/'+$mid+'/subEnd').val()>now)) && (!newData.exists() && (auth!=null && (root.child('users/'+auth.uid+'/role').val()=='admin' || root.child('madrasas/'+$mid+'/teacherPerms/'+root.child('users/'+auth.uid+'/ref').val()+'/g23').val()==true))))"
+     }
+    },
+    "routine": {
+     "$cls": {
+      ".read": "((auth!=null && root.child('users/'+auth.uid+'/mid').val()==$mid && root.child('licenses/'+$mid+'/suspended').val()!=true && (root.child('licenses/'+$mid+'/trialEnd').val()>now || root.child('licenses/'+$mid+'/subEnd').val()>now)) && ((auth!=null && root.child('users/'+auth.uid+'/role').val()=='admin') || (auth!=null && root.child('users/'+auth.uid+'/role').val()=='teacher') || (auth!=null && root.child('users/'+auth.uid+'/role').val()=='guardian' && root.child('madrasas/'+$mid+'/students/'+root.child('users/'+auth.uid+'/ref').val()+'/c').val()==$cls)))",
+      ".write": "((auth!=null && root.child('users/'+auth.uid+'/mid').val()==$mid && root.child('licenses/'+$mid+'/suspended').val()!=true && (root.child('licenses/'+$mid+'/trialEnd').val()>now || root.child('licenses/'+$mid+'/subEnd').val()>now)) && ((auth!=null && (root.child('users/'+auth.uid+'/role').val()=='admin' || root.child('madrasas/'+$mid+'/teacherPerms/'+root.child('users/'+auth.uid+'/ref').val()+'/g24').val()==true))))"
+     }
+    },
+    "routineIdx": {
+     ".read": "((auth!=null && root.child('users/'+auth.uid+'/mid').val()==$mid && root.child('licenses/'+$mid+'/suspended').val()!=true && (root.child('licenses/'+$mid+'/trialEnd').val()>now || root.child('licenses/'+$mid+'/subEnd').val()>now)) && (auth!=null && root.child('users/'+auth.uid+'/role').val()=='admin'))",
+     "$cls": {
+      ".write": "((auth!=null && root.child('users/'+auth.uid+'/mid').val()==$mid && root.child('licenses/'+$mid+'/suspended').val()!=true && (root.child('licenses/'+$mid+'/trialEnd').val()>now || root.child('licenses/'+$mid+'/subEnd').val()>now)) && ((auth!=null && (root.child('users/'+auth.uid+'/role').val()=='admin' || root.child('madrasas/'+$mid+'/teacherPerms/'+root.child('users/'+auth.uid+'/ref').val()+'/g24').val()==true))))"
+     }
+    },
+    "feeLock": {
+     ".read": "((auth!=null && root.child('users/'+auth.uid+'/mid').val()==$mid && root.child('licenses/'+$mid+'/suspended').val()!=true && (root.child('licenses/'+$mid+'/trialEnd').val()>now || root.child('licenses/'+$mid+'/subEnd').val()>now)) && ((auth!=null && (root.child('users/'+auth.uid+'/role').val()=='admin' || root.child('madrasas/'+$mid+'/teacherPerms/'+root.child('users/'+auth.uid+'/ref').val()+'/g15').val()==true))))",
+     "$k": {
+      ".write": "((auth!=null && root.child('users/'+auth.uid+'/mid').val()==$mid && root.child('licenses/'+$mid+'/suspended').val()!=true && (root.child('licenses/'+$mid+'/trialEnd').val()>now || root.child('licenses/'+$mid+'/subEnd').val()>now)) && ((!data.exists() && newData.exists() && (auth!=null && (root.child('users/'+auth.uid+'/role').val()=='admin' || (root.child('madrasas/'+$mid+'/teacherPerms/'+root.child('users/'+auth.uid+'/ref').val()+'/fee_collect').val()==true)))) || (!newData.exists() && (auth!=null && (root.child('users/'+auth.uid+'/role').val()=='admin' || (root.child('madrasas/'+$mid+'/teacherPerms/'+root.child('users/'+auth.uid+'/ref').val()+'/fee_del').val()==true))))))",
+      ".validate": "newData.isString()"
+     }
+    },
+    "contacts": {
+     "teachers": {
+      ".read": "((auth!=null && root.child('users/'+auth.uid+'/mid').val()==$mid && root.child('licenses/'+$mid+'/suspended').val()!=true && (root.child('licenses/'+$mid+'/trialEnd').val()>now || root.child('licenses/'+$mid+'/subEnd').val()>now)) && (auth!=null && root.child('users/'+auth.uid).exists()))",
+      ".write": "((auth!=null && root.child('users/'+auth.uid+'/mid').val()==$mid && root.child('licenses/'+$mid+'/suspended').val()!=true && (root.child('licenses/'+$mid+'/trialEnd').val()>now || root.child('licenses/'+$mid+'/subEnd').val()>now)) && (auth!=null && root.child('users/'+auth.uid+'/role').val()=='admin'))"
+     }
+    },
+    "notifGroups": {
+     ".read": "((auth!=null && root.child('users/'+auth.uid+'/mid').val()==$mid && root.child('licenses/'+$mid+'/suspended').val()!=true && (root.child('licenses/'+$mid+'/trialEnd').val()>now || root.child('licenses/'+$mid+'/subEnd').val()>now)) && ((auth!=null && (root.child('users/'+auth.uid+'/role').val()=='admin' || root.child('madrasas/'+$mid+'/teacherPerms/'+root.child('users/'+auth.uid+'/ref').val()+'/g25').val()==true))))",
+     ".indexOn": [
+      "meta/ts"
+     ],
+     "$gid": {
+      ".write": "((auth!=null && root.child('users/'+auth.uid+'/mid').val()==$mid && root.child('licenses/'+$mid+'/suspended').val()!=true && (root.child('licenses/'+$mid+'/trialEnd').val()>now || root.child('licenses/'+$mid+'/subEnd').val()>now)) && ((auth!=null && (root.child('users/'+auth.uid+'/role').val()=='admin' || root.child('madrasas/'+$mid+'/teacherPerms/'+root.child('users/'+auth.uid+'/ref').val()+'/g20').val()==true))))"
+     }
+    },
+    "teacherPerms": {
+     ".read": "((auth!=null && root.child('users/'+auth.uid+'/mid').val()==$mid && root.child('licenses/'+$mid+'/suspended').val()!=true && (root.child('licenses/'+$mid+'/trialEnd').val()>now || root.child('licenses/'+$mid+'/subEnd').val()>now)) && ((auth!=null && (root.child('users/'+auth.uid+'/role').val()=='admin' || (root.child('madrasas/'+$mid+'/teacherPerms/'+root.child('users/'+auth.uid+'/ref').val()+'/adm_perm').val()==true)))))",
+     "$tid": {
+      ".read": "((auth!=null && root.child('users/'+auth.uid+'/mid').val()==$mid && root.child('licenses/'+$mid+'/suspended').val()!=true && (root.child('licenses/'+$mid+'/trialEnd').val()>now || root.child('licenses/'+$mid+'/subEnd').val()>now)) && (auth!=null && root.child('users/'+auth.uid+'/ref').val()==$tid))",
+      ".write": "((auth!=null && root.child('users/'+auth.uid+'/mid').val()==$mid && root.child('licenses/'+$mid+'/suspended').val()!=true && (root.child('licenses/'+$mid+'/trialEnd').val()>now || root.child('licenses/'+$mid+'/subEnd').val()>now)) && ((auth!=null && (root.child('users/'+auth.uid+'/role').val()=='admin' || (root.child('madrasas/'+$mid+'/teacherPerms/'+root.child('users/'+auth.uid+'/ref').val()+'/adm_perm').val()==true)))))"
+     }
+    },
+    ".read": false,
+    ".write": "(auth!=null && root.child('superAdmins/'+auth.uid+'/role').val()=='superAdmin' && root.child('superAdmins/'+auth.uid+'/active').val()==true)"
+   }
+  }
+ }
+}

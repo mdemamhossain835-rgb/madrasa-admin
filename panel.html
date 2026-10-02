@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="bn"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="robots" content="noindex,nofollow">
+<title>Super Admin Panel</title>
+<style>
+:root{--bg:#f3f6f5;--card:#fff;--tx:#16302a;--mu:#5f7570;--br:#e1e9e5;--pr:#0b6b4a;--rd:#b42323}
+@media(prefers-color-scheme:dark){:root{--bg:#0f1a17;--card:#17262a;--tx:#e6f0ec;--mu:#9bb2aa;--br:#27403a}}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--tx);font-family:system-ui,'Noto Sans Bengali',sans-serif;padding:env(safe-area-inset-top) 0 env(safe-area-inset-bottom)}
+.w{max-width:1000px;margin:auto;padding:14px}h2{margin:6px 0 12px}
+.card,.m>div{background:var(--card);border:1px solid var(--br);border-radius:14px;padding:14px}
+.g{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:10px;margin-bottom:12px}
+.g .card b{font-size:26px;display:block}.g .card span{color:var(--mu);font-size:13px}
+input,select,button{font:inherit;padding:10px 12px;border-radius:10px;border:1px solid var(--br);background:var(--card);color:var(--tx);width:100%}
+button{width:auto;cursor:pointer;background:var(--pr);color:#fff;border:0;font-weight:600}button.s{background:#5b6b7d;padding:7px 10px;font-size:13px}button.d{background:var(--rd)}button.o{background:#c27a00}
+.bar{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px}.bar input{flex:1;min-width:160px}.bar select{width:auto}
+.it{margin-bottom:10px}.it h3{margin:0 0 4px}.it small{color:var(--mu);display:block}
+.act{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
+.bd{display:inline-block;padding:2px 10px;border-radius:99px;font-size:12px;color:#fff}.active{background:#0b6b4a}.trial{background:#2a6fd6}.expired{background:#c27a00}.suspended{background:#b42323}
+.m{position:fixed;inset:0;background:#0008;display:flex;align-items:flex-start;justify-content:center;overflow:auto;padding:16px;z-index:9}
+.m>div{width:100%;max-width:520px}label{display:block;font-size:13px;color:var(--mu);margin:10px 0 3px}
+.er{color:var(--rd);font-size:13px;min-height:18px}.hide{display:none}
+</style></head><body><div class="w" id="root"></div>
+<script type="module">
+import {initializeApp} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import {getAuth,signInWithEmailAndPassword,signOut,createUserWithEmailAndPassword,onAuthStateChanged} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+import {getDatabase,ref,get,update,runTransaction} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+const cfg={apiKey:"AIzaSyCE-tUb4wySKM7nrUJ_cxnfNm-EybJTLdE",authDomain:"madrasa-management-31850.firebaseapp.com",databaseURL:"https://madrasa-management-31850-default-rtdb.firebaseio.com",projectId:"madrasa-management-31850",messagingSenderId:"444057050878",appId:"1:444057050878:web:f192583528a128cf2e8faf"};
+const app=initializeApp(cfg),auth=getAuth(app),db=getDatabase(app),auth2=getAuth(initializeApp(cfg,'sec'));
+const $=s=>document.querySelector(s),root=$('#root'),DAY=864e5;
+const esc=s=>String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const d2=(s,end)=>s?new Date(s+(end?'T23:59:59.999':'T00:00:00')).getTime():0;
+const ms2d=m=>m?new Date(m-new Date(m).getTimezoneOffset()*6e4).toISOString().slice(0,10):'';
+const show=m=>m?ms2d(m):'—';
+let M={},L={},flt='all',q='';
+const st=l=>!l?'expired':l.suspended?'suspended':(l.subEnd>Date.now()?'active':(l.trialEnd>Date.now()?'trial':'expired'));
+const SN={active:'Active',trial:'Trial',expired:'Expired',suspended:'Suspended'};
+const CK='sa_cache';
+async function load(force){
+  if(!force){try{const c=JSON.parse(sessionStorage.getItem(CK)||'null');if(c&&Date.now()-c.t<3e5){M=c.M;L=c.L;return}}catch(e){}}
+  const [a,b]=await Promise.all([get(ref(db,'madrasaMeta')),get(ref(db,'licenses'))]);
+  M=a.val()||{};L=b.val()||{};save()}
+const save=()=>{try{sessionStorage.setItem(CK,JSON.stringify({t:Date.now(),M,L}))}catch(e){}};
+/* ---------- login ---------- */
+function loginView(msg){root.innerHTML=`<div class="card" style="max-width:380px;margin:12vh auto"><h2>Super Admin Login</h2>
+<label>ইমেইল</label><input id="em" type="email" autocomplete="username"><label>পাসওয়ার্ড</label><input id="pw" type="password" autocomplete="current-password">
+<div class="er" id="er">${esc(msg||'')}</div><button id="go">লগইন</button></div>`;
+ const go=async()=>{$('#er').textContent='';try{await signInWithEmailAndPassword(auth,$('#em').value.trim(),$('#pw').value)}catch(e){$('#er').textContent='ইমেইল বা পাসওয়ার্ড ভুল'}};
+ $('#go').onclick=go;$('#pw').onkeydown=e=>{if(e.key==='Enter')go()}}
+onAuthStateChanged(auth,async u=>{
+  if(!u)return loginView();
+  try{const s=(await get(ref(db,'superAdmins/'+u.uid))).val();
+    if(!s||s.role!=='superAdmin'||s.active!==true){await signOut(auth);return loginView('এই অ্যাকাউন্টের Super Admin অনুমতি নেই')}
+    await load();dash()}catch(e){await signOut(auth);loginView('অনুমতি যাচাই ব্যর্থ: '+e.message)}});
+/* ---------- dashboard ---------- */
+function dash(){
+  const ids=Object.keys(M),cnt={active:0,trial:0,expired:0,suspended:0};ids.forEach(i=>cnt[st(L[i])]++);
+  const rows=ids.filter(i=>{const m=M[i],s=st(L[i]);if(flt!=='all'&&s!==flt)return false;
+    const h=[i,m.name,m.adminName,m.adminPhone].join(' ').toLowerCase();return !q||h.includes(q.toLowerCase())}).sort();
+  root.innerHTML=`<div class="bar"><h2 style="flex:1;margin:0">Super Admin Dashboard</h2><button class="s" id="rf">রিফ্রেশ</button><button class="s" id="mg">ডেটা মাইগ্রেশন</button><button class="s d" id="lo">লগআউট</button></div>
+<div class="g"><div class="card"><b>${ids.length}</b><span>Total Madrasa</span></div>${Object.keys(cnt).map(k=>`<div class="card"><b>${cnt[k]}</b><span>${SN[k]}</span></div>`).join('')}</div>
+<div class="bar"><input id="sq" placeholder="নাম / ID / অ্যাডমিন / ফোন দিয়ে খুঁজুন" value="${esc(q)}"><select id="sf">${['all','active','trial','expired','suspended'].map(k=>`<option value="${k}" ${k===flt?'selected':''}>${k==='all'?'All':SN[k]}</option>`).join('')}</select><button id="ad">+ নতুন মাদ্রাসা</button></div>
+${rows.map(i=>{const m=M[i],l=L[i]||{},s=st(l);return `<div class="card it"><h3>${esc(m.name)} <span class="bd ${s}">${SN[s]}</span></h3>
+<small>ID: ${esc(i)} · অ্যাডমিন: ${esc(m.adminName)} (${esc(m.adminPhone)})</small><small>Trial শেষ: ${show(l.trialEnd)} · Subscription শেষ: ${show(l.subEnd)}</small>
+<div class="act"><button class="s" data-a="v" data-i="${i}">View</button><button class="s" data-a="e" data-i="${i}">Edit</button><button class="s" data-a="t" data-i="${i}">Extend Trial</button><button class="s" data-a="u" data-i="${i}">Extend Subscription</button>
+${l.suspended?`<button class="s" data-a="on" data-i="${i}">Activate</button>`:`<button class="s d" data-a="off" data-i="${i}">Suspend</button>`}</div></div>`}).join('')||'<div class="card">কোনো মাদ্রাসা পাওয়া যায়নি</div>'}`;
+  $('#lo').onclick=()=>{sessionStorage.removeItem(CK);signOut(auth)};
+  $('#rf').onclick=async()=>{await load(true);dash()};$('#ad').onclick=()=>form();$('#mg').onclick=migrate;
+  $('#sq').oninput=e=>{q=e.target.value;clearTimeout(window.__t);window.__t=setTimeout(()=>{dash();const x=$('#sq');x.focus();x.setSelectionRange(99,99)},250)};
+  $('#sf').onchange=e=>{flt=e.target.value;dash()};
+  root.querySelectorAll('[data-a]').forEach(b=>b.onclick=()=>act(b.dataset.a,b.dataset.i))}
+/* ---------- modal ---------- */
+function modal(h){const m=document.createElement('div');m.className='m';m.innerHTML='<div>'+h+'</div>';m.onclick=e=>{if(e.target===m)m.remove()};document.body.appendChild(m);return m}
+async function patch(mid,p,meta){
+  const U={};const o=L[mid]||{};for(const k in p)if(o[k]!==p[k])U['licenses/'+mid+'/'+k]=p[k];
+  if(meta)for(const k in meta)if((M[mid]||{})[k]!==meta[k])U['madrasaMeta/'+mid+'/'+k]=meta[k];
+  if(!Object.keys(U).length)return;await update(ref(db),U);
+  L[mid]=Object.assign({},o,p);if(meta)M[mid]=Object.assign({},M[mid],meta);save()}
+async function act(a,i){
+  if(a==='v')return view(i);if(a==='e')return form(i);
+  if(a==='off'||a==='on'){if(!confirm((a==='off'?'Suspend':'Activate')+' করবেন? '+M[i].name))return;
+    try{await patch(i,{suspended:a==='off'});dash()}catch(e){alert(e.message)}return}
+  const k=a==='t'?'trialEnd':'subEnd',cur=(L[i]||{})[k]||0;
+  const m=modal(`<h3>${a==='t'?'Trial':'Subscription'} বাড়ান</h3><p>বর্তমান শেষ তারিখ: ${show(cur)}</p><div class="act"><button data-d="7">+7 দিন</button><button data-d="30">+30 দিন</button><button data-d="365">+365 দিন</button></div>
+  <label>অথবা কাস্টম তারিখ</label><input type="date" id="cd"><div class="act"><button id="cs">সেভ</button><button class="s" id="cx">বাতিল</button></div>`);
+  const sv=async t=>{try{const p={};p[k]=t;if(k==='trialEnd'&&!(L[i]||{}).trialStart)p.trialStart=Date.now();if(k==='subEnd'&&!(L[i]||{}).subStart)p.subStart=Date.now();await patch(i,p);m.remove();dash()}catch(e){alert(e.message)}};
+  m.querySelectorAll('[data-d]').forEach(b=>b.onclick=()=>{const base=Math.max(cur,Date.now()),e=new Date(base+b.dataset.d*DAY);sv(d2(ms2d(e.getTime()),1))});
+  $('#cs').onclick=()=>{const v=$('#cd').value;if(!v)return alert('তারিখ দিন');sv(d2(v,1))};$('#cx').onclick=()=>m.remove()}
+async function view(i){
+  const m0=M[i],l=L[i]||{},s=st(l);
+  const m=modal(`<h3>${esc(m0.name)} <span class="bd ${s}">${SN[s]}</span></h3><p>ID: <b>${esc(i)}</b><br>ঠিকানা: ${esc(m0.addr)}<br>অ্যাডমিন: ${esc(m0.adminName)} · ${esc(m0.adminPhone)} · ${esc(m0.adminEmail)}<br>তৈরি: ${show(m0.createdAt)}<br>Trial: ${show(l.trialStart)} → ${show(l.trialEnd)}<br>Subscription: ${show(l.subStart)} → ${show(l.subEnd)}<br>App লিংক প্যারামিটার: <code>?m=${esc(i)}</code></p><p id="stt">পরিসংখ্যান লোড হচ্ছে...</p><button class="s" id="cx">বন্ধ</button>`);
+  $('#cx').onclick=()=>m.remove();
+  try{const tk=await auth.currentUser.getIdToken(),c=async n=>Object.keys(await (await fetch(`${cfg.databaseURL}/madrasas/${i}/${n}.json?shallow=true&auth=${tk}`)).json()||{}).length;
+    const [a,b]=await Promise.all([c('students'),c('teachers')]);$('#stt').textContent=`ছাত্র: ${a} · শিক্ষক: ${b}`}catch(e){$('#stt').textContent='পরিসংখ্যান পাওয়া যায়নি'}}
+/* ---------- add / edit ---------- */
+function form(i){
+  const ed=!!i,m0=ed?M[i]:{},l=ed?L[i]||{}:{trialStart:Date.now(),trialEnd:Date.now()+14*DAY};
+  const f=(id,lb,v,t)=>`<label>${lb}</label><input id="${id}" type="${t||'text'}" value="${esc(v||'')}">`;
+  const m=modal(`<h3>${ed?'Edit '+esc(i):'নতুন মাদ্রাসা'}</h3>${f('n','Madrasa Name',m0.name)}${f('a','Address',m0.addr)}${f('an','Admin Name',m0.adminName)}${f('ap','Admin Phone',m0.adminPhone)}${f('ae','Admin Email',m0.adminEmail,'email')}
+  ${ed?'':f('apw','অ্যাডমিনের প্রাথমিক পাসওয়ার্ড (ঐচ্ছিক, কমপক্ষে ৬ অক্ষর)','','password')}
+  ${f('ts','Trial Start',ms2d(l.trialStart),'date')}${f('te','Trial End',ms2d(l.trialEnd),'date')}${f('ss','Subscription Start',ms2d(l.subStart),'date')}${f('se','Subscription End',ms2d(l.subEnd),'date')}
+  <div class="er" id="er"></div><div class="act"><button id="sv">সেভ</button><button class="s" id="cx">বাতিল</button></div>`);
+  $('#cx').onclick=()=>m.remove();
+  $('#sv').onclick=async()=>{const b=$('#sv');const v=id=>$('#'+id).value.trim();if(!v('n'))return $('#er').textContent='মাদ্রাসার নাম দিন';
+    const meta={name:v('n'),addr:v('a'),adminName:v('an'),adminPhone:v('ap'),adminEmail:v('ae')};
+    const lic={trialStart:d2(v('ts')),trialEnd:d2(v('te'),1),subStart:d2(v('ss')),subEnd:d2(v('se'),1)};
+    b.disabled=true;try{
+      if(ed){await patch(i,lic,meta)}else{
+        const mid='MAD'+String((await runTransaction(ref(db,'meta/counter'),n=>(n||0)+1)).snapshot.val()).padStart(3,'0');
+        const U={};U['madrasaMeta/'+mid]=Object.assign({},meta,{createdAt:Date.now()});U['licenses/'+mid]=Object.assign({},lic,{suspended:false});
+        U['madrasas/'+mid+'/config/profile']={name:meta.name,addr:meta.addr,ph:meta.adminPhone,est:'',logo:''};U['madrasas/'+mid+'/config/setup']={at:Date.now(),by:auth.currentUser.uid};
+        const pw=$('#apw').value;if(meta.adminEmail&&pw){if(pw.length<6)throw new Error('পাসওয়ার্ড কমপক্ষে ৬ অক্ষর');
+          const c=await createUserWithEmailAndPassword(auth2,meta.adminEmail,pw);await signOut(auth2);
+          U['users/'+c.user.uid]={email:meta.adminEmail,role:'admin',mid};
+          const ek=meta.adminEmail.toLowerCase().replace(/\./g,',');U['madrasas/'+mid+'/loginIndex/'+ek]={email:meta.adminEmail,role:'admin'};
+          const pk=meta.adminPhone.replace(/[^0-9a-z]/gi,'').toLowerCase();if(pk)U['madrasas/'+mid+'/loginIndex/'+pk]={email:meta.adminEmail,role:'admin'}}
+        await update(ref(db),U);M[mid]=U['madrasaMeta/'+mid];L[mid]=U['licenses/'+mid];save();alert('তৈরি হয়েছে: '+mid)}
+      m.remove();dash()}catch(e){b.disabled=false;$('#er').textContent=e.code==='auth/email-already-in-use'?'এই ইমেইলে অ্যাকাউন্ট আগেই আছে':e.message}}}
+/* ---------- migration ---------- */
+function migrate(){
+  const MID='CURRENT_MADRASA_001';
+  const m=modal(`<h3>বর্তমান data মাইগ্রেশন</h3><p>Firebase Console থেকে নেওয়া Export JSON ফাইলটি দিন। Data <b>${MID}</b>-এর অধীনে <b>কপি</b> হবে; পুরনো data মুছবে না। Subscription ডিফল্ট ১ বছর সেট হবে (পরে Edit করা যাবে)।</p><input type="file" id="fl" accept=".json,application/json"><div class="er" id="er"></div><div class="act"><button id="go">মাইগ্রেট করুন</button><button class="s" id="cx">বাতিল</button></div>`);
+  $('#cx').onclick=()=>m.remove();
+  $('#go').onclick=async()=>{const f=$('#fl').files[0];if(!f)return $('#er').textContent='ফাইল বাছাই করুন';
+    try{if((await get(ref(db,'madrasaMeta/'+MID))).exists()&&!confirm('এই মাদ্রাসা আগেই আছে। আবার ওভাররাইট করবেন?'))return;
+      const d=JSON.parse(await f.text()),U={},now=Date.now();
+      if(!d.students&&!d.users)throw new Error('এটি সঠিক export ফাইল নয়');
+      Object.keys(d).forEach(k=>{if(k!=='users')U['madrasas/'+MID+'/'+k]=d[k]});
+      Object.keys(d.users||{}).forEach(u=>U['users/'+u]=Object.assign({},d.users[u],{mid:MID}));
+      const p=(d.config||{}).profile||{};
+      U['madrasaMeta/'+MID]={name:p.name||'Current Madrasa',addr:p.addr||'',adminName:'',adminPhone:p.ph||'',adminEmail:'',createdAt:now};
+      U['licenses/'+MID]={trialStart:0,trialEnd:0,subStart:now,subEnd:d2(ms2d(now+365*DAY),1),suspended:false};
+      $('#go').disabled=true;await update(ref(db),U);await load(true);m.remove();dash();alert('মাইগ্রেশন সম্পন্ন: '+MID)}
+    catch(e){$('#go').disabled=false;$('#er').textContent=e.message}}}
+</script></body></html>

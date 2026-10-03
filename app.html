@@ -921,6 +921,15 @@ window.rtnvV=function(){const G=role==='guardian',adm=canAny('rtn_add','rtn_edit
  shell('ক্লাস রুটিন — '+cls,head+days+(window.rtnBusy?'<p class="note">সংরক্ষণ হচ্ছে...</p>':'')+
  (L.map((e,i)=>{const mine=role==='teacher'&&e.tid&&e.tid===myTeacher;return `<div class="row" style="${mine?'border-color:var(--g)':''}"><div class="av">${e.p?bn(e.p):'•'}</div><div class="info"><b>${xe(e.n)}</b><small>${e.p?'পিরিয়ড '+bn(e.p)+' • ':''}${xe(e.tm||'')}<br>শিক্ষক: ${xe(e.tid?tName(e.tid,e.t):(e.t||'নির্ধারিত নয়'))}${mine?' ★ আপনি':''}</small></div>${adm?`<button aria-label="সম্পাদনা" onclick="rtnEdit(${i})">✏️</button><button aria-label="মুছুন" onclick="rtnDel(${i})">🗑️</button>`:''}</div>`}).join('')||'<p class="note">এই দিনের কোনো রুটিন নেই।</p>')+
  (adm?`<button ${btn} onclick="rtnEdit(-1)">＋ পিরিয়ড যোগ করুন</button>${L.length?`<button ${btn} style="background:#1f6fe0;width:100%;margin-top:10px;padding:12px" onclick="rtnApply()">📋 এই দিনের রুটিন অন্য দিনে প্রয়োগ করুন</button>`:''}`:''),G?'child':'home')};
+/* শিক্ষকের রুটিন: দিন বেছে নিলে ওই দিনে লগইন করা শিক্ষকের সব ক্লাসের রুটিন একসাথে (ক্লাস বাছাই লাগে না) */
+const _rtnv0=window.rtnvV;
+function rtnT(){const days=`<div style="display:flex;gap:8px;overflow-x:auto;padding-bottom:4px;margin-bottom:10px">${DAYS.map(d=>`<button class="chip" style="min-width:auto;white-space:nowrap;${chipS(d[0]===rtnDayK)}" onclick="setDay('${d[0]}')">${d[1]}</button>`).join('')}</div>`;
+ if(!window.rtnLoaded())return shell('ক্লাস রুটিন',days+'<p class="note">রুটিন লোড হচ্ছে...</p>','home');
+ const seen=new Set(),L=[];
+ classes.forEach(c=>rtnList(c,rtnDayK).forEach(e=>{if(!e||e.tid!==myTeacher)return;const k=[c,e.p,e.tm,e.n].join('|');if(seen.has(k))return;seen.add(k);L.push({c:c,e:e})}));
+ L.sort((a,b)=>(+a.e.p||99)-(+b.e.p||99)||String(a.e.tm||'').localeCompare(String(b.e.tm||''))||classes.indexOf(a.c)-classes.indexOf(b.c));
+ shell('ক্লাস রুটিন — '+dayNm(rtnDayK),days+(L.map(x=>{const e=x.e;return `<div class="row" style="border-color:var(--g)"><div class="av">${e.p?bn(e.p):'•'}</div><div class="info"><b>${xe(x.c)}</b><small>বিষয়: ${xe(e.n)}<br>${e.p?'পিরিয়ড '+bn(e.p)+' নং':'পিরিয়ড —'} • ${xe(e.tm||'—')}<br>শিক্ষক: ${xe(tName(e.tid,e.t))}</small></div></div>`}).join('')||'<p class="note">এই দিনে আপনার কোনো ক্লাস নেই।</p>'),'home')}
+window.rtnvV=function(){if(role==='teacher'&&!canAny('rtn_add','rtn_edit','rtn_del'))return rtnT();return _rtnv0()};
 window.rtnEdit=function(i){const cls=selClass||classes[0],cur=rtnList(cls,rtnDayK),e=i>=0?cur[i]:{},sj=window.subjFor(cls);
  if(e.n&&!sj.includes(e.n))sj.push(e.n);
  if(!sj.length){alert('আগে Settings → Subject Management থেকে এই শ্রেণীর বিষয় যোগ করুন');return}

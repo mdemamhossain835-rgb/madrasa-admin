@@ -86,6 +86,16 @@ h3{font-size:16px;margin:14px 0 8px}
 .atopt button i{width:14px;height:14px;border-radius:50%;border:2px solid var(--c);flex:none;transition:background .15s}
 .atopt button.on{font-weight:700;border-color:var(--c)}.atopt button.on i{background:var(--c)}
 .atlm{display:block;margin-top:6px;color:var(--latet);font-size:12.5px}
+
+/* ===== একই ডিজাইনের Toggle Switch (রিইউজেবল): <input type=checkbox class="tgl"> অথবা tglHTML(on,'কাজ()') ===== */
+.tgl{-webkit-appearance:none;appearance:none;position:relative;display:inline-block;flex:none;width:50px;height:30px;margin:0;padding:0;border:0;border-radius:99px;background:#c3ccc8;cursor:pointer;vertical-align:middle;transition:background .22s ease;-webkit-tap-highlight-color:transparent;outline:0}
+.tgl::after{content:"";position:absolute;top:3px;left:3px;width:24px;height:24px;border-radius:50%;background:#fff;box-shadow:0 1px 2px rgba(0,0,0,.25);transition:transform .22s ease}
+.tgl.on,.tgl:checked{background:var(--g)}
+.tgl.on::after,.tgl:checked::after{transform:translateX(20px)}
+.tgl:focus-visible{outline:2px solid var(--g);outline-offset:2px}
+.tgl:disabled{opacity:.5;cursor:default}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .tgl:not(.on):not(:checked){background:#4b5c55}}
+:root[data-theme="dark"] .tgl:not(.on):not(:checked){background:#4b5c55}
 </style>
 </head>
 <body>
@@ -148,6 +158,9 @@ function child(){const s=stu_(myChild);
  shell('আমার সন্তান',`<div class="hello"><div class="av">${avHTML(s.photo,(s.n||'?')[0])}</div><div><b>${s.n}</b><br><small style="color:var(--mute)">ID: ${myChild} | রোল: ${bn(s.r)}<br>ক্লাস: ${s.c||'—'}</small></div></div>
  <div class="grid">${items.map(x=>`<button class="tile" style="background:${x[3]}" onclick="${LK[x[2]]?`${LK[x[2]]};draw()`:`alert('${x[1]} পরের ধাপে তৈরি হবে')`}"><b>${x[0]}</b>${x[1]}${x[2]==='Notif'&&typeof getUnread==='function'&&getUnread()?' ('+bn(getUnread())+')':''}<span>${x[2]}</span></button>`).join('')}</div>
  <button class="strip" style="width:100%;border:0;margin-top:14px" onclick="devShow()">👨‍💻 ডেভেলপার সম্পর্কে তথ্য</button>`)}
+function tglHTML(on,fn,extra){return '<button type="button" class="tgl'+(on?' on':'')+'" role="switch" aria-checked="'+(on?'true':'false')+'" '+(extra||'')+' onclick="tglGo(this,function(){'+fn+'})"></button>'}
+function tglGo(el,f){if(el.dataset.b)return;el.dataset.b='1';const was=el.classList.contains('on');el.classList.toggle('on',!was);el.setAttribute('aria-checked',String(!was));
+ setTimeout(function(){try{f()}catch(e){console.error(e)}setTimeout(function(){if(el.isConnected){el.classList.toggle('on',was);el.setAttribute('aria-checked',String(was));delete el.dataset.b}},80)},180)}
 function ldHTML(){const lg=profile&&profile.logo&&/^(data:image|https?:)/.test(profile.logo)?'<img src="'+profile.logo+'" alt="">':'🕌';return '<div class="ldw"><div class="ldb"><span class="ldr"></span><span class="ldr2"></span><div class="ldl">'+lg+'</div></div><div class="ldd"><b></b><b></b><b></b></div></div>'}
 function hideLd(){clearTimeout(window.__ldT);const d=document.getElementById('ldo');if(d)d.remove()}
 function showLd(){if(document.getElementById('ldo'))return;const d=document.createElement('div');d.id='ldo';d.className='ldo';d.innerHTML=ldHTML();document.body.appendChild(d);clearTimeout(window.__ldT);window.__ldT=setTimeout(hideLd,45000)}
@@ -231,7 +244,7 @@ const TABN={students:['stu_view'],teachers:['tch_view'],catt:['att_take','att_ed
 function tabOK(t){if(role==='admin')return true;const n=TABN[t];return n?n.some(hasPerm):true}
 function setFilt(){if(role!=='teacher')return;document.querySelectorAll('#app .link').forEach(b=>{const o=b.getAttribute('onclick')||'';const ok=/nset/.test(o)?tabOK('nset'):/nlog|nann/.test(o)?tabOK('nann'):/classFee/.test(o)?tabOK('classFee'):false;if(!ok)b.remove()});document.querySelectorAll('#app .act').forEach(a=>a.remove())}
 function permHTML(v){if(!hasPerm('adm_perm'))return '';const sel=v.perm||[],lk='style="color:var(--g);cursor:pointer;font-size:12px;margin-left:10px;white-space:nowrap"',bt='class="chip" style="min-width:0;padding:6px 10px;background:var(--card);border:1px solid var(--line)"';
- const sw=(k,l,ci)=>`<label style="display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:9px;font-size:14px"><span>${l}</span><input type="checkbox" name="perm_${k}" data-c="${ci}" ${sel.indexOf(k)>=0?'checked':''} style="width:22px;height:22px;accent-color:var(--g);flex:none"></label>`;
+ const sw=(k,l,ci)=>`<label style="display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:9px;font-size:14px"><span>${l}</span><input type="checkbox" name="perm_${k}" data-c="${ci}" ${sel.indexOf(k)>=0?'checked':''} class="tgl"></label>`;
  return `<div style="margin-top:12px"><small style="color:var(--mute)">অনুমতি (রোল ও পারমিশন) — যে কাজের অনুমতি দেবেন শিক্ষক শুধু সেটিই দেখতে ও করতে পারবেন। শিক্ষকের role অ্যাডমিন হয় না; সব অনুমতি দিলে প্রায় পূর্ণ অ্যাক্সেস পাবেন।</small><div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:8px"><button type="button" ${bt} onclick="pmAll('*',1)">✅ সব অনুমতি</button><button type="button" ${bt} onclick="pmAll('*',0)">❌ সব বাতিল</button><button type="button" ${bt} onclick="pmBase()">মৌলিক শিক্ষক</button></div>`+
  PCAT.map((c,ci)=>`<div style="margin-top:14px;padding:10px 12px;border:1px solid var(--line);border-radius:12px"><div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:4px"><b>${c[0]}</b><span><a ${lk} onclick="pmAll(${ci},1)">সব নির্বাচন করুন</a><a ${lk} onclick="pmAll(${ci},0)">সব বাতিল করুন</a></span></div>${c[1].map(x=>sw(x[0],x[1],ci)).join('')}</div>`).join('')+'</div>'}
 window.pmAll=(ci,on)=>document.querySelectorAll(ci==='*'?'#md input[name^="perm_"]':'#md input[data-c="'+ci+'"]').forEach(i=>{i.checked=!!on});
@@ -877,7 +890,7 @@ function sysAlert(n){try{if(!('Notification' in window)||Notification.permission
  x.onclick=()=>{window.focus();tab='notif';draw();x.close()}}catch(e){}}
 window.markRead=function(id){const n=nlist.find(x=>x.id===id);if(!n||n.read)return;n.read=1;nunread=nlist.filter(x=>!x.read).length;
  set(R((role==='guardian'?'notifications/guardian/'+myChild:'notifications/teacher/'+myTeacher)+'/'+id+'/read'),1).catch(()=>{});redraw()};
-const sw=(on,fn)=>`<button class="chip ${on?'Present':'Absent'}" onclick="${fn}">${on?'চালু':'বন্ধ'}</button>`;
+const sw=(on,fn)=>tglHTML(on,fn);
 const saveCfg=()=>{set(R('config/notif'),clean(ncfg)).catch(e=>alert('সংরক্ষণ হয়নি: '+denied(e)));draw()};
 window.ntgl=(g,k)=>{ncfg[g][k]=ncfg[g][k]?0:1;saveCfg()};
 window.tplEdit=k=>form('মেসেজ টেমপ্লেট',[['n','টেমপ্লেট (ভেরিয়েবল: {studentName} {time} {month} {amount} {feeType} {date} {teacherName})']],{n:ncfg.tpl[k]},o=>{ncfg.tpl[k]=o.n;saveCfg()});

@@ -421,7 +421,7 @@ function tattV(){const n=k=>teachers.filter(t=>t.s===k).length,L={Present:'উ�
  (teachers.map(t=>`<div class="row"><div class="av">${avHTML(t.photo,t.n[0])}</div><div class="info"><b>${t.n}</b><small>${t.id}</small></div><button class="chip ${t.s}" onclick="tcyc('${t.id}')">${L[t.s]}</button></div>`).join('')||'<p class="note">কোনো শিক্ষক নেই।</p>')+(typeof tfinBtn==='function'?tfinBtn():''),'catt')}
 </script>
 <script>
-let rq='',rcls='',curT='',repYear=T0.slice(0,4),yrOpen=false;
+let rq='',rcls='',curT='',repYear=T0.slice(0,4),yrOpen=false,repMon=M0,repFM='',monOpen=false;
 function yearChips(){if(!yrOpen)return `<button class="chip" style="min-width:auto;background:var(--g);color:#fff" onclick="yrOpen=true;draw()">${bn(repYear.slice(2))} ▾</button>`;
  const ys=[2026,2027,2028,2029,2030];return `<div style="display:flex;gap:8px;overflow-x:auto;padding-bottom:4px;margin:8px 0">${ys.map(y=>`<button class="chip" style="min-width:auto;white-space:nowrap;${String(y)===repYear?'background:var(--g);color:#fff':'background:var(--card);border:1px solid var(--line);color:var(--ink)'}" onclick="repYear='${y}';yrOpen=false;draw()">${bn(y)}</button>`).join('')}</div>`}
 const BM=['জানুয়ারি','ফেব্রুয়ারি','মার্চ','এপ্রিল','মে','জুন','জুলাই','আগস্ট','সেপ্টেম্বর','অক্টোবর','নভেম্বর','ডিসেম্বর'];
@@ -449,19 +449,51 @@ function rows2(l){return l.map(s=>`<div class="row" style="cursor:pointer" oncli
 function srepBody(){if(rq){const ql=rq.toLowerCase();return rows2(students.filter(s=>(s.n+' '+s.id).toLowerCase().indexOf(ql)>-1))}
  return `<div class="stats" style="grid-template-columns:1fr"><div class="stat"><b>${bn(students.length)}</b><small>মোট শিক্ষার্থী (প্রতিষ্ঠান)</small></div></div><h3>শ্রেণী অনুযায়ী দেখুন</h3>`+(classes.map(c=>`<button class="link" onclick="rcls='${esc(c)}';tab='chist';draw()"><span>${c}<small>${bn(students.filter(s=>s.c===c).length)} জন শিক্ষার্থী</small></span>›</button>`).join('')||'<p class="note">কোনো শ্রেণী নেই।</p>')}
 function srepV(){shell('ছাত্র রিপোর্ট',`<input class="search" placeholder="নাম বা আইডি দিয়ে খুঁজুন..." value="${esc(rq)}" oninput="rq=this.value;document.getElementById('srl').innerHTML=srepBody()" aria-label="ছাত্র খুঁজুন"><div id="srl">${srepBody()}</div>`,'rep')}
+/* ===== বিস্তারিত ছাত্র রিপোর্ট: হাজিরা (মাস বদলানো যায়) + মাসিক ফি — সব তথ্য Firebase থেকে লাইভ ===== */
+const MINM='2026-01';
+function mAdd(mo,d){const p=mo.split('-').map(Number),t=p[0]*12+p[1]-1+d;return Math.floor(t/12)+'-'+String(t%12+1).padStart(2,'0')}
+function monBar(){const p=repMon.split('-'),canP=repMon>MINM,canN=repMon<M0,cy=+M0.slice(0,4);
+ const nb=(ok,d,t)=>`<button class="chip" style="min-width:42px;${ok?'background:var(--card);border:1px solid var(--line);color:var(--ink)':'opacity:.35'}" ${ok?`onclick="repMon=mAdd(repMon,${d});repFM='';draw()"`:''}>${t}</button>`;
+ let h=`<div style="display:flex;align-items:center;gap:8px;margin:8px 0"><div>${nb(canP,-1,'‹')}</div><button class="chip" style="flex:1;background:var(--g);color:#fff" onclick="monOpen=!monOpen;draw()">📅 ${BM[+p[1]-1]} ${bn(p[0])} ${monOpen?'▴':'▾'}</button><div>${nb(canN,1,'›')}</div></div>`;
+ if(monOpen){let ys='';for(let y=2026;y<=cy;y++)ys+=`<button class="chip" style="min-width:auto;${String(y)===p[0]?'background:var(--g);color:#fff':'background:var(--card);border:1px solid var(--line);color:var(--ink)'}" onclick="repMon=clampM('${y}-${p[1]}');repFM='';draw()">${bn(y)}</button>`;
+  let ms='';BM.forEach((n,i)=>{const k=p[0]+'-'+String(i+1).padStart(2,'0'),ok=k>=MINM&&k<=M0;ms+=`<button class="chip" style="min-width:auto;${k===repMon?'background:var(--g);color:#fff':ok?'background:var(--card);border:1px solid var(--line);color:var(--ink)':'opacity:.35;border:1px solid var(--line)'}" ${ok?`onclick="repMon='${k}';repFM='';monOpen=false;draw()"`:''}>${n}</button>`});
+  h+=`<div class="link" style="display:block"><div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:8px">${ys}</div><div style="display:flex;gap:8px;flex-wrap:wrap">${ms}</div></div>`}
+ return h}
+function clampM(k){return k<MINM?MINM:k>M0?M0:k}
+function attMonth(s,mo){const p=mo.split('-').map(Number),n=new Date(p[0],p[1],0).getDate(),cm=students.filter(x=>x.c===s.c),r={p:0,a:0,l:0,h:0,w:0,st:{}};
+ for(let d=1;d<=n;d++){const ds=mo+'-'+String(d).padStart(2,'0');if(ds>T0){r.st[d]='';continue}
+  const rec=at[ds]||{},taken=cm.some(x=>rec[x.id])||(!cm.length&&Object.keys(rec).length>0),v=rec[s.id];if(taken)r.w++;
+  if(v==='Present'){r.p++;r.st[d]='P'}else if(v==='Absent'){r.a++;r.st[d]='A'}else if(v==='Late'){r.l++;r.st[d]='L'}else if(!taken){r.h++;r.st[d]='H'}else r.st[d]=''}
+ r.pct=r.w?Math.round((r.p+r.l)*100/r.w):0;return r}
+function calNew(mo,r){const p=mo.split('-').map(Number),g=calGrid(p[0],p[1]),wd=['রবি','সোম','মঙ্গল','বুধ','বৃহ','শুক্র','শনি'];
+ const C={P:['var(--ok)','var(--okt)','✓'],A:['var(--no)','var(--not)','✕'],L:['var(--late)','var(--latet)','দেরি'],H:['rgba(130,90,190,.16)','#8a5fc9','ছুটি'],'':['transparent','var(--mute)','']};let cells='';
+ for(let i=0;i<g.first;i++)cells+='<div></div>';
+ for(let d=1;d<=g.days;d++){const v=r.st[d]||'',c=C[v];cells+=`<div style="text-align:center"><div style="width:34px;height:34px;margin:0 auto;border-radius:50%;background:${c[0]};color:${c[1]};display:flex;align-items:center;justify-content:center;font-weight:600;font-size:13px;${v?'':'opacity:.5'}">${bn(d)}</div><div style="font-size:10px;height:14px;color:${c[1]}">${c[2]}</div></div>`}
+ const lg=(c,t)=>`<span style="display:inline-flex;align-items:center;gap:4px"><i style="width:10px;height:10px;border-radius:50%;background:${c};display:inline-block"></i>${t}</span>`;
+ return `<div style="display:grid;grid-template-columns:repeat(7,1fr);gap:4px;margin-bottom:6px">${wd.map(w=>`<div style="text-align:center;font-size:11px;color:var(--mute)">${w}</div>`).join('')}</div><div style="display:grid;grid-template-columns:repeat(7,1fr);gap:6px 4px">${cells}</div><div style="display:flex;flex-wrap:wrap;gap:10px;justify-content:center;margin-top:12px;font-size:12px;color:var(--mute)">${lg('var(--okt)','✓ উপস্থিত')}${lg('var(--not)','✕ অনুপস্থিত')}${lg('var(--latet)','দেরি')}${lg('#8a5fc9','ছুটি')}</div>`}
+function feeInfo(s,mo){const pays=fp.filter(p=>p.sid===s.id&&p.t==='মাসিক ফি'&&p.m===mo).sort((a,b)=>a.d<b.d?-1:1),paid=pays.reduce((a,p)=>a+(+p.a||0),0),total=feeOf(s.id);return{pays,paid,total,due:Math.max(0,total-paid)}}
+function feeKind(s,mo){if(mo>M0)return '';const f=feeInfo(s,mo);return f.total>0&&f.paid>=f.total?'paid':f.paid>0?'part':f.total>0?'due':''}
 function shist(){const s=students.find(x=>x.id===cur);if(!s){tab='srep';return draw()}
- const mo=stCount(at,s.id,M0),ym=monthsOf(at,s.id,repYear),fm=feeMonths(s.id),months=Object.keys(fm).sort().reverse();
- shell('শিক্ষার্থীর ইতিহাস',`<div class="hello"><div class="av">${avHTML(s.photo,s.n[0])}</div><div><b>${s.n}</b><br><small style="color:var(--mute)">ID: ${s.id} | রোল: ${bn(s.r)} | ${s.c||'—'}</small></div></div>
- <h3>উপস্থিতি — এই মাস</h3><div class="stats"><div class="stat"><b>${bn(mo.p)}</b><small>উপস্থিত</small></div><div class="stat"><b>${bn(mo.a)}</b><small>অনুপস্থিত</small></div><div class="stat"><b>${bn(mo.l)}</b><small>দেরি</small></div></div>
- <button class="link" onclick="tab='scal';draw()"><span>এই মাসের সম্পূর্ণ হাজিরা দেখুন<small>ক্যালেন্ডার আকারে — ${monLabel(M0)}</small></span>›</button>
- <h3>সাল অনুযায়ী মাসভিত্তিক উপস্থিতি</h3>${yearChips()}${monRows(ym)}
- <h3>বেতন হিস্টরি (${bn(months.length)} মাসের ফি পরিশোধ হয়েছে)</h3>`+(months.map(m=>K(m,tk(fm[m]))).join('')||'<p class="note">এখনো কোনো মাসিক ফি পরিশোধ হয়নি।</p>'),'srep')}
+ const r=attMonth(s,repMon),p=repMon.split('-'),feeOK=canAny.apply(null,PR_FEES),fy=p[0];
+ const tile=(l,v,bg,col)=>`<div style="background:${bg};color:${col};border-radius:14px;padding:10px;text-align:center"><b style="display:block;font-size:18px">${v}</b><small>${l}</small></div>`;
+ let h=`<div class="hello"><div class="av">${avHTML(s.photo,s.n[0])}</div><div><b>${s.n}</b><br><small style="color:var(--mute)">ID: ${s.id} | রোল: ${bn(s.r)}<br>শ্রেণী: ${s.c||'—'}${s.sec||s.section?' | শাখা: '+(s.sec||s.section):''}</small></div></div>`;
+ h+=`<h3>উপস্থিতি</h3>${monBar()}<div class="link" style="display:block"><div style="display:flex;align-items:center;gap:14px"><div style="width:96px;height:96px;border-radius:50%;flex:none;background:conic-gradient(var(--g) ${r.pct}%,var(--line) 0);display:flex;align-items:center;justify-content:center"><div style="width:72px;height:72px;border-radius:50%;background:var(--card);display:flex;flex-direction:column;align-items:center;justify-content:center"><b style="font-size:19px">${bn(r.pct)}%</b><small style="color:var(--mute);font-size:11px">উপস্থিতি</small></div></div><div style="flex:1;display:grid;grid-template-columns:1fr 1fr;gap:8px">${tile('উপস্থিত',bn(r.p)+' দিন','var(--ok)','var(--okt)')}${tile('অনুপস্থিত',bn(r.a)+' দিন','var(--no)','var(--not)')}${tile('ছুটি',bn(r.h)+' দিন','rgba(130,90,190,.16)','#8a5fc9')}${tile('দেরি',bn(r.l)+' দিন','var(--late)','var(--latet)')}</div></div><small style="display:block;margin-top:10px;color:var(--mute)">মোট কার্যদিবস: ${bn(r.w)} (যেসব দিন এই শ্রেণীর হাজিরা নেওয়া হয়েছে)। হাজিরা না নেওয়া দিন ছুটি ধরা হয়।</small></div>`;
+ h+=`<div class="link" style="display:block;margin-top:10px">${calNew(repMon,r)}</div>`;
+ if(feeOK){const fmo=repFM||repMon,f=feeInfo(s,fmo);
+  h+=`<h3>মাসিক ফি — ${bn(fy)}</h3><div class="link" style="display:block"><div style="display:flex;gap:8px;flex-wrap:wrap">`+BM.map((n,i)=>{const mo=fy+'-'+String(i+1).padStart(2,'0'),k=feeKind(s,mo),c=k==='paid'?'background:var(--ok);color:var(--okt)':k==='part'?'background:var(--late);color:var(--latet)':k==='due'?'background:var(--no);color:var(--not)':'background:var(--card);border:1px solid var(--line);color:var(--mute)';
+   return `<button class="chip" style="min-width:auto;${c};${mo===fmo?'outline:2px solid var(--g)':''}" onclick="repFM='${mo}';draw()">${n}${k==='paid'?' ✓':k==='part'?' (আংশিক)':k==='due'?' — বকেয়া':''}</button>`}).join('')+`</div></div>`;
+  h+=`<h3>${monLabel(fmo)}</h3>`+K('মোট ফি',tk(f.total))+K('পরিশোধিত',tk(f.paid))+K('বকেয়া',`<span style="color:${f.due?'var(--not)':'var(--okt)'}">${tk(f.due)}</span>`)+(f.pays.length?f.pays.map(x=>K('পেমেন্ট: '+dd(x.d)+(x.by?' • '+x.by:''),`<button class="chip" style="min-width:auto;background:var(--g);color:#fff" onclick="rc('${x.id}')">রসিদ</button>`)).join(''):K('পেমেন্টের তারিখ','—'))}
+ shell('শিক্ষার্থীর রিপোর্ট',h,'srep')}
+function rowsM(list){const feeOK=canAny.apply(null,PR_FEES);let np=0,nd=0;
+ const body=list.map(s=>{const r=attMonth(s,repMon);let b='';if(feeOK){const k=feeKind(s,repMon);if(k==='paid')np++;else if(k==='due'||k==='part')nd++;b=k==='paid'?'<span style="color:var(--okt)">৳ ✓ পরিশোধিত</span>':k==='part'?'<span style="color:var(--latet)">৳ আংশিক</span>':k==='due'?'<span style="color:var(--not)">৳ বকেয়া</span>':'<span style="color:var(--mute)">৳ —</span>'}
+  return `<div class="row" style="display:block;cursor:pointer" onclick="cur='${s.id}';repFM='';tab='shist';draw()"><div style="display:flex;justify-content:space-between;gap:8px"><b>${s.n}</b><small style="color:var(--mute)">রোল ${bn(s.r)} ›</small></div><div style="display:flex;gap:12px;flex-wrap:wrap;font-size:13px;margin-top:4px"><span style="color:var(--okt)">✓ ${bn(r.p)}</span><span style="color:var(--not)">✕ ${bn(r.a)}</span><span style="color:var(--latet)">দেরি ${bn(r.l)}</span>${b}</div></div>`}).join('')||'<p class="note">কোনো শিক্ষার্থী পাওয়া যায়নি।</p>';
+ return (feeOK&&list.length?`<div class="stats" style="grid-template-columns:1fr 1fr"><div class="stat"><b>${bn(np)}</b><small>বেতন পরিশোধ</small></div><div class="stat"><b>${bn(nd)}</b><small>বকেয়া/আংশিক</small></div></div>`:'')+body}
 function chist(){const list=students.filter(s=>s.c===rcls),agM={p:0,a:0,l:0},agY={p:0,a:0,l:0};
  list.forEach(s=>{const m=stCount(at,s.id,M0);agM.p+=m.p;agM.a+=m.a;agM.l+=m.l});const ym=classMonths(list,repYear);
  shell(rcls+' — শ্রেণী ইতিহাস',`<div class="stats" style="grid-template-columns:1fr"><div class="stat"><b>${bn(list.length)}</b><small>মোট শিক্ষার্থী</small></div></div>
  <h3>উপস্থিতি — এই মাস (সমষ্টি)</h3><div class="stats"><div class="stat"><b>${bn(agM.p)}</b><small>উপস্থিত</small></div><div class="stat"><b>${bn(agM.a)}</b><small>অনুপস্থিত</small></div><div class="stat"><b>${bn(agM.l)}</b><small>দেরি</small></div></div>
  <h3>সাল অনুযায়ী মাসভিত্তিক উপস্থিতি (সমষ্টি)</h3>${yearChips()}${monRows(ym)}
- <h3>শিক্ষার্থী তালিকা</h3>`+rows2(list),'srep')}
+ <h3>মাসভিত্তিক বেতন ও উপস্থিতি</h3>`+monBar()+rowsM(list),'srep')}
 function trepV(){shell('শিক্ষক রিপোর্ট',(teachers.map(t=>`<div class="row" style="cursor:pointer" onclick="curT='${t.id}';tab='thist';draw()"><div class="av">${avHTML(t.photo,t.n[0])}</div><div class="info"><b>${t.n}</b><small>${t.id}</small></div>›</div>`).join('')||'<p class="note">কোনো শিক্ষক নেই।</p>'),'rep')}
 function thist(){const t=teachers.find(x=>x.id===curT);if(!t){tab='trep';return draw()}
  const mo=stCount(tat,t.id,M0),ym=monthsOf(tat,t.id,repYear);

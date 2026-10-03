@@ -125,6 +125,13 @@ h3{font-size:16px;margin:14px 0 8px}
 #mnu .sec{margin:14px 2px 6px;font-size:13px;color:var(--mute)}
 .nav.cp button{padding:8px 0 6px;font-size:10px;min-width:0;white-space:nowrap;overflow:hidden}
 .nav.cp b{font-size:18px}
+
+/* ===== প্রফেশনাল ডিলিট আইকন (SVG) ===== */
+.idel{display:inline-block;width:1.1em;height:1.1em;vertical-align:-.2em;background:currentColor;color:#d64545;-webkit-mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M3 6h18'/%3E%3Cpath d='M8 6V4a1 1 0 011-1h6a1 1 0 011 1v2'/%3E%3Cpath d='M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6'/%3E%3Cpath d='M10 11v6M14 11v6'/%3E%3C/svg%3E") center/contain no-repeat;mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M3 6h18'/%3E%3Cpath d='M8 6V4a1 1 0 011-1h6a1 1 0 011 1v2'/%3E%3Cpath d='M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6'/%3E%3Cpath d='M10 11v6M14 11v6'/%3E%3C/svg%3E") center/contain no-repeat}
+.act .idel,.chip .idel{color:inherit}
+/* স্ক্রল: টেনে রিফ্রেশ (pull-to-refresh) বন্ধ */
+html,body{overscroll-behavior-y:none}
+#mnu,#md,.lgp,#exitdlg{overscroll-behavior:contain}
 </style>
 </head>
 <body>
@@ -185,13 +192,13 @@ function guardGroups(){const it={Attendance:['✅','উপস্থিতি','A
 function home(){
  const t=homeList();
  const who=role==='teacher'&&myTeacher?(teachers.find(t=>t.id===myTeacher)||{}).n||'শিক্ষক':role==='admin'?(adminInfo.n||'Admin'):'Admin';
- shell(profile.name||'Madrasa Management',`<div class="hello" ${role==='admin'?'style="cursor:pointer" onclick="tab=\'aprof\';draw()"':''}><div class="av">${role==='admin'?avHTML(adminPic,'অ'):avHTML((teachers.find(t=>t.id===myTeacher)||{}).photo,'শ')}</div><div><b>আসসালামু আলাইকুম</b><br>${who}<br><small style="color:var(--mute)">আপনি ${role==='admin'?'এডমিন':'শিক্ষক'} প্যানেলে আছেন</small></div></div>
+ shell(profile.name||'Madrasa Management',`<div class="hello" ${role==='admin'?'style="cursor:pointer" onclick="tab=\'aprof\';draw()"':role==='teacher'?'style="cursor:pointer" onclick="tab=\'tself\';draw()"':''}><div class="av">${role==='admin'?avHTML(adminPic,'অ'):avHTML((teachers.find(t=>t.id===myTeacher)||{}).photo,'শ')}</div><div><b>আসসালামু আলাইকুম</b><br>${who}<br><small style="color:var(--mute)">আপনি ${role==='admin'?'এডমিন':'শিক্ষক'} প্যানেলে আছেন</small></div></div>
  ${secsH(groupTiles(t))}
  <button class="strip" style="width:100%;border:0" onclick="devShow()">👨‍💻 ডেভেলপার সম্পর্কে তথ্য</button>`)}
 function stu(){
  const list=students.filter(s=>(s.n+s.id+s.r).includes(q));
  const c=k=>students.filter(s=>s.s===k).length;
- shell('Student Management',`${role==='admin'?'<button class="link" onclick="tab=\'classes\';draw()"><span>ক্লাস ব্যবস্থাপনা<small>শ্রেণি যোগ, সম্পাদনা ও মুছুন</small></span>›</button>':''}<div class="stats"><div class="stat"><b>${bn(students.length)}</b><small>মোট</small></div><div class="stat"><b>${bn(c('Present')+c('Late'))}</b><small>উপস্থিত</small></div><div class="stat"><b>${bn(c('Absent'))}</b><small>অনুপস্থিত</small></div></div>
+ shell('Student Management',`${canAny('cls_add','cls_edit','cls_del')?'<button class="link" data-keep="1" onclick="tab=\'classes\';draw()"><span>ক্লাস ব্যবস্থাপনা<small>শ্রেণি যোগ, সম্পাদনা ও মুছুন</small></span>›</button>':''}<div class="stats"><div class="stat"><b>${bn(students.length)}</b><small>মোট</small></div><div class="stat"><b>${bn(c('Present')+c('Late'))}</b><small>উপস্থিত</small></div><div class="stat"><b>${bn(c('Absent'))}</b><small>অনুপস্থিত</small></div></div>
  <input class="search" placeholder="ছাত্রের নাম, আইডি বা রোল খুঁজুন..." value="${q}" oninput="q=this.value;stuList(this)" aria-label="ছাত্র খুঁজুন">
  <div id="sl">${rows(list)}</div><p class="note">উপস্থিতি বদলাতে স্ট্যাটাসে ট্যাপ করুন</p>`,'home')}
 function rows(l){return l.map(s=>`<div class="row"><div class="av">${s.n[0]}</div><div class="info"><b>${s.n}</b><small>ID: ${s.id} | রোল: ${bn(s.r)} | ক্লাস: ৩ (আম)</small></div><button class="chip ${s.s}" onclick="cyc('${s.id}')">${{Present:'উপস্থিত',Absent:'অনুপস্থিত',Late:'দেরি'}[s.s]}</button></div>`).join('')||'<p class="note">কোনো ছাত্র পাওয়া যায়নি। অন্য নাম বা রোল লিখে খুঁজুন।</p>'}
@@ -202,7 +209,7 @@ function fees(){
  <div class="act">${[['➕','ফি যোগ'],['💳','পরিশোধ'],['📄','বকেয়া তালিকা'],['🧾','রসিদ'],['📈','আয়'],['📉','ব্যয়']].map(a=>`<button onclick="alert('${a[1]} পরের ধাপে তৈরি হবে')"><b>${a[0]}</b>${a[1]}</button>`).join('')}</div>
  <h3>সাম্প্রতিক পেমেন্ট</h3>${pays.map(p=>`<div class="row"><div class="av">${p[0][0]}</div><div class="info"><b>${p[0]}</b><small>৳ ১,০০০ • ${p[1]}</small></div><span class="chip Paid">পরিশোধিত</span></div>`).join('')}`,role==='admin'||role==='teacher'?'home':'')}
 function child(){const s=stu_(myChild);
- shell('আমার সন্তান',`<div class="hello"><div class="av">${avHTML(s.photo,(s.n||'?')[0])}</div><div><b>${s.n}</b><br><small style="color:var(--mute)">ID: ${myChild} | রোল: ${bn(s.r)}<br>ক্লাস: ${s.c||'—'}</small></div></div>
+ shell('আমার সন্তান',`<div class="hello" style="cursor:pointer" onclick="cur=myChild;tab='prof';draw()"><div class="av">${avHTML(s.photo,(s.n||'?')[0])}</div><div><b>${s.n}</b><br><small style="color:var(--mute)">ID: ${myChild} | রোল: ${bn(s.r)}<br>ক্লাস: ${s.c||'—'}</small></div></div>
  ${guardGroups().map(g=>`<div class="sec">${g[0]}</div><div class="grid">${g[1].map(x=>`<button class="tile" style="background:${x[3]}" onclick="${LK[x[2]]?`${LK[x[2]]};draw()`:`alert('${x[1]} পরের ধাপে তৈরি হবে')`}"><b>${x[0]}</b>${x[1]}${x[2]==='Notif'&&typeof getUnread==='function'&&getUnread()?' ('+bn(getUnread())+')':''}<span>${x[2]}</span></button>`).join('')}</div>`).join('')}
  <button class="strip" style="width:100%;border:0;margin-top:14px" onclick="devShow()">👨‍💻 ডেভেলপার সম্পর্কে তথ্য</button>`)}
 function tglHTML(on,fn,extra){return '<button type="button" class="tgl'+(on?' on':'')+'" role="switch" aria-checked="'+(on?'true':'false')+'" '+(extra||'')+' onclick="tglGo(this,function(){'+fn+'})"></button>'}
@@ -228,7 +235,7 @@ d.innerHTML=`<div style="background:var(--card);width:100%;max-width:480px;borde
 function cl(){const m=document.getElementById('md');if(m)m.remove()}
 function sv(){const o={};document.querySelectorAll('#md input,#md select').forEach(i=>{o[i.name]=i.type==='checkbox'?i.checked:i.value.trim()});if(!o.n){alert('নাম লিখুন');return}const perm=[];Object.keys(o).forEach(k=>{if(k.indexOf('perm_')===0){if(o[k])perm.push(k.slice(5));delete o[k]}});if(perm.length||document.getElementById('md').querySelector('[name^="perm_"]'))o.perm=perm;cl();fh(o)}
 function shell(title,body,back,plus){
- plus=plus||(title==='Student Management'&&role==='admin'?'addS()':'');
+ plus=plus||(title==='Student Management'&&hasPerm('stu_add')?'addS()':'');
  const tabs=navTabs();
   app.innerHTML=`<div class="top">${back?`<button aria-label="ফিরে যান" onclick="tab='${back}';draw()">←</button>`:'<button aria-label="মেনু" onclick="openMenu()">☰</button>'}<h1>${title}</h1>${plus?`<button aria-label="নতুন যোগ করুন" onclick="${plus}">＋</button>`:''}<button aria-label="নোটিফিকেশন" style="position:relative" onclick="tab=(role==='admin'?'notices':'notif');draw()">🔔${typeof unreadBadge==='function'?unreadBadge():''}</button></div><main>${body}</main>
  <nav class="nav${tabs.length>4?' cp':''}">${tabs.map(t=>`<button class="${tab===t[0]?'on':''}" onclick="${t[0]==='out'?'login()':`tab='${t[0]}';draw()`}"><b>${t[1]}</b>${t[2]}</button>`).join('')}</nav>`}
@@ -257,10 +264,10 @@ function prof(id){cur=id;tab='prof';draw()}
 function profV(){const s=students.find(x=>x.id===cur);if(!s){tab='students';return draw()}
  shell('ছাত্র প্রোফাইল',`<div class="hello"><div class="av">${avHTML(s.photo,s.n[0])}</div><div><b>${s.n}</b><br><small style="color:var(--mute)">ID: ${s.id} | রোল: ${bn(s.r)}</small></div></div><h3>বিস্তারিত</h3>`+
  [['ক্লাস',s.c||'৩ (আম)'],['ধার্যকৃত মাসিক বেতন',tk(feeOf(s.id))+((s.fee!=null&&s.fee!=='')?' (নিজস্ব)':(classFee[s.c]!=null&&classFee[s.c]!==''?' (শ্রেণী অনুযায়ী)':' (সাধারণ)'))],['অভিভাবক',s.g||'—'],['ফোন',s.ph||'—'],['ঠিকানা',[s.vil,s.po,s.upz,s.dist].filter(Boolean).join(', ')||'—'],['এ মাসের বকেয়া',tk(dueOf(s.id))],['আজকের উপস্থিতি',{Present:'উপস্থিত',Absent:'অনুপস্থিত',Late:'দেরি'}[s.s]]].map(x=>`<div class="link"><span><small>${x[0]}</small>${x[1]}</span></div>`).join('')+
- homeBlock(s)+msgBlock(s)+(role==='admin'?`<div class="act" style="grid-template-columns:1fr 1fr"><button onclick="editS()"><b>✏️</b>সম্পাদনা</button><button onclick="delS()"><b>🗑️</b>মুছে ফেলুন</button></div>`:''),role==='guardian'?'child':'students')}
-function addS(){form('নতুন ছাত্র ভর্তি',SF,{c:selClass||'৩ (আম)'},o=>{ensureClass(o.c);students.push({n:o.n,pw:o.pw,id:nid(students,'STU'),r:+o.r||students.length+1,c:o.c,fee:o.fee,photo:o.photo,g:o.g,ph:o.ph,vil:o.vil,po:o.po,upz:o.upz,dist:o.dist,s:'Present'});save('mm_s',students);tab='students';draw()})}
-function editS(){const s=students.find(x=>x.id===cur);form('তথ্য সম্পাদনা',SF,s,o=>{ensureClass(o.c);Object.assign(s,o,{r:+o.r||s.r});save('mm_s',students);draw()})}
-function delS(){if(confirm('এই ছাত্রকে মুছে ফেলবেন? এটি ফেরানো যাবে না।')){students=students.filter(x=>x.id!==cur);save('mm_s',students);tab='students';draw()}}
+ homeBlock(s)+msgBlock(s)+((hasPerm('stu_edit')||hasPerm('stu_del'))?`<div class="act" data-keep="1" style="grid-template-columns:${hasPerm('stu_edit')&&hasPerm('stu_del')?'1fr 1fr':'1fr'}">${hasPerm('stu_edit')?'<button onclick="editS()"><b>✏️</b>সম্পাদনা</button>':''}${hasPerm('stu_del')?'<button onclick="delS()"><b><i class=idel></i></b>মুছে ফেলুন</button>':''}</div>`:''),role==='guardian'?'child':'students')}
+function addS(){if(!hasPerm('stu_add')){deny();return}form('নতুন ছাত্র ভর্তি',SF,{c:selClass||'৩ (আম)'},o=>{ensureClass(o.c);students.push({n:o.n,pw:o.pw,id:nid(students,'STU'),r:+o.r||students.length+1,c:o.c,fee:o.fee,photo:o.photo,g:o.g,ph:o.ph,vil:o.vil,po:o.po,upz:o.upz,dist:o.dist,s:'Present'});save('mm_s',students);tab='students';draw()})}
+function editS(){if(!hasPerm('stu_edit')){deny();return}const s=students.find(x=>x.id===cur);form('তথ্য সম্পাদনা',SF,s,o=>{ensureClass(o.c);Object.assign(s,o,{r:+o.r||s.r});save('mm_s',students);draw()})}
+function delS(){if(!hasPerm('stu_del')){deny();return}if(confirm('এই ছাত্রকে মুছে ফেলবেন? এটি ফেরানো যাবে না।')){students=students.filter(x=>x.id!==cur);save('mm_s',students);tab='students';draw()}}
 /* ===== অনুমতি (রোল ও পারমিশন): ক্যাটালগ ===== */
 const PCAT=[
 ['১. শিক্ষার্থী ব্যবস্থাপনা',[['stu_view','শিক্ষার্থী দেখা'],['stu_add','শিক্ষার্থী যোগ করা'],['stu_edit','শিক্ষার্থী Edit করা'],['stu_del','শিক্ষার্থী Delete করা'],['stu_bio','শিক্ষার্থীর তথ্য/বায়োডাটা দেখা']]],
@@ -293,7 +300,7 @@ window.can=hasPerm;
 const deny=()=>alert('এই কাজের অনুমতি আপনার নেই');
 const TABN={students:['stu_view'],teachers:['tch_view'],catt:['att_take','att_edit','att_hist'],fees:['fee_view','fee_collect','fee_edit','fee_del','due_view','inc_view','exp_view','exp_add','sal_view','sal_pay'],res:['stu_view'],notices:['not_view'],rep:REPS,set:['set_view','set_notif','set_toggle'],nset:['set_notif','set_toggle'],classFee:['fee_edit'],dues:['due_view'],rcpt:['fee_view','fee_collect'],inc:['inc_view'],exp:['exp_view'],feePick:['fee_collect'],srep:['rep_stu'],chist:['rep_att','att_rep'],shist:['rep_att','att_rep'],trep:['rep_tch'],thist:['rep_tch'],fin:['rep_fin','rep_sal'],scal:['rep_att','att_rep'],tcal:['rep_tch'],frep:['rep_fee','rep_due'],tatt:['tatt_view','tatt_take'],rtnv:['rtn_view'],subj:['sub_view'],classes:['cls_view'],hhist:['ph_hist'],nann:['notif_send','msg_grd','msg_tch'],nlog:['notif_send','msg_grd','msg_tch'],hw:['hw_view','hw_edit'],aprof:['__admin']};
 function tabOK(t){if(role==='admin')return true;const n=TABN[t];return n?n.some(hasPerm):true}
-function setFilt(){if(role!=='teacher')return;document.querySelectorAll('#app .link').forEach(b=>{const o=b.getAttribute('onclick')||'';const ok=/nset/.test(o)?tabOK('nset'):/nlog|nann/.test(o)?tabOK('nann'):/classFee/.test(o)?tabOK('classFee'):false;if(!ok)b.remove()});document.querySelectorAll('#app .act').forEach(a=>a.remove())}
+function setFilt(){if(role!=='teacher')return;document.querySelectorAll('#app .link').forEach(b=>{const o=b.getAttribute('onclick')||'';const ok=/nset/.test(o)?tabOK('nset'):/nlog|nann/.test(o)?tabOK('nann'):/classFee/.test(o)?tabOK('classFee'):false;if(!ok&&!b.hasAttribute('data-keep'))b.remove()});document.querySelectorAll('#app .act').forEach(a=>{if(!a.hasAttribute('data-keep'))a.remove()})}
 function permHTML(v){if(!hasPerm('adm_perm'))return '';const sel=v.perm||[],lk='style="color:var(--g);cursor:pointer;font-size:12px;margin-left:10px;white-space:nowrap"',bt='class="chip" style="min-width:0;padding:6px 10px;background:var(--card);border:1px solid var(--line)"';
  const sw=(k,l,ci)=>`<label style="display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:9px;font-size:14px"><span>${l}</span><input type="checkbox" name="perm_${k}" data-c="${ci}" ${sel.indexOf(k)>=0?'checked':''} class="tgl"></label>`;
  return `<div style="margin-top:12px"><small style="color:var(--mute)">অনুমতি (রোল ও পারমিশন) — যে কাজের অনুমতি দেবেন শিক্ষক শুধু সেটিই দেখতে ও করতে পারবেন। শিক্ষকের role অ্যাডমিন হয় না; সব অনুমতি দিলে প্রায় পূর্ণ অ্যাক্সেস পাবেন।</small><div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:8px"><button type="button" ${bt} onclick="pmAll('*',1)">✅ সব অনুমতি</button><button type="button" ${bt} onclick="pmAll('*',0)">❌ সব বাতিল</button><button type="button" ${bt} onclick="pmBase()">মৌলিক শিক্ষক</button></div>`+
@@ -303,11 +310,11 @@ window.pmBase=()=>document.querySelectorAll('#md input[name^="perm_"]').forEach(
 function subjList(){return[...new Set(teachers.map(t=>t.sub).filter(Boolean))]}
 const TF=[['n','শিক্ষকের নাম'],['photo','ছবি','photo'],['pw','শিক্ষকের পাসওয়ার্ড (লগইনের জন্য)','type=text placeholder=খালি রাখলে ডিফল্ট পাসওয়ার্ড চলবে'],['sal','মাসিক বেতন (৳)','type=number'],['ph','মোবাইল নম্বর','type=tel'],['em','জিমেইল','type=email'],['edu','শিক্ষাগত যোগ্যতা (যেমন: দাওরায়ে হাদিস, অনার্স)'],['vil','গ্রাম/মহল্লা'],['po','ডাকঘর'],['upz','উপজেলা/থানা'],['dist','জেলা'],['perm','অনুমতি (রোল ও পারমিশন) — অ্যাডমিন চাইলে নিজের কিছু ক্ষমতা এই শিক্ষককে দিতে পারবেন','perms']];
 function teachV(){shell('Teacher Management',`<div class="stats" style="grid-template-columns:1fr 1fr"><div class="stat"><b>${bn(teachers.length)}</b><small>মোট শিক্ষক</small></div><div class="stat"><b>৳ ${bn(teachers.reduce((a,t)=>a+(+t.sal||0),0).toLocaleString('en-US'))}</b><small>মাসিক বেতন</small></div></div>`+
- (teachers.map(t=>`<div class="row"><div class="av">${avHTML(t.photo,t.n[0])}</div><div class="info"><b>${t.n}</b><small>${window.tSummary?window.tSummary(t.id):''}<br>বেতন: ৳ ${bn(t.sal||0)}${(function(){const n=effPerm(t.id).length;return n?'<br>অনুমতি: '+bn(n)+'টি':'<br>অনুমতি: নেই'})()}</small></div><button aria-label="বেতন দিন" onclick="paySal('${t.id}')">💵</button><button aria-label="কল করুন" onclick="callT('${t.id}')">📞</button><button aria-label="সম্পাদনা" onclick="editT('${t.id}')">✏️</button><button aria-label="মুছুন" onclick="delT('${t.id}')">🗑️</button></div>`).join('')||'<p class="note">কোনো শিক্ষক নেই। ＋ চেপে যোগ করুন।</p>'),'home','addT()')}
-function addT(){const id=nid(teachers,'TCH');form('নতুন শিক্ষক',TF,{perm:PBASE.slice()},o=>{const perm=o.perm;delete o.perm;teachers.push(Object.assign({id:id,s:'Present'},o));save('mm_t',teachers);if(hasPerm('adm_perm'))window.savePerm(id,perm||[]);draw()})}
-function editT(id){const t=teachers.find(x=>x.id===id);form('শিক্ষকের তথ্য সম্পাদনা',TF,Object.assign({},t,{perm:effPerm(id)}),o=>{const perm=o.perm;delete o.perm;Object.assign(t,o);save('mm_t',teachers);if(hasPerm('adm_perm')&&perm)window.savePerm(id,perm);draw()})}
-function delT(id){if(confirm('এই শিক্ষককে মুছে ফেলবেন?')){teachers=teachers.filter(x=>x.id!==id);save('mm_t',teachers);if(hasPerm('adm_perm'))window.savePerm(id,null);draw()}}
-function noteV(){const A=role==='admin';shell('Notice',(role==='guardian'?gm():'')+notices.map((n,i)=>`<div class="row" style="display:block"><b>${n.t}</b><br><small style="color:var(--mute)">${n.d}</small><p style="margin-top:6px">${n.b||''}</p>${A?`<button onclick="delN(${i})" style="color:var(--not);margin-top:4px">🗑️ মুছুন</button>`:''}</div>`).join('')||'<p class="note">এখনো কোনো নোটিস নেই।</p>',role==='guardian'?'':'home',A?'addN()':'')}
+ (teachers.map(t=>`<div class="row"><div class="av">${avHTML(t.photo,t.n[0])}</div><div class="info"><b>${t.n}</b><small>${window.tSummary?window.tSummary(t.id):''}<br>বেতন: ৳ ${bn(t.sal||0)}${(function(){const n=effPerm(t.id).length;return n?'<br>অনুমতি: '+bn(n)+'টি':'<br>অনুমতি: নেই'})()}</small></div>${hasPerm('sal_pay')?`<button aria-label="বেতন দিন" onclick="paySal('${t.id}')">💵</button>`:''}<button aria-label="কল করুন" onclick="callT('${t.id}')">📞</button>${hasPerm('tch_edit')?`<button aria-label="সম্পাদনা" onclick="editT('${t.id}')">✏️</button>`:''}${hasPerm('tch_del')?`<button aria-label="মুছুন" onclick="delT('${t.id}')"><i class=idel></i></button>`:''}</div>`).join('')||'<p class="note">কোনো শিক্ষক নেই।'+(hasPerm('tch_add')?' ＋ চেপে যোগ করুন।':'')+'</p>'),'home',hasPerm('tch_add')?'addT()':'')}
+function addT(){if(!hasPerm('tch_add')){deny();return}const id=nid(teachers,'TCH');form('নতুন শিক্ষক',TF,{perm:PBASE.slice()},o=>{const perm=o.perm;delete o.perm;teachers.push(Object.assign({id:id,s:'Present'},o));save('mm_t',teachers);if(hasPerm('adm_perm'))window.savePerm(id,perm||[]);draw()})}
+function editT(id){if(!hasPerm('tch_edit')){deny();return}const t=teachers.find(x=>x.id===id);form('শিক্ষকের তথ্য সম্পাদনা',TF,Object.assign({},t,{perm:effPerm(id)}),o=>{const perm=o.perm;delete o.perm;Object.assign(t,o);save('mm_t',teachers);if(hasPerm('adm_perm')&&perm)window.savePerm(id,perm);draw()})}
+function delT(id){if(!hasPerm('tch_del')){deny();return}if(confirm('এই শিক্ষককে মুছে ফেলবেন?')){teachers=teachers.filter(x=>x.id!==id);save('mm_t',teachers);if(hasPerm('adm_perm'))window.savePerm(id,null);draw()}}
+function noteV(){const A=role==='admin';shell('Notice',(role==='guardian'?gm():'')+notices.map((n,i)=>`<div class="row" style="display:block"><b>${n.t}</b><br><small style="color:var(--mute)">${n.d}</small><p style="margin-top:6px">${n.b||''}</p>${A?`<button onclick="delN(${i})" style="color:var(--not);margin-top:4px"><i class=idel></i> মুছুন</button>`:''}</div>`).join('')||'<p class="note">এখনো কোনো নোটিস নেই।</p>',role==='guardian'?'':'home',A?'addN()':'')}
 function addN(){form('নতুন নোটিস',[['n','শিরোনাম'],['b','বিস্তারিত']],{},o=>{notices.unshift({t:o.n,b:o.b,d:new Date().toLocaleDateString('bn-BD')});save('mm_n',notices);draw()})}
 function delN(i){if(confirm('নোটিসটি মুছে ফেলবেন?')){notices.splice(i,1);save('mm_n',notices);draw()}}
 </script>
@@ -415,7 +422,7 @@ function finV(){const ms=x=>x.filter(e=>e.m===M0),days=Object.keys(at).filter(d=
  '<h3>ফলাফল</h3>'+K('ফলাফল আছে',bn(rl.length)+' জন')+K('পাসের হার',rl.length?bn(Math.round(rl.filter(c=>!c.f).length/rl.length*100))+'%':'—')+
  '<h3>শিক্ষক</h3>'+K('মোট মাসিক বেতন',tk(sum(teachers.map(t=>({a:t.sal}))))),'rep')}
 /* সেটিংস, ব্যাকআপ */
-function setV(){shell('Settings',`${role==='admin'?'<button class="link" onclick="planV()"><span><small>প্ল্যান</small>ট্রায়াল ও মাসিক সাবস্ক্রিপশন (৳৩০০)</span>›</button>':''}<button class="link" onclick="profEdit()"><span><small>মাদ্রাসার তথ্য</small>নাম, ঠিকানা ও প্রতিষ্ঠার তারিখ</span>›</button><button class="link" onclick="adminEdit()"><span><small>অ্যাডমিনের তথ্য</small>নাম, ছবি, ফোন ও ইমেইল</span>›</button><button class="link" onclick="tab='nset';draw()"><span><small>Notification Settings</small>নোটিফিকেশন চালু/বন্ধ ও টেমপ্লেট</span>›</button><button class="link" onclick="tab='nlog';draw()"><span><small>Notification History</small>কাকে কী পাঠানো হয়েছে</span>›</button><button class="link" onclick="tab='nann';draw()"><span><small>ঘোষণা পাঠান</small>গার্জিয়ান ও শিক্ষকদের জন্য</span>›</button><button class="link" onclick="tab='classFee';draw()"><span><small>মাসিক ফি</small>ফি নির্ধারণ</span>›</button><button class="link" onclick="purgeRollKeys()"><span><small>একবারের কাজ</small>রোল নম্বর দিয়ে গার্জিয়ান লগইন বন্ধ করুন</span>›</button><div class="act"><button onclick="bk()"><b>💾</b>ব্যাকআপ কপি</button><button onclick="rst()"><b>♻️</b>রিস্টোর</button><button onclick="wipe()"><b>🗑️</b>সব মুছুন</button></div><p class="note">ব্যাকআপ কপি করে নিরাপদ জায়গায় রেখে দিন। "সব মুছুন" চাপলে সব তথ্য চলে যাবে।</p>`,'home');setFilt()}
+function setV(){shell('Settings',`${role==='admin'?'<button class="link" onclick="planV()"><span><small>প্ল্যান</small>ট্রায়াল ও মাসিক সাবস্ক্রিপশন (৳৩০০)</span>›</button>':''}<button class="link" onclick="profEdit()"><span><small>মাদ্রাসার তথ্য</small>নাম, ঠিকানা ও প্রতিষ্ঠার তারিখ</span>›</button><button class="link" onclick="adminEdit()"><span><small>অ্যাডমিনের তথ্য</small>নাম, ছবি, ফোন ও ইমেইল</span>›</button><button class="link" onclick="tab='nset';draw()"><span><small>Notification Settings</small>নোটিফিকেশন চালু/বন্ধ ও টেমপ্লেট</span>›</button><button class="link" onclick="tab='nlog';draw()"><span><small>Notification History</small>কাকে কী পাঠানো হয়েছে</span>›</button><button class="link" onclick="tab='nann';draw()"><span><small>ঘোষণা পাঠান</small>গার্জিয়ান ও শিক্ষকদের জন্য</span>›</button><button class="link" onclick="tab='classFee';draw()"><span><small>মাসিক ফি</small>ফি নির্ধারণ</span>›</button><button class="link" onclick="purgeRollKeys()"><span><small>একবারের কাজ</small>রোল নম্বর দিয়ে গার্জিয়ান লগইন বন্ধ করুন</span>›</button><div class="act"><button onclick="bk()"><b>💾</b>ব্যাকআপ কপি</button><button onclick="rst()"><b>♻️</b>রিস্টোর</button><button onclick="wipe()"><b><i class=idel></i></b>সব মুছুন</button></div><p class="note">ব্যাকআপ কপি করে নিরাপদ জায়গায় রেখে দিন। "সব মুছুন" চাপলে সব তথ্য চলে যাবে।</p>`,'home');setFilt()}
 function classFeeV(){shell('মাসিক ফি (শ্রেণী অনুযায়ী)',`<div class="row"><div class="info"><b>সাধারণ (ডিফল্ট) ফি</b><small>যে শ্রেণীর নিজস্ব ফি সেট করা নেই, তাদের জন্য প্রযোজ্য</small></div><b>${tk(MF)}</b><button aria-label="পরিবর্তন" onclick="setDefaultFee()">✏️</button></div>`+
  classes.map(c=>`<div class="row"><div class="info"><b>${c}</b><small>বর্তমান ফি: ${tk(classFee[c]!=null&&classFee[c]!==''?classFee[c]:MF)}${classFee[c]!=null&&classFee[c]!==''?'':' (সাধারণ)'}</small></div><button aria-label="পরিবর্তন" onclick="setClassFee('${esc(c)}')">✏️</button></div>`).join(''),'set')}
 function setDefaultFee(){form('সাধারণ (ডিফল্ট) মাসিক ফি',[['n','পরিমাণ (৳)','type=number']],{n:MF},o=>{MF=+o.n||MF;save('mm_mf',MF);draw()})}
@@ -448,10 +455,10 @@ function pwEdit(){form('পাসওয়ার্ড পরিবর্তন'
 let classes=load('mm_cls',[...new Set(students.map(s=>s.c).filter(Boolean))].length?[...new Set(students.map(s=>s.c).filter(Boolean))]:['৩ (আম)']);
 function ensureClass(name){if(name&&!classes.includes(name)){classes.push(name);save('mm_cls',classes)}}
 let selClass=load('mm_selc',classes[0]);
-function classesV(){shell('ক্লাস ব্যবস্থাপনা',classes.map(c=>{const n=students.filter(s=>s.c===c).length;return `<div class="row"><div class="av">${c[0]}</div><div class="info"><b>${c}</b><small>${bn(n)} জন ছাত্র</small></div><button aria-label="সম্পাদনা" onclick="clsEdit('${esc(c)}')">✏️</button><button aria-label="মুছুন" onclick="clsDel('${esc(c)}')">🗑️</button></div>`}).join('')||'<p class="note">কোনো ক্লাস নেই। ＋ চেপে যোগ করুন।</p>','students','clsAdd()')}
-function clsAdd(){form('নতুন শ্রেণি যোগ',[['n','শ্রেণির নাম (যেমন: ৪র্থ শ্রেণি)']],{},o=>{if(classes.includes(o.n)){alert('এই নামে ক্লাস আগে থেকেই আছে');return}classes.push(o.n);save('mm_cls',classes);draw()})}
-function clsEdit(old){form('শ্রেণির নাম সম্পাদনা',[['n','শ্রেণির নাম']],{n:old},o=>{if(o.n!==old&&classes.includes(o.n)){alert('এই নামে ক্লাস আগে থেকেই আছে');return}classes=classes.map(c=>c===old?o.n:c);students.forEach(s=>{if(s.c===old)s.c=o.n});if(selClass===old)selClass=o.n;save('mm_cls',classes);save('mm_s',students);save('mm_selc',selClass);draw()})}
-function clsDel(name){if(students.some(s=>s.c===name)){alert('এই ক্লাসে ছাত্র আছে, তাই মুছা যাবে না। আগে ছাত্রদের অন্য ক্লাসে সরান।');return}if(confirm('"'+name+'" শ্রেণিটি মুছে ফেলবেন?')){classes=classes.filter(c=>c!==name);save('mm_cls',classes);draw()}}
+function classesV(){shell('ক্লাস ব্যবস্থাপনা',classes.map(c=>{const n=students.filter(s=>s.c===c).length;return `<div class="row"><div class="av">${c[0]}</div><div class="info"><b>${c}</b><small>${bn(n)} জন ছাত্র</small></div>${hasPerm('cls_edit')?`<button aria-label="সম্পাদনা" onclick="clsEdit('${esc(c)}')">✏️</button>`:''}${hasPerm('cls_del')?`<button aria-label="মুছুন" onclick="clsDel('${esc(c)}')"><i class=idel></i></button>`:''}</div>`}).join('')||'<p class="note">কোনো ক্লাস নেই।'+(hasPerm('cls_add')?' ＋ চেপে যোগ করুন।':'')+'</p>','students',hasPerm('cls_add')?'clsAdd()':'')}
+function clsAdd(){if(!hasPerm('cls_add')){deny();return}form('নতুন শ্রেণি যোগ',[['n','শ্রেণির নাম (যেমন: ৪র্থ শ্রেণি)']],{},o=>{if(classes.includes(o.n)){alert('এই নামে ক্লাস আগে থেকেই আছে');return}classes.push(o.n);save('mm_cls',classes);draw()})}
+function clsEdit(old){if(!hasPerm('cls_edit')){deny();return}form('শ্রেণির নাম সম্পাদনা',[['n','শ্রেণির নাম']],{n:old},o=>{if(o.n!==old&&classes.includes(o.n)){alert('এই নামে ক্লাস আগে থেকেই আছে');return}classes=classes.map(c=>c===old?o.n:c);students.forEach(s=>{if(s.c===old)s.c=o.n});if(selClass===old)selClass=o.n;save('mm_cls',classes);save('mm_s',students);save('mm_selc',selClass);draw()})}
+function clsDel(name){if(!hasPerm('cls_del')){deny();return}if(students.some(s=>s.c===name)){alert('এই ক্লাসে ছাত্র আছে, তাই মুছা যাবে না। আগে ছাত্রদের অন্য ক্লাসে সরান।');return}if(confirm('"'+name+'" শ্রেণিটি মুছে ফেলবেন?')){classes=classes.filter(c=>c!==name);save('mm_cls',classes);draw()}}
 function pickClass(c){selClass=c;save('mm_selc',c);draw()}
 function cattV(){const list=students.filter(s=>s.c===selClass),n=k=>list.filter(s=>s.s===k).length;
  shell('ক্লাসভিত্তিক হাজিরা',`<p class="note" style="text-align:left;margin:0 0 8px">${dd(T0)}</p>${role==='admin'?`<button class="link" onclick="tab='tatt';draw()"><span>শিক্ষক হাজিরা<small>শিক্ষকদের উপস্থিতি নিন</small></span>›</button>`:''}<div style="display:flex;gap:8px;overflow-x:auto;padding-bottom:4px;margin-bottom:12px">${classes.map(c=>`<button class="chip" style="min-width:auto;white-space:nowrap;${c===selClass?'background:var(--g);color:#fff':'background:var(--card);border:1px solid var(--line);color:var(--ink)'}" onclick="pickClass('${esc(c)}')">${c}</button>`).join('')}</div>`+
@@ -668,7 +675,7 @@ window.subjSet=async(c,arr)=>{try{await window.fbSet('config/subjects/byClass/'+
 const subjOld=c=>{const L=window.subjFor(c);return subjects.filter(x=>!L.includes(x))};
 function subjV(){const cls=selClass||classes[0],L=cls?window.subjFor(cls):[],old=cls?subjOld(cls):[];
  shell('Subject Management',`<div style="display:flex;gap:8px;overflow-x:auto;padding-bottom:4px;margin-bottom:10px">${classes.map(c=>`<button class="chip" style="min-width:auto;white-space:nowrap;${c===cls?'background:var(--g);color:#fff':'background:var(--card);border:1px solid var(--line);color:var(--ink)'}" onclick="pickClass('${esc(c)}')">${xe0(c)}</button>`).join('')}</div><div class="stats" style="grid-template-columns:1fr"><div class="stat"><b>${bn(L.length)}</b><small>${xe0(cls||'')} — মোট বিষয়</small></div></div>`+
- (L.map((s,i)=>R_('📘',xe0(s),'',`<button class="chip Late" style="min-width:0" aria-label="সম্পাদনা" onclick="subjEdit(${i})">✏️</button> <button class="chip Absent" style="min-width:0" aria-label="মুছুন" onclick="subjDel(${i})">🗑️</button>`)).join('')||'<p class="note">এই শ্রেণীর কোনো বিষয় নেই। ＋ চেপে যোগ করুন।</p>')+
+ (L.map((s,i)=>R_('📘',xe0(s),'',`<button class="chip Late" style="min-width:0" aria-label="সম্পাদনা" onclick="subjEdit(${i})">✏️</button> <button class="chip Absent" style="min-width:0" aria-label="মুছুন" onclick="subjDel(${i})"><i class=idel></i></button>`)).join('')||'<p class="note">এই শ্রেণীর কোনো বিষয় নেই। ＋ চেপে যোগ করুন।</p>')+
  (old.length?`<h3>পুরনো সাধারণ তালিকা</h3><p class="note" style="text-align:left">আগে সব ক্লাসের জন্য যোগ করা বিষয়। ইচ্ছামতো এই ক্লাসে নিন।</p>`+old.map((s,i)=>R_('📘',xe0(s),'',`<button class="chip Late" style="min-width:0" onclick="subjImport(${i})">＋ এই ক্লাসে</button>`)).join(''):''),'set','subjAdd()')}
 window.subjAdd=function(){if(!classes.length){alert('আগে ক্লাস যোগ করুন');return}
  form('নতুন বিষয়',[['cls','কোন শ্রেণীর জন্য'],['n','বিষয়ের নাম']],{cls:selClass||classes[0]},async o=>{const L=window.subjFor(o.cls);
@@ -684,7 +691,7 @@ window.subjDel=async function(i){const c=selClass||classes[0],L=window.subjFor(c
  if(window.subjUsed(c,s)){alert('"'+s+'" এই শ্রেণীর রুটিনে ব্যবহৃত হচ্ছে। আগে রুটিন থেকে সংশ্লিষ্ট পিরিয়ড সরান।');return}
  if(confirm('"'+s+'" বিষয়টি '+c+' থেকে মুছে ফেলবেন?')){L.splice(i,1);await window.subjSet(c,L)}};
 /* ব্যয় তালিকা: বেতন রেকর্ডে Delete (শুধু Admin) */
-window.expV=function(){const A=role==='admin';shell('ব্যয়',`<div class="stats" style="grid-template-columns:1fr 1fr"><div class="stat"><b>${tk(sum(ex.filter(e=>e.m===M0)))}</b><small>এ মাসের ব্যয়</small></div><div class="stat"><b>${tk(sum(ex))}</b><small>মোট ব্যয়</small></div></div>`+(ex.slice().reverse().map(e=>R_('📉',e.t,e.c+' • '+dd(e.d),`<b>${tk(e.a)}</b>`+(A&&e.c==='বেতন'&&e.id?` <button class="chip Absent" style="min-width:0" aria-label="Delete" onclick="delSal('${e.id}')">🗑️</button>`:''))).join('')||'<p class="note">কোনো ব্যয় নেই। ＋ চেপে যোগ করুন।</p>'),'fees','addE()')};
+window.expV=function(){const A=role==='admin';shell('ব্যয়',`<div class="stats" style="grid-template-columns:1fr 1fr"><div class="stat"><b>${tk(sum(ex.filter(e=>e.m===M0)))}</b><small>এ মাসের ব্যয়</small></div><div class="stat"><b>${tk(sum(ex))}</b><small>মোট ব্যয়</small></div></div>`+(ex.slice().reverse().map(e=>R_('📉',e.t,e.c+' • '+dd(e.d),`<b>${tk(e.a)}</b>`+(A&&e.c==='বেতন'&&e.id?` <button class="chip Absent" style="min-width:0" aria-label="Delete" onclick="delSal('${e.id}')"><i class=idel></i></button>`:''))).join('')||'<p class="note">কোনো ব্যয় নেই। ＋ চেপে যোগ করুন।</p>'),'fees','addE()')};
 window.delSal=function(id){if(!hasPerm('sal_del'))return deny();if(!confirm('আপনি কি এই Salary Record-টি Delete করতে চান?'))return;exDel.add(id);ex=ex.filter(e=>e.id!==id);save('mm_e',ex);draw()};
 /* ফি রিপোর্ট: আদায় / বকেয়ার বিস্তারিত তালিকা (বর্তমান ডাটা থেকে) */
 const _fv=finV;window.finV=function(){_fv();document.querySelectorAll('#app main .link').forEach(el=>{const x=el.textContent.trim(),m=x.indexOf('ফি আদায়')===0?'paid':x.indexOf('বকেয়া (')===0?'due':'';if(m){el.style.cursor='pointer';el.onclick=()=>{frMode=m;frCls='';frQ='';tab='frep';draw()}}})};
@@ -694,12 +701,15 @@ function frList(){const l=frRows(),P=frMode==='paid';return `<div class="stats" 
  (l.map(x=>R_(xe0((x.n||'?')[0]),xe0(x.n),'ID: '+xe0(x.id)+' | রোল: '+bn(x.r==null?'-':x.r)+' | ক্লাস: '+xe0(x.c||'—')+'<br>'+(P?'পেমেন্ট: '+dd(x.d):'মোট ফি '+tk(x.f)+' • পরিশোধ '+tk(x.a)),P?`<b>${tk(x.a)}</b>`:`<b style="color:var(--not)">${tk(x.due)}</b>`)).join('')||'<p class="note">কোনো তথ্য পাওয়া যায়নি।</p>')}
 window.frUp=function(){const e=document.getElementById('frl');if(e)e.innerHTML=frList()};
 function frV(){shell(frMode==='paid'?'ফি আদায় তালিকা':'বকেয়া তালিকা',`<select class="search" onchange="frCls=this.value;frUp()"><option value="">সব ক্লাস</option>${classes.map(c=>`<option value="${esc(c)}" ${c===frCls?'selected':''}>${xe0(c)}</option>`).join('')}</select><input class="search" placeholder="নাম, আইডি বা রোল খুঁজুন..." value="${esc(frQ)}" oninput="frQ=this.value;frUp()"><div id="frl">${frList()}</div>`,'fin')}
-const _d2=draw;window.draw=function(){if(tab==='subj'){if(tabOK('subj'))return subjV();tab='home'}if(tab==='frep'){if(tabOK('frep'))return frV();tab='home'}_d2()};
+window.tselfV=function(){const t=teachers.find(x=>x.id===myTeacher)||{};
+ const rows=TF.filter(x=>!['pw','perm','photo'].includes(x[0])).map(x=>[x[1],t[x[0]]]).filter(r=>r[1]);
+ shell('আমার প্রোফাইল',`<div class="hello"><div class="av">${avHTML(t.photo,(t.n||'শ')[0])}</div><div><b>${xe(t.n||'')}</b><br><small style="color:var(--mute)">ID: ${xe(myTeacher)} | শিক্ষক</small></div></div><h3>বিস্তারিত</h3>`+(rows.map(r=>`<div class="link" data-keep="1"><span><small>${r[0]}</small>${xe(r[1])}</span></div>`).join('')||'<p class="note">কোনো তথ্য নেই।</p>'),'home')};
+const _d2=draw;window.draw=function(){if(tab==='tself'&&role==='teacher')return tselfV();if(tab==='subj'){if(tabOK('subj'))return subjV();tab='home'}if(tab==='frep'){if(tabOK('frep'))return frV();tab='home'}_d2()};
 </script>
 <script>
 /* ===== ভুল ফি/বেতন আদায়ের রসিদ Delete (শুধু Admin) ===== */
 window.fpDel=[];
-const _rv=rcptV;window.rcptV=function(){_rv();if(role!=='admin')return;document.querySelectorAll('#app button[aria-label="রসিদ দেখুন"]').forEach(b=>{const m=/rc\('([^']+)'\)/.exec(b.getAttribute('onclick')||'');if(m)b.insertAdjacentHTML('afterend',' <button class="chip Absent" style="min-width:0" aria-label="Delete" onclick="delRcpt(\''+m[1]+'\')">🗑️</button>')})};
+const _rv=rcptV;window.rcptV=function(){_rv();if(role!=='admin')return;document.querySelectorAll('#app button[aria-label="রসিদ দেখুন"]').forEach(b=>{const m=/rc\('([^']+)'\)/.exec(b.getAttribute('onclick')||'');if(m)b.insertAdjacentHTML('afterend',' <button class="chip Absent" style="min-width:0" aria-label="Delete" onclick="delRcpt(\''+m[1]+'\')"><i class=idel></i></button>')})};
 window.delRcpt=function(id){if(!hasPerm('fee_del'))return deny();const p=fp.find(x=>x.id===id);if(!p)return;
  if(!confirm('আপনি কি এই রসিদ ('+id+' — '+tk(p.a)+') Delete করতে চান? এই মাসের বেতন আবার আদায় করা যাবে।'))return;
  fp=fp.filter(x=>x.id!==id);fpDel.push({id:p.id,sid:p.sid,m:p.m,lk:p.t==='মাসিক ফি'&&!fp.some(x=>x.sid===p.sid&&x.m===p.m&&x.t==='মাসিক ফি')});save('mm_f',fp);draw()};
@@ -778,8 +788,8 @@ window.save=function(k,v){
   if(hasPerm('fee_edit')&&k==='mm_mf')set(R('config/fees/MF'),v).catch(()=>{});
   if(hasPerm('fee_edit')&&k==='mm_classfee')set(R('config/fees/classFee'),clean(v)).catch(e=>alert('ফি সংরক্ষণ হয়নি: '+denied(e)));
   if(role==='admin'&&k==='mm_profile')set(R('config/profile'),clean(v)).catch(e=>alert('সংরক্ষণ হয়নি: '+denied(e)));
-  if(canAny('cls_add','cls_edit','cls_del')&&k==='mm_cls')set(R('config/classes'),{list:v}).catch(e=>alert('ক্লাস সংরক্ষণ হয়নি: '+denied(e)));
-  if(role==='admin'&&k==='mm_subj')set(R('config/subjects'),{list:v}).catch(e=>alert('সংরক্ষণ হয়নি: '+denied(e)));
+  if(canAny('cls_add','cls_edit','cls_del')&&k==='mm_cls')set(R('config/classes'),{list:v}).catch(async e=>{alert('ক্লাস সংরক্ষণ হয়নি: '+denied(e));try{const sn=await get(R('config/classes')),l=sn.val()&&sn.val().list;if(l){classes=Array.isArray(l)?l:Object.values(l);draw()}}catch(x){}});
+  if(canAny('sub_add','sub_edit','sub_del')&&k==='mm_subj')set(R('config/subjects'),{list:v}).catch(e=>alert('সংরক্ষণ হয়নি: '+denied(e)));
  }
  _save(k,v)};
 /* হাজিরা: ক্লাসের প্রথম ট্যাপে সবাই "উপস্থিত" হয়, তারপর ট্যাপ করা জনের স্ট্যাটাস বদলায় */
@@ -974,9 +984,9 @@ window.finBtn=()=>`<button ${btn} onclick="finalizeClass()">✓ সকল হা
 window.tfinBtn=()=>hasPerm('tatt_take')?`<button ${btn} onclick="finalizeTeachers()">✅ শিক্ষক হাজিরা সম্পন্ন করুন ও জানান</button>`:'';
 window.getUnread=()=>nunread;
 window.unreadBadge=()=>nunread>0?`<span style="position:absolute;top:-4px;right:-4px;background:#d6455d;color:#fff;border-radius:99px;font-size:10px;padding:1px 5px">${bn(nunread)}</span>`:'';
-const dBtn=n=>`<button class="chip Absent" style="min-width:0;float:right;padding:2px 8px" aria-label="মুছুন" onclick="event.stopPropagation();delNotif('${esc(n.id)}')">🗑️</button>`;
+const dBtn=n=>`<button class="chip Absent" style="min-width:0;float:right;padding:2px 8px" aria-label="মুছুন" onclick="event.stopPropagation();delNotif('${esc(n.id)}')"><i class=idel></i></button>`;
 window.notifV=function(){const st=n=>`<span class="chip ${n.read?'Present':'Absent'}" style="font-size:11px;padding:1px 8px">${n.read?'পঠিত':'অপঠিত'}</span>`;
- shell('নোটিফিকেশন',nlist.map(n=>{const un=!n.read;
+ shell('নোটিফিকেশন',(nlist.length?delAllBtn('n'):'')+nlist.map(n=>{const un=!n.read;
   if(n.t==='message'){const m=String(n.msg||'');return `<div class="row" style="display:block;cursor:pointer;${un?'border-color:var(--g)':''}" onclick="openMsg('${n.id}')"><b>${un?'🔴 ':''}💬 ${xe(n.title)}</b> ${st(n)}${dBtn(n)}<br><small style="color:var(--mute)">প্রেরক: ${xe(n.from||'এডমিন')} • ${dd(n.date)} • ${xe(n.time)}</small><p style="margin-top:4px">${xe(m.length>70?m.slice(0,70)+'…':m)}</p></div>`}
   return `<div class="row" style="display:block;cursor:pointer;${un?'border-color:var(--g)':''}" onclick="markRead('${n.id}')"><b>${un?'🔵 ':''}🔔 ${xe(n.title)}</b> ${st(n)}${dBtn(n)}<br><small style="color:var(--mute)">${dd(n.date)} • ${xe(n.time)}${n.status?' • '+xe(n.status):''}</small><p style="margin-top:4px">${xe(n.msg)}</p>${n.amt?`<small>৳${xe(n.amt)} • ${xe(n.month)} • ${xe(n.fee)}</small>`:''}</div>`}).join('')||'<p class="note">এখনো কোনো নোটিফিকেশন নেই।</p>',role==='guardian'?'child':'home')};
 window.openMsg=function(id){const n=nlist.find(x=>x.id===id);if(!n)return;markRead(id);cl();const d=document.createElement('div');d.id='md';d.style.cssText='position:fixed;inset:0;background:#0009;z-index:20;display:flex;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:16px';
@@ -1023,9 +1033,18 @@ window.delNotif=async function(id){const n=nlist.find(x=>x.id===id);if(!n)return
  try{if(role==='guardian')await set(R(mine+'/'+id),null);
   else{if(n.gid)await window.purgeGroup(n.gid);else await set(R(mine+'/'+id),null)}}
  catch(e){alert('মুছতে সমস্যা: '+denied(e))}};
+window.delAllBtn=k=>`<button class="chip Absent" style="width:100%;margin:0 0 10px;padding:10px" onclick="delAllN('${k}')"><i class=idel></i> সব নোটিফিকেশন মুছুন</button>`;
+window.delAllN=async function(k){
+ if(k==='n'){if(!nlist.length||!confirm(role==='guardian'?'আপনার অ্যাপ থেকে সব নোটিফিকেশন মুছে যাবে। মুছবেন?':'আপনার অ্যাপের সব নোটিফিকেশন মুছে যাবে। মুছবেন?'))return;
+  const base=role==='guardian'?'notifications/guardian/'+myChild:'notifications/teacher/'+myTeacher,U={};nlist.forEach(n=>{U[base+'/'+n.id]=null});
+  try{await upd(U)}catch(e){alert('মুছতে সমস্যা: '+denied(e))}return}
+ const ids=Object.keys(ngrp).filter(g=>ngrp[g].meta&&ngrp[g].meta.ts>=nCut());
+ if(!ids.length||!confirm('সব নোটিফিকেশন মুছলে সব প্রাপকের অ্যাপ থেকেও মুছে যাবে। মুছবেন?'))return;
+ let bad=0;for(const g of ids){try{await window.purgeGroup(g)}catch(e){bad++}}
+ if(bad)alert(bad+'টি মোছা যায়নি')};
 window.delGroup=async function(gid){if(!confirm('এই নোটিফিকেশন মুছলে সব প্রাপকের অ্যাপ থেকেও মুছে যাবে। মুছবেন?'))return;await window.purgeGroup(gid)};
 window.nlogV=function(){const G=Object.keys(ngrp).map(k=>Object.assign({gid:k},ngrp[k])).filter(g=>g.meta&&g.meta.ts>=nCut()).sort((a,b)=>b.meta.ts-a.meta.ts),old=nlogL.filter(n=>!n.gid&&n.ts>=nCut());
- shell('Notification History',G.map(g=>{const m=g.meta,c=Object.keys(g.rcp||{}).length;return `<div class="row" style="display:block"><b>${xe(m.title||TL[m.kind]||m.kind)}</b><button class="chip Absent" style="min-width:0;float:right;padding:2px 8px" aria-label="মুছুন" onclick="delGroup('${esc(g.gid)}')">🗑️</button><br><small>প্রেরক: ${xe(m.byName||'')} (${xe(m.byRole||'')}) • ${m.tgt==='guardian'?'গার্জিয়ান':'শিক্ষক'}: ${bn(c)} জন</small><br><small style="color:var(--mute)">${dd(m.date)} • ${xe(m.time)}</small><p style="margin-top:4px">${xe(m.msg)}</p></div>`}).join('')+
+ shell('Notification History',(G.length?delAllBtn('g'):'')+G.map(g=>{const m=g.meta,c=Object.keys(g.rcp||{}).length;return `<div class="row" style="display:block"><b>${xe(m.title||TL[m.kind]||m.kind)}</b><button class="chip Absent" style="min-width:0;float:right;padding:2px 8px" aria-label="মুছুন" onclick="delGroup('${esc(g.gid)}')"><i class=idel></i></button><br><small>প্রেরক: ${xe(m.byName||'')} (${xe(m.byRole||'')}) • ${m.tgt==='guardian'?'গার্জিয়ান':'শিক্ষক'}: ${bn(c)} জন</small><br><small style="color:var(--mute)">${dd(m.date)} • ${xe(m.time)}</small><p style="margin-top:4px">${xe(m.msg)}</p></div>`}).join('')+
  (old.length?'<h3>পুরনো ইতিহাস</h3>'+old.map(n=>`<div class="row" style="display:block"><b>${xe(TL[n.t]||n.t)}</b> • ${n.tgt==='guardian'?'Guardian':'Teacher'}: ${xe(n.to)}${n.sn?'<br>ছাত্র: '+xe(n.sn):''}<br><small style="color:var(--mute)">${dd(n.date)} • ${xe(n.time)}</small></div>`).join(''):'')||'<p class="note">এখনো কোনো নোটিফিকেশন পাঠানো হয়নি।</p>',role==='teacher'?'home':'set')};
 window.nannV=function(){shell('নোটিফিকেশন পাঠান',`<p class="note" style="text-align:left">${role==='teacher'?'আপনার রুটিনের ক্লাসগুলোর গার্জিয়ানদের':'গার্জিয়ান বা শিক্ষকদের'} কাছে নোটিফিকেশন পাঠান। এটি তাদের অ্যাপের নোটিফিকেশনে দেখাবে।</p><button ${btn} onclick="annForm()">✍️ নতুন নোটিফিকেশন লিখুন</button>`,role==='teacher'?'home':'set')};
 window.annForm=function(){const T=role==='teacher',mc=T?window.tClasses(myTeacher):classes;
@@ -1116,7 +1135,7 @@ window.rtnvV=function(){const G=role==='guardian',adm=canAny('rtn_add','rtn_edit
  if(!(cls in rtn)){return shell('ক্লাস রুটিন — '+cls,head+days+'<p class="note">রুটিন লোড হচ্ছে...</p>',G?'child':'home')}
  const L=rtnList(cls,rtnDayK);
  shell('ক্লাস রুটিন — '+cls,head+days+(window.rtnBusy?'<p class="note">সংরক্ষণ হচ্ছে...</p>':'')+
- (L.map((e,i)=>{const mine=role==='teacher'&&e.tid&&e.tid===myTeacher;return `<div class="row" style="${mine?'border-color:var(--g)':''}"><div class="av">${e.p?bn(e.p):'•'}</div><div class="info"><b>${xe(e.n)}</b><small>${e.p?'পিরিয়ড '+bn(e.p)+' • ':''}${xe(e.tm||'')}<br>শিক্ষক: ${xe(e.tid?tName(e.tid,e.t):(e.t||'নির্ধারিত নয়'))}${mine?' ★ আপনি':''}</small></div>${adm?`<button aria-label="সম্পাদনা" onclick="rtnEdit(${i})">✏️</button><button aria-label="মুছুন" onclick="rtnDel(${i})">🗑️</button>`:''}</div>`}).join('')||'<p class="note">এই দিনের কোনো রুটিন নেই।</p>')+
+ (L.map((e,i)=>{const mine=role==='teacher'&&e.tid&&e.tid===myTeacher;return `<div class="row" style="${mine?'border-color:var(--g)':''}"><div class="av">${e.p?bn(e.p):'•'}</div><div class="info"><b>${xe(e.n)}</b><small>${e.p?'পিরিয়ড '+bn(e.p)+' • ':''}${xe(e.tm||'')}<br>শিক্ষক: ${xe(e.tid?tName(e.tid,e.t):(e.t||'নির্ধারিত নয়'))}${mine?' ★ আপনি':''}</small></div>${adm?`<button aria-label="সম্পাদনা" onclick="rtnEdit(${i})">✏️</button><button aria-label="মুছুন" onclick="rtnDel(${i})"><i class=idel></i></button>`:''}</div>`}).join('')||'<p class="note">এই দিনের কোনো রুটিন নেই।</p>')+
  (adm?`<button ${btn} onclick="rtnEdit(-1)">＋ পিরিয়ড যোগ করুন</button>${L.length?`<button ${btn} style="background:#1f6fe0;width:100%;margin-top:10px;padding:12px" onclick="rtnApply()">📋 এই দিনের রুটিন অন্য দিনে প্রয়োগ করুন</button>`:''}`:''),G?'child':'home')};
 /* শিক্ষকের রুটিন: দিন বেছে নিলে ওই দিনে লগইন করা শিক্ষকের সব ক্লাসের রুটিন একসাথে (ক্লাস বাছাই লাগে না) */
 const _rtnv0=window.rtnvV;
@@ -1209,11 +1228,14 @@ document.addEventListener('visibilitychange',()=>{if(!document.hidden&&localDay(
   var rootTab=function(){return (role==='guardian'||role==='student')?'child':'home'};
 
   /* ব্রাউজার history-তে একটি "গার্ড" এন্ট্রি রাখা হয়, যাতে Back চাপলে পেজ ছেড়ে না যায় */
+  var actG=false;
   function arm(){
-    if(guard||exiting)return;
+    if(exiting)return;
     try{
-      if(navigator.userActivation&&!navigator.userActivation.hasBeenActive)return;
-      history.pushState({mm:1},'',location.href);guard=true;
+      var act=!(navigator.userActivation&&!navigator.userActivation.hasBeenActive);
+      /* প্রথমে ট্যাপ ছাড়াই একটি গার্ড (WebView/APK-তে কাজ করে); ট্যাপের পর আরেকটি (Chrome ট্যাপ-ছাড়া এন্ট্রি বাদ দেয়) */
+      if(!guard){history.pushState({mm:1},'',location.href);guard=true;actG=act;return}
+      if(act&&!actG){history.pushState({mm:2},'',location.href);actG=true}
     }catch(e){}
   }
   try{history.replaceState({mm:0},'',location.href)}catch(e){}
@@ -1263,9 +1285,10 @@ document.addEventListener('visibilitychange',()=>{if(!document.hidden&&localDay(
     exitAsk()}                                             /* হোম/লগইনে: বের হওয়ার নিশ্চিতকরণ */
 
   window.addEventListener('popstate',function(){
-    guard=false;
+    guard=false;actG=false;
     if(exiting)return;
     onBack();arm()});
+  arm();setTimeout(arm,600);
 
   /* প্রথম ট্যাপের পর গার্ড বসে (ব্রাউজার ট্যাপ ছাড়া history এন্ট্রি বাদ দেয়) */
   var touch=function(){if(exiting)exiting=false;arm()};
@@ -1913,7 +1936,27 @@ var D={
 'আবার':'again',
 'বেতন: ৳':'Fee: ৳',
 'মাসের':'month\'s',
-'বিষয়টি':'This subject'
+'বিষয়টি':'This subject',
+'সব নোটিফিকেশন মুছুন':'Delete all notifications',
+'আমার প্রোফাইল':'My profile',
+'আপনার অ্যাপ থেকে সব নোটিফিকেশন মুছে যাবে। মুছবেন?':'All notifications will be removed from your app. Delete?',
+'আপনার অ্যাপের সব নোটিফিকেশন মুছে যাবে। মুছবেন?':'All notifications in your app will be removed. Delete?',
+'সব নোটিফিকেশন মুছলে সব প্রাপকের অ্যাপ থেকেও মুছে যাবে। মুছবেন?':'Deleting all notifications also removes them from all recipients\' apps. Delete?',
+'কোনো তথ্য নেই':'No information',
+'অ্যাকাউন্ট':'Account',
+'🧩 অন্যান্য':'🧩 Others',
+'📚 ছাত্র ও শিক্ষক':'📚 Students & Teachers',
+'📋 দৈনন্দিন কাজ':'📋 Daily work',
+'📖 একাডেমিক':'📖 Academic',
+'📚 একাডেমিক':'📚 Academic',
+'📢 যোগাযোগ':'📢 Communication',
+'📊 বিশ্লেষণ ও সিস্টেম':'📊 Analysis & System',
+'📊 ইতিহাস ও রিপোর্ট':'📊 History & Reports',
+'👦 সন্তান':'👦 Child',
+'💰 ফি ও পেমেন্ট':'💰 Fees & Payment',
+'👤 অ্যাকাউন্ট':'👤 Account',
+'ইতিহাস':'History',
+'নোটস':'Notes'
 };
 var keys=Object.keys(D).sort(function(a,b){return b.length-a.length}),B='\\u0980-\\u09FF';
 var RX=new RegExp('(?<!['+B+'])('+keys.map(function(s){return s.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')}).join('|')+')(?!['+B+'])','g');

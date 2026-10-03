@@ -23,8 +23,8 @@ button{width:auto;cursor:pointer;background:var(--pr);color:#fff;border:0;font-w
 </style></head><body><div class="w" id="root"></div>
 <script type="module">
 import {initializeApp} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-import {getAuth,signInWithEmailAndPassword,signOut,createUserWithEmailAndPassword,onAuthStateChanged} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-import {getDatabase,ref,get,update,runTransaction} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+import {getAuth,signInWithEmailAndPassword,signOut,createUserWithEmailAndPassword,onAuthStateChanged,sendPasswordResetEmail} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+import {getDatabase,ref,get,update,runTransaction,query,orderByChild,equalTo} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
 const cfg={apiKey:"AIzaSyCE-tUb4wySKM7nrUJ_cxnfNm-EybJTLdE",authDomain:"madrasa-management-31850.firebaseapp.com",databaseURL:"https://madrasa-management-31850-default-rtdb.firebaseio.com",projectId:"madrasa-management-31850",messagingSenderId:"444057050878",appId:"1:444057050878:web:f192583528a128cf2e8faf"};
 const app=initializeApp(cfg),auth=getAuth(app),db=getDatabase(app),auth2=getAuth(initializeApp(cfg,'sec'));
 const $=s=>document.querySelector(s),root=$('#root'),DAY=864e5;
@@ -62,7 +62,7 @@ function dash(){
 <div class="bar"><input id="sq" placeholder="নাম / ID / অ্যাডমিন / ফোন দিয়ে খুঁজুন" value="${esc(q)}"><select id="sf">${['all','active','trial','expired','suspended'].map(k=>`<option value="${k}" ${k===flt?'selected':''}>${k==='all'?'All':SN[k]}</option>`).join('')}</select><button id="ad">+ নতুন মাদ্রাসা</button></div>
 ${rows.map(i=>{const m=M[i],l=L[i]||{},s=st(l);return `<div class="card it"><h3>${esc(m.name)} <span class="bd ${s}">${SN[s]}</span></h3>
 <small>ID: ${esc(i)} · অ্যাডমিন: ${esc(m.adminName)} (${esc(m.adminPhone)})</small><small>Trial শেষ: ${show(l.trialEnd)} · Subscription শেষ: ${show(l.subEnd)}</small>
-<div class="act"><button class="s" data-a="v" data-i="${i}">View</button><button class="s" data-a="e" data-i="${i}">Edit</button><button class="s" data-a="t" data-i="${i}">Extend Trial</button><button class="s" data-a="u" data-i="${i}">Extend Subscription</button>
+<div class="act"><button class="s" data-a="v" data-i="${i}">View</button><button class="s" data-a="e" data-i="${i}">Edit</button><button class="s" data-a="t" data-i="${i}">Extend Trial</button><button class="s" data-a="u" data-i="${i}">Extend Subscription</button><button class="s" data-a="pw" data-i="${i}">🔑 Admin পাসওয়ার্ড</button>
 ${l.suspended?`<button class="s" data-a="on" data-i="${i}">Activate</button>`:`<button class="s d" data-a="off" data-i="${i}">Suspend</button>`}</div></div>`}).join('')||'<div class="card">কোনো মাদ্রাসা পাওয়া যায়নি</div>'}`;
   $('#lo').onclick=()=>{sessionStorage.removeItem(CK);signOut(auth)};
   $('#rf').onclick=async()=>{await load(true);dash()};$('#ad').onclick=()=>form();$('#mg').onclick=migrate;
@@ -71,13 +71,13 @@ ${l.suspended?`<button class="s" data-a="on" data-i="${i}">Activate</button>`:`<
   root.querySelectorAll('[data-a]').forEach(b=>b.onclick=()=>act(b.dataset.a,b.dataset.i))}
 /* ---------- modal ---------- */
 function modal(h){const m=document.createElement('div');m.className='m';m.innerHTML='<div>'+h+'</div>';m.onclick=e=>{if(e.target===m)m.remove()};document.body.appendChild(m);return m}
-async function patch(mid,p,meta){
+async function patch(mid,p,meta){ // শুধু পরিবর্তিত field লেখা (duplicate write বন্ধ)
   const U={};const o=L[mid]||{};for(const k in p)if(o[k]!==p[k])U['licenses/'+mid+'/'+k]=p[k];
   if(meta)for(const k in meta)if((M[mid]||{})[k]!==meta[k])U['madrasaMeta/'+mid+'/'+k]=meta[k];
   if(!Object.keys(U).length)return;await update(ref(db),U);
   L[mid]=Object.assign({},o,p);if(meta)M[mid]=Object.assign({},M[mid],meta);save()}
 async function act(a,i){
-  if(a==='v')return view(i);if(a==='e')return form(i);
+  if(a==='v')return view(i);if(a==='e')return form(i);if(a==='pw')return pwAdmin(i);
   if(a==='off'||a==='on'){if(!confirm((a==='off'?'Suspend':'Activate')+' করবেন? '+M[i].name))return;
     try{await patch(i,{suspended:a==='off'});dash()}catch(e){alert(e.message)}return}
   const k=a==='t'?'trialEnd':'subEnd',cur=(L[i]||{})[k]||0;
@@ -92,6 +92,30 @@ async function view(i){
   $('#cx').onclick=()=>m.remove();
   try{const tk=await auth.currentUser.getIdToken(),c=async n=>Object.keys(await (await fetch(`${cfg.databaseURL}/madrasas/${i}/${n}.json?shallow=true&auth=${tk}`)).json()||{}).length;
     const [a,b]=await Promise.all([c('students'),c('teachers')]);$('#stt').textContent=`ছাত্র: ${a} · শিক্ষক: ${b}`}catch(e){$('#stt').textContent='পরিসংখ্যান পাওয়া যায়নি'}}
+/* ---------- Admin পাসওয়ার্ড (পুরনো পাসওয়ার্ড ছাড়াই) ---------- */
+const kx=s=>{s=String(s||'').trim().toLowerCase();return s.indexOf('@')>-1?s.replace(/\./g,','):s.replace(/[^0-9a-z]/g,'')};
+async function pwAdmin(mid){
+  const m=modal(`<h3>Admin পাসওয়ার্ড — ${esc((M[mid]||{}).name)}</h3><p id="pwl">অ্যাডমিন খোঁজা হচ্ছে...</p><div class="act"><button class="s" id="cx">বন্ধ</button></div>`);$('#cx').onclick=()=>m.remove();
+  let admins=[];
+  try{const sn=await get(query(ref(db,'users'),orderByChild('mid'),equalTo(mid)));const v=sn.val()||{};admins=Object.keys(v).filter(u=>v[u].role==='admin').map(u=>({uid:u,email:v[u].email}))}
+  catch(e){$('#pwl').textContent='অ্যাডমিন তালিকা পড়া যায়নি: '+e.message+' (Rules-এ users-এর .read/.indexOn যোগ হয়েছে কিনা দেখুন)';return}
+  if(!admins.length){$('#pwl').textContent='এই মাদ্রাসার কোনো Admin অ্যাকাউন্ট পাওয়া যায়নি';return}
+  $('#pwl').outerHTML=admins.map((a,n)=>`<div class="card" style="margin:8px 0"><b>${esc(a.email)}</b><small>adminId: ${esc(a.uid)}</small>
+  <div class="act"><button class="s" data-r="${n}">ইমেইলে রিসেট লিংক পাঠান</button></div>
+  <label>নতুন পাসওয়ার্ড (পুরনোটি লাগবে না)</label><input type="password" id="np${n}" placeholder="কমপক্ষে ৬ অক্ষর"><div class="er" id="pe${n}"></div>
+  <div class="act"><button data-s="${n}">নতুন পাসওয়ার্ড সেট করুন</button></div></div>`).join('')+'<small>নতুন পাসওয়ার্ড সেট করলে অ্যাডমিনের জন্য একটি নতুন লগইন তৈরি হয় (একই মোবাইল/ইমেইল দিয়েই লগইন চলবে) এবং পুরনো লগইন নিষ্ক্রিয় হয়।</small>';
+  m.querySelectorAll('[data-r]').forEach(b=>b.onclick=async()=>{const a=admins[b.dataset.r],e=$('#pe'+b.dataset.r);try{await sendPasswordResetEmail(auth,a.email);e.style.color='#0a7a4a';e.textContent='রিসেট লিংক '+a.email+' ঠিকানায় পাঠানো হয়েছে'}catch(x){e.textContent=x.code||x.message}});
+  m.querySelectorAll('[data-s]').forEach(b=>b.onclick=async()=>{const n=b.dataset.s,a=admins[n],e=$('#pe'+n),pw=$('#np'+n).value;e.style.color='';
+    if(pw.length<6){e.textContent='পাসওয়ার্ড কমপক্ষে ৬ অক্ষর';return}
+    if(!confirm('"'+a.email+'" অ্যাডমিনের পাসওয়ার্ড বদলাবেন? মাদ্রাসা: '+M[mid].name+' ('+mid+')'))return;
+    b.disabled=true;try{
+      const p=a.email.split('@'),ne=p[0].split('+')[0]+'+r'+Date.now().toString(36)+'@'+p[1];
+      const c=await createUserWithEmailAndPassword(auth2,ne,pw);await signOut(auth2);
+      const U={};U['users/'+c.user.uid]={email:ne,role:'admin',mid};U['users/'+a.uid]=null;
+      const meta=M[mid]||{},prof=(await get(ref(db,'madrasas/'+mid+'/config/profile'))).val()||{},keys=new Set([kx(a.email),kx(meta.adminEmail),kx(meta.adminPhone),kx(prof.ph)]),done=[];
+      for(const k of keys){if(!k)continue;const ix=(await get(ref(db,'madrasas/'+mid+'/loginIndex/'+k))).val();if(ix&&ix.role==='admin'&&String(ix.email).toLowerCase()===a.email.toLowerCase()){U['madrasas/'+mid+'/loginIndex/'+k]={email:ne,role:'admin'};done.push(k.replace(/,/g,'.'))}}
+      await update(ref(db),U);e.style.color='#0a7a4a';e.textContent='সম্পন্ন। এখন এই আইডি দিয়ে নতুন পাসওয়ার্ডে লগইন চলবে: '+(done.join(', ')||'(কোনো লগইন আইডি মেলেনি)')}
+    catch(x){b.disabled=false;e.textContent=x.code==='auth/email-already-in-use'?'আবার চেষ্টা করুন':(x.code||x.message)}})}
 /* ---------- add / edit ---------- */
 function form(i){
   const ed=!!i,m0=ed?M[i]:{},l=ed?L[i]||{}:{trialStart:Date.now(),trialEnd:Date.now()+14*DAY};
@@ -116,7 +140,7 @@ function form(i){
           const pk=meta.adminPhone.replace(/[^0-9a-z]/gi,'').toLowerCase();if(pk)U['madrasas/'+mid+'/loginIndex/'+pk]={email:meta.adminEmail,role:'admin'}}
         await update(ref(db),U);M[mid]=U['madrasaMeta/'+mid];L[mid]=U['licenses/'+mid];save();alert('তৈরি হয়েছে: '+mid)}
       m.remove();dash()}catch(e){b.disabled=false;$('#er').textContent=e.code==='auth/email-already-in-use'?'এই ইমেইলে অ্যাকাউন্ট আগেই আছে':e.message}}}
-/* ---------- migration ---------- */
+/* ---------- migration (বর্তমান মাদ্রাসার data কপি) ---------- */
 function migrate(){
   const MID='CURRENT_MADRASA_001';
   const m=modal(`<h3>বর্তমান data মাইগ্রেশন</h3><p>Firebase Console থেকে নেওয়া Export JSON ফাইলটি দিন। Data <b>${MID}</b>-এর অধীনে <b>কপি</b> হবে; পুরনো data মুছবে না। Subscription ডিফল্ট ১ বছর সেট হবে (পরে Edit করা যাবে)।</p><input type="file" id="fl" accept=".json,application/json"><div class="er" id="er"></div><div class="act"><button id="go">মাইগ্রেট করুন</button><button class="s" id="cx">বাতিল</button></div>`);

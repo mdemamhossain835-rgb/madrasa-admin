@@ -96,6 +96,28 @@ h3{font-size:16px;margin:14px 0 8px}
 .tgl:disabled{opacity:.5;cursor:default}
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .tgl:not(.on):not(:checked){background:#4b5c55}}
 :root[data-theme="dark"] .tgl:not(.on):not(:checked){background:#4b5c55}
+
+/* ===== নতুন লগইন পেজ ===== */
+.lgp{position:fixed;inset:0;z-index:30;overflow-y:auto;-webkit-overflow-scrolling:touch;background:linear-gradient(170deg,#0b6b4a,#053626 75%);color:#fff;animation:lgin .25s ease}
+@keyframes lgin{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+.lgp .in{max-width:480px;margin:0 auto;min-height:100%;padding:18px 18px 30px;position:relative;display:flex;flex-direction:column;gap:16px}
+.lgp .mq{position:absolute;left:0;right:0;top:70px;width:100%;height:170px;opacity:.12;pointer-events:none}
+.lgp .bk{align-self:flex-start;width:40px;height:40px;border-radius:50%;background:rgba(255,255,255,.14);font-size:20px;color:#fff;display:flex;align-items:center;justify-content:center;position:relative}
+.lgp .hd{text-align:center;position:relative}.lgp .ar{font-size:25px;color:#d9a72e;line-height:1.7}
+.lgp h1{font-size:27px;font-weight:700;margin-top:2px}.lgp .sb{opacity:.9;font-size:14px;margin-top:4px}
+.lgc{background:#fff;color:#16302a;border-radius:24px;padding:22px 20px;position:relative;box-shadow:0 12px 30px rgba(0,0,0,.25);margin-top:6px}
+.lgc h2{font-size:25px;color:#0a4d33;font-weight:700}.lgc p.s{color:#5f7570;font-size:14px;margin:4px 0 12px}
+.lgf{display:flex;align-items:center;gap:10px;border:1.5px solid #e1e9e5;border-radius:14px;background:#fff;padding:0 12px;margin-top:10px;transition:border-color .15s,box-shadow .15s}
+.lgf:focus-within{border-color:#d9a72e;box-shadow:0 0 0 3px rgba(217,167,46,.18)}
+.lgf svg{width:20px;height:20px;flex:none;stroke:#4b5c55;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.lgf input{flex:1;min-width:0;border:0;outline:0;background:transparent;padding:15px 0;font:inherit;font-size:15.5px;color:#16302a}
+.lgf button{padding:6px;display:flex}.lgf input:focus-visible{outline:0}
+.lgl{display:inline-block;color:#0b6b4a;font-weight:600;font-size:14.5px;padding:10px 0;text-decoration:none}
+.lgb{width:100%;display:flex;align-items:center;justify-content:center;gap:10px;background:#0b6b4a;color:#fff;border-radius:14px;padding:15px;font-size:18px;font-weight:700;margin-top:6px;box-shadow:0 6px 14px rgba(11,107,74,.3);transition:transform .1s,opacity .2s}
+.lgb:active{transform:scale(.98)}.lgb:disabled{opacity:.6}
+.lgor{display:flex;align-items:center;gap:12px;color:#7d8f89;font-size:13px;margin:16px 0 8px}.lgor:before,.lgor:after{content:"";flex:1;height:1px;background:#e1e9e5}
+.lgnote{background:#eaf6ef;color:#0a4d33;border-radius:12px;padding:10px 12px;font-size:13.5px;margin-top:12px;line-height:1.6}
+.lger{color:#b42323;font-size:13px;min-height:18px;margin-top:8px}
 </style>
 </head>
 <body>
@@ -364,7 +386,7 @@ function finV(){const ms=x=>x.filter(e=>e.m===M0),days=Object.keys(at).filter(d=
  '<h3>ফলাফল</h3>'+K('ফলাফল আছে',bn(rl.length)+' জন')+K('পাসের হার',rl.length?bn(Math.round(rl.filter(c=>!c.f).length/rl.length*100))+'%':'—')+
  '<h3>শিক্ষক</h3>'+K('মোট মাসিক বেতন',tk(sum(teachers.map(t=>({a:t.sal}))))),'rep')}
 /* সেটিংস, ব্যাকআপ */
-function setV(){shell('Settings',`<button class="link" onclick="profEdit()"><span><small>মাদ্রাসার তথ্য</small>নাম, ঠিকানা ও প্রতিষ্ঠার তারিখ</span>›</button><button class="link" onclick="adminEdit()"><span><small>অ্যাডমিনের তথ্য</small>নাম, ছবি, ফোন ও ইমেইল</span>›</button><button class="link" onclick="tab='nset';draw()"><span><small>Notification Settings</small>নোটিফিকেশন চালু/বন্ধ ও টেমপ্লেট</span>›</button><button class="link" onclick="tab='nlog';draw()"><span><small>Notification History</small>কাকে কী পাঠানো হয়েছে</span>›</button><button class="link" onclick="tab='nann';draw()"><span><small>ঘোষণা পাঠান</small>গার্জিয়ান ও শিক্ষকদের জন্য</span>›</button><button class="link" onclick="tab='classFee';draw()"><span><small>মাসিক ফি</small>ফি নির্ধারণ</span>›</button><button class="link" onclick="purgeRollKeys()"><span><small>একবারের কাজ</small>রোল নম্বর দিয়ে গার্জিয়ান লগইন বন্ধ করুন</span>›</button><div class="act"><button onclick="bk()"><b>💾</b>ব্যাকআপ কপি</button><button onclick="rst()"><b>♻️</b>রিস্টোর</button><button onclick="wipe()"><b>🗑️</b>সব মুছুন</button></div><p class="note">ব্যাকআপ কপি করে নিরাপদ জায়গায় রেখে দিন। "সব মুছুন" চাপলে সব তথ্য চলে যাবে।</p>`,'home');setFilt()}
+function setV(){shell('Settings',`${role==='admin'?'<button class="link" onclick="planV()"><span><small>প্ল্যান</small>ট্রায়াল ও মাসিক সাবস্ক্রিপশন (৳৩০০)</span>›</button>':''}<button class="link" onclick="profEdit()"><span><small>মাদ্রাসার তথ্য</small>নাম, ঠিকানা ও প্রতিষ্ঠার তারিখ</span>›</button><button class="link" onclick="adminEdit()"><span><small>অ্যাডমিনের তথ্য</small>নাম, ছবি, ফোন ও ইমেইল</span>›</button><button class="link" onclick="tab='nset';draw()"><span><small>Notification Settings</small>নোটিফিকেশন চালু/বন্ধ ও টেমপ্লেট</span>›</button><button class="link" onclick="tab='nlog';draw()"><span><small>Notification History</small>কাকে কী পাঠানো হয়েছে</span>›</button><button class="link" onclick="tab='nann';draw()"><span><small>ঘোষণা পাঠান</small>গার্জিয়ান ও শিক্ষকদের জন্য</span>›</button><button class="link" onclick="tab='classFee';draw()"><span><small>মাসিক ফি</small>ফি নির্ধারণ</span>›</button><button class="link" onclick="purgeRollKeys()"><span><small>একবারের কাজ</small>রোল নম্বর দিয়ে গার্জিয়ান লগইন বন্ধ করুন</span>›</button><div class="act"><button onclick="bk()"><b>💾</b>ব্যাকআপ কপি</button><button onclick="rst()"><b>♻️</b>রিস্টোর</button><button onclick="wipe()"><b>🗑️</b>সব মুছুন</button></div><p class="note">ব্যাকআপ কপি করে নিরাপদ জায়গায় রেখে দিন। "সব মুছুন" চাপলে সব তথ্য চলে যাবে।</p>`,'home');setFilt()}
 function classFeeV(){shell('মাসিক ফি (শ্রেণী অনুযায়ী)',`<div class="row"><div class="info"><b>সাধারণ (ডিফল্ট) ফি</b><small>যে শ্রেণীর নিজস্ব ফি সেট করা নেই, তাদের জন্য প্রযোজ্য</small></div><b>${tk(MF)}</b><button aria-label="পরিবর্তন" onclick="setDefaultFee()">✏️</button></div>`+
  classes.map(c=>`<div class="row"><div class="info"><b>${c}</b><small>বর্তমান ফি: ${tk(classFee[c]!=null&&classFee[c]!==''?classFee[c]:MF)}${classFee[c]!=null&&classFee[c]!==''?'':' (সাধারণ)'}</small></div><button aria-label="পরিবর্তন" onclick="setClassFee('${esc(c)}')">✏️</button></div>`).join(''),'set')}
 function setDefaultFee(){form('সাধারণ (ডিফল্ট) মাসিক ফি',[['n','পরিমাণ (৳)','type=number']],{n:MF},o=>{MF=+o.n||MF;save('mm_mf',MF);draw()})}
@@ -655,7 +677,7 @@ window.delRcpt=function(id){if(!hasPerm('fee_del'))return deny();const p=fp.find
 </script>
 <script type="module">
 import {initializeApp} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-import {getAuth,initializeAuth,indexedDBLocalPersistence,browserLocalPersistence,onAuthStateChanged,updatePassword,signInWithEmailAndPassword,createUserWithEmailAndPassword,signOut} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+import {getAuth,initializeAuth,indexedDBLocalPersistence,browserLocalPersistence,onAuthStateChanged,updatePassword,signInWithEmailAndPassword,createUserWithEmailAndPassword,sendPasswordResetEmail,signOut} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 import {getDatabase,ref,get,set,update,onValue,query,orderByKey,orderByChild,limitToLast,startAt,endAt} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
 const cfg={apiKey:"AIzaSyCE-tUb4wySKM7nrUJ_cxnfNm-EybJTLdE",authDomain:"madrasa-management-31850.firebaseapp.com",databaseURL:"https://madrasa-management-31850-default-rtdb.firebaseio.com",projectId:"madrasa-management-31850",messagingSenderId:"444057050878",appId:"1:444057050878:web:f192583528a128cf2e8faf"};
 const app=initializeApp(cfg),auth=initializeAuth(app,{persistence:[indexedDBLocalPersistence,browserLocalPersistence]}),db=getDatabase(app),auth2=getAuth(initializeApp(cfg,'sec'));
@@ -793,6 +815,68 @@ window.pwGo=async function(r){const idv=document.getElementById('pwid').value,pw
   cleanup();role=r;myChild=r==='guardian'?u.val().ref:'';myTeacher=r==='teacher'?u.val().ref:'';tab=r==='guardian'?'child':'home';
   listen()
  }catch(e){hideLd();er.textContent=(e.code==='auth/invalid-credential'||e.code==='auth/wrong-password'||e.code==='auth/user-not-found')?'ভুল তথ্য, আবার চেষ্টা করুন ['+e.code+']':'সমস্যা: '+(e.code||e.message)}};
+/* ===== নতুন লগইন পেজ / নিবন্ধন / পাসওয়ার্ড রিকভারি / প্ল্যান ===== */
+const LGI={u:'<svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4.4 3.6-8 8-8s8 3.6 8 8"/></svg>',l:'<svg viewBox="0 0 24 24"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 018 0v3"/></svg>',e:'<svg viewBox="0 0 24 24"><path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg>',m:'<svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/></svg>',p:'<svg viewBox="0 0 24 24"><path d="M5 4h4l2 5-2.5 1.5a11 11 0 005 5L15 13l5 2v4a2 2 0 01-2 2A16 16 0 013 6a2 2 0 012-2z"/></svg>',b:'<svg viewBox="0 0 24 24"><path d="M4 21V8l8-5 8 5v13M9 21v-6h6v6"/></svg>',i:'<svg viewBox="0 0 24 24"><path d="M10 17l5-5-5-5M15 12H3M15 4h4a2 2 0 012 2v12a2 2 0 01-2 2h-4"/></svg>'};
+const MQ='<svg class="mq" viewBox="0 0 400 150" preserveAspectRatio="xMidYMax slice"><g fill="#fff"><rect x="20" y="40" width="14" height="110"/><path d="M20 40l7-24 7 24z"/><rect x="366" y="40" width="14" height="110"/><path d="M366 40l7-24 7 24z"/><path d="M110 150v-50a90 90 0 01180 0v50z"/><circle cx="200" cy="28" r="6"/><rect x="60" y="100" width="40" height="50"/><path d="M60 100a20 20 0 0140 0z"/><rect x="300" y="100" width="40" height="50"/><path d="M300 100a20 20 0 0140 0z"/></g></svg>';
+const lgF=(id,ic,ph,t,x)=>`<div class="lgf">${LGI[ic]}<input id="${id}" type="${t||'text'}" placeholder="${ph}" ${x||''}></div>`;
+const lgPw=(id,ph,x)=>`<div class="lgf">${LGI.l}<input id="${id}" type="password" placeholder="${ph}" ${x||''}><button type="button" aria-label="দেখান/লুকান" onclick="lgEye('${id}',this)">${LGI.e}</button></div>`;
+window.lgEye=(id,b)=>{const i=document.getElementById(id);i.type=i.type==='password'?'text':'password';b.style.opacity=i.type==='password'?1:.5};
+function lgPage(id,inner,onBack){document.querySelectorAll('.lgp#'+id).forEach(x=>x.remove());const d=document.createElement('div');d.id=id;d.className='lgp';
+ const sub=profile.addr||profile.est?[profile.addr,profile.est?'প্রতিষ্ঠা: '+profile.est:''].filter(Boolean).join(' • '):'শিক্ষা • শৃঙ্খলা • নৈতিকতা';
+ d.innerHTML=`<div class="in">${MQ}<button class="bk" aria-label="ফিরে যান" onclick="${onBack}">←</button><div class="hd"><div class="ar">وَمَا تَوْفِيقِي إِلَّا بِاللَّهِ</div><h1>${xe(profile.name||'Madrasa Management')}</h1><div class="sb">${xe(sub)}</div></div>${inner}</div>`;document.body.appendChild(d);d.scrollTop=0;return d}
+const lgClose=id=>{const d=document.getElementById(id);if(d)d.remove()};
+window.pwAsk=function(r){
+ const cfg={admin:{t:'Admin',l:'মোবাইল নম্বর বা জিমেইল',hint:'অ্যাডমিনের সেট করা পাসওয়ার্ড দিন'},teacher:{t:'Teacher',l:'মোবাইল নম্বর বা জিমেইল',hint:'ভর্তির সময় অ্যাডমিনের দেওয়া পাসওয়ার্ড দিন'},guardian:{t:'Guardian',l:'ছাত্রের আইডি অথবা আপনার মোবাইল নম্বর',hint:'ভর্তির সময় অ্যাডমিনের দেওয়া পাসওয়ার্ড দিন'}}[r];
+ const adm=r==='admin';
+ const d=lgPage('pwmd',`<div class="lgc"><h2>${cfg.t} লগইন</h2><p class="s">${cfg.l} ও পাসওয়ার্ড দিন</p>${lgF('pwid','u',cfg.l)}${lgPw('pwin','পাসওয়ার্ড',`onkeydown="if(event.key==='Enter')pwGo('${r}')"`)}<div id="pwerr" class="lger"></div>
+ <a class="lgl" href="javascript:void(0)" onclick="${adm?'lgForgot()':"lgHelp(this)"}">আপনার পাসওয়ার্ড ভুলে গেছেন?</a><div class="lgnote" id="lghelp" style="display:none">পাসওয়ার্ড বদলাতে মাদ্রাসার অ্যাডমিনের সাথে যোগাযোগ করুন।</div>
+ <button class="lgb" onclick="pwGo('${r}')">${LGI.i.replace('<svg','<svg style="width:22px;height:22px;stroke:#fff;fill:none;stroke-width:2"')} লগইন</button>
+ ${adm?`<div class="lgor">অথবা</div><div style="font-weight:600">একটি অ্যাকাউন্ট নেই?</div><a class="lgl" href="javascript:void(0)" onclick="lgReg()" style="padding-top:2px">নিবন্ধন করুন</a>`:''}
+ <p style="font-size:13px;color:#7d8f89;margin-top:14px">${cfg.hint}</p></div>`,"lgClose('pwmd')");
+ setTimeout(()=>document.getElementById('pwid').focus(),60)};
+window.lgHelp=()=>{const n=document.getElementById('lghelp');n.style.display=n.style.display==='none'?'block':'none'};
+const lgContact=()=>`<div class="lgnote" style="background:#f4f7f5;color:#16302a"><b>ডেভেলপারের সাথে যোগাযোগ</b><br>${xe(DEV.n)}<br><a class="lgl" style="padding:4px 0" href="mailto:${DEV.em}">${DEV.em}</a><br><a class="lgl" style="padding:4px 0" href="${DEV.fb}" target="_blank" rel="noopener">ফেসবুকে মেসেজ করুন</a></div>`;
+const maskEm=e=>{const p=String(e).split('@');return (p[0].slice(0,2)||'')+'***@'+(p[1]||'')};
+window.lgForgot=function(){lgPage('fgmd',`<div class="lgc"><h2>পাসওয়ার্ড রিসেট</h2><p class="s">অ্যাডমিনের ইমেইল বা মোবাইল নম্বর দিন। ইমেইলে নতুন পাসওয়ার্ড সেট করার লিংক যাবে।</p>${lgF('fgid','m','ইমেইল বা মোবাইল নম্বর')}<div id="fger" class="lger"></div><button class="lgb" id="fgbtn" onclick="lgReset()">রিসেট লিংক পাঠান</button><p style="font-size:13px;color:#7d8f89;margin-top:12px">ইমেইল না পেলে স্প্যাম ফোল্ডার দেখুন। তবুও না পেলে বা ইমেইল ব্যবহার না করলে নিচের ঠিকানায় যোগাযোগ করুন — পুরনো পাসওয়ার্ড ছাড়াই নতুন পাসওয়ার্ড সেট করে দেওয়া হবে।</p>${lgContact()}</div>`,"lgClose('fgmd')")};
+window.lgReset=async function(){const v=document.getElementById('fgid').value.trim(),er=document.getElementById('fger');er.style.color='#b42323';
+ if(!v){er.textContent='ইমেইল বা মোবাইল নম্বর দিন';return}
+ const b=document.getElementById('fgbtn');b.disabled=true;showLd();
+ try{let em=norm(v);const ix=await tmo(get(R('loginIndex/'+key(v))),20000,'তথ্য খোঁজা');
+  if(ix.exists()){if(ix.val().role!=='admin'){hideLd();b.disabled=false;er.textContent='এটি অ্যাডমিন অ্যাকাউন্ট নয়। শিক্ষক/অভিভাবক অ্যাডমিনের সাথে যোগাযোগ করুন।';return}em=ix.val().email}
+  else if(v.indexOf('@')<0){hideLd();b.disabled=false;er.textContent='এই নম্বরে কোনো অ্যাডমিন পাওয়া যায়নি';return}
+  await tmo(sendPasswordResetEmail(auth,em),25000,'ইমেইল পাঠানো');hideLd();b.disabled=false;er.style.color='#0a4d33';er.textContent='রিসেট লিংক '+maskEm(em)+' ঠিকানায় পাঠানো হয়েছে (যদি অ্যাকাউন্ট থাকে)। ইনবক্স ও স্প্যাম দেখুন।'
+ }catch(e){hideLd();b.disabled=false;er.textContent=e.code==='auth/too-many-requests'?'অনেকবার চেষ্টা হয়েছে। কিছুক্ষণ পরে আবার চেষ্টা করুন।':e.code==='auth/invalid-email'?'ইমেইল সঠিক নয়':'সমস্যা: '+(e.code||e.message)}};
+window.lgReg=function(){lgPage('rgmd',`<div class="lgc"><h2>নতুন মাদ্রাসা নিবন্ধন</h2><p class="s">আপনার মাদ্রাসার অ্যাডমিন অ্যাকাউন্ট তৈরি করুন</p>
+ ${lgF('rgn','b','মাদ্রাসার নাম')}${lgF('rga','b','ঠিকানা (ঐচ্ছিক)')}${lgF('rgan','u','অ্যাডমিনের নাম')}${lgF('rgph','p','মোবাইল নম্বর','tel')}${lgF('rgem','m','জিমেইল / ইমেইল','email','autocapitalize="none"')}${lgPw('rgpw','পাসওয়ার্ড (কমপক্ষে ৬ অক্ষর)')}${lgPw('rgpw2','পাসওয়ার্ড আবার দিন')}
+ <div class="lgnote">🎁 নিবন্ধনের পর <b>১৫ দিন ফ্রি ট্রায়াল</b>। এরপর মাসিক ৩০০ টাকার প্ল্যান।</div><div id="rger" class="lger"></div><button class="lgb" id="rgbtn" onclick="lgRegGo()">নিবন্ধন করুন</button></div>`,"lgClose('rgmd')")};
+window.lgRegGo=async function(){const g=id=>document.getElementById(id).value.trim(),er=document.getElementById('rger'),btn=document.getElementById('rgbtn'),bad=m=>{er.textContent=m};
+ const n=g('rgn'),ad=g('rga'),an=g('rgan'),ph=g('rgph'),em=g('rgem').toLowerCase(),pw=document.getElementById('rgpw').value,pw2=document.getElementById('rgpw2').value,pk=key(ph);
+ er.textContent='';if(!n)return bad('মাদ্রাসার নাম দিন');if(!an)return bad('অ্যাডমিনের নাম দিন');if(!/^[0-9]{10,14}$/.test(pk))return bad('সঠিক মোবাইল নম্বর দিন');if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(em))return bad('সঠিক ইমেইল দিন');if(pw.length<6)return bad('পাসওয়ার্ড কমপক্ষে ৬ অক্ষরের হতে হবে');if(pw!==pw2)return bad('দুই পাসওয়ার্ড মেলেনি');
+ btn.disabled=true;showLd();let step='অ্যাকাউন্ট তৈরি',resume=false;
+ try{const so=(await get(ref(db,'.info/serverTimeOffset'))).val()||0,now=Date.now()+so;let c;
+  try{c=await createUserWithEmailAndPassword(auth,em,pw)}catch(e){if(e.code!=='auth/email-already-in-use')throw e;c=await signInWithEmailAndPassword(auth,em,pw);if((await get(ref(db,'users/'+c.user.uid))).exists()){await signOut(auth);throw {code:'exists'}}resume=true}
+  const uid=c.user.uid,mid='M'+uid,soft=async(p,v)=>{try{await set(ref(db,p),v)}catch(e){if(!(resume&&/permission/i.test(e.code+e.message)))throw e}};
+  step='মাদ্রাসা তৈরি';await soft('madrasaMeta/'+mid,{name:n,addr:ad,adminName:an,adminPhone:ph,adminEmail:em,ownerUid:uid,createdAt:now,selfReg:true});
+  step='ট্রায়াল সেট';await soft('licenses/'+mid,{trialStart:now,trialEnd:now+15*864e5,subStart:0,subEnd:0,suspended:false});
+  step='অ্যাডমিন সংযোগ';await set(ref(db,'users/'+uid),{email:em,role:'admin',mid});
+  step='লগইন তথ্য';const U={};U['madrasas/'+mid+'/config/profile']={name:n,addr:ad,ph:ph,est:'',logo:''};U['madrasas/'+mid+'/config/setup']={by:uid,at:now};
+  [em,ph].forEach(i=>{const k=key(i);if(k)U['madrasas/'+mid+'/loginIndex/'+k]={email:em,role:'admin'}});await update(ref(db),U);
+  try{localStorage.setItem('mid',mid)}catch(e){}hideLd();
+  const link=location.origin+location.pathname+'?m='+mid;
+  lgPage('rgmd',`<div class="lgc" style="text-align:center"><div style="font-size:46px">🎉</div><h2>নিবন্ধন সফল!</h2><p class="s">${xe(n)} — ১৫ দিনের ফ্রি ট্রায়াল শুরু হয়েছে।</p><div class="lgnote" style="text-align:left">আপনার মাদ্রাসার লিংক (শিক্ষক ও অভিভাবকদের দিন):<br><b style="word-break:break-all;font-size:12.5px">${xe(link)}</b></div><button class="lgb" style="background:#5b6b7d" onclick="navigator.clipboard&&navigator.clipboard.writeText('${link}');this.textContent='কপি হয়েছে ✓'">লিংক কপি করুন</button><button class="lgb" onclick="location.href='${link}'">অ্যাপে প্রবেশ করুন</button></div>`,"location.href='"+link+"'")
+ }catch(e){hideLd();btn.disabled=false;  er.textContent=e.code==='exists'?'এই ইমেইলে অ্যাকাউন্ট আছে। লগইন করুন, অথবা পাসওয়ার্ড ভুলে গেলে রিসেট করুন।':e.code==='auth/email-already-in-use'||e.code==='auth/invalid-credential'?'এই ইমেইলে আগে থেকে অ্যাকাউন্ট আছে (পাসওয়ার্ড মেলেনি)। পাসওয়ার্ড রিসেট করুন।':'সমস্যা ('+step+'): '+(e.code||e.message)+(step!=='অ্যাকাউন্ট তৈরি'?' — আবার "নিবন্ধন করুন" চাপুন, একই ইমেইল ও পাসওয়ার্ড দিয়ে।':'')}};
+/* প্ল্যান (সেটিংস → প্ল্যান) */
+window.planV=async function(){const d=document.createElement('div');d.id='md';d.style.cssText='position:fixed;inset:0;background:#0009;z-index:20;display:flex;align-items:flex-end;justify-content:center';
+ d.onclick=e=>{if(e.target===d)cl()};d.innerHTML='<div class="sheet" style="width:100%;max-width:480px;background:var(--bg);border-radius:20px 20px 0 0;padding:18px;max-height:90vh;overflow:auto"><p class="note" id="plb">লোড হচ্ছে...</p></div>';document.body.appendChild(d);
+ let l={};try{l=(await get(R('licenses/'+MID))).val()||{}}catch(e){}
+ const n=Date.now(),dt=t=>t?new Date(t).toLocaleDateString('bn-BD'):'—',days=t=>Math.max(0,Math.ceil((t-n)/864e5));
+ const st=l.suspended===true?['⛔ বন্ধ আছে','সুপার অ্যাডমিনের সাথে যোগাযোগ করুন']:(l.subEnd||0)>n?['✅ সাবস্ক্রিপশন চালু','মেয়াদ শেষ: '+dt(l.subEnd)+' (বাকি '+bn(days(l.subEnd))+' দিন)']:(l.trialEnd||0)>n?['🎁 ফ্রি ট্রায়াল চলছে','বাকি '+bn(days(l.trialEnd))+' দিন • শেষ: '+dt(l.trialEnd)]:['⚠️ মেয়াদ শেষ','চালিয়ে যেতে প্ল্যান নিন'];
+ const link=location.origin+location.pathname+'?m='+MID;
+ d.firstChild.innerHTML=`<h3 style="text-align:center;margin:0 0 12px">💳 প্ল্যান</h3><div class="link" style="display:block"><b>${st[0]}</b><br><small style="color:var(--mute)">${st[1]}</small></div>
+ <button class="link" style="display:block;width:100%;text-align:left;border:2px solid var(--g)" onclick="cl();devShow()"><span><small>মাসিক প্ল্যান</small><b style="font-size:22px">৳ ৩০০</b> / প্রতি মাস<br><small>সব সুবিধা সহ • নেওয়ার জন্য ট্যাপ করে যোগাযোগ করুন</small></span>›</button>
+ <div class="link" style="display:block"><small>আপনার মাদ্রাসার লিংক</small><br><span style="word-break:break-all;font-size:12.5px">${xe(link)}</span></div>
+ <div class="act"><button onclick="navigator.clipboard&&navigator.clipboard.writeText('${link}');this.textContent='কপি হয়েছে ✓'">📋 লিংক কপি</button><button onclick="cl()">বন্ধ করুন</button></div>`};
+
 /* প্রথম অ্যাডমিন তৈরি (একবারই) */
 const _login=window.login;
 function addSetup(){if(!needSetup)return;const r=document.querySelector('.roles');if(r)r.insertAdjacentHTML('beforeend','<button class="role" style="background:#5b6b7d" onclick="setupAdmin()"><div>প্রথম অ্যাডমিন তৈরি করুন<span>শুধু একবার — প্রথম চালুর সময়</span></div><i>›</i></button>')}

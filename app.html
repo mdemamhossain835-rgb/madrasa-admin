@@ -66,6 +66,26 @@ h3{font-size:16px;margin:14px 0 8px}
 .nav button.on{color:var(--g);font-weight:700}
 .nav b{display:block;font-size:20px}
 .note{font-size:13px;color:var(--mute);text-align:center;margin-top:12px}
+
+.ldw{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:26px;background:linear-gradient(170deg,#0b6b4a,#053626)}
+.ldo{position:fixed;inset:0;z-index:50}.ldo .ldw{height:100%}
+.ldb{position:relative;width:104px;height:104px;display:flex;align-items:center;justify-content:center}
+.ldr,.ldr2{position:absolute;inset:0;border-radius:50%;border:3px solid rgba(255,255,255,.14)}
+.ldr{border-top-color:#d9a72e;border-right-color:#d9a72e;animation:ldsp 1.1s linear infinite}
+.ldr2{inset:9px;border-bottom-color:#7fe0ae;animation:ldsp 1.7s linear infinite reverse}
+.ldl{width:62px;height:62px;border-radius:50%;background:rgba(255,255,255,.12);display:flex;align-items:center;justify-content:center;font-size:30px;overflow:hidden;animation:ldpl 1.8s ease-in-out infinite}
+.ldl img{width:100%;height:100%;object-fit:cover}
+.ldd{display:flex;gap:8px}.ldd b{width:8px;height:8px;border-radius:50%;background:#d9a72e;animation:ldbn 1.2s ease-in-out infinite}
+.ldd b:nth-child(2){animation-delay:.18s}.ldd b:nth-child(3){animation-delay:.36s}
+@keyframes ldsp{to{transform:rotate(360deg)}}@keyframes ldpl{50%{transform:scale(.9);opacity:.8}}
+@keyframes ldbn{0%,80%,100%{transform:translateY(0);opacity:.4}40%{transform:translateY(-7px);opacity:1}}
+@media (prefers-reduced-motion:reduce){.ldr,.ldr2,.ldl,.ldd b{animation-duration:3s}}
+.att{display:block}.att .at1{display:flex;align-items:center;gap:12px}
+.atopt{display:flex;gap:6px;margin-top:10px;flex-wrap:nowrap}
+.atopt button{flex:1;min-width:0;display:flex;align-items:center;justify-content:center;gap:5px;padding:7px 2px;border:1px solid var(--line);border-radius:99px;background:transparent;color:var(--ink);font:inherit;font-size:12.5px;white-space:nowrap;-webkit-tap-highlight-color:transparent}
+.atopt button i{width:14px;height:14px;border-radius:50%;border:2px solid var(--c);flex:none;transition:background .15s}
+.atopt button.on{font-weight:700;border-color:var(--c)}.atopt button.on i{background:var(--c)}
+.atlm{display:block;margin-top:6px;color:var(--latet);font-size:12.5px}
 </style>
 </head>
 <body>
@@ -128,7 +148,10 @@ function child(){const s=stu_(myChild);
  shell('আমার সন্তান',`<div class="hello"><div class="av">${avHTML(s.photo,(s.n||'?')[0])}</div><div><b>${s.n}</b><br><small style="color:var(--mute)">ID: ${myChild} | রোল: ${bn(s.r)}<br>ক্লাস: ${s.c||'—'}</small></div></div>
  <div class="grid">${items.map(x=>`<button class="tile" style="background:${x[3]}" onclick="${LK[x[2]]?`${LK[x[2]]};draw()`:`alert('${x[1]} পরের ধাপে তৈরি হবে')`}"><b>${x[0]}</b>${x[1]}${x[2]==='Notif'&&typeof getUnread==='function'&&getUnread()?' ('+bn(getUnread())+')':''}<span>${x[2]}</span></button>`).join('')}</div>
  <button class="strip" style="width:100%;border:0;margin-top:14px" onclick="devShow()">👨‍💻 ডেভেলপার সম্পর্কে তথ্য</button>`)}
-app.innerHTML='<div class="login"><div class="brand"><h1>'+(profile.name||'Madrasa Management')+'</h1><p>লোড হচ্ছে...</p></div></div>';
+function ldHTML(){const lg=profile&&profile.logo&&/^(data:image|https?:)/.test(profile.logo)?'<img src="'+profile.logo+'" alt="">':'🕌';return '<div class="ldw"><div class="ldb"><span class="ldr"></span><span class="ldr2"></span><div class="ldl">'+lg+'</div></div><div class="ldd"><b></b><b></b><b></b></div></div>'}
+function hideLd(){clearTimeout(window.__ldT);const d=document.getElementById('ldo');if(d)d.remove()}
+function showLd(){if(document.getElementById('ldo'))return;const d=document.createElement('div');d.id='ldo';d.className='ldo';d.innerHTML=ldHTML();document.body.appendChild(d);clearTimeout(window.__ldT);window.__ldT=setTimeout(hideLd,45000)}
+app.innerHTML=ldHTML();
 setTimeout(function(){if(!role&&!window.__authChecked)login()},12000);
 </script>
 <script>
@@ -368,7 +391,7 @@ function clsDel(name){if(students.some(s=>s.c===name)){alert('এই ক্ল�
 function pickClass(c){selClass=c;save('mm_selc',c);draw()}
 function cattV(){const list=students.filter(s=>s.c===selClass),n=k=>list.filter(s=>s.s===k).length;
  shell('ক্লাসভিত্তিক হাজিরা',`<p class="note" style="text-align:left;margin:0 0 8px">${dd(T0)}</p>${role==='admin'?`<button class="link" onclick="tab='tatt';draw()"><span>শিক্ষক হাজিরা<small>শিক্ষকদের উপস্থিতি নিন</small></span>›</button>`:''}<div style="display:flex;gap:8px;overflow-x:auto;padding-bottom:4px;margin-bottom:12px">${classes.map(c=>`<button class="chip" style="min-width:auto;white-space:nowrap;${c===selClass?'background:var(--g);color:#fff':'background:var(--card);border:1px solid var(--line);color:var(--ink)'}" onclick="pickClass('${esc(c)}')">${c}</button>`).join('')}</div>`+
- (list.length?`<div class="stats"><div class="stat"><b>${bn(n('Present'))}</b><small>উপস্থিত</small></div><div class="stat"><b>${bn(n('Absent'))}</b><small>অনুপস্থিত</small></div><div class="stat"><b>${bn(n('Late'))}</b><small>দেরি</small></div></div>`+rows(list)+'<p class="note">স্ট্যাটাসে ট্যাপ করে বদলান</p>'+(typeof finBtn==='function'?finBtn():''):'<p class="note">এই ক্লাসে কোনো ছাত্র নেই।</p>'),'home')}
+ (list.length?`<div class="stats"><div class="stat"><b>${bn(n('Present'))}</b><small>উপস্থিত</small></div><div class="stat"><b>${bn(n('Absent'))}</b><small>অনুপস্থিত</small></div><div class="stat"><b>${bn(n('Late'))}</b><small>দেরি</small></div></div>`+window.attRows(list)+'<p class="note">স্ট্যাটাসে ট্যাপ করে বদলান</p>'+(typeof finBtn==='function'?finBtn():''):'<p class="note">এই ক্লাসে কোনো ছাত্র নেই।</p>'),'home')}
 </script>
 <script>
 function feePick(){const list=students.filter(s=>s.c===selClass);
@@ -668,13 +691,27 @@ window.cyc=async function(id){const s=students.find(x=>x.id===id);if(!s)return;c
  if(!students.filter(x=>x.c===s.c).some(x=>at[T0]&&at[T0][x.id]))students.filter(x=>x.c===s.c).forEach(x=>{U['attendance/students/'+T0+'/'+x.id]='P';U['attendance/byStudent/'+x.id+'/'+T0]='P'});
  U['attendance/students/'+T0+'/'+id]=RC[nx];U['attendance/byStudent/'+id+'/'+T0]=RC[nx];
  try{await upd(U)}catch(e){alert('হাজিরা সংরক্ষণ হয়নি: '+denied(e))}};
+/* নতুন হাজিরা কার্ড: বৃত্ত + লেখা; দেরি চাপলে মিনিট জিজ্ঞাসা। আগের P/A/L কাঠামো অপরিবর্তিত, দেরির মিনিট আলাদা node-এ (attendance/lateMin/তারিখ/studentId) */
+window.attRows=function(l){const O=[['Present','✓ উপস্থিত','#1aa260'],['Absent','✕ অনুপস্থিত','#d64545'],['Late','◷ দেরি','#e0a020']];
+ return l.map(s=>`<div class="row att"><div class="at1"><div class="av">${avHTML(s.photo,s.n[0])}</div><div class="info" style="cursor:pointer" onclick="prof('${s.id}')"><b>${s.n}</b><small>ID: ${s.id} | রোল: ${bn(s.r)} | ${s.c||''}</small></div></div><div class="atopt">${O.map(o=>`<button style="--c:${o[2]}" class="${s.s===o[0]?'on':''}" onclick="setSt('${s.id}','${o[0]}')"><i></i>${o[1]}</button>`).join('')}</div>${s.s==='Late'&&lm[s.id]?`<small class="atlm">দেরি ${bn(lm[s.id])} মিনিট</small>`:''}</div>`).join('')||'<p class="note">কোনো ছাত্র পাওয়া যায়নি।</p>'};
+async function stSave(id,k,min){const s=students.find(x=>x.id===id);if(!s)return;const U={};
+ if(!students.filter(x=>x.c===s.c).some(x=>at[T0]&&at[T0][x.id]))students.filter(x=>x.c===s.c).forEach(x=>{U['attendance/students/'+T0+'/'+x.id]='P';U['attendance/byStudent/'+x.id+'/'+T0]='P'});
+ U['attendance/students/'+T0+'/'+id]=RC[k];U['attendance/byStudent/'+id+'/'+T0]=RC[k];
+ try{await upd(U)}catch(e){alert('হাজিরা সংরক্ষণ হয়নি: '+denied(e));return}
+ if(k==='Late'){lm[id]=min;draw();try{await set(R('attendance/lateMin/'+T0+'/'+id),min)}catch(e){alert('দেরির মিনিট সংরক্ষণ হয়নি: '+denied(e)+'\n(Firebase Rules-এ lateMin যোগ করতে হবে)')}}
+ else if(lm[id]!=null){delete lm[id];try{await set(R('attendance/lateMin/'+T0+'/'+id),null)}catch(e){}}}
+window.setSt=function(id,k){const s=students.find(x=>x.id===id);if(!s)return;if(k!=='Late'){if(s.s!==k||lm[id]!=null)stSave(id,k);return}
+ const d=document.createElement('div');d.id='md';d.style.cssText='position:fixed;inset:0;background:#0009;z-index:20;display:flex;padding:16px';
+ d.innerHTML=`<div style="background:var(--card);width:100%;max-width:340px;border-radius:18px;padding:20px;margin:auto"><h3 style="margin:0 0 4px">কত মিনিট দেরি?</h3><small style="color:var(--mute)">${s.n}</small><input id="lmin" type="text" inputmode="numeric" maxlength="3" value="${lm[id]||''}" placeholder="যেমন: ১৫" style="width:100%;margin-top:12px;padding:12px;border-radius:12px;border:1px solid var(--line);background:var(--bg);color:var(--ink);font-size:18px;text-align:center"><div id="lerr" style="color:var(--not);font-size:13px;min-height:18px;margin-top:6px"></div><div style="display:flex;gap:10px;margin-top:8px"><button class="tile" style="background:var(--g);flex:1;padding:12px" id="lsv">সংরক্ষণ</button><button class="tile" style="background:#5b6b7d;flex:1;padding:12px" onclick="cl()">বাতিল</button></div></div>`;
+ document.body.appendChild(d);const inp=document.getElementById('lmin');setTimeout(()=>inp.focus(),50);
+ document.getElementById('lsv').onclick=()=>{const v=parseInt(inp.value.replace(/[০-৯]/g,c=>'০১২৩৪৫৬৭৮৯'.indexOf(c)),10);if(!(v>=1&&v<=600)){document.getElementById('lerr').textContent='১ থেকে ৬০০ এর মধ্যে মিনিট লিখুন';return}cl();stSave(id,'Late',v)}};
 window.tcyc=async function(id){const t=teachers.find(x=>x.id===id);if(!t)return;const o=['Present','Absent','Late'],nx=o[(o.indexOf(t.s)+1)%3],U={};
  if(!teachers.some(x=>tat[T0]&&tat[T0][x.id]))teachers.forEach(x=>{U['attendance/teachers/'+T0+'/'+x.id]='P'});
  U['attendance/teachers/'+T0+'/'+id]=RC[nx];
  try{await upd(U)}catch(e){alert('হাজিরা সংরক্ষণ হয়নি: '+denied(e))}};
 /* রিয়েল-টাইম শোনা */
 let lastC='';function syncContacts(){if(role!=='admin'||!ready.T)return;const o={};teachers.forEach(x=>{if(x.id)o[x.id]={id:x.id,n:x.n||'',ph:x.ph||''}});const j=JSON.stringify(o);if(j===lastC)return;lastC=j;set(R('contacts/teachers'),Object.keys(o).length?o:null).catch(()=>{})}
-const go=()=>{try{syncContacts()}catch(e){}if(ready.S&&ready.T&&ready.A&&role){const m=document.getElementById('pwmd');if(m)m.remove();try{attachHW();attachRtn()}catch(e){}draw()}};
+const go=()=>{try{syncContacts()}catch(e){}if(ready.S&&ready.T&&ready.A&&role){const m=document.getElementById('pwmd');if(m)m.remove();hideLd();try{attachHW();attachRtn()}catch(e){}draw()}};
 function applyS(){students.forEach(s=>s.s=(at[T0]&&at[T0][s.id])||'Present');teachers.forEach(t=>t.s=(tat[T0]&&tat[T0][t.id])||'Present')}
 const one=(col,isOne)=>sn=>{const v=sn.val(),raw=!v?[]:(isOne?[v]:Object.values(v));last[col]={};
  const arr=raw.map(d=>{const c=fromDB(col,d);last[col][c.id]=sj(strip(c));return c}).sort((a,b)=>a.id<b.id?-1:1);
@@ -682,8 +719,9 @@ const one=(col,isOne)=>sn=>{const v=sn.val(),raw=!v?[]:(isOne?[v]:Object.values(
  applyS();go()};
 const onAt=sn=>{const v=sn.val()||{};at={};Object.keys(v).forEach(d=>{at[d]={};Object.keys(v[d]).forEach(id=>at[d][id]=CODE[v[d][id]]||'Present')});ready.A=1;applyS();go()};
 const onTat=sn=>{const v=sn.val()||{};tat={};Object.keys(v).forEach(d=>{tat[d]={};Object.keys(v[d]).forEach(id=>tat[d][id]=CODE[v[d][id]]||'Present')});applyS();go()};
-function listen(){queueMicrotask(listen2);queueMicrotask(listen3);const er=e=>{console.error(e);const x=document.getElementById('pwerr');if(x)x.textContent='ডেটা লোডে সমস্যা: '+(e.code||e.message)};
+function listen(){queueMicrotask(listen2);queueMicrotask(listen3);const er=e=>{console.error(e);hideLd();const x=document.getElementById('pwerr');if(x)x.textContent='ডেটা লোডে সমস্যা: '+(e.code||e.message)};
  const q=p=>query(R(p),orderByKey(),startAt(FROM)),on=(r,f)=>unsub.push(onValue(r,f,er));
+ if(role==='admin'||role==='teacher')unsub.push(onValue(R('attendance/lateMin/'+T0),sn=>{lm=sn.val()||{};if(tab==='catt')draw()},e=>console.error(e)));
  if(role==='guardian'){on(R('students/'+myChild),one('students',1));teachers=[];ready.T=1;
   on(q('attendance/byStudent/'+myChild),sn=>{const v=sn.val()||{};at={};Object.keys(v).forEach(d=>{at[d]={};at[d][myChild]=CODE[v[d]]||'Present'});ready.A=1;applyS();go()})}
  else{on(R('students'),one('students',0));on(q('attendance/students'),onAt)}
@@ -698,17 +736,18 @@ function listen(){queueMicrotask(listen2);queueMicrotask(listen3);const er=e=>{c
  if(role==='teacher'){on(R('teachers/'+myTeacher),sn=>{if(!tAll)one('teachers',1)(sn);applyTPerm()});
   on(R('teacherPerms/'+myTeacher),sn=>{const v=sn.val();if(v&&v.v2)tperm[myTeacher]=Object.keys(v).filter(k=>PKEYS.has(k));else delete tperm[myTeacher];tpOk=1;applyTPerm();redraw()})}
  on(R('config/classes'),sn=>{const l=sn.val()&&sn.val().list;if(l){classes=Array.isArray(l)?l:Object.values(l);if(ready.S&&ready.T&&ready.A&&role)draw()}})}
-function cleanup(){unsub.forEach(f=>f());unsub=[];tAll=0;tAtt=0;tEx=0;tpAll=0;tpOk=0;tperm={};ready.S=0;ready.T=0;ready.A=0;last.students={};last.teachers={};at={};tat={};students=[];teachers=[];fp=[];nlist=[];nlogL=[];nunread=0;nraw={};ngrp={};tFee=0;feeKnown.clear();ncfg=mergeCfg(null);ex=[];rs={};notices=[];hw={};hwAssign={};exKnown=new Set();nKnown=new Set();rsKnown={};hwKnown={};hwLogKnown={};rtn={};Object.keys(hwByClass).forEach(k=>delete hwByClass[k]);hwAtt.clear();rtnAtt.clear();role='';myChild='';myTeacher=''}
+let lm={};
+function cleanup(){lm={};unsub.forEach(f=>f());unsub=[];tAll=0;tAtt=0;tEx=0;tpAll=0;tpOk=0;tperm={};ready.S=0;ready.T=0;ready.A=0;last.students={};last.teachers={};at={};tat={};students=[];teachers=[];fp=[];nlist=[];nlogL=[];nunread=0;nraw={};ngrp={};tFee=0;feeKnown.clear();ncfg=mergeCfg(null);ex=[];rs={};notices=[];hw={};hwAssign={};exKnown=new Set();nKnown=new Set();rsKnown={};hwKnown={};hwLogKnown={};rtn={};Object.keys(hwByClass).forEach(k=>delete hwByClass[k]);hwAtt.clear();rtnAtt.clear();role='';myChild='';myTeacher=''}
 /* লগইন */
 window.pwGo=async function(r){const idv=document.getElementById('pwid').value,pw=document.getElementById('pwin').value,er=document.getElementById('pwerr');
- const bad=c=>{er.textContent='ভুল তথ্য, আবার চেষ্টা করুন'+(c?' ['+c+']':'');document.getElementById('pwin').value=''};
- if(!key(idv)||!pw){bad('খালি');return}er.textContent='যাচাই করা হচ্ছে...';
+ const bad=c=>{hideLd();er.textContent='ভুল তথ্য, আবার চেষ্টা করুন'+(c?' ['+c+']':'');document.getElementById('pwin').value=''};
+ if(!key(idv)||!pw){bad('খালি');return}er.textContent='';showLd();
  try{const ix=await tmo(get(R('loginIndex/'+key(idv))),25000,'লগইন তথ্য খোঁজা');if(!ix.exists()||ix.val().role!==r){bad(!ix.exists()?'ID পাওয়া যায়নি':'অন্য ধরনের অ্যাকাউন্ট');return}
-  er.textContent='পাসওয়ার্ড যাচাই হচ্ছে...';const cr=await tmo(signInWithEmailAndPassword(auth,ix.val().email,pw),25000,'পাসওয়ার্ড যাচাই');
-  er.textContent='অ্যাকাউন্ট দেখা হচ্ছে...';const u=await tmo(get(R('users/'+cr.user.uid)),25000,'অ্যাকাউন্ট তথ্য');if(!u.exists()||u.val().role!==r){await signOut(auth);bad('users রেকর্ড মেলেনি');return}{const lk=await licMsg(u.val());if(lk){await lockScr(lk);return}}
+  const cr=await tmo(signInWithEmailAndPassword(auth,ix.val().email,pw),25000,'পাসওয়ার্ড যাচাই');
+  const u=await tmo(get(R('users/'+cr.user.uid)),25000,'অ্যাকাউন্ট তথ্য');if(!u.exists()||u.val().role!==r){await signOut(auth);bad('users রেকর্ড মেলেনি');return}{const lk=await licMsg(u.val());if(lk){await lockScr(lk);return}}
   cleanup();role=r;myChild=r==='guardian'?u.val().ref:'';myTeacher=r==='teacher'?u.val().ref:'';tab=r==='guardian'?'child':'home';
-  er.textContent='ডেটা লোড হচ্ছে...';listen()
- }catch(e){er.textContent=(e.code==='auth/invalid-credential'||e.code==='auth/wrong-password'||e.code==='auth/user-not-found')?'ভুল তথ্য, আবার চেষ্টা করুন ['+e.code+']':'সমস্যা: '+(e.code||e.message)}};
+  listen()
+ }catch(e){hideLd();er.textContent=(e.code==='auth/invalid-credential'||e.code==='auth/wrong-password'||e.code==='auth/user-not-found')?'ভুল তথ্য, আবার চেষ্টা করুন ['+e.code+']':'সমস্যা: '+(e.code||e.message)}};
 /* প্রথম অ্যাডমিন তৈরি (একবারই) */
 const _login=window.login;
 function addSetup(){if(!needSetup)return;const r=document.querySelector('.roles');if(r)r.insertAdjacentHTML('beforeend','<button class="role" style="background:#5b6b7d" onclick="setupAdmin()"><div>প্রথম অ্যাডমিন তৈরি করুন<span>শুধু একবার — প্রথম চালুর সময়</span></div><i>›</i></button>')}
@@ -773,7 +812,7 @@ window.finalizeTeachers=async function(){if(!teachers.length)return;if(!confirm(
 async function notifyFee(p){const s=students.find(x=>x.id===p.sid);if(!s)return;const mo=BM[+String(p.m).slice(5)-1]||p.m,am=bn((+p.a).toLocaleString('en-US'));
  await deliver('fee','guardian',s,{studentName:s.n,month:mo,amount:am,feeType:p.t},'fee-'+p.id,{status:'Paid',amt:am,month:mo,feeType:p.t})}
 const btn='class="tile" style="background:var(--g);width:100%;margin-top:12px;padding:12px"';
-window.finBtn=()=>`<button ${btn} onclick="finalizeClass()">✅ হাজিরা সম্পন্ন করুন ও গার্জিয়ানদের জানান</button>`;
+window.finBtn=()=>`<button ${btn} onclick="finalizeClass()">✓ সকল হাজিরা সংরক্ষণ করুন</button>`;
 window.tfinBtn=()=>hasPerm('tatt_take')?`<button ${btn} onclick="finalizeTeachers()">✅ শিক্ষক হাজিরা সম্পন্ন করুন ও জানান</button>`:'';
 window.getUnread=()=>nunread;
 window.unreadBadge=()=>nunread>0?`<span style="position:absolute;top:-4px;right:-4px;background:#d6455d;color:#fff;border-radius:99px;font-size:10px;padding:1px 5px">${bn(nunread)}</span>`:'';
@@ -988,11 +1027,11 @@ window.lockOld=async function(){if(role!=='admin')return;try{const ex=(await get
  const n=Object.keys(U).length;if(!n){alert('নতুন লক দরকার নেই।');return}await upd(U);alert(bn(n)+'টি পুরোনো পেমেন্ট মাস লক হয়েছে।')}catch(e){alert('লক করা যায়নি: '+denied(e))}};
 const LM={exp:'আপনার মাদ্রাসার সফটওয়্যার ব্যবহারের মেয়াদ শেষ হয়েছে।<br>সফটওয়্যার প্রদানকারীর সাথে যোগাযোগ করুন।',sus:'আপনার মাদ্রাসার সফটওয়্যার Access বন্ধ করা হয়েছে।<br>সফটওয়্যার প্রদানকারীর সাথে যোগাযোগ করুন।'};
 async function licMsg(v){if(!v||v.mid!==MID)return 'এই অ্যাকাউন্ট এই মাদ্রাসার নয়। সঠিক মাদ্রাসার লিংক ব্যবহার করুন।';try{const l=(await get(R('licenses/'+MID))).val()||{};if(l.suspended===true)return LM.sus;const n=Date.now();if((l.trialEnd||0)>n||(l.subEnd||0)>n)return '';return LM.exp}catch(e){return LM.exp}}
-async function lockScr(m){try{await signOut(auth)}catch(e){}document.getElementById('app').innerHTML='<div class="login"><div class="brand"><h1>🔒</h1><p>'+m+'</p></div><button class="btn" onclick="location.reload()">আবার চেষ্টা করুন</button></div>'}
+async function lockScr(m){hideLd();try{await signOut(auth)}catch(e){}document.getElementById('app').innerHTML='<div class="login"><div class="brand"><h1>🔒</h1><p>'+m+'</p></div><button class="btn" onclick="location.reload()">আবার চেষ্টা করুন</button></div>'}
 async function resumeSession(user){try{const v=(await get(R('users/'+user.uid))).val();
  if(!v||!['admin','teacher','guardian'].includes(v.role)){await signOut(auth);return false}{const lk=await licMsg(v);if(lk){await lockScr(lk);return true}}
  cleanup();role=v.role;myChild=role==='guardian'?v.ref:'';myTeacher=role==='teacher'?v.ref:'';tab=role==='guardian'?'child':'home';
- app.innerHTML='<div class="login"><div class="brand"><h1>'+xe(profile.name||'Madrasa Management')+'</h1><p>ডেটা লোড হচ্ছে...</p></div></div>';listen();return true}catch(e){console.error(e);return false}}
+ app.innerHTML=ldHTML();listen();return true}catch(e){console.error(e);return false}}
 let firstAuth=true;
 onAuthStateChanged(auth,async user=>{if(!firstAuth)return;firstAuth=false;let ok=false;if(user)ok=await resumeSession(user);window.__authChecked=1;booting=false;if(!ok)paint()});
 setTimeout(()=>{if(booting&&!role){booting=false;window.__authChecked=1;paint()}},10000);

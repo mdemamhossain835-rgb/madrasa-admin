@@ -113,11 +113,18 @@ h3{font-size:16px;margin:14px 0 8px}
 .lgf input{flex:1;min-width:0;border:0;outline:0;background:transparent;padding:15px 0;font:inherit;font-size:15.5px;color:#16302a}
 .lgf button{padding:6px;display:flex}.lgf input:focus-visible{outline:0}
 .lgl{display:inline-block;color:#0b6b4a;font-weight:600;font-size:14.5px;padding:10px 0;text-decoration:none}
-.lgb{width:100%;display:flex;align-items:center;justify-content:center;gap:10px;background:#0b6b4a;color:#fff;border-radius:14px;padding:15px;font-size:18px;font-weight:700;margin-top:6px;box-shadow:0 6px 14px rgba(11,107,74,.3);transition:transform .1s,opacity .2s}
-.lgb:active{transform:scale(.98)}.lgb:disabled{opacity:.6}
+.lgbt{width:100%;display:flex;align-items:center;justify-content:center;gap:10px;background:#0b6b4a;color:#fff;border-radius:14px;padding:15px;font-size:18px;font-weight:700;margin-top:6px;box-shadow:0 6px 14px rgba(11,107,74,.3);transition:transform .1s,opacity .2s}
+.lgbt:active{transform:scale(.98)}.lgbt:disabled{opacity:.6}
 .lgor{display:flex;align-items:center;gap:12px;color:#7d8f89;font-size:13px;margin:16px 0 8px}.lgor:before,.lgor:after{content:"";flex:1;height:1px;background:#e1e9e5}
 .lgnote{background:#eaf6ef;color:#0a4d33;border-radius:12px;padding:10px 12px;font-size:13.5px;margin-top:12px;line-height:1.6}
 .lger{color:#b42323;font-size:13px;min-height:18px;margin-top:8px}
+
+/* ===== গ্রুপ করা হোম ও কমপ্যাক্ট নেভিগেশন ===== */
+.sec{margin:18px 4px 0;font-weight:700;font-size:15px;color:var(--ink)}
+.sec+.grid{margin-top:8px}
+#mnu .sec{margin:14px 2px 6px;font-size:13px;color:var(--mute)}
+.nav.cp button{padding:8px 0 6px;font-size:10px;min-width:0;white-space:nowrap;overflow:hidden}
+.nav.cp b{font-size:18px}
 </style>
 </head>
 <body>
@@ -138,8 +145,8 @@ let profile=_ld('mm_profile',{name:'Madrasa Management',addr:'',est:''});
 const DEV={n:'Md Emam Hossain',em:'mdemamhossain835@gmail.com',fb:'https://www.facebook.com/share/1E7fB265YK/'};
 let role='',tab='home',q='';
 function login(){
- const sub=profile.addr||profile.est?[profile.addr,profile.est?'প্রতিষ্ঠা: '+profile.est:''].filter(Boolean).join(' • '):'শিক্ষা • শৃঙ্খলা • নৈতিকতা';
- app.innerHTML=`<div class="login"><div class="brand">${profile.logo?`<img src="${profile.logo}" style="width:64px;height:64px;border-radius:50%;object-fit:cover;margin-bottom:8px">`:''}<div class="ar">وَمَا تَوْفِيقِي إِلَّا بِاللَّهِ</div><h1>${profile.name||'Madrasa Management'}</h1><p>${sub}</p></div>
+ const sub='শিক্ষা • শৃঙ্খলা • নৈতিকতা';
+ app.innerHTML=`<div class="login"><div class="brand"><div class="ar">وَمَا تَوْفِيقِي إِلَّا بِاللَّهِ</div><h1>Madrasa Management</h1><p>${sub}</p></div>
  <div class="roles"><h2>স্বাগতম</h2><small>আপনার অ্যাকাউন্ট দিয়ে লগইন করুন</small>
  ${[['admin','Admin Login','প্রশাসন','#0b6b4a'],['teacher','Teacher Login','শিক্ষক','#1f6fe0'],['guardian','Guardian Login','অভিভাবক','#e8891a']].map(r=>`<button class="role" style="background:${r[3]}" onclick="go('${r[0]}')"><div>${r[1]}<span>(${r[2]})</span></div><i>›</i></button>`).join('')}
  </div></div>`}
@@ -151,16 +158,35 @@ function shell(title,body,back){
  <nav class="nav">${tabs.map(t=>`<button class="${tab===t[0]?'on':''}" onclick="${t[0]==='out'?'login()':`tab='${t[0]}';draw()`}"><b>${t[1]}</b>${t[2]}</button>`).join('')}</nav>`}
 function draw(){
  if(tab==='home')home();else if(tab==='students')stu();else if(tab==='fees')fees();else child()}
-function home(){
- let t=[['🎓','Student','ছাত্র ব্যবস্থাপনা','#0b6b4a','students'],['👨‍🏫','Teacher','শিক্ষক ব্যবস্থাপনা','#1f6fe0','teachers'],['✅','Attendance','উপস্থিতি','#7a3fc4','catt'],['৳','Fees','ফি ও হিসাব','#e8891a','fees'],['📝','Result','ফলাফল','#128a94','res'],['📢','Notice','নোটিস','#d6455d','notices'],['📊','Reports','রিপোর্ট','#1f86d6','rep'],['⚙️','Settings','সেটিংস','#5b6b7d','set']];
+/* ===== নেভিগেশন মডেল: Home ও ☰ মেনু একই তালিকা/একই ফাংশন ব্যবহার করে ===== */
+function homeList(){
+  let t=[['🎓','Student','ছাত্র ব্যবস্থাপনা','#0b6b4a','students'],['👨‍🏫','Teacher','শিক্ষক ব্যবস্থাপনা','#1f6fe0','teachers'],['✅','Attendance','উপস্থিতি','#7a3fc4','catt'],['৳','Fees','ফি ও হিসাব','#e8891a','fees'],['📝','Result','ফলাফল','#128a94','res'],['📢','Notice','নোটিস','#d6455d','notices'],['📊','Reports','রিপোর্ট','#1f86d6','rep'],['⚙️','Settings','সেটিংস','#5b6b7d','set']];
  if(role==='teacher')t=t.filter(x=>tabOK(x[4]));
  if(role!=='teacher'||hasPerm('rtn_view'))t.push(['🗓️','Routine','ক্লাস রুটিন','#1f6fe0','rtnv']);
  if(role==='teacher'){t.push(['🔔','Notifications','নোটিফিকেশন','#d6455d','notif']);if(tabOK('nann'))t.push(['📣','Send','নোটিফিকেশন পাঠান','#0b6b4a','nann'],['🗂️','History','পাঠানো নোটিফিকেশন','#5b6b7d','nlog']);if(hasPerm('cls_view'))t.push(['🏫','Class','ক্লাস','#1f6fe0','classes']);if(hasPerm('sub_view'))t.push(['📘','Subject','বিষয়','#128a94','subj'])}
  if(role==='teacher')t.push(['📚','Homework','আজকের হোমওয়ার্ক দিন','#8a3fc4','hwSet']);
  if(role==='admin')t.push(['📚','Homework','ক্লাসের হোমওয়ার্ক দেখুন','#8a3fc4','hwSet']);
+ if(role==='admin'||(role==='teacher'&&hasPerm('ph_hist')))t.push(['🕌','History','নামাজ ও হোমওয়ার্ক ইতিহাস','#0b6b4a','hhist']);
+ return t}
+const NAVG={
+ admin:[['📚 ছাত্র ও শিক্ষক',['students','teachers']],['📋 দৈনন্দিন কাজ',['catt','fees']],['📖 একাডেমিক',['rtnv','hwSet','res','hhist']],['📢 যোগাযোগ',['notices']],['📊 বিশ্লেষণ ও সিস্টেম',['rep','set']]],
+ teacher:[['📋 দৈনন্দিন কাজ',['catt','hwSet','fees']],['📚 একাডেমিক',['rtnv','students','teachers','res','classes','subj']],['📢 যোগাযোগ',['notif','nann','nlog','notices']],['📊 ইতিহাস ও রিপোর্ট',['hhist','rep','set']]]};
+function groupTiles(t){const defs=NAVG[role]||[],used=new Set(),out=[];
+ defs.forEach(d=>{const it=d[1].map(k=>t.find(x=>x[4]===k)).filter(Boolean);it.forEach(x=>used.add(x));if(it.length)out.push([d[0],it])});
+ const rest=t.filter(x=>!used.has(x));if(rest.length)out.push(['🧩 অন্যান্য',rest]);return out}
+function tileH(x){return `<button class="tile" style="background:${x[3]}" onclick="${x[4]?`tab='${x[4]}';draw()`:`alert('${x[2]} পেজ পরের ধাপে তৈরি হবে')`}"><b>${x[0]}</b>${x[1]}${x[2]==='Notif'&&typeof getUnread==='function'&&getUnread()?' ('+bn(getUnread())+')':''}<span>${x[2]}</span></button>`}
+function secsH(g){return g.map(s=>`<div class="sec">${s[0]}</div><div class="grid">${s[1].map(tileH).join('')}</div>`).join('')}
+function navTabs(){
+ if(role==='guardian')return [['child','👦','সন্তান'],['notices','📢','নোটিস'],['fees','৳','ফি'],['contact','☎️','যোগাযোগ']];
+ if(role==='teacher'){const T=[['home','🏠','হোম']];if(tabOK('students'))T.push(['students','🎓','ছাত্র']);if(tabOK('catt'))T.push(['catt','✅','হাজিরা']);T.push(['hwSet','📚','হোমওয়ার্ক']);if(hasPerm('ph_hist'))T.push(['hhist','🕌','ইতিহাস']);T.push(['notif','🔔','নোটিফিকেশন']);return T}
+ return [['home','🏠','হোম'],['students','🎓','ছাত্র'],['teachers','👨‍🏫','শিক্ষক'],['fees','৳','ফি'],['rep','📊','রিপোর্ট'],['set','⚙️','সেটিংস']]}
+function guardGroups(){const it={Attendance:['✅','উপস্থিতি','Attendance','#7a3fc4'],HW:['🕌','নামাজ ও হোমওয়ার্ক','HW','#0b6b4a'],Fees:['৳','ফি ও বকেয়া','Fees','#e8891a'],Result:['📝','ফলাফল','Result','#128a94'],Routine:['📅','ক্লাস রুটিন','Routine','#1f6fe0'],Notice:['📢','নোটিস','Notice','#d6455d'],Contact:['☎️','যোগাযোগ','Contact','#5b6b7d'],Notif:['🔔','নোটিফিকেশন','Notif','#d6455d']};
+ return [['👦 সন্তান',['Attendance']],['📚 একাডেমিক',['Routine','HW','Result']],['💰 ফি ও পেমেন্ট',['Fees']],['📢 যোগাযোগ',['Notice','Contact','Notif']]].map(g=>[g[0],g[1].map(k=>it[k])])}
+function home(){
+ const t=homeList();
  const who=role==='teacher'&&myTeacher?(teachers.find(t=>t.id===myTeacher)||{}).n||'শিক্ষক':role==='admin'?(adminInfo.n||'Admin'):'Admin';
  shell(profile.name||'Madrasa Management',`<div class="hello" ${role==='admin'?'style="cursor:pointer" onclick="tab=\'aprof\';draw()"':''}><div class="av">${role==='admin'?avHTML(adminPic,'অ'):avHTML((teachers.find(t=>t.id===myTeacher)||{}).photo,'শ')}</div><div><b>আসসালামু আলাইকুম</b><br>${who}<br><small style="color:var(--mute)">আপনি ${role==='admin'?'এডমিন':'শিক্ষক'} প্যানেলে আছেন</small></div></div>
- <div class="grid">${t.map(x=>`<button class="tile" style="background:${x[3]}" onclick="${x[4]?`tab='${x[4]}';draw()`:`alert('${x[2]} পেজ পরের ধাপে তৈরি হবে')`}"><b>${x[0]}</b>${x[1]}${x[2]==='Notif'&&typeof getUnread==='function'&&getUnread()?' ('+bn(getUnread())+')':''}<span>${x[2]}</span></button>`).join('')}</div>
+ ${secsH(groupTiles(t))}
  <button class="strip" style="width:100%;border:0" onclick="devShow()">👨‍💻 ডেভেলপার সম্পর্কে তথ্য</button>`)}
 function stu(){
  const list=students.filter(s=>(s.n+s.id+s.r).includes(q));
@@ -176,14 +202,13 @@ function fees(){
  <div class="act">${[['➕','ফি যোগ'],['💳','পরিশোধ'],['📄','বকেয়া তালিকা'],['🧾','রসিদ'],['📈','আয়'],['📉','ব্যয়']].map(a=>`<button onclick="alert('${a[1]} পরের ধাপে তৈরি হবে')"><b>${a[0]}</b>${a[1]}</button>`).join('')}</div>
  <h3>সাম্প্রতিক পেমেন্ট</h3>${pays.map(p=>`<div class="row"><div class="av">${p[0][0]}</div><div class="info"><b>${p[0]}</b><small>৳ ১,০০০ • ${p[1]}</small></div><span class="chip Paid">পরিশোধিত</span></div>`).join('')}`,role==='admin'||role==='teacher'?'home':'')}
 function child(){const s=stu_(myChild);
- const items=[['✅','উপস্থিতি','Attendance','#7a3fc4'],['🕌','নামাজ ও হোমওয়ার্ক','HW','#0b6b4a'],['৳','ফি ও বকেয়া','Fees','#e8891a'],['📝','ফলাফল','Result','#128a94'],['📅','ক্লাস রুটিন','Routine','#1f6fe0'],['📢','নোটিস','Notice','#d6455d'],['☎️','যোগাযোগ','Contact','#5b6b7d'],['🔔','নোটিফিকেশন','Notif','#d6455d'],['👤','প্রোফাইল','Profile','#7a3fc4']];
  shell('আমার সন্তান',`<div class="hello"><div class="av">${avHTML(s.photo,(s.n||'?')[0])}</div><div><b>${s.n}</b><br><small style="color:var(--mute)">ID: ${myChild} | রোল: ${bn(s.r)}<br>ক্লাস: ${s.c||'—'}</small></div></div>
- <div class="grid">${items.map(x=>`<button class="tile" style="background:${x[3]}" onclick="${LK[x[2]]?`${LK[x[2]]};draw()`:`alert('${x[1]} পরের ধাপে তৈরি হবে')`}"><b>${x[0]}</b>${x[1]}${x[2]==='Notif'&&typeof getUnread==='function'&&getUnread()?' ('+bn(getUnread())+')':''}<span>${x[2]}</span></button>`).join('')}</div>
+ ${guardGroups().map(g=>`<div class="sec">${g[0]}</div><div class="grid">${g[1].map(x=>`<button class="tile" style="background:${x[3]}" onclick="${LK[x[2]]?`${LK[x[2]]};draw()`:`alert('${x[1]} পরের ধাপে তৈরি হবে')`}"><b>${x[0]}</b>${x[1]}${x[2]==='Notif'&&typeof getUnread==='function'&&getUnread()?' ('+bn(getUnread())+')':''}<span>${x[2]}</span></button>`).join('')}</div>`).join('')}
  <button class="strip" style="width:100%;border:0;margin-top:14px" onclick="devShow()">👨‍💻 ডেভেলপার সম্পর্কে তথ্য</button>`)}
 function tglHTML(on,fn,extra){return '<button type="button" class="tgl'+(on?' on':'')+'" role="switch" aria-checked="'+(on?'true':'false')+'" '+(extra||'')+' onclick="tglGo(this,function(){'+fn+'})"></button>'}
 function tglGo(el,f){if(el.dataset.b)return;el.dataset.b='1';const was=el.classList.contains('on');el.classList.toggle('on',!was);el.setAttribute('aria-checked',String(!was));
  setTimeout(function(){try{f()}catch(e){console.error(e)}setTimeout(function(){if(el.isConnected){el.classList.toggle('on',was);el.setAttribute('aria-checked',String(was));delete el.dataset.b}},80)},180)}
-function ldHTML(){const lg=profile&&profile.logo&&/^(data:image|https?:)/.test(profile.logo)?'<img src="'+profile.logo+'" alt="">':'🕌';return '<div class="ldw"><div class="ldb"><span class="ldr"></span><span class="ldr2"></span><div class="ldl">'+lg+'</div></div><div class="ldd"><b></b><b></b><b></b></div></div>'}
+function ldHTML(){const lg=role&&profile&&profile.logo&&/^(data:image|https?:)/.test(profile.logo)?'<img src="'+profile.logo+'" alt="">':'🕌';return '<div class="ldw"><div class="ldb"><span class="ldr"></span><span class="ldr2"></span><div class="ldl">'+lg+'</div></div><div class="ldd"><b></b><b></b><b></b></div></div>'}
 function hideLd(){clearTimeout(window.__ldT);const d=document.getElementById('ldo');if(d)d.remove()}
 function showLd(){if(document.getElementById('ldo'))return;const d=document.createElement('div');d.id='ldo';d.className='ldo';d.innerHTML=ldHTML();document.body.appendChild(d);clearTimeout(window.__ldT);window.__ldT=setTimeout(hideLd,45000)}
 app.innerHTML=ldHTML();
@@ -204,20 +229,24 @@ function cl(){const m=document.getElementById('md');if(m)m.remove()}
 function sv(){const o={};document.querySelectorAll('#md input,#md select').forEach(i=>{o[i.name]=i.type==='checkbox'?i.checked:i.value.trim()});if(!o.n){alert('নাম লিখুন');return}const perm=[];Object.keys(o).forEach(k=>{if(k.indexOf('perm_')===0){if(o[k])perm.push(k.slice(5));delete o[k]}});if(perm.length||document.getElementById('md').querySelector('[name^="perm_"]'))o.perm=perm;cl();fh(o)}
 function shell(title,body,back,plus){
  plus=plus||(title==='Student Management'&&role==='admin'?'addS()':'');
- const tabs=role==='guardian'?[['child','👦','সন্তান'],['notices','📢','নোটিস'],['fees','৳','ফি']]:role==='teacher'?[['home','🏠','হোম'],['students','🎓','ছাত্র'],['notices','📢','নোটিস']]:[['home','🏠','হোম'],['students','🎓','ছাত্র'],['teachers','👨‍🏫','শিক্ষক'],['fees','৳','ফি']];
+ const tabs=navTabs();
   app.innerHTML=`<div class="top">${back?`<button aria-label="ফিরে যান" onclick="tab='${back}';draw()">←</button>`:'<button aria-label="মেনু" onclick="openMenu()">☰</button>'}<h1>${title}</h1>${plus?`<button aria-label="নতুন যোগ করুন" onclick="${plus}">＋</button>`:''}<button aria-label="নোটিফিকেশন" style="position:relative" onclick="tab=(role==='admin'?'notices':'notif');draw()">🔔${typeof unreadBadge==='function'?unreadBadge():''}</button></div><main>${body}</main>
- <nav class="nav">${tabs.map(t=>`<button class="${tab===t[0]?'on':''}" onclick="${t[0]==='out'?'login()':`tab='${t[0]}';draw()`}"><b>${t[1]}</b>${t[2]}</button>`).join('')}</nav>`}
+ <nav class="nav${tabs.length>4?' cp':''}">${tabs.map(t=>`<button class="${tab===t[0]?'on':''}" onclick="${t[0]==='out'?'login()':`tab='${t[0]}';draw()`}"><b>${t[1]}</b>${t[2]}</button>`).join('')}</nav>`}
 function closeMenu(){const m=document.getElementById('mnu');if(m)m.remove()}
 function mgo(t,c){closeMenu();if(c)cur=c;tab=t;draw()}
 function doLogout(){closeMenu();login()}
 function openMenu(){closeMenu();
  const who=role==='admin'?(adminInfo.n||'Admin'):role==='teacher'?((teachers.find(t=>t.id===myTeacher)||{}).n||'শিক্ষক'):((students.find(s=>s.id===myChild)||{}).n||'অভিভাবক');
- const rl=role==='admin'?'এডমিন':role==='teacher'?'শিক্ষক':'অভিভাবক',it=[];
- if(role==='admin')it.push(['👤','প্রোফাইল / অ্যাকাউন্ট',"mgo('aprof')"],['⚙️','সেটিংস',"mgo('set')"]);
- if(role==='guardian')it.push(['👤','প্রোফাইল / অ্যাকাউন্ট',"mgo('prof','"+esc(myChild)+"')"]);
- it.push(['🔔','নোটিফিকেশন',"mgo('"+(role==='admin'?'notices':'notif')+"')"],['⎋','লগআউট','doLogout()']);
+ const rl=role==='admin'?'এডমিন':role==='teacher'?'শিক্ষক':'অভিভাবক';
+ const li=(ic,tx,fn)=>`<button class="link" style="width:100%" onclick="${fn}"><span>${ic} ${tx}</span>›</button>`;
+ let h='';
+ if(role==='admin')h+=`<div class="sec" style="margin-top:4px">👤 অ্যাকাউন্ট</div>`+li('👤','প্রোফাইল / অ্যাকাউন্ট',"mgo('aprof')");
+ if(role==='guardian')h+=`<div class="sec" style="margin-top:4px">👤 অ্যাকাউন্ট</div>`+li('👤','প্রোফাইল / অ্যাকাউন্ট',"mgo('prof','"+esc(myChild)+"')");
+ if(role==='guardian')guardGroups().forEach(g=>{h+=`<div class="sec">${g[0]}</div>`+g[1].map(x=>li(x[0],x[1],"closeMenu();"+(LK[x[2]]||"tab='home'")+";draw()")).join('')});
+ else groupTiles(homeList()).forEach(g=>{h+=`<div class="sec">${g[0]}</div>`+g[1].map(x=>li(x[0],x[2]&&/[\u0980-\u09FF]/.test(x[2])?x[2]:x[1],"mgo('"+x[4]+"')")).join('')});
+ h+=`<div style="height:10px"></div>`+li('⎋','লগআউট','doLogout()');
  const d=document.createElement('div');d.id='mnu';d.style.cssText='position:fixed;inset:0;background:#0009;z-index:30';d.onclick=closeMenu;
- d.innerHTML=`<div onclick="event.stopPropagation()" style="background:var(--card);width:78%;max-width:320px;height:100%;padding:18px;overflow:auto"><div style="margin-bottom:14px"><b>${xe0(who)}</b><br><small style="color:var(--mute)">${rl}</small></div>${it.map(x=>`<button class="link" style="width:100%" onclick="${x[2]}"><span>${x[0]} ${x[1]}</span>›</button>`).join('')}</div>`;
+ d.innerHTML=`<div onclick="event.stopPropagation()" style="background:var(--card);width:80%;max-width:330px;height:100%;padding:18px;overflow:auto"><div style="margin-bottom:6px"><b>${xe0(who)}</b><br><small style="color:var(--mute)">${rl}</small></div>${h}</div>`;
  document.body.appendChild(d)}
 const xe0=t=>String(t==null?'':t).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 function draw(){({home:home,students:stu,teachers:teachV,fees:fees,notices:noteV,prof:profV,child:child}[tab]||home)()}
@@ -618,7 +647,7 @@ window.hhExpire=async function(){const f=hhFrom();try{
  if(role==='admin'||role==='teacher'){const v=(await get(query(R('homeLog'),orderByKey(),endAt(dayAdd(f,-1))))).val()||{},U={};Object.keys(v).forEach(d=>{U['homeLog/'+d]=null});if(Object.keys(U).length)await upd(U)}
  else if(role==='guardian'&&myChild){const U={};for(let i=1;i<=7;i++)U['homeLog/'+dayAdd(f,-i)+'/'+myChild]=null;await upd(U)}
 }catch(e){console.warn('hhExpire',e)}};
-const _home=home;window.home=function(){_home();if(role==='admin'||(role==='teacher'&&hasPerm('ph_hist'))){const g=document.querySelector('#app .grid');if(g)g.insertAdjacentHTML('beforeend','<button class="tile" style="background:#0b6b4a" onclick="tab=\'hhist\';draw()"><b>🕌</b>History<span>নামাজ ও হোমওয়ার্ক ইতিহাস</span></button>')}};
+const _home=home;window.home=function(){_home()};
 const _dr=draw;window.draw=function(){if(tab==='hhist'){if(role==='admin'||(role==='teacher'&&hasPerm('ph_hist')))return hhV();tab=role==='guardian'?'child':'home'}_dr()};
 /* গার্জিয়ান: সব শিক্ষকের নম্বরে যোগাযোগ */
 window.contactV=function(){const T=(window.contactT||[]).filter(t=>t.ph);window.contactTF=T;
@@ -786,7 +815,7 @@ const one=(col,isOne)=>sn=>{const v=sn.val(),raw=!v?[]:(isOne?[v]:Object.values(
  applyS();go()};
 const onAt=sn=>{const v=sn.val()||{};at={};Object.keys(v).forEach(d=>{at[d]={};Object.keys(v[d]).forEach(id=>at[d][id]=CODE[v[d][id]]||'Present')});ready.A=1;applyS();go()};
 const onTat=sn=>{const v=sn.val()||{};tat={};Object.keys(v).forEach(d=>{tat[d]={};Object.keys(v[d]).forEach(id=>tat[d][id]=CODE[v[d][id]]||'Present')});applyS();go()};
-function listen(){queueMicrotask(listen2);queueMicrotask(listen3);const er=e=>{console.error(e);hideLd();const x=document.getElementById('pwerr');if(x)x.textContent='ডেটা লোডে সমস্যা: '+(e.code||e.message)};
+function listen(){try{localStorage.removeItem(LKK)}catch(e){}queueMicrotask(listen2);queueMicrotask(listen3);const er=e=>{console.error(e);hideLd();const x=document.getElementById('pwerr');if(x)x.textContent='ডেটা লোডে সমস্যা: '+(e.code||e.message)};
  const q=p=>query(R(p),orderByKey(),startAt(FROM)),on=(r,f)=>unsub.push(onValue(r,f,er));
  if(role==='admin'||role==='teacher')unsub.push(onValue(R('attendance/lateMin/'+T0),sn=>{lm=sn.val()||{};if(tab==='catt')draw()},e=>console.error(e)));
  if(role==='guardian'){on(R('students/'+myChild),one('students',1));teachers=[];ready.T=1;
@@ -822,22 +851,22 @@ const lgF=(id,ic,ph,t,x)=>`<div class="lgf">${LGI[ic]}<input id="${id}" type="${
 const lgPw=(id,ph,x)=>`<div class="lgf">${LGI.l}<input id="${id}" type="password" placeholder="${ph}" ${x||''}><button type="button" aria-label="দেখান/লুকান" onclick="lgEye('${id}',this)">${LGI.e}</button></div>`;
 window.lgEye=(id,b)=>{const i=document.getElementById(id);i.type=i.type==='password'?'text':'password';b.style.opacity=i.type==='password'?1:.5};
 function lgPage(id,inner,onBack){document.querySelectorAll('.lgp#'+id).forEach(x=>x.remove());const d=document.createElement('div');d.id=id;d.className='lgp';
- const sub=profile.addr||profile.est?[profile.addr,profile.est?'প্রতিষ্ঠা: '+profile.est:''].filter(Boolean).join(' • '):'শিক্ষা • শৃঙ্খলা • নৈতিকতা';
- d.innerHTML=`<div class="in">${MQ}<button class="bk" aria-label="ফিরে যান" onclick="${onBack}">←</button><div class="hd"><div class="ar">وَمَا تَوْفِيقِي إِلَّا بِاللَّهِ</div><h1>${xe(profile.name||'Madrasa Management')}</h1><div class="sb">${xe(sub)}</div></div>${inner}</div>`;document.body.appendChild(d);d.scrollTop=0;return d}
+ const sub='শিক্ষা • শৃঙ্খলা • নৈতিকতা';
+ d.innerHTML=`<div class="in">${MQ}<button class="bk" aria-label="ফিরে যান" onclick="${onBack}">←</button><div class="hd"><div class="ar">وَمَا تَوْفِيقِي إِلَّا بِاللَّهِ</div><h1>Madrasa Management</h1><div class="sb">${xe(sub)}</div></div>${inner}</div>`;document.body.appendChild(d);d.scrollTop=0;return d}
 const lgClose=id=>{const d=document.getElementById(id);if(d)d.remove()};
 window.pwAsk=function(r){
  const cfg={admin:{t:'Admin',l:'মোবাইল নম্বর বা জিমেইল',hint:'অ্যাডমিনের সেট করা পাসওয়ার্ড দিন'},teacher:{t:'Teacher',l:'মোবাইল নম্বর বা জিমেইল',hint:'ভর্তির সময় অ্যাডমিনের দেওয়া পাসওয়ার্ড দিন'},guardian:{t:'Guardian',l:'ছাত্রের আইডি অথবা আপনার মোবাইল নম্বর',hint:'ভর্তির সময় অ্যাডমিনের দেওয়া পাসওয়ার্ড দিন'}}[r];
  const adm=r==='admin';
  const d=lgPage('pwmd',`<div class="lgc"><h2>${cfg.t} লগইন</h2><p class="s">${cfg.l} ও পাসওয়ার্ড দিন</p>${lgF('pwid','u',cfg.l)}${lgPw('pwin','পাসওয়ার্ড',`onkeydown="if(event.key==='Enter')pwGo('${r}')"`)}<div id="pwerr" class="lger"></div>
  <a class="lgl" href="javascript:void(0)" onclick="${adm?'lgForgot()':"lgHelp(this)"}">আপনার পাসওয়ার্ড ভুলে গেছেন?</a><div class="lgnote" id="lghelp" style="display:none">পাসওয়ার্ড বদলাতে মাদ্রাসার অ্যাডমিনের সাথে যোগাযোগ করুন।</div>
- <button class="lgb" onclick="pwGo('${r}')">${LGI.i.replace('<svg','<svg style="width:22px;height:22px;stroke:#fff;fill:none;stroke-width:2"')} লগইন</button>
+ <button class="lgbt" onclick="pwGo('${r}')">${LGI.i.replace('<svg','<svg style="width:22px;height:22px;stroke:#fff;fill:none;stroke-width:2"')} লগইন</button>
  ${adm?`<div class="lgor">অথবা</div><div style="font-weight:600">একটি অ্যাকাউন্ট নেই?</div><a class="lgl" href="javascript:void(0)" onclick="lgReg()" style="padding-top:2px">নিবন্ধন করুন</a>`:''}
  <p style="font-size:13px;color:#7d8f89;margin-top:14px">${cfg.hint}</p></div>`,"lgClose('pwmd')");
  setTimeout(()=>document.getElementById('pwid').focus(),60)};
 window.lgHelp=()=>{const n=document.getElementById('lghelp');n.style.display=n.style.display==='none'?'block':'none'};
 const lgContact=()=>`<div class="lgnote" style="background:#f4f7f5;color:#16302a"><b>ডেভেলপারের সাথে যোগাযোগ</b><br>${xe(DEV.n)}<br><a class="lgl" style="padding:4px 0" href="mailto:${DEV.em}">${DEV.em}</a><br><a class="lgl" style="padding:4px 0" href="${DEV.fb}" target="_blank" rel="noopener">ফেসবুকে মেসেজ করুন</a></div>`;
 const maskEm=e=>{const p=String(e).split('@');return (p[0].slice(0,2)||'')+'***@'+(p[1]||'')};
-window.lgForgot=function(){lgPage('fgmd',`<div class="lgc"><h2>পাসওয়ার্ড রিসেট</h2><p class="s">অ্যাডমিনের ইমেইল বা মোবাইল নম্বর দিন। ইমেইলে নতুন পাসওয়ার্ড সেট করার লিংক যাবে।</p>${lgF('fgid','m','ইমেইল বা মোবাইল নম্বর')}<div id="fger" class="lger"></div><button class="lgb" id="fgbtn" onclick="lgReset()">রিসেট লিংক পাঠান</button><p style="font-size:13px;color:#7d8f89;margin-top:12px">ইমেইল না পেলে স্প্যাম ফোল্ডার দেখুন। তবুও না পেলে বা ইমেইল ব্যবহার না করলে নিচের ঠিকানায় যোগাযোগ করুন — পুরনো পাসওয়ার্ড ছাড়াই নতুন পাসওয়ার্ড সেট করে দেওয়া হবে।</p>${lgContact()}</div>`,"lgClose('fgmd')")};
+window.lgForgot=function(){lgPage('fgmd',`<div class="lgc"><h2>পাসওয়ার্ড রিসেট</h2><p class="s">অ্যাডমিনের ইমেইল বা মোবাইল নম্বর দিন। ইমেইলে নতুন পাসওয়ার্ড সেট করার লিংক যাবে।</p>${lgF('fgid','m','ইমেইল বা মোবাইল নম্বর')}<div id="fger" class="lger"></div><button class="lgbt" id="fgbtn" onclick="lgReset()">রিসেট লিংক পাঠান</button><p style="font-size:13px;color:#7d8f89;margin-top:12px">ইমেইল না পেলে স্প্যাম ফোল্ডার দেখুন। তবুও না পেলে বা ইমেইল ব্যবহার না করলে নিচের ঠিকানায় যোগাযোগ করুন — পুরনো পাসওয়ার্ড ছাড়াই নতুন পাসওয়ার্ড সেট করে দেওয়া হবে।</p>${lgContact()}</div>`,"lgClose('fgmd')")};
 window.lgReset=async function(){const v=document.getElementById('fgid').value.trim(),er=document.getElementById('fger');er.style.color='#b42323';
  if(!v){er.textContent='ইমেইল বা মোবাইল নম্বর দিন';return}
  const b=document.getElementById('fgbtn');b.disabled=true;showLd();
@@ -848,7 +877,7 @@ window.lgReset=async function(){const v=document.getElementById('fgid').value.tr
  }catch(e){hideLd();b.disabled=false;er.textContent=e.code==='auth/too-many-requests'?'অনেকবার চেষ্টা হয়েছে। কিছুক্ষণ পরে আবার চেষ্টা করুন।':e.code==='auth/invalid-email'?'ইমেইল সঠিক নয়':'সমস্যা: '+(e.code||e.message)}};
 window.lgReg=function(){lgPage('rgmd',`<div class="lgc"><h2>নতুন মাদ্রাসা নিবন্ধন</h2><p class="s">আপনার মাদ্রাসার অ্যাডমিন অ্যাকাউন্ট তৈরি করুন</p>
  ${lgF('rgn','b','মাদ্রাসার নাম')}${lgF('rga','b','ঠিকানা (ঐচ্ছিক)')}${lgF('rgan','u','অ্যাডমিনের নাম')}${lgF('rgph','p','মোবাইল নম্বর','tel')}${lgF('rgem','m','জিমেইল / ইমেইল','email','autocapitalize="none"')}${lgPw('rgpw','পাসওয়ার্ড (কমপক্ষে ৬ অক্ষর)')}${lgPw('rgpw2','পাসওয়ার্ড আবার দিন')}
- <div class="lgnote">🎁 নিবন্ধনের পর <b>১৫ দিন ফ্রি ট্রায়াল</b>। এরপর মাসিক ৩০০ টাকার প্ল্যান।</div><div id="rger" class="lger"></div><button class="lgb" id="rgbtn" onclick="lgRegGo()">নিবন্ধন করুন</button></div>`,"lgClose('rgmd')")};
+ <div class="lgnote">🎁 নিবন্ধনের পর <b>১৫ দিন ফ্রি ট্রায়াল</b>। এরপর মাসিক ৩০০ টাকার প্ল্যান।</div><div id="rger" class="lger"></div><button class="lgbt" id="rgbtn" onclick="lgRegGo()">নিবন্ধন করুন</button></div>`,"lgClose('rgmd')")};
 window.lgRegGo=async function(){const g=id=>document.getElementById(id).value.trim(),er=document.getElementById('rger'),btn=document.getElementById('rgbtn'),bad=m=>{er.textContent=m};
  const n=g('rgn'),ad=g('rga'),an=g('rgan'),ph=g('rgph'),em=g('rgem').toLowerCase(),pw=document.getElementById('rgpw').value,pw2=document.getElementById('rgpw2').value,pk=key(ph);
  er.textContent='';if(!n)return bad('মাদ্রাসার নাম দিন');if(!an)return bad('অ্যাডমিনের নাম দিন');if(!/^[0-9]{10,14}$/.test(pk))return bad('সঠিক মোবাইল নম্বর দিন');if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(em))return bad('সঠিক ইমেইল দিন');if(pw.length<6)return bad('পাসওয়ার্ড কমপক্ষে ৬ অক্ষরের হতে হবে');if(pw!==pw2)return bad('দুই পাসওয়ার্ড মেলেনি');
@@ -863,7 +892,7 @@ window.lgRegGo=async function(){const g=id=>document.getElementById(id).value.tr
   [em,ph].forEach(i=>{const k=key(i);if(k)U['madrasas/'+mid+'/loginIndex/'+k]={email:em,role:'admin'}});await update(ref(db),U);
   try{localStorage.setItem('mid',mid)}catch(e){}hideLd();
   const link=location.origin+location.pathname+'?m='+mid;
-  lgPage('rgmd',`<div class="lgc" style="text-align:center"><div style="font-size:46px">🎉</div><h2>নিবন্ধন সফল!</h2><p class="s">${xe(n)} — ১৫ দিনের ফ্রি ট্রায়াল শুরু হয়েছে।</p><div class="lgnote" style="text-align:left">আপনার মাদ্রাসার লিংক (শিক্ষক ও অভিভাবকদের দিন):<br><b style="word-break:break-all;font-size:12.5px">${xe(link)}</b></div><button class="lgb" style="background:#5b6b7d" onclick="navigator.clipboard&&navigator.clipboard.writeText('${link}');this.textContent='কপি হয়েছে ✓'">লিংক কপি করুন</button><button class="lgb" onclick="location.href='${link}'">অ্যাপে প্রবেশ করুন</button></div>`,"location.href='"+link+"'")
+  lgPage('rgmd',`<div class="lgc" style="text-align:center"><div style="font-size:46px">🎉</div><h2>নিবন্ধন সফল!</h2><p class="s">${xe(n)} — ১৫ দিনের ফ্রি ট্রায়াল শুরু হয়েছে।</p><div class="lgnote" style="text-align:left">আপনার মাদ্রাসার লিংক (শিক্ষক ও অভিভাবকদের দিন):<br><b style="word-break:break-all;font-size:12.5px">${xe(link)}</b></div><button class="lgbt" style="background:#5b6b7d" onclick="navigator.clipboard&&navigator.clipboard.writeText('${link}');this.textContent='কপি হয়েছে ✓'">লিংক কপি করুন</button><button class="lgbt" onclick="location.href='${link}'">অ্যাপে প্রবেশ করুন</button></div>`,"location.href='"+link+"'")
  }catch(e){hideLd();btn.disabled=false;  er.textContent=e.code==='exists'?'এই ইমেইলে অ্যাকাউন্ট আছে। লগইন করুন, অথবা পাসওয়ার্ড ভুলে গেলে রিসেট করুন।':e.code==='auth/email-already-in-use'||e.code==='auth/invalid-credential'?'এই ইমেইলে আগে থেকে অ্যাকাউন্ট আছে (পাসওয়ার্ড মেলেনি)। পাসওয়ার্ড রিসেট করুন।':'সমস্যা ('+step+'): '+(e.code||e.message)+(step!=='অ্যাকাউন্ট তৈরি'?' — আবার "নিবন্ধন করুন" চাপুন, একই ইমেইল ও পাসওয়ার্ড দিয়ে।':'')}};
 /* প্ল্যান (সেটিংস → প্ল্যান) */
 window.planV=async function(){const d=document.createElement('div');d.id='md';d.style.cssText='position:fixed;inset:0;background:#0009;z-index:20;display:flex;align-items:flex-end;justify-content:center';
@@ -881,7 +910,7 @@ window.planV=async function(){const d=document.createElement('div');d.id='md';d.
 const _login=window.login;
 function addSetup(){if(!needSetup)return;const r=document.querySelector('.roles');if(r)r.insertAdjacentHTML('beforeend','<button class="role" style="background:#5b6b7d" onclick="setupAdmin()"><div>প্রথম অ্যাডমিন তৈরি করুন<span>শুধু একবার — প্রথম চালুর সময়</span></div><i>›</i></button>')}
 let booting=true;
-const paint=()=>{if(booting)return;_login();addSetup()};
+const paint=()=>{if(booting)return;let lk='';try{lk=localStorage.getItem(LKK)||''}catch(e){}if(lk){lockUI(lk);return}_login();addSetup()};
 window.login=function(){cleanup();if(auth.currentUser)signOut(auth);paint()};
 window.setupAdmin=function(){form('প্রথম অ্যাডমিন অ্যাকাউন্ট',[['n','নাম'],['em','জিমেইল','type=email'],['ph','মোবাইল নম্বর','type=tel'],['pw','পাসওয়ার্ড (কমপক্ষে ৬ অক্ষর)','type=password']],{},async o=>{
  const em=(o.em||'').trim().toLowerCase();if(!em||!o.pw||o.pw.length<6){alert('জিমেইল ও ৬+ অক্ষরের পাসওয়ার্ড দিন');return}
@@ -1156,7 +1185,9 @@ window.lockOld=async function(){if(role!=='admin')return;try{const ex=(await get
  const n=Object.keys(U).length;if(!n){alert('নতুন লক দরকার নেই।');return}await upd(U);alert(bn(n)+'টি পুরোনো পেমেন্ট মাস লক হয়েছে।')}catch(e){alert('লক করা যায়নি: '+denied(e))}};
 const LM={exp:'আপনার মাদ্রাসার সফটওয়্যার ব্যবহারের মেয়াদ শেষ হয়েছে।<br>সফটওয়্যার প্রদানকারীর সাথে যোগাযোগ করুন।',sus:'আপনার মাদ্রাসার সফটওয়্যার Access বন্ধ করা হয়েছে।<br>সফটওয়্যার প্রদানকারীর সাথে যোগাযোগ করুন।'};
 async function licMsg(v){if(!v||v.mid!==MID)return 'এই অ্যাকাউন্ট এই মাদ্রাসার নয়। সঠিক মাদ্রাসার লিংক ব্যবহার করুন।';try{const l=(await get(R('licenses/'+MID))).val()||{};if(l.suspended===true)return LM.sus;const n=Date.now();if((l.trialEnd||0)>n||(l.subEnd||0)>n)return '';return LM.exp}catch(e){return LM.exp}}
-async function lockScr(m){hideLd();try{await signOut(auth)}catch(e){}document.getElementById('app').innerHTML='<div class="login"><div class="brand"><h1>🔒</h1><p>'+m+'</p></div><button class="btn" onclick="location.reload()">আবার চেষ্টা করুন</button></div>'}
+const LKK='mm_lock_'+MID;
+function lockUI(m){hideLd();document.getElementById('app').innerHTML='<div class="ldw" style="padding:20px;justify-content:center"><div class="lgc" style="max-width:420px;width:100%;text-align:center"><div style="font-size:52px">🔒</div><h2 style="margin:6px 0 10px">'+m+'</h2><div class="lgnote" style="text-align:left"><b>👨‍💻 ডেভেলপারের সাথে যোগাযোগ</b><br>'+DEV.n+'<br><a class="lgl" style="padding:4px 0" href="mailto:'+DEV.em+'">'+DEV.em+'</a><br><a class="lgl" style="padding:4px 0" href="'+DEV.fb+'" target="_blank" rel="noopener">ফেসবুকে মেসেজ করুন</a></div><button class="lgbt" onclick="try{localStorage.removeItem(\''+LKK+'\')}catch(e){}location.reload()">আবার চেষ্টা করুন</button></div></div>'}
+async function lockScr(m){hideLd();try{await signOut(auth)}catch(e){}try{localStorage.setItem(LKK,m)}catch(e){}lockUI(m)}
 async function resumeSession(user){try{const v=(await get(R('users/'+user.uid))).val();
  if(!v||!['admin','teacher','guardian'].includes(v.role)){await signOut(auth);return false}{const lk=await licMsg(v);if(lk){await lockScr(lk);return true}}
  cleanup();role=v.role;myChild=role==='guardian'?v.ref:'';myTeacher=role==='teacher'?v.ref:'';tab=role==='guardian'?'child':'home';
@@ -1278,7 +1309,611 @@ var D={
 'সময় শেষ':'Timed out','সংরক্ষণে ত্রুটি':'Save error','এই কাজের অনুমতি আপনার নেই':'You do not have permission for this action',
 'শনিবার':'Saturday','রবিবার':'Sunday','সোমবার':'Monday','মঙ্গলবার':'Tuesday','বুধবার':'Wednesday','বৃহস্পতিবার':'Thursday','শুক্রবার':'Friday',
 'জানুয়ারি':'January','ফেব্রুয়ারি':'February','মার্চ':'March','এপ্রিল':'April','মে':'May','জুন':'June','জুলাই':'July','আগস্ট':'August','সেপ্টেম্বর':'September','অক্টোবর':'October','নভেম্বর':'November','ডিসেম্বর':'December',
-'সেপ':'Sep','সকাল':'Morning','দুপুর':'Noon','বিকাল':'Afternoon','সন্ধ্যা':'Evening','রাত':'Night','শুক্রবার ক্লাস বন্ধ':'No class on Friday','মোট':'Total','আজ':'Today'
+'সেপ':'Sep','সকাল':'Morning','দুপুর':'Noon','বিকাল':'Afternoon','সন্ধ্যা':'Evening','রাত':'Night','শুক্রবার ক্লাস বন্ধ':'No class on Friday','মোট':'Total','আজ':'Today',
+'অথবা':'or',
+'অনুপস্থিত (নোটিফিকেশন নেই)':'Absent (no notification)',
+'অনুমতি (রোল ও পারমিশন) — অ্যাডমিন চাইলে নিজের কিছু ক্ষমতা এই শিক্ষককে দিতে পারবেন':'Permissions (roles) — the admin can delegate some powers to this teacher',
+'অনুমতি (রোল ও পারমিশন) — যে কাজের অনুমতি দেবেন শিক্ষক শুধু সেটিই দেখতে ও করতে পারবেন':'Permissions (roles) — the teacher can see and do only what you allow',
+'অনুমতি সংরক্ষণ হয়নি':'Permissions were not saved',
+'অনুমতি: নেই':'Permissions: none',
+'অনেকবার চেষ্টা হয়েছে':'Too many attempts',
+'অন্তত একটি দিন বাছুন':'Select at least one day',
+'অন্য Teacher-এর Permission পরিবর্তন করা':'Change another teacher\'s permissions',
+'অন্য ধরনের অ্যাকাউন্ট':'Different account type',
+'অন্য নাম বা রোল লিখে খুঁজুন':'Try searching by another name or roll',
+'অপঠিত':'Unread',
+'অ্যাকাউন্ট তথ্য':'Account info',
+'অ্যাকাউন্ট তৈরি':'Create account',
+'অ্যাকাউন্ট তৈরি হয়নি':'Account was not created',
+'অ্যাকাউন্ট তৈরি হয়েছে, ডাটাবেসে সংরক্ষণ হচ্ছে...':'Account created, saving to database...',
+'অ্যাডমিন তৈরি হয়েছে':'Admin created',
+'অ্যাডমিন সংযোগ':'Linking admin',
+'অ্যাডমিনকে রুটিনে আপনাকে যুক্ত করতে বলুন':'Ask the admin to add you to the routine',
+'অ্যাডমিনের ইমেইল বা মোবাইল নম্বর দিন':'Enter the admin\'s email or mobile number',
+'অ্যাডমিনের নাম':'Admin name',
+'অ্যাডমিনের নাম দিন':'Enter admin name',
+'অ্যাডমিনের প্রোফাইল ছবি':'Admin profile photo',
+'অ্যাডমিনের সেট করা পাসওয়ার্ড দিন':'Enter the password set by the admin',
+'অ্যাপে প্রবেশ করুন':'Enter the app',
+'অ্যাপের সাধারণ Settings দেখা':'View general app Settings',
+'আংশিক':'Partial',
+'উত্তীর্ণ':'Pass',
+'অকৃতকার্য':'Fail',
+'আইডি (নির্দিষ্ট ছাত্র/শিক্ষকের ক্ষেত্রে, যেমন STU001)':'ID (for a specific student/teacher, e.g. STU001)',
+'আগে ক্লাস যোগ করুন':'Add a class first',
+'আগে ছাত্রদের অন্য ক্লাসে সরান':'Move the students to another class first',
+'আগে রুটিন থেকে সংশ্লিষ্ট পিরিয়ড সরান':'Remove the related periods from the routine first',
+'আগে শিক্ষক যোগ করুন':'Add a teacher first',
+'আগে সব ক্লাসের জন্য যোগ করা বিষয়':'Subjects previously added for all classes',
+'আগে সম্পাদনা করে ফোন যোগ করুন':'Edit and add a phone number first',
+'আগেই পাঠানো':'Already sent',
+'আজ এখনো শিক্ষক বাড়ির কাজ দেননি':'The teacher has not given homework yet today',
+'আজ বাসায় নামাজ আদায়':'Prayers offered at home today',
+'আজ বাসায় নামাজ আদায় — ট্যাপ করে দিন':'Prayers offered at home today — tap to enter',
+'আজকের বাড়ির কাজ':'Today\'s homework',
+'আজকের হোমওয়ার্ক':'Today\'s homework',
+'আদায়কারী':'Collected by',
+'আপনার পাসওয়ার্ড ভুলে গেছেন?':'Forgot your password?',
+'আপনার পাসওয়ার্ড সফলভাবে পরিবর্তন হয়েছে':'Your password has been changed successfully',
+'আপনার মাদ্রাসার অ্যাডমিন অ্যাকাউন্ট তৈরি করুন':'Create your madrasa\'s admin account',
+'আপনার মাদ্রাসার লিংক':'Your madrasa link',
+'আপনার মাদ্রাসার লিংক (শিক্ষক ও অভিভাবকদের দিন)':'Your madrasa link (share with teachers and guardians)',
+'আপনার মাদ্রাসার সফটওয়্যার Access বন্ধ করা হয়েছে':'Your madrasa\'s software access has been suspended',
+'আপনার মাদ্রাসার সফটওয়্যার ব্যবহারের মেয়াদ শেষ হয়েছে':'Your madrasa\'s software subscription has expired',
+'আপনার রুটিন':'Your routine',
+'আপনার রুটিনের ক্লাসগুলোর গার্জিয়ানদের':'Guardians of the classes in your routine',
+'আপনার সন্তানের জন্য মেসেজ':'Message for your child',
+'আপনি কি এই Salary Record-টি Delete করতে চান?':'Do you want to delete this Salary Record?',
+'আপনি কি এই রসিদ':'Do you want to delete this receipt',
+'আপনি কি নিশ্চিত?':'Are you sure?',
+'আপনি শুধু নিজের রুটিনের ক্লাসের গার্জিয়ানকে মেসেজ পাঠাতে পারেন (অ্যাডমিন সবাইকে)':'You can message only guardians of classes in your routine (admin can message everyone)',
+'আবার চেষ্টা করুন':'Try again',
+'আবু বকর সিদ্দিক':'Abu Bakr Siddique',
+'আব্দুল্লাহ হোসাইন':'Abdullah Hossain',
+'আমার ক্লাসগুলোর সকল গার্জিয়ান':'All guardians of my classes',
+'আমার ক্লাসগুলোর সকল গার্জিয়ান,নির্দিষ্ট ক্লাসের গার্জিয়ান,নির্দিষ্ট ছাত্রের গার্জিয়ান':'All guardians of my classes,Guardians of a specific class,Guardian of a specific student',
+'আয় Delete করা':'Delete income',
+'আয় Edit করা':'Edit income',
+'আয় দেখা':'View income',
+'আয় যোগ করা':'Add income',
+'আরবি':'Arabic',
+'আর্থিক ও ফলাফল সারাংশ':'Financial & result summary',
+'আলহামদুলিল্লাহ!':'Alhamdulillah!',
+'আলহামদুলিল্লাহ, আপনার সন্তান':'Alhamdulillah, your child',
+'আলহামদুলিল্লাহ, আপনার হাজিরা সফলভাবে গ্রহণ করা হয়েছে':'Alhamdulillah, your attendance has been recorded successfully',
+'আসর':'Asr',
+'আসসালামু আলাইকুম':'Assalamu Alaikum',
+'ইংরেজি':'English',
+'ইচ্ছামতো এই ক্লাসে নিন':'Take freely in this class',
+'ইনবক্স ও স্প্যাম দেখুন':'Check your inbox and spam',
+'ইন্টারনেট সংযোগ দেখুন':'Check your internet connection',
+'ইমরান হোসেন':'Imran Hossain',
+'ইমেইল না পেলে স্প্যাম ফোল্ডার দেখুন':'If you don\'t get the email, check the spam folder',
+'ইমেইল পাঠানো':'Sending email',
+'ইমেইল বা মোবাইল নম্বর':'Email or mobile number',
+'ইমেইল বা মোবাইল নম্বর দিন':'Enter email or mobile number',
+'ইমেইল সঠিক নয়':'Email is not valid',
+'ইমেইলে নতুন পাসওয়ার্ড সেট করার লিংক যাবে':'A link to set a new password will be sent by email',
+'উদ্বৃত্ত':'Surplus',
+'উপজেলা/থানা':'Upazila/Thana',
+'উপস্থিতি — এই মাস (সমষ্টি)':'Attendance — this month (total)',
+'এ মাসে':'This month',
+'এ মাসে আদায়':'Collected this month',
+'এ মাসে এখনো উপস্থিতি নেওয়া হয়নি':'No attendance taken yet this month',
+'এ মাসে কোনো বকেয়া নেই':'No dues this month',
+'এ মাসের আয়':'This month\'s income',
+'এ মাসের ব্যয়':'This month\'s expense',
+'এই অ্যাকাউন্ট এই মাদ্রাসার নয়':'This account does not belong to this madrasa',
+'এই ইমেইলে অ্যাকাউন্ট আছে':'An account already exists with this email',
+'এই ইমেইলে আগে থেকে অ্যাকাউন্ট আছে (পাসওয়ার্ড মেলেনি)':'An account already exists with this email (password did not match)',
+'এই ক্লাসে':'In this class',
+'এই ক্লাসে কোনো ছাত্র নেই':'No students in this class',
+'এই ক্লাসে ছাত্র আছে, তাই মুছা যাবে না':'This class has students, so it cannot be deleted',
+'এই ক্লাসে ছাত্র নেই':'No students in this class',
+'এই ক্লাসে রুটিন অনুযায়ী আপনার কোনো বিষয় নেই':'You have no subject in this class according to the routine',
+'এই ছাত্রের গার্জিয়ান অ্যাকাউন্ট নেই, তাই অ্যাপে মেসেজ পাঠানো যাবে না':'This student has no guardian account, so an in-app message cannot be sent',
+'এই ছাত্রের ফোন নম্বর নেই':'This student has no phone number',
+'এই তারিখ ও বিষয়ে কোনো হোমওয়ার্ক দেওয়া হয়নি':'No homework was given on this date and subject',
+'এই দিনে আপনার কোনো ক্লাস নেই':'You have no class on this day',
+'এই দিনের কোনো রুটিন নেই':'No routine for this day',
+'এই দিনের রুটিন অন্য দিনে প্রয়োগ করুন':'Apply this day\'s routine to other days',
+'এই নম্বরে কোনো অ্যাডমিন পাওয়া যায়নি':'No admin found with this number',
+'এই নামে ক্লাস আগে থেকেই আছে':'A class with this name already exists',
+'এই নোটিফিকেশন মুছলে এটি সবার (প্রাপক গার্জিয়ান/শিক্ষক ও ইতিহাস) অ্যাপ থেকে মুছে যাবে':'Deleting this notification removes it from everyone\'s app (recipient guardians/teachers and history)',
+'এই নোটিফিকেশন মুছলে সব প্রাপকের অ্যাপ থেকেও মুছে যাবে':'Deleting this notification removes it from all recipients\' apps too',
+'এই নোটিফিকেশন শুধু আপনার অ্যাপ থেকে মুছে যাবে':'This notification will be removed from your app only',
+'এই পিরিয়ডটি মুছবেন?':'Delete this period?',
+'এই মাস':'This month',
+'এই মাসে কোনো তারিখ নেই':'No dates this month',
+'এই মাসের সম্পূর্ণ হাজিরা দেখুন':'View this month\'s full attendance',
+'এই শ্রেণীতে এই নামে বিষয় আগে থেকেই আছে':'A subject with this name already exists in this class',
+'এই শ্রেণীতে বিষয়টি আগে থেকেই আছে':'This subject already exists in this class',
+'এই শ্রেণীর কোনো বিষয় নেই':'No subjects for this class',
+'এই শ্রেণীর কোনো বিষয় যোগ করা হয়নি':'No subjects have been added for this class',
+'এই শ্রেণীর রুটিনে আছে':'Is in this class routine',
+'এই শ্রেণীর রুটিনে ব্যবহৃত হচ্ছে':'Is used in this class routine',
+'একটি অ্যাকাউন্ট নেই?':'Don\'t have an account?',
+'একবারের কাজ':'One-time task',
+'এখন Admin Login করুন':'Now log in as Admin',
+'এখন থেকে নতুন পাসওয়ার্ড দিয়ে লগইন করতে হবে':'From now on, log in with the new password',
+'এখনো কোনো নোটিফিকেশন নেই':'No notifications yet',
+'এখনো কোনো নোটিফিকেশন পাঠানো হয়নি':'No notifications sent yet',
+'এখনো কোনো নোটিস নেই':'No notices yet',
+'এখনো কোনো পেমেন্ট নেই':'No payments yet',
+'এখনো কোনো ফলাফল নেই':'No results yet',
+'এখনো কোনো মাসিক ফি পরিশোধ হয়নি':'No monthly fee paid yet',
+'এখনো কোনো মেসেজ পাঠানো হয়নি':'No messages sent yet',
+'এটি অ্যাডমিন অ্যাকাউন্ট নয়':'This is not an admin account',
+'এটি তাদের অ্যাপের নোটিফিকেশনে দেখাবে':'This will appear in their app\'s notifications',
+'এর Password পরিবর্তন করা':'Change this person\'s password',
+'এর রুটিন':'Routine of',
+'এর রুটিন যে দিনগুলোতে প্রযোজ্য হবে সেগুলো বাছুন':'Select the days this routine will apply to',
+'এরপর মাসিক ৩০০ টাকার প্ল্যান':'After that, a monthly plan of ৳300',
+'এশা':'Isha',
+'ও পাসওয়ার্ড দিন':'and password',
+'কত মিনিট দেরি?':'How many minutes late?',
+'কপি করুন':'Copy',
+'কপি হয়েছে':'Copied',
+'করতে চান? এই মাসের বেতন আবার আদায় করা যাবে':'? This month\'s fee can be collected again',
+'কাকে কী পাঠানো হয়েছে':'What was sent to whom',
+'কাছে নোটিফিকেশন পাঠান':'Send notification to',
+'কাদের জন্য':'For whom',
+'কিছুক্ষণ পরে আবার চেষ্টা করুন':'Please try again in a while',
+'কুরআন মাজীদ':'Quran Majeed',
+'কে Message পাঠানো':'Send a message to',
+'কোন শ্রেণীর জন্য':'For which class',
+'কোনো ক্লাস নেই':'No classes',
+'কোনো ক্লাস পাওয়া যায়নি':'No class found',
+'কোনো ছাত্র পাওয়া যায়নি':'No student found',
+'কোনো তথ্য পাওয়া যায়নি':'No information found',
+'কোনো প্রাপক পাওয়া যায়নি':'No recipient found',
+'কোনো প্রাপক পাওয়া যায়নি (শুধু আপনার রুটিনের ক্লাস)':'No recipient found (only classes in your routine)',
+'কোনো ব্যয় নেই':'No expenses',
+'কোনো রসিদ নেই':'No receipts',
+'কোনো শিক্ষক নেই':'No teachers',
+'কোনো শিক্ষার্থী পাওয়া যায়নি':'No student found',
+'ক্যালেন্ডার আকারে':'In calendar form',
+'ক্লাস (ক্লাসের ক্ষেত্রে)':'Class (for classes)',
+'ক্লাস Delete করা':'Delete class',
+'ক্লাস Edit করা':'Edit class',
+'ক্লাস দেখা':'View class',
+'ক্লাস যোগ করা':'Add class',
+'ক্লাস রুটিন অনুযায়ী এই ক্লাস ও বিষয়ে হোমওয়ার্ক দেওয়ার অনুমতি আপনার নেই':'According to the class routine, you are not allowed to give homework for this class and subject',
+'ক্লাস রুটিনে আপনার কোনো ক্লাস নেই':'You have no class in the class routine',
+'ক্লাস রুটিনে আপনার নাম কোনো ক্লাস/বিষয়ে যুক্ত নেই':'Your name is not linked to any class/subject in the class routine',
+'ক্লাস সংরক্ষণ হয়নি':'Class was not saved',
+'ক্লাস: ৩ (আম)':'Class: 3 (Amm)',
+'ক্লাসের হাজিরা চূড়ান্ত করে উপস্থিত ছাত্রদের গার্জিয়ানকে জানাবেন?':'Finalize class attendance and notify guardians of present students?',
+'খরচ':'Cost',
+'খাত (যেমন: বিদ্যুৎ বিল)':'Category (e.g. electricity bill)',
+'খালি রাখলে ডিফল্ট পাসওয়ার্ড চলবে':'If left empty, the default password applies',
+'গণিত':'Math',
+'গার্জিয়ান':'Guardian',
+'গার্জিয়ান Delete করা':'Delete guardian',
+'গার্জিয়ান Edit করা':'Edit guardian',
+'গার্জিয়ান ও শিক্ষকদের জন্য':'For guardians and teachers',
+'গার্জিয়ান তথ্য জমা দেননি':'Guardian has not submitted',
+'গার্জিয়ান দেখা':'View guardian',
+'গার্জিয়ান বা শিক্ষকদের':'Guardians or teachers',
+'গার্জিয়ান যোগ করা':'Add guardian',
+'গার্জিয়ান লগইন':'Guardian login',
+'গার্জিয়ানের দেওয়া তথ্য':'Info given by guardian',
+'গার্জিয়ানের পাসওয়ার্ড পরিবর্তন করা':'Change guardian\'s password',
+'গেটওয়ে সংযুক্ত নয়':'gateway not connected',
+'গ্রাম/মহল্লা':'Village/Locality',
+'ঘোষণা':'Announcement',
+'চাপলে সব তথ্য চলে যাবে':'All data will be lost if you tap',
+'চাপুন, একই ইমেইল ও পাসওয়ার্ড দিয়ে':'Tap, using the same email and password',
+'চালিয়ে যাবেন?':'Continue?',
+'চালিয়ে যেতে প্ল্যান নিন':'Take a plan to continue',
+'চালু বা বন্ধ করা':'Turn on or off',
+'চিহ্নিত':'marked',
+'চেপে যোগ করুন':'Tap to add',
+'ছাত্র আইডি':'Student ID',
+'ছাত্র খুঁজুন':'Search student',
+'ছাত্র পরিসংখ্যান':'Student statistics',
+'ছাত্রের আইডি অথবা আপনার মোবাইল নম্বর':'Student ID or your mobile number',
+'ছাত্রের হাজিরা':'Student attendance',
+'ছাত্রের হাজিরা নোটিফিকেশন':'Student attendance notification',
+'জন ছাত্র':'students',
+'জনকে নোটিফিকেশন পাঠাবেন?':'people. Send notification?',
+'জমা দিন':'Submit',
+'জমা দেওয়া হয়েছে (আবার জমা দিন)':'Submitted (submit again)',
+'জিমেইল':'Gmail',
+'জিমেইল / ইমেইল':'Gmail / Email',
+'জিমেইল ও ৬+ অক্ষরের পাসওয়ার্ড দিন':'Enter Gmail and a password of 6+ characters',
+'জুমার প্রস্তুতির জন্য এই শুক্রবার ক্লাস বন্ধ থাকবে':'No class this Friday for Jumu\'ah preparation',
+'জেলা':'District',
+'টি ছাত্র-মাসে একাধিক মাসিক ফি পাওয়া গেছে':'student-months have more than one monthly fee',
+'টি দিনে প্রয়োগ হয়েছে':'days were applied',
+'টি পুরোনো পেমেন্ট মাস লক হয়েছে':'old payment months were locked',
+'টি রোল-লগইন এন্ট্রি মুছে ফেলা হয়েছে':'roll-login entries were removed',
+'ট্যাপ করে দিন':'Tap to enter',
+'ট্রায়াল ও মাসিক সাবস্ক্রিপশন (৳৩০০)':'Trial & monthly subscription (৳300)',
+'ট্রায়াল সেট':'Setting trial',
+'ঠিকানা (ঐচ্ছিক)':'Address (optional)',
+'ঠিকানা যোগ করা হয়নি':'Address not added',
+'ঠিকানায় পাঠানো হয়েছে (যদি অ্যাকাউন্ট থাকে)':'(if the account exists)',
+'ডাকঘর':'Post office',
+'ডাটাবেসে সংরক্ষণ':'Saving to database',
+'ডাটাবেসে সংরক্ষণ হয়নি':'Not saved to the database',
+'ডেটা লোডে সমস্যা':'Problem loading data',
+'ডেভেলপারের সাথে যোগাযোগ':'Contact the developer',
+'তথ্য ও ছবি সম্পাদনা':'Edit info & photo',
+'তথ্য খোঁজা':'Searching info',
+'তথ্য জমা হয়েছে':'Info submitted',
+'তবুও না পেলে বা ইমেইল ব্যবহার না করলে নিচের ঠিকানায় যোগাযোগ করুন — পুরনো পাসওয়ার্ড ছাড়াই নতুন পাসওয়ার্ড সেট করে দেওয়া হবে':'If you still do not receive it, or do not use email, contact the address below — a new password will be set without the old one',
+'তিনটি পাসওয়ার্ডই লিখুন':'Fill in all three passwords',
+'তৈরি করা':'Create',
+'থেকে এই শ্রেণীর বিষয় যোগ করুন':'to add subjects for this class',
+'থেকে মুছে ফেলবেন?':'Remove from',
+'দিন • শেষ':'days • ends',
+'দিয়েছেন':'has given',
+'দুই পাসওয়ার্ড মেলেনি':'The two passwords do not match',
+'দেখান/লুকান':'Show/Hide',
+'দেরির মিনিট সংরক্ষণ হয়নি':'Late minutes were not saved',
+'দ্বীনিয়াত':'Deeniyat',
+'নং পিরিয়ড আগেই আছে':'period already exists',
+'নতুন অ্যাকাউন্ট তৈরি':'Create new account',
+'নতুন ডুপ্লিকেট আর তৈরি হবে না':'No new duplicates will be created',
+'নতুন নোটিফিকেশন':'New notification',
+'নতুন নোটিফিকেশন লিখুন':'Write a new notification',
+'নতুন পাসওয়ার্ড (খালি রাখলে অপরিবর্তিত)':'New password (leave empty to keep unchanged)',
+'নতুন পিরিয়ড':'New period',
+'নতুন পেমেন্ট সংরক্ষিত হয়নি':'New payment was not saved',
+'নতুন বিষয়':'New subject',
+'নতুন ব্যয়':'New expense',
+'নতুন মাদ্রাসা নিবন্ধন':'New madrasa registration',
+'নতুন লক দরকার নেই':'No new lock needed',
+'নতুন শ্রেণি যোগ':'Add new class',
+'নাম বদলালে রুটিনেও নতুন নাম বসবে (আগের হোমওয়ার্ক পুরনো নামেই থাকবে)':'Renaming also updates the routine (earlier homework keeps the old name)',
+'নাম, আইডি বা রোল খুঁজুন...':'Search name, ID or roll...',
+'নাম, ছবি, ফোন ও ইমেইল':'Name, photo, phone & email',
+'নাম, ঠিকানা ও প্রতিষ্ঠার তারিখ':'Name, address & founding date',
+'নামাজ':'Prayer',
+'নামাজ ও হোমওয়ার্ক History দেখা':'View Prayer & Homework History',
+'নামাজ ও হোমওয়ার্ক ইতিহাস':'Prayer & Homework History',
+'নামাজের তথ্য Edit করা':'Edit prayer info',
+'নামাজের তথ্য দেখা':'View prayer info',
+'নিবন্ধন করুন':'Register',
+'নিবন্ধন সফল!':'Registration successful!',
+'নিবন্ধনের পর':'After registration',
+'নিরাপত্তার জন্য একবার লগআউট করে নতুন করে লগইন করুন, তারপর সঙ্গে সঙ্গে পাসওয়ার্ড বদলান':'For security, log out and log in again, then change the password right away',
+'নির্দিষ্ট ক্লাসের গার্জিয়ান':'Guardians of a specific class',
+'নির্দিষ্ট ছাত্রের গার্জিয়ান':'Guardian of a specific student',
+'নির্ধারিত নয়':'Not assigned',
+'নিশ্চিত?':'Sure?',
+'নোটিফিকেশন চালু/বন্ধ ও টেমপ্লেট':'Notification on/off & templates',
+'নোটিফিকেশন পাঠান':'Send notification',
+'নোটিফিকেশন পাঠানো শেষ':'Notifications sent',
+'নোটিস সংরক্ষণ হয়নি':'Notice was not saved',
+'পঠিত':'Read',
+'পরিবর্তন করা':'Change',
+'পরিমাণ (৳)':'Amount (৳)',
+'পরিমাণ (৳) — খালি রাখলে সাধারণ ফি প্রযোজ্য হবে':'Amount (৳) — if empty, the general fee applies',
+'পরিশোধ':'Paid',
+'পরিশোধ করবেন?':'Confirm payment?',
+'পরিশোধিত মাসসমূহ':'Paid months',
+'পরীক্ষার নাম':'Exam name',
+'পরে যেকোনো দিন আলাদাভাবে এডিট করা যাবে':'Can be edited separately any time later',
+'পাওয়া যায়নি':'Not found',
+'পাঠানো নোটিফিকেশন':'Sent notifications',
+'পাঠানো সম্ভব হয়নি (অ্যাকাউন্ট নেই)':'Could not send (no account)',
+'পাসওয়ার্ড (কমপক্ষে ৬ অক্ষর)':'Password (at least 6 characters)',
+'পাসওয়ার্ড আবার দিন':'Re-enter password',
+'পাসওয়ার্ড কমপক্ষে ৬ অক্ষরের হতে হবে':'Password must be at least 6 characters',
+'পাসওয়ার্ড পরিবর্তন হচ্ছে, অপেক্ষা করুন...':'Changing password, please wait...',
+'পাসওয়ার্ড পরিবর্তন হয়নি':'Password was not changed',
+'পাসওয়ার্ড পরিবর্তন হয়েছে':'Password changed',
+'পাসওয়ার্ড বদলাতে মাদ্রাসার অ্যাডমিনের সাথে যোগাযোগ করুন':'To change the password, contact your madrasa\'s admin',
+'পাসওয়ার্ড বদলানোর অনুমতি নেই':'No permission to change the password',
+'পাসওয়ার্ড যাচাই':'Verifying password',
+'পাসওয়ার্ড রিসেট':'Password reset',
+'পাসওয়ার্ড রিসেট করুন':'Reset password',
+'পাসওয়ার্ড সফলভাবে পরিবর্তন হয়েছে':'Password changed successfully',
+'পাসের হার':'Pass rate',
+'পিরিয়ড':'Period',
+'পিরিয়ড নম্বর':'Period number',
+'পিরিয়ড নম্বর ১ বা তার বেশি দিন':'Enter a period number of 1 or more',
+'পিরিয়ড যোগ করুন':'Add period',
+'পিরিয়ড সম্পাদনা':'Edit period',
+'পুরনো ইতিহাস':'Old history',
+'পুরনো সাধারণ তালিকা':'Old general list',
+'পুরোনো পেমেন্ট লক করুন (একবারের মাইগ্রেশন)':'Lock old payments (one-time migration)',
+'পেজ পরের ধাপে তৈরি হবে':'Page will be built in the next step',
+'পেমেন্ট':'Payment',
+'পেমেন্ট সংরক্ষণ হয়নি':'Payment was not saved',
+'পেমেন্টের তারিখ':'Payment date',
+'প্যানেলে আছেন':'panel',
+'প্রতি মাস':'per month',
+'প্রতিষ্ঠা':'Established',
+'প্রতিষ্ঠার তারিখ (যেমন: ১ জানুয়ারি ২০১০)':'Founding date (e.g. 1 January 2010)',
+'প্রথম অ্যাডমিন অ্যাকাউন্ট':'First admin account',
+'প্রথম অ্যাডমিন তৈরি করুন':'Create first admin',
+'প্রয়োগ করুন':'Apply',
+'প্রশাসক':'Administrator',
+'প্রেরক':'Sender',
+'প্রোফাইল':'Profile',
+'প্রোফাইল দেখুন':'View profile',
+'প্ল্যান':'Plan',
+'ফজর':'Fajr',
+'ফলাফল আছে':'Has results',
+'ফলাফল যোগ':'Add result',
+'ফলাফল সংরক্ষণ হয়নি':'Result was not saved',
+'ফি Edit করা':'Edit fee',
+'ফি আদায় করা':'Collect fee',
+'ফি আদায় তালিকা':'Fee collection list',
+'ফি ও হিসাব (এ মাস)':'Fees & accounts (this month)',
+'ফি ধরন উল্লেখ করুন':'Specify the fee type',
+'ফি নিন':'Take fee',
+'ফি নির্ধারণ':'Set fee',
+'ফি পরিশোধ':'Fee payment',
+'ফি পরিশোধ নোটিফিকেশন':'Fee payment notification',
+'ফি যোগ':'Add fee',
+'ফি সংরক্ষণ হয়নি':'Fee was not saved',
+'ফি, ব্যয়, ফলাফল — সবকিছু একসাথে':'Fees, expenses, results — all together',
+'ফেসবুক':'Facebook',
+'ফেসবুকে মেসেজ করুন':'Message on Facebook',
+'ফোন নেই':'No phone',
+'ফ্রি ট্রায়াল চলছে':'Free trial running',
+'বকেয়া':'Due',
+'বকেয়া দেখা':'View dues',
+'বকেয়া শিক্ষার্থী':'Students with dues',
+'বকেয়া/আংশিক':'Due/Partial',
+'বদলান':'Change',
+'বন্ধ আছে':'Suspended',
+'বর্তমান ফি':'Current fee',
+'বাছাই করা দিনের আগের রুটিন বদলে যাবে':'The existing routine of the selected days will be replaced',
+'বাড়ির কাজ':'Homework',
+'বার্তা':'Message',
+'বার্তা লিখুন':'Write a message',
+'বিদ্যুৎ বিল':'Electricity bill',
+'বিষয় ও মেসেজ দুটিই লিখুন':'Write both subject and message',
+'বিষয় দেখা':'View subjects',
+'বিষয় যোগ, সম্পাদনা ও মুছুন':'Add, edit and delete subjects',
+'বিষয়ের নাম':'Subject name',
+'বিষয়ের নামে কমা (,) ব্যবহার করা যাবে না':'Commas (,) cannot be used in a subject name',
+'বুধ':'Wed',
+'বৃহ':'Thu',
+'বেতন Payment Delete করা':'Delete salary payment',
+'বেতন আদায় — ছাত্র নির্বাচন':'Fee collection — select student',
+'বেতন দিন':'Pay salary',
+'বেতন পরিশোধ':'Fees paid',
+'বেতন ব্যয়ের খাতায় যোগ হয়েছে':'Salary was added to expenses',
+'ব্যয় Delete করা':'Delete expense',
+'ব্যয় Edit করা':'Edit expense',
+'ব্যয় দেখা':'View expenses',
+'ব্যয় যোগ করা':'Add expense',
+'ব্যয় সংরক্ষণ হয়নি':'Expense was not saved',
+'ব্যর্থ':'Failed',
+'ব্যাকআপ কপি':'Backup copy',
+'ব্যাকআপ কপি করে নিরাপদ জায়গায় রেখে দিন':'Copy the backup and keep it in a safe place',
+'ব্যাকআপ কপি হয়েছে':'Backup copied',
+'ব্যাকআপ পেস্ট করুন':'Paste backup',
+'ব্যাকআপটি সঠিক নয়':'The backup is not valid',
+'ভর্তির সময় অ্যাডমিনের দেওয়া পাসওয়ার্ড দিন':'Enter the password given by the admin at admission',
+'ভাষা':'Language',
+'ভুল ফি Payment Delete করা':'Delete wrong fee payment',
+'মঙ্গল':'Tue',
+'মাগরিব':'Maghrib',
+'মাদ্রাসা তৈরি':'Create madrasa',
+'মাদ্রাসায় উপস্থিত হয়েছে':'has arrived at the madrasa',
+'মাদ্রাসার নাম দিন':'Enter madrasa name',
+'মাদ্রাসার যোগাযোগ নম্বর এখনো যোগ করা হয়নি':'The madrasa\'s contact number has not been added yet',
+'মাদ্রাসার লোগো':'Madrasa logo',
+'মাসভিত্তিক বেতন ও উপস্থিতি':'Monthly fee & attendance',
+'মাসিক উপস্থিতি':'Monthly attendance',
+'মাসিক প্ল্যান':'Monthly plan',
+'মাসিক ফি (শ্রেণী অনুযায়ী)':'Monthly fee (by class)',
+'মাসিক বেতন':'Monthly fee',
+'মাসিক বেতন (৳)':'Monthly fee (৳)',
+'মাসের বেতন ইতিমধ্যে পরিশোধ করা হয়েছে':'fee has already been paid',
+'মিনিটে':'minutes',
+'মুছতে সমস্যা':'Problem deleting',
+'মুছবেন?':'Delete?',
+'মুছে ফেলা ছাত্র':'deleted student',
+'মুছে ফেলা শিক্ষক':'deleted teacher',
+'মুহাম্মদ তানভীর':'Muhammad Tanvir',
+'মেয়াদ শেষ':'Expired',
+'মেসেজ গার্জিয়ানের নোটিফিকেশনে পাঠানো হয়েছে':'Message sent to the guardian\'s notifications',
+'মেসেজ টেমপ্লেট':'Message template',
+'মেসেজ পাঠানো যায়নি':'Message could not be sent',
+'মেসেজ লিখুন':'Write a message',
+'মোঃ রাহাতুল ইসলাম':'Md Rahatul Islam',
+'মোট কার্যদিবস':'Total working days',
+'মোট মাসিক বেতন':'Total monthly fees',
+'মোট শিক্ষার্থী':'Total students',
+'মোবাইল নম্বর':'Mobile number',
+'মৌলিক শিক্ষক':'Basic teacher',
+'যে শ্রেণীর নিজস্ব ফি সেট করা নেই, তাদের জন্য প্রযোজ্য':'Applies to classes without their own fee set',
+'যেমন: ১৫':'e.g. 15',
+'যেসব দিন এই শ্রেণীর হাজিরা নেওয়া হয়েছে':'days when attendance was taken for this class',
+'যোগাযোগ নম্বর':'Contact number',
+'যোগাযোগ নম্বর নেই':'No contact number',
+'যোহর':'Dhuhr',
+'রবি':'Sun',
+'রসিদ দেখুন':'View receipt',
+'রিসেট লিংক':'Reset link',
+'রিসেট লিংক পাঠান':'Send reset link',
+'রিস্টোর':'Restore',
+'রিস্টোর করলে বর্তমান সব তথ্য মুছে গিয়ে ব্যাকআপের তথ্য বসে যাবে':'Restoring will erase all current data and replace it with the backup',
+'রুটিন প্রয়োগ করুন':'Apply routine',
+'রুটিন বদলানোর অনুমতি আপনার নেই':'You do not have permission to change the routine',
+'রুটিন লোড হচ্ছে...':'Loading routine...',
+'রুটিন সংরক্ষণ হয়নি':'Routine was not saved',
+'রুটিনে':'In routine',
+'রুটিনে এখনো যুক্ত নয়':'Not yet in the routine',
+'রেকর্ড মেলেনি':'Record did not match',
+'রোল দিয়ে লগইনের কোনো এন্ট্রি নেই':'No roll-login entries',
+'রোল নম্বর দিয়ে গার্জিয়ান লগইন বন্ধ করুন':'Disable guardian login by roll number',
+'লক করা যায়নি':'Could not lock',
+'লগইন করুন, অথবা পাসওয়ার্ড ভুলে গেলে রিসেট করুন':'Log in, or reset your password if you forgot it',
+'লগইন তথ্য':'Login info',
+'লগইন তথ্য (শুধু এখন দেখানো হচ্ছে, লিখে রাখুন)':'Login info (shown only now, write it down)',
+'লগইন তথ্য খোঁজা':'Looking up login info',
+'লিংক কপি':'Copy link',
+'লিংক কপি করুন':'Copy link',
+'শনি':'Sat',
+'শাখা':'Section',
+'শিক্ষক Delete করা':'Delete teacher',
+'শিক্ষক Edit করা':'Edit teacher',
+'শিক্ষক ও অ্যাডমিন দেখতে পারবেন':'Teachers and admin can view',
+'শিক্ষক দেখা':'View teachers',
+'শিক্ষক নির্বাচন করুন':'Select teacher',
+'শিক্ষক বেতন দেখা':'View teacher salary',
+'শিক্ষক বেতন প্রদান করা':'Pay teacher salary',
+'শিক্ষক যোগ করা':'Add teacher',
+'শিক্ষক হাজিরা সংরক্ষিত':'Teacher attendance saved',
+'শিক্ষক হাজিরা সম্পন্ন করুন ও জানান':'Finalize teacher attendance & notify',
+'শিক্ষক/অভিভাবক অ্যাডমিনের সাথে যোগাযোগ করুন':'Teachers/guardians: contact the admin',
+'শিক্ষকদের আজকের হাজিরা চূড়ান্ত করে উপস্থিতদের জানাবেন?':'Finalize today\'s teacher attendance and notify those present?',
+'শিক্ষকদের উপস্থিতি নিন':'Take teacher attendance',
+'শিক্ষকদের নম্বর এখনো যোগ করা হয়নি':'Teachers\' numbers have not been added yet',
+'শিক্ষকদের সাথে যোগাযোগ':'Contact teachers',
+'শিক্ষকের role অ্যাডমিন হয় না; সব অনুমতি দিলে প্রায় পূর্ণ অ্যাক্সেস পাবেন':'A teacher is never an admin; giving all permissions grants near-full access',
+'শিক্ষকের ইতিহাস':'Teacher history',
+'শিক্ষকের তথ্য সম্পাদনা':'Edit teacher info',
+'শিক্ষকের পাসওয়ার্ড (লগইনের জন্য)':'Teacher\'s password (for login)',
+'শিক্ষকের সময়ে সংঘর্ষ':'Teacher time conflict',
+'শিক্ষকের সময়ে সংঘর্ষ — প্রয়োগ করা হয়নি':'Teacher time conflict — not applied',
+'শিক্ষকের হাজিরা':'Teacher attendance',
+'শিক্ষকের হাজিরা দেখা':'View teacher attendance',
+'শিক্ষকের হাজিরা নেওয়া':'Take teacher attendance',
+'শিক্ষকের হাজিরা নোটিফিকেশন':'Teacher attendance notification',
+'শিক্ষাগত যোগ্যতা (যেমন: দাওরায়ে হাদিস, অনার্স)':'Educational qualification (e.g. Dawra-e-Hadith, Honours)',
+'শিক্ষার্থী':'Student',
+'শিক্ষার্থী Delete করা':'Delete student',
+'শিক্ষার্থী Edit করা':'Edit student',
+'শিক্ষার্থী দেখা':'View students',
+'শিক্ষার্থী যোগ করা':'Add student',
+'শিক্ষার্থীর তথ্য/বায়োডাটা দেখা':'View student info/biodata',
+'শিক্ষার্থীর তালিকা':'Student list',
+'শিক্ষার্থীর ফি দেখা':'View student fees',
+'শিক্ষার্থীর রিপোর্ট':'Student report',
+'শিক্ষার্থীর হাজিরা নেওয়া':'Take student attendance',
+'শুক্র':'Fri',
+'শুধু অ্যাডমিন':'Admin only',
+'শুধু অ্যাডমিন নতুন ছাত্র/শিক্ষক যোগ করতে পারেন':'Only the admin can add new students/teachers',
+'শুধু একবার — প্রথম চালুর সময়':'Only once — at first setup',
+'শুধু শেষ ৩০ দিনের ইতিহাস সংরক্ষিত থাকে':'Only the last 30 days of history are kept',
+'শ্রেণি যোগ, সম্পাদনা ও মুছুন':'Add, edit and delete classes',
+'শ্রেণিটি মুছে ফেলবেন?':'Delete this class?',
+'শ্রেণির নাম':'Class name',
+'শ্রেণির নাম (যেমন: ৪র্থ শ্রেণি)':'Class name (e.g. Class 4)',
+'শ্রেণির নাম সম্পাদনা':'Edit class name',
+'শ্রেণী ইতিহাস':'Class history',
+'সংরক্ষণ হচ্ছে...':'Saving...',
+'সংরক্ষণ হয়নি':'Not saved',
+'সংরক্ষণ হয়েছে':'Saved',
+'সকল ক্লাস':'All classes',
+'সকল গার্জিয়ান':'All guardians',
+'সকল গার্জিয়ান,নির্দিষ্ট ক্লাসের গার্জিয়ান,নির্দিষ্ট ছাত্রের গার্জিয়ান,সকল শিক্ষক,নির্দিষ্ট শিক্ষক':'All guardians,Guardians of a specific class,Guardian of a specific student,All teachers,A specific teacher',
+'সকল শিক্ষক':'All teachers',
+'সকল শিক্ষক,নির্দিষ্ট শিক্ষক':'All teachers,A specific teacher',
+'সকল হাজিরা সংরক্ষণ করুন':'Save all attendance',
+'সঠিক ইমেইল দিন':'Enter a valid email',
+'সঠিক মাদ্রাসার লিংক ব্যবহার করুন':'Use the correct madrasa\'s link',
+'সঠিক মোবাইল নম্বর দিন':'Enter a valid mobile number',
+'সঠিক রোল ও পরিমাণ দিন':'Enter a valid roll and amount',
+'সফটওয়্যার প্রদানকারীর সাথে যোগাযোগ করুন':'Please contact the software provider',
+'সফলভাবে গ্রহণ করা হয়েছে':'has been recorded successfully',
+'সব অনুমতি':'All permissions',
+'সব ক্লাস':'All classes',
+'সব তথ্য মুছে যাবে':'All data will be erased',
+'সব নির্বাচন করুন':'Select all',
+'সব বাতিল':'Clear all',
+'সব বাতিল করুন':'Clear all',
+'সব মুছুন':'Delete all',
+'সব সুবিধা সহ • নেওয়ার জন্য ট্যাপ করে যোগাযোগ করুন':'All features included • Tap to contact and subscribe',
+'সময় (যেমন: ৯:০০-৯:৪৫)':'Time (e.g. 9:00-9:45)',
+'সময় লিখুন':'Enter time',
+'সম্পন্ন হয়েছে':'Completed',
+'সর্বশেষ সংরক্ষণ করেছেন':'Last saved by',
+'সাইকুল ইসলাম':'Saikul Islam',
+'সাধারণ (ডিফল্ট) ফি':'General (default) fee',
+'সাধারণ (ডিফল্ট) মাসিক ফি':'General (default) monthly fee',
+'সাধারণ ঘোষণা নোটিফিকেশন':'General announcement notification',
+'সাধারণ নোটিস':'General notice',
+'সাধারণ':'General',
+'সাবস্ক্রিপশন চালু':'Subscription active',
+'সাম্প্রতিক লগ':'Recent log',
+'সাম্প্রতিক হোমওয়ার্ক (সব ক্লাস)':'Recent homework (all classes)',
+'সাল অনুযায়ী মাসভিত্তিক উপস্থিতি':'Monthly attendance by year',
+'সাল অনুযায়ী মাসভিত্তিক উপস্থিতি (সমষ্টি)':'Monthly attendance by year (total)',
+'সুপার অ্যাডমিনের সাথে যোগাযোগ করুন':'Contact the Super Admin',
+'সোম':'Mon',
+'স্ট্যাটাস':'Status',
+'স্ট্যাটাসে ট্যাপ করে বদলান':'Tap a status to change',
+'হাজিরা Edit করা':'Edit attendance',
+'হাজিরা History দেখা':'View attendance history',
+'হাজিরা Report দেখা':'View attendance report',
+'হাজিরা না নেওয়া দিন ছুটি ধরা হয়':'Days with no attendance taken are counted as holidays',
+'হাজিরা সংরক্ষণ হয়নি':'Attendance was not saved',
+'হাজিরা সংরক্ষিত':'Attendance saved',
+'হাজিরার Notification পাঠানো':'Send attendance notification',
+'হোমওয়ার্ক':'Homework',
+'হোমওয়ার্ক Edit করা':'Edit homework',
+'হোমওয়ার্ক করেছে':'Did homework',
+'হোমওয়ার্ক করেছে / করেনি — একটি বেছে নিন':'Did / did not do homework — choose one',
+'হোমওয়ার্ক করেনি':'Did not do homework',
+'হোমওয়ার্ক দিন':'Give homework',
+'হোমওয়ার্ক দেখা':'View homework',
+'হোমওয়ার্ক দেখুন':'View homework',
+'হোমওয়ার্ক লিখুন':'Write homework',
+'হোমওয়ার্ক সংরক্ষণ হয়নি':'Homework was not saved',
+'১ থেকে ৬০০ এর মধ্যে মিনিট লিখুন':'Enter minutes between 1 and 600',
+'১. শিক্ষার্থী ব্যবস্থাপনা':'1. Student management',
+'১০. নোটিশ ও মেসেজ':'10. Notices & messages',
+'১১. অ্যাপ ও সেটিংস':'11. App & settings',
+'১২. গুরুত্বপূর্ণ Admin ক্ষমতা':'12. Important admin powers',
+'১৫ দিন ফ্রি ট্রায়াল':'15-day free trial',
+'১৫ দিনের ফ্রি ট্রায়াল শুরু হয়েছে':'Your 15-day free trial has started',
+'৩. গার্জিয়ান ব্যবস্থাপনা':'3. Guardian management',
+'৫ ওয়াক্ত':'5 prayers',
+'৬. ফি ও বেতন':'6. Fees & salary',
+'৯. ক্লাস ও একাডেমিক':'9. Class & academics',
+'৳ আংশিক':'৳ Partial',
+'৳ বকেয়া':'৳ Due',
+'প্রি-প্লে':'Pre-play',
+'মোবাইল নম্বর বা জিমেইল ও পাসওয়ার্ড দিন':'Enter your mobile number or Gmail and password',
+'পাসওয়ার্ড দেখান/লুকান':'Show/hide password',
+'কার্যদিবস':'Working days',
+'ক্যালেন্ডার':'Calendar',
+'দেরি ... মিনিট':'Late ... minutes',
+'মোট ফি':'Total fee',
+'মাসিক ৩০০ টাকা':'৳300 per month',
+'মোট কার্যদিবস:':'Total working days:',
+'শ্রেণী রিপোর্ট':'Class report',
+'উপস্থিত ✓':'Present ✓',
+'অনুপস্থিত ✕':'Absent ✕',
+'ছুটি':'Holiday',
+'মিনিট':'minutes',
+'দিন':'days',
+'মাস':'Month',
+'সংরক্ষণ':'Save',
+'তারিখ':'Date',
+'সময়':'Time',
+'শ্রেণী':'Class',
+'সমস্যা':'Problem',
+'বন্ধ':'Off',
+'নেই':'None',
+'হয়নি':'No',
+'দেখা':'View',
+'বাকি':'Remaining',
+'ধরন':'Type',
+'পরিবর্তন':'Change',
+'নির্বাচন':'Select',
+'পাঠান':'Send',
+'পাঠানো':'Sent',
+'মুছুন':'Delete',
+'যোগ করা':'Add',
+'এই দিনে':'On this day',
+'এই ছাত্রের':'This student\'s',
+'আপনি':'You',
+'আবার':'again',
+'বেতন: ৳':'Fee: ৳',
+'মাসের':'month\'s',
+'বিষয়টি':'This subject'
 };
 var keys=Object.keys(D).sort(function(a,b){return b.length-a.length}),B='\\u0980-\\u09FF';
 var RX=new RegExp('(?<!['+B+'])('+keys.map(function(s){return s.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')}).join('|')+')(?!['+B+'])','g');

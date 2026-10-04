@@ -98,7 +98,7 @@ async function delM(i){
       const sn=await get(query(ref(db,'users'),orderByChild('mid'),equalTo(i)));
       const v=sn.val()||{};Object.keys(v).forEach(k=>{u['users/'+k]=null});
       await update(ref(db),u);
-      m.remove();alert('ডিলিট হয়েছে। (users রেকর্ড: '+Object.keys(v).length+'টি)');load?load():dash()
+      m.remove();alert('ডিলিট হয়েছে। (users রেকর্ড: '+Object.keys(v).length+'টি)');delete M[i];delete L[i];save();dash()
     }catch(e){$('#dm').textContent='ব্যর্থ: '+e.message;$('#dy').disabled=false}}}
 async function view(i){
   const m0=M[i],l=L[i]||{},s=st(l);
@@ -170,4 +170,90 @@ function migrate(){
       U['licenses/'+MID]={trialStart:0,trialEnd:0,subStart:now,subEnd:d2(ms2d(now+365*DAY),1),suspended:false};
       $('#go').disabled=true;await update(ref(db),U);await load(true);m.remove();dash();alert('মাইগ্রেশন সম্পন্ন: '+MID)}
     catch(e){$('#go').disabled=false;$('#er').textContent=e.message}}}
-</script></body></html>
+</script><script>
+/* ইমোজি → পেশাদার লাইন-আইকন (SVG) */
+(function(){
+var S=function(p){return '<svg viewBox="0 0 24 24" aria-hidden="true">'+p+'</svg>'};
+var P={
+home:'<path d="M3 11l9-8 9 8"/><path d="M5 10v10h14V10"/><path d="M10 20v-6h4v6"/>',
+cap:'<path d="M2 9l10-5 10 5-10 5z"/><path d="M6 11.5V16c3 2 9 2 12 0v-4.5"/>',
+teach:'<circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c0-3.6 2.9-6 6.5-6s6.5 2.4 6.5 6"/><path d="M17 6h5v7h-5"/>',
+bars:'<path d="M5 20V11M11 20V4M17 20v-6M3 20h18"/>',
+up:'<path d="M3 17l6-6 4 4 8-8"/><path d="M15 7h6v6"/>',
+down:'<path d="M3 7l6 6 4-4 8 8"/><path d="M15 17h6v-6"/>',
+gear:'<circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.9 4.9l2.1 2.1M17 17l2.1 2.1M19.1 4.9L17 7M7 17l-2.1 2.1"/>',
+bell:'<path d="M6 16v-5a6 6 0 0112 0v5l2 2H4z"/><path d="M10 21h4"/>',
+mega:'<path d="M3 11v3l11 5V6z"/><path d="M17 9a4 4 0 010 6M6 15l1 5h3l-1-4"/>',
+chat:'<path d="M21 12a8 8 0 01-11.5 7.2L4 20l1-4.5A8 8 0 1121 12z"/>',
+book:'<path d="M2 5h6a4 4 0 014 4v11a3 3 0 00-3-3H2z"/><path d="M22 5h-6a4 4 0 00-4 4v11a3 3 0 013-3h7z"/>',
+mosque:'<path d="M12 3c-2 2-3 3.5-3 5a3 3 0 006 0c0-1.5-1-3-3-5z"/><path d="M4 21V12h16v9M3 21h18M10 21v-3a2 2 0 014 0v3"/>',
+school:'<path d="M3 21h18M5 21V9l7-5 7 5v12"/><path d="M10 21v-5h4v5"/>',
+doc:'<path d="M6 3h9l4 4v14H6z"/><path d="M14 3v5h5M9 13h7M9 17h7"/>',
+user:'<circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 3.5-6 8-6s8 2 8 6"/>',
+phone:'<path d="M5 4h4l2 5-2.5 1.5a11 11 0 005 5L15 13l5 2v4a2 2 0 01-2 2A16 16 0 013 6a2 2 0 012-2z"/>',
+laptop:'<rect x="4" y="5" width="16" height="11" rx="1"/><path d="M2 20h20"/>',
+mobile:'<rect x="7" y="2" width="10" height="20" rx="2"/><path d="M11 18h2"/>',
+globe:'<circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c3 3 3 15 0 18M12 3c-3 3-3 15 0 18"/>',
+grid:'<rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/>',
+cal:'<rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/>',
+cash:'<rect x="2" y="6" width="20" height="12" rx="2"/><circle cx="12" cy="12" r="3"/>',
+card:'<rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20"/>',
+okc:'<circle cx="12" cy="12" r="9"/><path d="M8 12l3 3 5-6"/>',
+xc:'<circle cx="12" cy="12" r="9"/><path d="M9 9l6 6M15 9l-6 6"/>',
+edit:'<path d="M4 20l1-4L16 5l3 3L8 19z"/><path d="M14 7l3 3"/>',
+plus:'<path d="M12 5v14M5 12h14"/>',
+warn:'<path d="M12 3l10 18H2z"/><path d="M12 10v5M12 18v.5"/>',
+lock:'<rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 018 0v3"/>',
+gift:'<rect x="3" y="8" width="18" height="4"/><path d="M5 12v9h14v-9M12 8v13M12 8C9 8 8 4 10 4s2 4 2 4 0-4 2-4 1 4-2 4"/>',
+save:'<path d="M5 3h12l4 4v14H5z"/><path d="M8 3v6h8V3M8 21v-7h8v7"/>',
+sync:'<path d="M20 11a8 8 0 00-14-4M4 4v4h4M4 13a8 8 0 0014 4M20 20v-4h-4"/>',
+eye:'<path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/>',
+out:'<path d="M9 21H5V3h4M16 17l5-5-5-5M21 12H9"/>',
+key:'<circle cx="8" cy="15" r="4"/><path d="M11 12l9-9M16 7l3 3"/>',
+trash:'<path d="M4 7h16M9 7V4h6v3M6 7l1 14h10l1-14M10 11v6M14 11v6"/>'
+};
+var M={'🏠':'home','🎓':'cap','👨\u200D🏫':'teach','👨\u200D💻':'laptop','📊':'bars','📈':'up','📉':'down','⚙':'gear','🔔':'bell','📢':'mega','📣':'mega','💬':'chat','📚':'book','📘':'book','📖':'book','🕌':'mosque','🏫':'school','📋':'doc','📝':'doc','📄':'doc','🗂':'doc','🧾':'doc','👤':'user','👦':'user','📞':'phone','☎':'phone','💻':'laptop','📱':'mobile','🌐':'globe','🧩':'grid','📅':'cal','🗓':'cal','💰':'cash','💵':'cash','💳':'card','✅':'okc','🎉':'okc','❌':'xc','⛔':'xc','✏':'edit','✍':'edit','➕':'plus','⚠':'warn','🔒':'lock','🎁':'gift','💾':'save','♻':'sync','🔁':'sync','👁':'eye','🚪':'out','🔑':'key','🗑':'trash'};
+var DOT={'🟩':['#2e9e6b','2px'],'🟥':['#d64545','2px'],'🟧':['#e6951f','2px'],'⬜':['#cbd5d1','2px'],'🔴':['#d64545','50%'],'🔵':['#3b82f6','50%']};
+var RX=/\p{Extended_Pictographic}(?:\uFE0F|\u200D\p{Extended_Pictographic}\uFE0F?)*/gu;
+var css=document.createElement('style');
+css.textContent='.ic{display:inline-block;width:1.15em;height:1.15em;vertical-align:-.2em}.ic svg{width:100%;height:100%;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}.icd{display:inline-block;width:.8em;height:.8em;vertical-align:-.05em}';
+(document.head||document.documentElement).appendChild(css);
+function key(s){return s.replace(/\uFE0F/g,'')}
+function conv(node){
+ var par=node.parentNode;if(!par)return;var tg=par.nodeName;
+ if(tg==='SCRIPT'||tg==='STYLE'||tg==='TEXTAREA'||tg==='TITLE')return;
+ var tx=node.nodeValue;if(!RX.test(tx)){RX.lastIndex=0;return}RX.lastIndex=0;
+ var opt=tg==='OPTION',out=[],last=0,m,ch=false;
+ while((m=RX.exec(tx))){var k=key(m[0]),h=null;
+  if(M[k])h='<span class="ic">'+S(P[M[k]])+'</span>';
+  else if(DOT[k])h='<span class="icd" style="background:'+DOT[k][0]+';border-radius:'+DOT[k][1]+'"></span>';
+  if(opt&&!h){h=''}
+  if(opt&&h){h=''}
+  if(h===null)continue;
+  out.push(document.createTextNode(tx.slice(last,m.index)));
+  if(h){var w=document.createElement('span');w.innerHTML=h;out.push(w.firstChild)}
+  last=m.index+m[0].length;ch=true}
+ if(!ch)return;
+ out.push(document.createTextNode(tx.slice(last)));
+ var f=document.createDocumentFragment();out.forEach(function(n){f.appendChild(n)});par.replaceChild(f,node)}
+function walk(root){
+ if(root.nodeType===3){conv(root);return}
+ if(root.nodeType!==1)return;
+ var w=document.createTreeWalker(root,4,null),a=[],n;
+ while((n=w.nextNode()))a.push(n);
+ a.forEach(conv)}
+var q=[],sch=0;
+function flush(){sch=0;var l=q;q=[];l.forEach(function(n){if(n.isConnected)walk(n)})}
+new MutationObserver(function(ms){
+ ms.forEach(function(m){if(m.type==='characterData')q.push(m.target);else m.addedNodes.forEach(function(n){q.push(n)})});
+ if(!sch){sch=1;(window.queueMicrotask||setTimeout)(flush)}
+}).observe(document.documentElement,{childList:true,subtree:true,characterData:true});
+walk(document.body||document.documentElement);
+/* alert/confirm-এ ইমোজি বাদ */
+var strip=function(s){return typeof s==='string'?s.replace(RX,'').replace(/^\s+/,''):s};
+var oa=window.alert,oc=window.confirm;
+window.alert=function(s){return oa.call(window,strip(s))};
+window.confirm=function(s){return oc.call(window,strip(s))};
+})();
+</script>
+</body></html>

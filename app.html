@@ -1988,12 +1988,12 @@ function open(){if(document.getElementById('langdlg'))return;var d=document.crea
  var b=function(l,t){return '<button data-l="'+l+'" class="tile" style="background:'+(lang===l?'var(--g)':'#5b6b7d')+';flex:1;padding:12px">'+(lang===l?'✓ ':'')+t+'</button>'};
  d.innerHTML='<div style="background:var(--card);color:var(--ink);width:100%;max-width:320px;border-radius:18px;padding:20px;text-align:center"><div style="font-size:30px">🌐</div><h3 style="margin:6px 0 14px">Language / ভাষা</h3><div style="display:flex;gap:10px">'+b('bn','বাংলা')+b('en','English')+'</div></div>';
  d.addEventListener('click',function(e){var l=e.target.getAttribute&&e.target.getAttribute('data-l');if(l)pick(l);else if(e.target===d)d.remove()});document.body.appendChild(d)}
-function mkB(fixed){var b=document.createElement('button');b.className='lgb';b.setAttribute('aria-label','Language');b.textContent='🌐 '+(lang==='en'?'EN':'বাং');
+function mkB(fixed){var b=document.createElement('button');b.className='lgb';b.setAttribute('aria-label','Language');b.textContent=(lang==='en'?'EN':'বাং');
  b.style.cssText=(fixed?'position:fixed;top:calc(env(safe-area-inset-top,0px) + 10px);right:12px;z-index:25;background:#0006;color:#fff;border-radius:99px;padding:6px 12px;font-size:13px;':'width:auto;height:34px;font-size:13px;padding:0 8px;border-radius:99px;background:#fff3;white-space:nowrap;');
  b.onclick=open;return b}
 function btns(){var top=document.querySelector('#app .top'),fx=document.getElementById('lgfix');
- if(top){if(fx)fx.remove();var o=top.querySelector('.lgb');if(!o)top.appendChild(mkB(false));else{var L1='🌐 '+(lang==='en'?'EN':'বাং');if(o.textContent!==L1)o.textContent=L1}}
- else{var x=document.querySelector('#app .login');if(x&&!fx){fx=mkB(true);fx.id='lgfix';document.body.appendChild(fx)}else if(fx){var L2='🌐 '+(lang==='en'?'EN':'বাং');if(fx.textContent!==L2)fx.textContent=L2}}}
+ if(top){if(fx)fx.remove();var o=top.querySelector('.lgb');if(!o)top.appendChild(mkB(false));else{var L1=(lang==='en'?'EN':'বাং');if(o.textContent!==L1)o.textContent=L1}}
+ else{var x=document.querySelector('#app .login');if(x&&!fx){fx=mkB(true);fx.id='lgfix';document.body.appendChild(fx)}else if(fx){var L2=(lang==='en'?'EN':'বাং');if(fx.textContent!==L2)fx.textContent=L2}}}
 new MutationObserver(function(ms){ms.forEach(function(m){if(m.type==='childList')m.addedNodes.forEach(walk);else if(m.type==='characterData')dText(m.target);else dAttr(m.target)});btns()})
  .observe(document.body,{childList:true,subtree:true,characterData:true,attributes:true,attributeFilter:AT});
 walk(document.body);retr();btns();
@@ -2064,12 +2064,12 @@ var M={'🏠':'home','🎓':'cap','👨\u200D🏫':'teach','👨\u200D💻':'lap
 var DOT={'🟩':['#2e9e6b','2px'],'🟥':['#d64545','2px'],'🟧':['#e6951f','2px'],'⬜':['#cbd5d1','2px'],'🔴':['#d64545','50%'],'🔵':['#3b82f6','50%']};
 var RX=/\p{Extended_Pictographic}(?:\uFE0F|\u200D\p{Extended_Pictographic}\uFE0F?)*/gu;
 var css=document.createElement('style');
-css.textContent='.ic{display:inline-block;width:1.15em;height:1.15em;vertical-align:-.2em}.ic svg{width:100%;height:100%;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}.icd{display:inline-block;width:.8em;height:.8em;vertical-align:-.05em}';
+css.textContent=`.ic{display:inline-block;width:1.15em;height:1.15em;vertical-align:-.2em}.ic svg{width:100%;height:100%;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}.icd{display:inline-block;width:.8em;height:.8em;vertical-align:-.05em}.lgb::before{content:'';display:inline-block;width:1.1em;height:1.1em;margin-right:5px;vertical-align:-.2em;background:currentColor;-webkit-mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='1.8' stroke-linecap='round'%3E%3Ccircle cx='12' cy='12' r='9'/%3E%3Cpath d='M3 12h18M12 3c3 3 3 15 0 18M12 3c-3 3-3 15 0 18'/%3E%3C/svg%3E") center/contain no-repeat;mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='1.8' stroke-linecap='round'%3E%3Ccircle cx='12' cy='12' r='9'/%3E%3Cpath d='M3 12h18M12 3c3 3 3 15 0 18M12 3c-3 3-3 15 0 18'/%3E%3C/svg%3E") center/contain no-repeat}`;
 (document.head||document.documentElement).appendChild(css);
 function key(s){return s.replace(/\uFE0F/g,'')}
 function conv(node){
  var par=node.parentNode;if(!par)return;var tg=par.nodeName;
- if(tg==='SCRIPT'||tg==='STYLE'||tg==='TEXTAREA'||tg==='TITLE')return;
+ if(tg==='SCRIPT'||tg==='STYLE'||tg==='TEXTAREA'||tg==='TITLE')return;if(par.closest&&par.closest('.ldl,.lgb'))return;
  var tx=node.nodeValue;if(!RX.test(tx)){RX.lastIndex=0;return}RX.lastIndex=0;
  var opt=tg==='OPTION',out=[],last=0,m,ch=false;
  while((m=RX.exec(tx))){var k=key(m[0]),h=null;
@@ -2091,8 +2091,9 @@ function walk(root){
  while((n=w.nextNode()))a.push(n);
  a.forEach(conv)}
 var q=[],sch=0;
-function flush(){sch=0;var l=q;q=[];l.forEach(function(n){if(n.isConnected)walk(n)})}
-new MutationObserver(function(ms){
+var burst=0,ob;setInterval(function(){burst=0},1000);
+function flush(){sch=0;if(++burst>400){try{ob.disconnect()}catch(e){}return}var l=q;q=[];l.forEach(function(n){if(n.isConnected)walk(n)})}
+ob=new MutationObserver(function(ms){
  ms.forEach(function(m){if(m.type==='characterData')q.push(m.target);else m.addedNodes.forEach(function(n){q.push(n)})});
  if(!sch){sch=1;(window.queueMicrotask||setTimeout)(flush)}
 }).observe(document.documentElement,{childList:true,subtree:true,characterData:true});

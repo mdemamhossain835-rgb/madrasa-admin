@@ -893,7 +893,7 @@ window.lgRegGo=async function(){const g=id=>document.getElementById(id).value.tr
  const n=g('rgn'),ad=g('rga'),an=g('rgan'),ph=g('rgph'),em=g('rgem').toLowerCase(),pw=document.getElementById('rgpw').value,pw2=document.getElementById('rgpw2').value,pk=key(ph);
  er.textContent='';if(!n)return bad('মাদ্রাসার নাম দিন');if(!an)return bad('অ্যাডমিনের নাম দিন');if(!/^[0-9]{10,14}$/.test(pk))return bad('সঠিক মোবাইল নম্বর দিন');if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(em))return bad('সঠিক ইমেইল দিন');if(pw.length<6)return bad('পাসওয়ার্ড কমপক্ষে ৬ অক্ষরের হতে হবে');if(pw!==pw2)return bad('দুই পাসওয়ার্ড মেলেনি');
  btn.disabled=true;showLd();let step='অ্যাকাউন্ট তৈরি',resume=false;
- try{const so=(await get(ref(db,'.info/serverTimeOffset'))).val()||0,now=Date.now()+so;let c;
+ try{const so=await new Promise(r=>{let d=0,u;const f=v=>{if(d)return;d=1;try{u&&u()}catch(e){}r(v)};try{u=onValue(ref(db,'.info/serverTimeOffset'),s=>f(+s.val()||0),()=>f(0))}catch(e){f(0)}setTimeout(()=>f(0),4000)}),now=Date.now()+so;let c;
   try{c=await createUserWithEmailAndPassword(auth,em,pw)}catch(e){if(e.code!=='auth/email-already-in-use')throw e;c=await signInWithEmailAndPassword(auth,em,pw);if((await get(ref(db,'users/'+c.user.uid))).exists()){await signOut(auth);throw {code:'exists'}}resume=true}
   const uid=c.user.uid,mid='M'+uid,soft=async(p,v)=>{try{await set(ref(db,p),v)}catch(e){if(!(resume&&/permission/i.test(e.code+e.message)))throw e}};
   step='মাদ্রাসা তৈরি';await soft('madrasaMeta/'+mid,{name:n,addr:ad,adminName:an,adminPhone:ph,adminEmail:em,ownerUid:uid,createdAt:now,selfReg:true});

@@ -62,7 +62,7 @@ function dash(){
 <div class="bar"><input id="sq" placeholder="নাম / ID / অ্যাডমিন / ফোন দিয়ে খুঁজুন" value="${esc(q)}"><select id="sf">${['all','active','trial','expired','suspended'].map(k=>`<option value="${k}" ${k===flt?'selected':''}>${k==='all'?'All':SN[k]}</option>`).join('')}</select><button id="ad">+ নতুন মাদ্রাসা</button></div>
 ${rows.map(i=>{const m=M[i],l=L[i]||{},s=st(l);return `<div class="card it"><h3>${esc(m.name)} <span class="bd ${s}">${SN[s]}</span></h3>
 <small>ID: ${esc(i)} · অ্যাডমিন: ${esc(m.adminName)} (${esc(m.adminPhone)})</small><small>Trial শেষ: ${show(l.trialEnd)} · Subscription শেষ: ${show(l.subEnd)}</small>
-<div class="act"><button class="s" data-a="v" data-i="${i}">View</button><button class="s" data-a="e" data-i="${i}">Edit</button><button class="s" data-a="t" data-i="${i}">Extend Trial</button><button class="s" data-a="u" data-i="${i}">Extend Subscription</button><button class="s" data-a="pw" data-i="${i}">🔑 Admin পাসওয়ার্ড</button>
+<div class="act"><button class="s" data-a="v" data-i="${i}">View</button><button class="s" data-a="e" data-i="${i}">Edit</button><button class="s" data-a="t" data-i="${i}">Extend Trial</button><button class="s" data-a="u" data-i="${i}">Extend Subscription</button><button class="s" data-a="pw" data-i="${i}">🔑 Admin পাসওয়ার্ড</button><button class="s d" data-a="del" data-i="${i}">🗑️ মাদ্রাসা ডিলিট</button>
 ${l.suspended?`<button class="s" data-a="on" data-i="${i}">Activate</button>`:`<button class="s d" data-a="off" data-i="${i}">Suspend</button>`}</div></div>`}).join('')||'<div class="card">কোনো মাদ্রাসা পাওয়া যায়নি</div>'}`;
   $('#lo').onclick=()=>{sessionStorage.removeItem(CK);signOut(auth)};
   $('#rf').onclick=async()=>{await load(true);dash()};$('#ad').onclick=()=>form();$('#mg').onclick=migrate;
@@ -77,7 +77,7 @@ async function patch(mid,p,meta){ // শুধু পরিবর্তিত fi
   if(!Object.keys(U).length)return;await update(ref(db),U);
   L[mid]=Object.assign({},o,p);if(meta)M[mid]=Object.assign({},M[mid],meta);save()}
 async function act(a,i){
-  if(a==='v')return view(i);if(a==='e')return form(i);if(a==='pw')return pwAdmin(i);
+  if(a==='del')return delM(i);if(a==='v')return view(i);if(a==='e')return form(i);if(a==='pw')return pwAdmin(i);
   if(a==='off'||a==='on'){if(!confirm((a==='off'?'Suspend':'Activate')+' করবেন? '+M[i].name))return;
     try{await patch(i,{suspended:a==='off'});dash()}catch(e){alert(e.message)}return}
   const k=a==='t'?'trialEnd':'subEnd',cur=(L[i]||{})[k]||0;
@@ -86,6 +86,20 @@ async function act(a,i){
   const sv=async t=>{try{const p={};p[k]=t;if(k==='trialEnd'&&!(L[i]||{}).trialStart)p.trialStart=Date.now();if(k==='subEnd'&&!(L[i]||{}).subStart)p.subStart=Date.now();await patch(i,p);m.remove();dash()}catch(e){alert(e.message)}};
   m.querySelectorAll('[data-d]').forEach(b=>b.onclick=()=>{const base=Math.max(cur,Date.now()),e=new Date(base+b.dataset.d*DAY);sv(d2(ms2d(e.getTime()),1))});
   $('#cs').onclick=()=>{const v=$('#cd').value;if(!v)return alert('তারিখ দিন');sv(d2(v,1))};$('#cx').onclick=()=>m.remove()}
+
+async function delM(i){
+  const m=modal(`<h3>⚠️ মাদ্রাসা স্থায়ীভাবে ডিলিট</h3><p><b>${esc((M[i]||{}).name||i)}</b> (ID: ${esc(i)})<br>এর সব ছাত্র, শিক্ষক, হাজিরা, ফি, লাইসেন্স ও ব্যবহারকারীর রেকর্ড Firebase Database থেকে মুছে যাবে। <b>ফেরত আনা যাবে না।</b></p><label>নিশ্চিত করতে মাদ্রাসার ID লিখুন: <b>${esc(i)}</b></label><input id="dc" autocomplete="off"><div class="act"><button class="s d" id="dy">চিরতরে ডিলিট</button><button class="s" id="cx">বাতিল</button></div><p id="dm"></p>`);
+  $('#cx').onclick=()=>m.remove();
+  $('#dy').onclick=async()=>{
+    if($('#dc').value.trim()!==i)return alert('ID মেলেনি');
+    $('#dy').disabled=true;$('#dm').textContent='ডিলিট হচ্ছে...';
+    try{
+      const u={};u['madrasas/'+i]=null;u['licenses/'+i]=null;u['madrasaMeta/'+i]=null;
+      const sn=await get(query(ref(db,'users'),orderByChild('mid'),equalTo(i)));
+      const v=sn.val()||{};Object.keys(v).forEach(k=>{u['users/'+k]=null});
+      await update(ref(db),u);
+      m.remove();alert('ডিলিট হয়েছে। (users রেকর্ড: '+Object.keys(v).length+'টি)');load?load():dash()
+    }catch(e){$('#dm').textContent='ব্যর্থ: '+e.message;$('#dy').disabled=false}}}
 async function view(i){
   const m0=M[i],l=L[i]||{},s=st(l);
   const m=modal(`<h3>${esc(m0.name)} <span class="bd ${s}">${SN[s]}</span></h3><p>ID: <b>${esc(i)}</b><br>ঠিকানা: ${esc(m0.addr)}<br>অ্যাডমিন: ${esc(m0.adminName)} · ${esc(m0.adminPhone)} · ${esc(m0.adminEmail)}<br>তৈরি: ${show(m0.createdAt)}<br>Trial: ${show(l.trialStart)} → ${show(l.trialEnd)}<br>Subscription: ${show(l.subStart)} → ${show(l.subEnd)}<br>App লিংক প্যারামিটার: <code>?m=${esc(i)}</code></p><p id="stt">পরিসংখ্যান লোড হচ্ছে...</p><button class="s" id="cx">বন্ধ</button>`);

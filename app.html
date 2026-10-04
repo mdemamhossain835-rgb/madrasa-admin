@@ -364,7 +364,7 @@ function cyc(id){const s=students.find(x=>x.id===id),o=['Present','Absent','Late
 /* ফি ও হিসাব */
 function fees(){const G=role==='guardian',ids=G?[myChild]:students.map(s=>s.id),P=fp.filter(p=>ids.includes(p.sid));
  const fm=G?feeMonths(myChild):{},pm=Object.keys(fm).sort().reverse();
- shell('Fees & Accounts',`<div class="money"><div style="background:var(--no);color:var(--not)">এ মাসের বকেয়া<b>${tk(ids.reduce((a,i)=>a+dueOf(i),0))}</b></div><div style="background:var(--ok);color:var(--okt)">এ মাসে আদায়<b>${tk(sum(P.filter(p=>p.m===M0)))}</b></div><div style="background:var(--card);border:1px solid var(--line)">মোট আদায়<b>${tk(sum(P))}</b></div></div>`+
+ shell('Fees & Accounts',`<div class="money"><div style="background:var(--no);color:var(--not)">এ মাসের বকেয়া<b>${tk(ids.reduce((a,i)=>a+dueOf(i),0))}</b></div><div style="background:var(--ok);color:var(--okt)">এ মাসে আদায়<b>${tk(sum(P.filter(p=>p.m===M0)))}</b></div>${G?'':`<div style="background:var(--card);border:1px solid var(--line)">মোট আদায়<b>${tk(sum(P))}</b></div>`}</div>`+
  (G?'':`<div class="act">${[['➕','ফি আদায়',"tab='feePick';draw()"],['📄','বকেয়া তালিকা',"tab='dues';draw()"],['🧾','রসিদ',"tab='rcpt';draw()"],['📈','আয়',"tab='inc';draw()"],['📉','ব্যয়',"tab='exp';draw()"]].map(a=>`<button onclick="${a[2]}"><b>${a[0]}</b>${a[1]}</button>`).join('')}</div>`)+
  (G?`<h3>পরিশোধিত মাসসমূহ (${bn(pm.length)} মাস)</h3>`+(pm.map(m=>K(monLabel(m),tk(fm[m]))).join('')||'<p class="note">এখনো কোনো মাসিক ফি পরিশোধ হয়নি।</p>'):'')+
  '<h3>সাম্প্রতিক পেমেন্ট</h3>'+(P.slice(-5).reverse().map(p=>R_(stu_(p.sid).n[0],stu_(p.sid).n,tk(p.a)+' • '+p.t+' • '+dd(p.d),'<span class="chip Paid">পরিশোধিত</span>')).join('')||'<p class="note">এখনো কোনো পেমেন্ট নেই।</p>'),G?'':'home')}
@@ -401,8 +401,10 @@ function cardV(){const s=stu_(cur),l=rs[cur]||[],G=role==='guardian';
  shell('রিপোর্ট কার্ড',R_(s.n[0],s.n,'ID: '+cur+' | রোল: '+bn(s.r))+(l.map(r=>{const c=calc(r);return `<div class="row" style="display:block"><b>${r.e}</b>`+r.m.map((x,i)=>`<div style="display:flex;justify-content:space-between;padding:4px 0;border-bottom:1px solid var(--line)"><span>${SJ[i]}</span><span>${bn(x)} • ${gl(gp(x))}</span></div>`).join('')+`<p style="margin-top:8px"><b>মোট ${bn(c.t)} | GPA ${bn(c.g.toFixed(2))} | ${c.l} ${c.f?'(অকৃতকার্য)':'(উত্তীর্ণ)'}</b></p></div>`}).join('')||'<p class="note">এখনো কোনো ফলাফল নেই।</p>'),G?'child':'res',G?'':'addR()')}
 function addR(){form('ফলাফল যোগ — '+stu_(cur).n,[['n','পরীক্ষার নাম']].concat(SJ.map((x,i)=>['m'+i,x+' (১০০ এর মধ্যে)','type=number max=100'])),{},o=>{(rs[cur]=rs[cur]||[]).push({e:o.n,m:SJ.map((x,i)=>Math.min(100,Math.max(0,+o['m'+i]||0)))});save('mm_r',rs);draw()})}
 /* উপস্থিতি (অভিভাবক) */
-function attV(){const id=myChild,days=Object.keys(at).filter(d=>d.startsWith(M0)&&at[d][id]).sort().reverse(),L={Present:'উপস্থিত',Absent:'অনুপস্থিত',Late:'দেরি'},c=k=>days.filter(d=>at[d][id]===k).length;
- shell('উপস্থিতি',`<div class="stats"><div class="stat"><b>${bn(c('Present'))}</b><small>উপস্থিত</small></div><div class="stat"><b>${bn(c('Absent'))}</b><small>অনুপস্থিত</small></div><div class="stat"><b>${bn(c('Late'))}</b><small>দেরি</small></div></div>`+(days.map(d=>R_('📅',dd(d),'',`<span class="chip ${at[d][id]}">${L[at[d][id]]}</span>`)).join('')||'<p class="note">এ মাসে এখনো উপস্থিতি নেওয়া হয়নি।</p>'),'child')}
+function attV(){const s=students.find(x=>x.id===myChild)||{id:myChild,n:'',c:''},r=attMonth(s,repMon);
+ const tile=(l,v,bg,col)=>`<div style="background:${bg};color:${col};border-radius:14px;padding:10px;text-align:center"><b style="display:block;font-size:18px">${v}</b><small>${l}</small></div>`;
+ let h=`${monBar()}<div class="link" style="display:block"><div style="display:flex;align-items:center;gap:14px"><div style="width:96px;height:96px;border-radius:50%;flex:none;background:conic-gradient(var(--g) ${r.pct}%,var(--line) 0);display:flex;align-items:center;justify-content:center"><div style="width:72px;height:72px;border-radius:50%;background:var(--card);display:flex;flex-direction:column;align-items:center;justify-content:center"><b style="font-size:19px">${bn(r.pct)}%</b><small style="color:var(--mute);font-size:11px">উপস্থিতি</small></div></div><div style="flex:1;display:grid;grid-template-columns:1fr 1fr;gap:8px">${tile('উপস্থিত',bn(r.p)+' দিন','var(--ok)','var(--okt)')}${tile('অনুপস্থিত',bn(r.a)+' দিন','var(--no)','var(--not)')}${tile('ছুটি',bn(r.h)+' দিন','rgba(130,90,190,.16)','#8a5fc9')}${tile('দেরি',bn(r.l)+' দিন','var(--late)','var(--latet)')}</div></div><small style="display:block;margin-top:10px;color:var(--mute)">মোট কার্যদিবস: ${bn(r.w)} (যেসব দিন হাজিরা নেওয়া হয়েছে)। হাজিরা না নেওয়া দিন ছুটি ধরা হয়।</small></div><div class="link" style="display:block;margin-top:10px">${calNew(repMon,r)}</div>`;
+ shell('উপস্থিতি',h,'child')}
 /* নামাজ ও হোমওয়ার্ক (গার্জিয়ান থেকে ইনপুট) */
 function hwEnsure(id){hw[id]=hw[id]||{};hw[id][T0]=hw[id][T0]||{p:[0,0,0,0,0],hw:0};return hw[id][T0]}
 function homeBlock(s){const e=(hw[s.id]&&hw[s.id][T0])||{p:[0,0,0,0,0],hw:0},G=role==='guardian';
@@ -417,8 +419,7 @@ function repV(){shell('রিপোর্ট',`<div class="grid"><button class="
 function finV(){const ms=x=>x.filter(e=>e.m===M0),days=Object.keys(at).filter(d=>d.startsWith(M0)),inc=sum(ms(fp)),exp=sum(ms(ex)),dl=students.filter(s=>dueOf(s.id)>0),
  rl=students.map(s=>(rs[s.id]||[]).length?calc(rs[s.id][rs[s.id].length-1]):null).filter(Boolean),n=k=>students.filter(s=>s.s===k).length,cn=(id,k)=>bn(days.filter(d=>at[d][id]===k).length);
  shell('আর্থিক ও ফলাফল সারাংশ','<h3>ছাত্র পরিসংখ্যান</h3>'+K('মোট ছাত্র',bn(students.length))+K('আজ উপস্থিত',bn(n('Present')))+K('আজ অনুপস্থিত',bn(n('Absent')))+K('আজ দেরি',bn(n('Late')))+
- `<h3>মাসিক উপস্থিতি (${bn(days.length)} দিন)</h3>`+students.map(s=>K(s.n,'উ '+cn(s.id,'Present')+' • অ '+cn(s.id,'Absent')+' • দে '+cn(s.id,'Late'))).join('')+
- '<h3>ফি ও হিসাব (এ মাস)</h3>'+K('ফি আদায়',tk(inc))+K('বকেয়া ('+bn(dl.length)+' জন)',tk(dl.reduce((a,s)=>a+dueOf(s.id),0)))+K('মোট ব্যয়',tk(exp))+K('শিক্ষক বেতন',tk(sum(ms(ex).filter(e=>e.c==='বেতন'))))+K('উদ্বৃত্ত',tk(inc-exp))+
+  '<h3>ফি ও হিসাব (এ মাস)</h3>'+K('ফি আদায়',tk(inc))+K('বকেয়া ('+bn(dl.length)+' জন)',tk(dl.reduce((a,s)=>a+dueOf(s.id),0)))+K('মোট ব্যয়',tk(exp))+K('শিক্ষক বেতন',tk(sum(ms(ex).filter(e=>e.c==='বেতন'))))+K('উদ্বৃত্ত',tk(inc-exp))+
  '<h3>ফলাফল</h3>'+K('ফলাফল আছে',bn(rl.length)+' জন')+K('পাসের হার',rl.length?bn(Math.round(rl.filter(c=>!c.f).length/rl.length*100))+'%':'—')+
  '<h3>শিক্ষক</h3>'+K('মোট মাসিক বেতন',tk(sum(teachers.map(t=>({a:t.sal}))))),'rep')}
 /* সেটিংস, ব্যাকআপ */
@@ -939,7 +940,7 @@ async function pushFees(arr){const nw=arr.filter(p=>!feeKnown.has(p.id)),U={},dl
  nw.forEach(p=>notifyFee(p).catch(()=>{}))}
 /* ===== নোটিফিকেশন ও SMS ===== */
 const xe=s=>String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-const DEF={on:{attendance:1,teacherAtt:1,fee:1,announce:1,message:1},
+const DEF={on:{attendance:1,teacherAtt:1,fee:1,announce:1,message:1,sim:0},
  tpl:{attendance:'আলহামদুলিল্লাহ, আপনার সন্তান {studentName} আজ {time} মাদ্রাসায় উপস্থিত হয়েছে।',
   fee:'আলহামদুলিল্লাহ, আপনার সন্তান {studentName}-এর {month} মাসের {feeType} ৳{amount} সফলভাবে গ্রহণ করা হয়েছে।',
   teacherAtt:'আলহামদুলিল্লাহ, আপনার হাজিরা সফলভাবে গ্রহণ করা হয়েছে। সময়: {time}'}};
@@ -970,7 +971,11 @@ window.finalizeClass=async function(){const list=students.filter(x=>x.c===selCla
  if(Object.keys(U).length){try{await upd(U)}catch(e){alert('হাজিরা সংরক্ষণ হয়নি: '+denied(e));return}}
  const c={};for(const s of list){const st=U['attendance/students/'+T0+'/'+s.id]?'Present':(at[T0]&&at[T0][s.id]);if(st==='Absent'){tally('skip',c);continue}
   tally(await deliver('attendance','guardian',s,{studentName:s.n},'att-'+s.id+'-'+T0,{status:ATL[st]||'উপস্থিত'}),c)}
- alert('হাজিরা সংরক্ষিত।\n'+sum2(c))};
+ alert('হাজিরা সংরক্ষিত।\n'+sum2(c));if(ncfg.on.sim)window.simAsk(list)};
+window.simAsk=function(list){const rows=list.map(s=>({s:s,st:at[T0]&&at[T0][s.id]})).filter(x=>x.st==='Absent'||x.st==='Late');if(!rows.length)return;
+ const old=document.getElementById('md');if(old)old.remove();const d=document.createElement('div');d.id='md';d.style.cssText='position:fixed;inset:0;background:#0009;z-index:60;display:flex;align-items:flex-end;justify-content:center';
+ d.innerHTML='<div style="background:var(--card);color:var(--ink);width:100%;max-width:480px;max-height:80%;overflow:auto;border-radius:18px 18px 0 0;padding:16px"><h3>📱 SIM দিয়ে SMS পাঠান</h3><p class="note" style="text-align:left">বাটন চাপলে ফোনের মেসেজ অ্যাপ খুলবে; সেখানে Send চাপলে আপনার SIM থেকে যাবে।</p>'+rows.map(x=>{const m=x.st==='Late'?'আপনার সন্তান '+x.s.n+' আজ মাদ্রাসায় দেরিতে এসেছে।':'আপনার সন্তান '+x.s.n+' আজ মাদ্রাসায় অনুপস্থিত।';return '<div class="row"><div class="info"><b>'+xe0(x.s.n)+'</b><small>'+(x.st==='Late'?'দেরি':'অনুপস্থিত')+' • '+xe0(x.s.ph||'নম্বর নেই')+'</small></div>'+(x.s.ph?'<a class="chip Late" style="text-decoration:none" href="sms:'+encodeURIComponent(x.s.ph)+'?body='+encodeURIComponent(m)+'">💬 SMS</a>':'')+'</div>'}).join('')+'<button class="tile" style="background:#5b6b7d;width:100%;margin-top:10px;padding:12px" onclick="document.getElementById(\'md\').remove()">বন্ধ করুন</button></div>';
+ d.addEventListener('click',function(e){if(e.target===d)d.remove()});document.body.appendChild(d)};
 window.finalizeTeachers=async function(){if(!teachers.length)return;if(!confirm('শিক্ষকদের আজকের হাজিরা চূড়ান্ত করে উপস্থিতদের জানাবেন?'))return;
  const U={};teachers.forEach(t=>{if(!(tat[T0]&&tat[T0][t.id]))U['attendance/teachers/'+T0+'/'+t.id]='P'});
  if(Object.keys(U).length){try{await upd(U)}catch(e){alert('হাজিরা সংরক্ষণ হয়নি: '+denied(e));return}}
@@ -1017,7 +1022,7 @@ const sw=(on,fn)=>tglHTML(on,fn);
 const saveCfg=()=>{set(R('config/notif'),clean(ncfg)).catch(e=>alert('সংরক্ষণ হয়নি: '+denied(e)));draw()};
 window.ntgl=(g,k)=>{ncfg[g][k]=ncfg[g][k]?0:1;saveCfg()};
 window.tplEdit=k=>form('মেসেজ টেমপ্লেট',[['n','টেমপ্লেট (ভেরিয়েবল: {studentName} {time} {month} {amount} {feeType} {date} {teacherName})']],{n:ncfg.tpl[k]},o=>{ncfg.tpl[k]=o.n;saveCfg()});
-window.nsetV=function(){const L=[['attendance','ছাত্রের হাজিরা নোটিফিকেশন'],['teacherAtt','শিক্ষকের হাজিরা নোটিফিকেশন'],['fee','ফি পরিশোধ নোটিফিকেশন'],['announce','সাধারণ ঘোষণা নোটিফিকেশন']],T=[['attendance','ছাত্রের হাজিরা'],['fee','ফি পরিশোধ'],['teacherAtt','শিক্ষকের হাজিরা']];
+window.nsetV=function(){const L=[['attendance','ছাত্রের হাজিরা নোটিফিকেশন'],['teacherAtt','শিক্ষকের হাজিরা নোটিফিকেশন'],['fee','ফি পরিশোধ নোটিফিকেশন'],['announce','সাধারণ ঘোষণা নোটিফিকেশন'],['sim','📱 SIM দিয়ে SMS (হাজিরার পর অনুপস্থিত/দেরি ছাত্রের অভিভাবককে)']],T=[['attendance','ছাত্রের হাজিরা'],['fee','ফি পরিশোধ'],['teacherAtt','শিক্ষকের হাজিরা']];
  shell('Notification Settings',L.map(x=>`<div class="row"><div class="info"><b>${x[1]}</b></div>${sw(ncfg.on[x[0]],`ntgl('on','${x[0]}')`)}</div>`).join('')+'<h3>মেসেজ টেমপ্লেট</h3>'+T.map(x=>`<div class="row"><div class="info"><b>${x[1]}</b><small>${xe(ncfg.tpl[x[0]])}</small></div><button aria-label="সম্পাদনা" onclick="tplEdit('${x[0]}')">✏️</button></div>`).join(''),'set')};
 window.ssetV=function(){tab='set';draw()};
 /* মোছা: এডমিন/শিক্ষক মুছলে সব প্রাপকের কপি+গ্রুপ+লগ মুছে যায়; গার্জিয়ান মুছলে শুধু নিজের কপি মুছে যায় */
@@ -1049,14 +1054,17 @@ window.nlogV=function(){const G=Object.keys(ngrp).map(k=>Object.assign({gid:k},n
 window.nannV=function(){shell('নোটিফিকেশন পাঠান',`<p class="note" style="text-align:left">${role==='teacher'?'আপনার রুটিনের ক্লাসগুলোর গার্জিয়ানদের':'গার্জিয়ান বা শিক্ষকদের'} কাছে নোটিফিকেশন পাঠান। এটি তাদের অ্যাপের নোটিফিকেশনে দেখাবে।</p><button ${btn} onclick="annForm()">✍️ নতুন নোটিফিকেশন লিখুন</button>`,role==='teacher'?'home':'set')};
 window.annForm=function(){const T=role==='teacher',mc=T?window.tClasses(myTeacher):classes;
  if(T&&!mc.length){alert('ক্লাস রুটিনে আপনার কোনো ক্লাস নেই');return}
- form('নতুন নোটিফিকেশন',[['a','কাদের জন্য','select:'+(T?'আমার ক্লাসগুলোর সকল গার্জিয়ান,নির্দিষ্ট ক্লাসের গার্জিয়ান,নির্দিষ্ট ছাত্রের গার্জিয়ান'+(hasPerm('msg_tch')?',সকল শিক্ষক,নির্দিষ্ট শিক্ষক':''):'সকল গার্জিয়ান,নির্দিষ্ট ক্লাসের গার্জিয়ান,নির্দিষ্ট ছাত্রের গার্জিয়ান,সকল শিক্ষক,নির্দিষ্ট শিক্ষক')],['cls','ক্লাস (ক্লাসের ক্ষেত্রে)'],['sid','আইডি (নির্দিষ্ট ছাত্র/শিক্ষকের ক্ষেত্রে, যেমন STU001)'],['n','শিরোনাম'],['b','বার্তা']],{},async o=>{
+ form('নতুন নোটিফিকেশন',[['a','কাদের জন্য','select:'+(T?'আমার ক্লাসগুলোর সকল গার্জিয়ান,নির্দিষ্ট ক্লাসের গার্জিয়ান,নির্দিষ্ট ছাত্রের গার্জিয়ান'+(hasPerm('msg_tch')?',সকল শিক্ষক,নির্দিষ্ট শিক্ষক':''):'সকল গার্জিয়ান,নির্দিষ্ট ক্লাসের গার্জিয়ান,নির্দিষ্ট ছাত্রের গার্জিয়ান,সকল শিক্ষক,নির্দিষ্ট শিক্ষক')],['cls','ক্লাস (ক্লাসের ক্ষেত্রে)'],['sid','আইডি (নির্দিষ্ট ছাত্রের ক্ষেত্রে, যেমন STU001)'],['n','শিরোনাম'],['b','বার্তা']],{},async o=>{
  const lc=(o.sid||'').toLowerCase(),pool=T?students.filter(x=>mc.includes(x.c)):students;let tg='guardian',rcp;
  if(o.a==='সকল গার্জিয়ান'||o.a==='আমার ক্লাসগুলোর সকল গার্জিয়ান')rcp=pool;else if(o.a==='নির্দিষ্ট ক্লাসের গার্জিয়ান')rcp=pool.filter(x=>x.c===o.cls);else if(o.a==='নির্দিষ্ট ছাত্রের গার্জিয়ান')rcp=pool.filter(x=>x.id.toLowerCase()===lc);
- else{tg='teacher';rcp=o.a==='সকল শিক্ষক'?teachers:teachers.filter(x=>x.id.toLowerCase()===lc)}
+ else{tg='teacher';rcp=o.a==='সকল শিক্ষক'?teachers:teachers.filter(x=>x.id===o.tid)}
  if(!rcp.length){alert(T?'কোনো প্রাপক পাওয়া যায়নি (শুধু আপনার রুটিনের ক্লাস)':'কোনো প্রাপক পাওয়া যায়নি');return}if(!o.b){alert('বার্তা লিখুন');return}
  if(!confirm(bn(rcp.length)+' জনকে নোটিফিকেশন পাঠাবেন?'))return;const base='ann-'+Date.now().toString(36),c={};
  for(const r of rcp)tally(await deliver('announce',tg,r,{},base+'-'+r.id,{title:o.n,msg:o.b,gid:base}),c);
- alert('নোটিফিকেশন পাঠানো শেষ।\n'+sum2(c))})};
+ alert('নোটিফিকেশন পাঠানো শেষ।\n'+sum2(c))});
+ const md=document.getElementById('md');if(!md)return;const sa=md.querySelector('[name=a]'),ls=md.querySelector('[name=sid]').closest('label'),lcl=md.querySelector('[name=cls]').closest('label');
+ const lt=document.createElement('label');lt.style.cssText='display:block;font-size:13px;color:var(--mute);margin-top:8px';lt.innerHTML='শিক্ষক বাছাই করুন<select class="search" style="margin:4px 0 0" name="tid">'+teachers.map(x=>'<option value="'+esc(x.id)+'">'+xe0(x.n)+'</option>').join('')+'</select>';ls.after(lt);
+ const up=()=>{const v=sa.value;lcl.style.display=v==='নির্দিষ্ট ক্লাসের গার্জিয়ান'?'':'none';ls.style.display=v==='নির্দিষ্ট ছাত্রের গার্জিয়ান'?'':'none';lt.style.display=v==='নির্দিষ্ট শিক্ষক'?'':'none'};sa.addEventListener('change',up);up()};
 /* লিসেনার */
 function listen2(){const er=e=>console.error(e),on=(r,f)=>unsub.push(onValue(r,f,er)),qN=p=>query(R(p),orderByChild('ts'),limitToLast(60));
  const nrebuild=window.nrebuild=()=>{const v=nraw;nlist=Object.keys(v).map(k=>Object.assign({id:k},v[k])).filter(n=>n.ts>=nCut()).sort((a,b)=>b.ts-a.ts);if(role==='guardian'){if(nSeen){nlist.forEach(n=>{if(!nSeen.has(n.id)&&!n.read)sysAlert(n)})}nSeen=new Set(nlist.map(n=>n.id))}nunread=nlist.filter(n=>!n.read).length;redraw()};const onNList=sn=>{nraw=sn.val()||{};nrebuild()};
@@ -1989,6 +1997,22 @@ function btns(){var top=document.querySelector('#app .top'),fx=document.getEleme
 new MutationObserver(function(ms){ms.forEach(function(m){if(m.type==='childList')m.addedNodes.forEach(walk);else if(m.type==='characterData')dText(m.target);else dAttr(m.target)});btns()})
  .observe(document.body,{childList:true,subtree:true,characterData:true,attributes:true,attributeFilter:AT});
 walk(document.body);retr();btns();
+})();
+
+/* ব্যাক চাপলে আগের স্ক্রল-অবস্থান ফেরত (স্ট্যাক-ভিত্তিক) */
+(function(){var st=[],nav=0,bk=0,prev=null,_d=window.draw;
+ function sig(){var h=document.querySelector('#app .top h1');return (window.tab||'')+'|'+(h?h.textContent:'')}
+ document.addEventListener('click',function(e){var b=e.target.closest&&e.target.closest('.top button[aria-label="ফিরে যান"]');if(b)bk=1;nav=Date.now()},true);
+ window.draw=function(){var y=window.scrollY||document.documentElement.scrollTop||0,was=prev,isBk=bk;bk=0;
+  _d.apply(this,arguments);
+  var s=sig();
+  if(was!==null&&s!==was){
+   if(isBk){var p=st.pop();if(p&&p.s===s){var go=function(){window.scrollTo(0,p.y)};go();requestAnimationFrame(go);setTimeout(go,120);setTimeout(go,400)}}
+   else if(Date.now()-nav<800){st.push({s:was,y:y});if(st.length>30)st.shift();window.scrollTo(0,0)}
+  }
+  prev=s};
+ window.__mmBk=function(){bk=1};
+ var ob=window.onBack;
 })();
 </script>
 </body>

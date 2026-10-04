@@ -1216,7 +1216,7 @@ const LKK='mm_lock_'+MID;
 function lockUI(m){hideLd();document.getElementById('app').innerHTML='<div class="ldw" style="padding:20px;justify-content:center"><div class="lgc" style="max-width:420px;width:100%;text-align:center"><div style="font-size:52px">🔒</div><h2 style="margin:6px 0 10px">'+m+'</h2><div class="lgnote" style="text-align:left"><b>👨‍💻 ডেভেলপারের সাথে যোগাযোগ</b><br>'+DEV.n+'<br><a class="lgl" style="padding:4px 0" href="mailto:'+DEV.em+'">'+DEV.em+'</a><br><a class="lgl" style="padding:4px 0" href="'+DEV.fb+'" target="_blank" rel="noopener">ফেসবুকে মেসেজ করুন</a></div><button class="lgbt" onclick="try{localStorage.removeItem(\''+LKK+'\')}catch(e){}location.reload()">আবার চেষ্টা করুন</button></div></div>'}
 async function lockScr(m){hideLd();try{await signOut(auth)}catch(e){}try{localStorage.setItem(LKK,m)}catch(e){}lockUI(m)}
 async function resumeSession(user){try{const v=(await get(R('users/'+user.uid))).val();
- if(!v||!['admin','teacher','guardian'].includes(v.role)){await signOut(auth);return false}{const lk=await licMsg(v);if(lk){await lockScr(lk);return true}}
+ if(!v||!['admin','teacher','guardian'].includes(v.role)){await signOut(auth);return false}if(v.mid&&v.mid!==MID&&/^[A-Za-z0-9_]{3,40}$/.test(v.mid)){try{localStorage.removeItem(LKK)}catch(e){}location.replace(location.pathname+'?m='+v.mid);return true}{const lk=await licMsg(v);if(lk){await lockScr(lk);return true}}
  cleanup();role=v.role;myChild=role==='guardian'?v.ref:'';myTeacher=role==='teacher'?v.ref:'';tab=role==='guardian'?'child':'home';
  app.innerHTML=ldHTML();listen();return true}catch(e){console.error(e);return false}}
 let firstAuth=true;

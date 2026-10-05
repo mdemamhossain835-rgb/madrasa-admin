@@ -1367,6 +1367,22 @@ TQ.saveEdit=async function(tid){const g=id=>document.getElementById(id).value.tr
  if(v.in){u[b+'/in/t']=ms(ti);u[b+'/in/st']=st;u[b+'/in/lm']=lm;ed('in')}else{u[b+'/in']={t:ms(ti),mid:MID,st:st,lm:lm,ls:'manual',tn:tn,ae:true,eb:me,ea:serverTimestamp()}}
  if(to){if(v.out){u[b+'/out/t']=ms(to);ed('out')}else u[b+'/out']={t:ms(to),mid:MID,ls:'manual',tn:tn,ae:true,eb:me,ea:serverTimestamp()}}else if(v.out)u[b+'/out']=null;
  try{await upd(u);cl();TQ.report()}catch(e){alert('সংরক্ষণ হয়নি: '+(e.code||e.message))}};
+
+/* ===== শিক্ষকের ইতিহাস ও মাসিক হাজিরা: QR হাজিরা মিশিয়ে দেখানো (শুধু Admin, দেখার জন্য) ===== */
+TQ.ov={};TQ.ovT={};
+TQ.load=async function(rs){let ch=false;for(const r of rs){const k=r[0]+'|'+r[1];if(Date.now()-(TQ.ovT[k]||0)<30000)continue;TQ.ovT[k]=Date.now();
+  try{const s=await get(query(R('tqr'),orderByKey(),startAt(r[0]),endAt(r[1]))),v=s.val()||{};
+   Object.keys(TQ.ov).forEach(d=>{if(d>=r[0]&&d<=r[1])delete TQ.ov[d]});
+   for(const d in v)for(const tid in v[d]){const i=v[d][tid]&&v[d][tid].in;if(!i)continue;const m={present:'Present',late:'Late',absent:'Absent'}[i.st];if(m)(TQ.ov[d]=TQ.ov[d]||{})[tid]=m}
+   ch=true}catch(e){TQ.ovT[k]=0}}
+ return ch};
+TQ.mergeTat=function(b){const m={};for(const d in b)m[d]=Object.assign({},b[d]);for(const d in TQ.ov)m[d]=Object.assign(m[d]||{},TQ.ov[d]);return m};
+TQ.wrap=function(name,ranges,tabName){const orig=window[name];if(typeof orig!=='function')return;
+ window[name]=function(){if(role!=='admin')return orig.apply(this,arguments);
+  const sv=tat;tat=TQ.mergeTat(sv);try{orig.apply(this,arguments)}finally{tat=sv}
+  const rs=ranges();if(rs.some(r=>Date.now()-(TQ.ovT[r[0]+'|'+r[1]]||0)>=30000))TQ.load(rs).then(ch=>{if(ch&&(tab===tabName))draw()})}};
+TQ.wrap('thist',()=>[[repYear+'-01-01',repYear+'-12-31'],[M0+'-01',M0+'-31']],'thist');
+TQ.wrap('tcalV',()=>[[M0+'-01',M0+'-31']],'tcal');
 </script>
 <script>
 /* ===== Android Back Button / History হ্যান্ডলিং =====

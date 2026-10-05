@@ -172,12 +172,14 @@ function homeList(){
  if(role!=='teacher'||hasPerm('rtn_view'))t.push(['🗓️','Routine','ক্লাস রুটিন','#1f6fe0','rtnv']);
  if(role==='teacher'){t.push(['🔔','Notifications','নোটিফিকেশন','#d6455d','notif']);if(tabOK('nann'))t.push(['📣','Send','নোটিফিকেশন পাঠান','#0b6b4a','nann'],['🗂️','History','পাঠানো নোটিফিকেশন','#5b6b7d','nlog']);if(hasPerm('cls_view'))t.push(['🏫','Class','ক্লাস','#1f6fe0','classes']);if(hasPerm('sub_view'))t.push(['📘','Subject','বিষয়','#128a94','subj'])}
  if(role==='teacher')t.push(['📚','Homework','আজকের হোমওয়ার্ক দিন','#8a3fc4','hwSet']);
+ if(role==='admin')t.push(['📷','QR Settings','শিক্ষক QR হাজিরা সেটিংস','#7a3fc4','tqs'],['🕘','Teacher Att.','শিক্ষক হাজিরা রিপোর্ট','#1f6fe0','tqrep']);
+ if(role==='teacher'&&hasPerm('att_take'))t.push(['📷','My Attendance','শিক্ষক হাজিরা','#7a3fc4','tself']);
  if(role==='admin')t.push(['📚','Homework','ক্লাসের হোমওয়ার্ক দেখুন','#8a3fc4','hwSet']);
  if(role==='admin'||(role==='teacher'&&hasPerm('ph_hist')))t.push(['🕌','History','নামাজ ও হোমওয়ার্ক ইতিহাস','#0b6b4a','hhist']);
  return t}
 const NAVG={
- admin:[['📚 ছাত্র ও শিক্ষক',['students','teachers']],['📋 দৈনন্দিন কাজ',['catt','fees']],['📖 একাডেমিক',['rtnv','hwSet','res','hhist']],['📢 যোগাযোগ',['notices']],['📊 বিশ্লেষণ ও সিস্টেম',['rep','set']]],
- teacher:[['📋 দৈনন্দিন কাজ',['catt','hwSet','fees']],['📚 একাডেমিক',['rtnv','students','teachers','res','classes','subj']],['📢 যোগাযোগ',['notif','nann','nlog','notices']],['📊 ইতিহাস ও রিপোর্ট',['hhist','rep','set']]]};
+ admin:[['📚 ছাত্র ও শিক্ষক',['students','teachers']],['📋 দৈনন্দিন কাজ',['catt','fees','tqs','tqrep']],['📖 একাডেমিক',['rtnv','hwSet','res','hhist']],['📢 যোগাযোগ',['notices']],['📊 বিশ্লেষণ ও সিস্টেম',['rep','set']]],
+ teacher:[['📋 দৈনন্দিন কাজ',['catt','tself','hwSet','fees']],['📚 একাডেমিক',['rtnv','students','teachers','res','classes','subj']],['📢 যোগাযোগ',['notif','nann','nlog','notices']],['📊 ইতিহাস ও রিপোর্ট',['hhist','rep','set']]]};
 function groupTiles(t){const defs=NAVG[role]||[],used=new Set(),out=[];
  defs.forEach(d=>{const it=d[1].map(k=>t.find(x=>x[4]===k)).filter(Boolean);it.forEach(x=>used.add(x));if(it.length)out.push([d[0],it])});
  const rest=t.filter(x=>!used.has(x));if(rest.length)out.push(['🧩 অন্যান্য',rest]);return out}
@@ -356,7 +358,7 @@ const R_=(av,t,sub,r)=>`<div class="row"><div class="av">${av}</div><div class="
 const K=(a,b)=>`<div class="link"><span>${a}</span><b>${b}</b></div>`;
 const _mb=msgBlock;msgBlock=function(s){return role==='guardian'?'':_mb(s)};
 function box(h){cl();const d=document.createElement('div');d.id='md';d.style.cssText='position:fixed;inset:0;background:#0009;z-index:20;display:flex;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:16px';d.innerHTML=`<div style="background:var(--card);width:100%;max-width:440px;border-radius:18px;padding:18px;margin:auto">${h}<div style="display:flex;gap:10px;margin-top:14px"><button class="tile" style="background:var(--g);flex:1;padding:12px" onclick="print()">প্রিন্ট</button><button class="tile" style="background:#5b6b7d;flex:1;padding:12px" onclick="cl()">বন্ধ করুন</button></div></div>`;document.body.appendChild(d)}
-function draw(){const R={home:home,students:stu,teachers:teachV,fees:fees,notices:noteV,prof:profV,child:child,dues:duesV,rcpt:rcptV,inc:incV,exp:expV,res:resV,card:cardV,att:attV,rep:repV,set:setV,classes:classesV,catt:cattV,feePick:feePick,homev:homeV,tatt:tattV,srep:srepV,chist:chist,shist:shist,trep:trepV,thist:thist,fin:finV,scal:scalV,tcal:tcalV,hwSet:hwSet,contact:contactV,aprof:aprof,classFee:classFeeV,notif:notifV,nhub:nhubV,nset:nsetV,sset:ssetV,nlog:nlogV,nann:nannV,rtnv:rtnvV};
+function draw(){const R={home:home,students:stu,teachers:teachV,fees:fees,notices:noteV,prof:profV,child:child,dues:duesV,rcpt:rcptV,inc:incV,exp:expV,res:resV,card:cardV,att:attV,rep:repV,set:setV,classes:classesV,catt:cattV,feePick:feePick,homev:homeV,tatt:tattV,srep:srepV,chist:chist,shist:shist,trep:trepV,thist:thist,fin:finV,scal:scalV,tcal:tcalV,hwSet:hwSet,contact:contactV,aprof:aprof,classFee:classFeeV,notif:notifV,nhub:nhubV,tqs:tqsV,tqrep:tqrepV,tself:tselfV,nset:nsetV,sset:ssetV,nlog:nlogV,nann:nannV,rtnv:rtnvV};
  if(role==='teacher'&&!tabOK(tab))tab='home';
  if(role==='guardian'&&!['child','notices','fees','res','att','prof','homev','contact','notif','rtnv'].includes(tab))tab='child';
  (R[tab]||home)()}
@@ -718,7 +720,7 @@ window.delRcpt=function(id){if(!hasPerm('fee_del'))return deny();const p=fp.find
 <script type="module">
 import {initializeApp} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 import {getAuth,initializeAuth,indexedDBLocalPersistence,browserLocalPersistence,onAuthStateChanged,updatePassword,signInWithEmailAndPassword,createUserWithEmailAndPassword,sendPasswordResetEmail,signOut} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-import {getDatabase,ref,get,set,update,onValue,query,orderByKey,orderByChild,limitToLast,startAt,endAt} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+import {getDatabase,ref,get,set,update,onValue,query,orderByKey,orderByChild,limitToLast,startAt,endAt,serverTimestamp} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
 const cfg={apiKey:"AIzaSyCE-tUb4wySKM7nrUJ_cxnfNm-EybJTLdE",authDomain:"madrasa-management-31850.firebaseapp.com",databaseURL:"https://madrasa-management-31850-default-rtdb.firebaseio.com",projectId:"madrasa-management-31850",messagingSenderId:"444057050878",appId:"1:444057050878:web:f192583528a128cf2e8faf"};
 const app=initializeApp(cfg),auth=initializeAuth(app,{persistence:[indexedDBLocalPersistence,browserLocalPersistence]}),db=getDatabase(app),auth2=getAuth(initializeApp(cfg,'sec'));
 const DEFAULT_MID='CURRENT_MADRASA_001';
@@ -1224,6 +1226,140 @@ onAuthStateChanged(auth,async user=>{if(!firstAuth)return;firstAuth=false;let ok
 setTimeout(()=>{if(booting&&!role){booting=false;window.__authChecked=1;paint()}},10000);
 document.addEventListener('visibilitychange',()=>{if(!document.hidden&&localDay()!==T0)location.reload()});
 
+
+/* ===== শিক্ষক QR হাজিরা (Admin সেটিংস + শিক্ষক স্ক্যান + রিপোর্ট) ===== */
+const TQ={cfg:undefined,tok:'',loc:null,me:null,rd:'',rep:null};
+window.__tq=TQ;
+const tqP=n=>String(n).padStart(2,'0');
+const tqT=ms=>ms?new Date(ms).toLocaleTimeString('bn-BD',{hour:'numeric',minute:'2-digit'}):'—';
+const tqHM=ms=>{const d=new Date(ms);return tqP(d.getHours())+':'+tqP(d.getMinutes())};
+const tqSt={present:['উপস্থিত','#1f9d6b'],late:['দেরি','#e6951f'],absent:['অনুপস্থিত','#d64545'],leave:['ছুটি','#7a5fc4']};
+const tqLs={inside:['✓ প্রতিষ্ঠানের মধ্যে','#1f9d6b'],outside:['⚠ প্রতিষ্ঠানের বাইরে','#e6951f'],location_unavailable:['⚠ অবস্থান যাচাই করা যায়নি','#d64545'],manual:['ম্যানুয়াল (Admin)','#5b6b7d']};
+const tqBadge=(m,k)=>{const x=m[k]||['—','#5b6b7d'];return '<span style="display:inline-block;padding:3px 10px;border-radius:99px;font-size:12px;font-weight:700;background:'+x[1]+'33;color:'+x[1]+'">'+x[0]+'</span>'};
+const tqBox='background:var(--card);border-radius:16px;padding:14px;margin:10px 0';
+const tqDist=d=>d==null?'—':d>=1000?bn((d/1000).toFixed(1))+' কিমি':bn(Math.round(d))+' মি';
+const tqSO=()=>TQ.so!==undefined?Promise.resolve(TQ.so):new Promise(r=>{let d=0,u;const f=v=>{if(d)return;d=1;try{u&&u()}catch(e){}TQ.so=v;r(v)};try{u=onValue(ref(db,'.info/serverTimeOffset'),s=>f(+s.val()||0),()=>f(0))}catch(e){f(0)}setTimeout(()=>f(0),4000)});
+const tqTok=()=>gen()+gen();
+const tqHav=(a,b,c,d)=>{const R0=6371000,x=Math.PI/180,dl=(c-a)*x,dn=(d-b)*x,h=Math.sin(dl/2)**2+Math.cos(a*x)*Math.cos(c*x)*Math.sin(dn/2)**2;return 2*R0*Math.asin(Math.sqrt(h))};
+const tqGeo=()=>new Promise(r=>{if(!navigator.geolocation)return r({ok:0,err:'unsupported'});navigator.geolocation.getCurrentPosition(p=>r({ok:1,lat:p.coords.latitude,lng:p.coords.longitude,acc:p.coords.accuracy}),e=>r({ok:0,err:e&&e.code===1?'denied':'unavailable'}),{enableHighAccuracy:true,timeout:15000,maximumAge:0})});
+const tqQRtext=()=>'MMQ1|'+MID+'|'+(TQ.cfg&&TQ.cfg.qid)+'|'+TQ.tok;
+const tqDN=dk=>{const a=dk.split('-');return Date.UTC(+a[0],+a[1]-1,+a[2])/864e5};
+const tqMap=()=>{const o={},b=new Date();for(let i=-5;i<=800;i++){const d=new Date(b.getTime()+i*864e5-b.getTimezoneOffset()*6e4),k=d.toISOString().slice(0,10);o[k]=tqDN(k)}return o};
+TQ.ensureMap=async function(){try{const k=new Date(Date.now()+60*864e5-new Date().getTimezoneOffset()*6e4).toISOString().slice(0,10),s=await get(R('attQr/dayMap/'+k));if(!s.exists())await update(R('attQr'),{dayMap:tqMap()})}catch(e){}};
+
+/* ---------- Admin: QR সেটিংস (প্রিন্টযোগ্য স্থায়ী QR) ---------- */
+TQ.html=function(){const c=TQ.cfg;
+ if(c===undefined)return '<p class="note">লোড হচ্ছে...</p>';
+ if(!c)return '<div style="'+tqBox+'"><p class="note" style="text-align:left">শিক্ষকদের হাজিরার জন্য একটি QR তৈরি করে প্রিন্ট করে প্রতিষ্ঠানে লাগিয়ে রাখুন। শিক্ষকরা সেটি স্ক্যান করবেন; প্রতিষ্ঠানের অবস্থানের মধ্যে আছেন কি না তা যাচাই হবে। এই পেজ খোলা রাখতে হবে না। ইচ্ছা করলে যেকোনো সময় নতুন QR তৈরি করা যাবে।</p><button class="tile" style="background:var(--g);width:100%;padding:14px" onclick="__tq.create()">নতুন QR তৈরি করুন</button></div>';
+ const on=c.active===true,sm=c.start!=null?tqP(Math.floor(c.start/60))+':'+tqP(c.start%60):'08:00';
+ const inp='style="width:100%;padding:10px;border-radius:10px;border:1px solid #0003;background:var(--bg);color:var(--ink);box-sizing:border-box"';
+ return '<div style="'+tqBox+';text-align:center"><div style="margin-bottom:8px">অবস্থা: '+(on?'<b style="color:#1f9d6b">সক্রিয়</b>':'<b style="color:#d64545">নিষ্ক্রিয়</b>')+' • QR ID: <small>'+xe(String(c.qid||'').slice(0,6))+'…</small></div>'+
+  (TQ.tok?'<div style="background:#fff;border-radius:12px;padding:6px;display:inline-block;max-width:100%">'+mmQR.svg(tqQRtext(),260)+'</div>':'<p class="note">QR লোড হচ্ছে...</p>')+
+  (on?'':'<p class="note">QR নিষ্ক্রিয়। শিক্ষকরা এখন হাজিরা দিতে পারবেন না।</p>')+
+  '<div style="display:flex;gap:8px;margin-top:12px"><button class="tile" style="background:var(--g);flex:1;padding:12px" onclick="__tq.print()">প্রিন্ট করুন</button><button class="tile" style="background:#1f6fe0;flex:1;padding:12px" onclick="__tq.download()">ছবি সংরক্ষণ</button></div>'+
+  '<div style="display:flex;gap:8px;margin-top:8px"><button class="tile" style="background:'+(on?'#d64545':'var(--g)')+';flex:1;padding:12px" onclick="__tq.toggle()">'+(on?'নিষ্ক্রিয় করুন':'সক্রিয় করুন')+'</button><button class="tile" style="background:#5b6b7d;flex:1;padding:12px" onclick="__tq.regen()">নতুন QR তৈরি</button></div><small style="color:var(--mute);display:block;margin-top:8px">নতুন QR তৈরি করলে আগের প্রিন্ট করা QR আর কাজ করবে না।</small></div>'+
+  '<div style="'+tqBox+'"><h3 style="margin:0 0 8px">প্রতিষ্ঠানের অবস্থান ও সময়</h3>'+
+  '<small>Latitude</small><input id="tqla" type="text" inputmode="decimal" value="'+(c.lat!=null?c.lat:'')+'" '+inp+'><small>Longitude</small><input id="tqlo" type="text" inputmode="decimal" value="'+(c.lng!=null?c.lng:'')+'" '+inp+'>'+
+  '<button class="tile" style="background:#1f6fe0;width:100%;padding:11px;margin:8px 0" onclick="__tq.here()">আমার বর্তমান অবস্থান নিন (প্রতিষ্ঠানে থেকে চাপুন)</button>'+
+  '<small>অনুমোদিত দূরত্ব (মিটার)</small><input id="tqrd" type="text" inputmode="numeric" value="'+(c.rad||100)+'" '+inp+'>'+
+  '<small>শুরুর সময়</small><input id="tqst" type="time" value="'+sm+'" '+inp+'><small>দেরি ধরার আগে ছাড় (মিনিট)</small><input id="tqgr" type="text" inputmode="numeric" value="'+(c.grace!=null?c.grace:10)+'" '+inp+'>'+
+  '<button class="tile" style="background:var(--g);width:100%;padding:12px;margin-top:10px" onclick="__tq.saveCfg()">সংরক্ষণ করুন</button></div>'};
+TQ.draw=function(){if(tab==='tqs')shell('Teacher QR Attendance Settings',TQ.html(),'home')};
+TQ.settings=async function(){
+ if(role!=='admin')return;TQ.draw();
+ if(TQ.cfg===undefined||(TQ.cfg&&!TQ.tok)){try{const s=await get(R('attQr/cfg'));TQ.cfg=s.exists()?s.val():null;if(TQ.cfg){TQ.tok=(await get(R('attQr/sec/tok'))).val()||''}}catch(e){TQ.cfg=null;alert('QR সেটিংস পড়া যায়নি: '+(e.code||e.message));return}
+  TQ.draw();if(TQ.cfg)TQ.ensureMap()}};
+TQ.create=async function(){try{const tok=tqTok();await update(R('attQr'),{cfg:{active:true,qid:tqTok(),rad:100,start:480,grace:10,tz:360,created:serverTimestamp()},sec:{tok:tok},dayMap:tqMap()});TQ.tok=tok;TQ.cfg=(await get(R('attQr/cfg'))).val();TQ.draw()}catch(e){alert('QR তৈরি হয়নি: '+(e.code||e.message))}};
+TQ.toggle=async function(){const on=!(TQ.cfg&&TQ.cfg.active);try{await update(R('attQr/cfg'),{active:on});TQ.cfg.active=on;TQ.draw()}catch(e){alert('হয়নি: '+(e.code||e.message))}};
+TQ.regen=async function(){if(!confirm('নতুন QR তৈরি করলে আগের প্রিন্ট করা সব QR বাতিল হবে। নিশ্চিত?'))return;try{const q=tqTok(),k=tqTok();await update(R('attQr'),{'cfg/qid':q,'sec/tok':k});TQ.cfg.qid=q;TQ.tok=k;TQ.draw()}catch(e){alert('হয়নি: '+(e.code||e.message))}};
+TQ.print=function(){if(!TQ.tok)return;cl();const d=document.createElement('div');d.id='qprint';d.style.cssText='position:fixed;inset:0;background:#fff;color:#000;z-index:70;overflow:auto;text-align:center;padding:16px;box-sizing:border-box';
+ d.innerHTML='<style>@media print{body>*:not(#qprint){display:none!important}#qprint{position:static!important}.noprint{display:none!important}}</style><h1 style="margin:10px 0 4px;font-size:26px">'+xe(profile.name||'')+'</h1><h2 style="margin:0 0 12px;font-size:20px">শিক্ষক হাজিরা QR</h2><div style="display:inline-block;width:min(80vw,420px)">'+mmQR.svg(tqQRtext(),420).replace('width="420" height="420"','style="width:100%;height:auto"')+'</div><p style="font-size:18px;margin:10px 0">অ্যাপ থেকে "শিক্ষক হাজিরা" খুলে এই QR স্ক্যান করুন।<br>প্রথম স্ক্যান = আগমন, দ্বিতীয় স্ক্যান = প্রস্থান।</p><div class="noprint" style="display:flex;gap:10px;justify-content:center;margin-top:14px"><button class="tile" style="background:var(--g);padding:12px 26px;width:auto" onclick="window.print()">প্রিন্ট</button><button class="tile" style="background:#5b6b7d;padding:12px 26px;width:auto" onclick="document.getElementById(\'qprint\').remove()">বন্ধ করুন</button></div>';
+ document.body.appendChild(d)};
+TQ.download=function(){if(!TQ.tok)return;const b=new Blob([mmQR.svg(tqQRtext(),800)],{type:'image/svg+xml'}),a=document.createElement('a');a.href=URL.createObjectURL(b);a.download='teacher-attendance-qr.svg';document.body.appendChild(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove()},1500)};
+TQ.here=async function(){const r=await tqGeo();if(!r.ok){alert('অবস্থান পাওয়া যায়নি। ফোনের Location ও ব্রাউজারের অনুমতি চালু করুন।');return}document.getElementById('tqla').value=r.lat.toFixed(6);document.getElementById('tqlo').value=r.lng.toFixed(6)};
+TQ.saveCfg=async function(){const g=id=>document.getElementById(id).value.trim(),la=parseFloat(g('tqla')),lo=parseFloat(g('tqlo')),rd=parseInt(g('tqrd'),10),gr=parseInt(g('tqgr'),10),st=g('tqst').split(':');
+ if(!(la>=-90&&la<=90)||!(lo>=-180&&lo<=180)){alert('সঠিক Latitude/Longitude দিন');return}
+ if(!(rd>=20&&rd<=5000)){alert('দূরত্ব ২০–৫০০০ মিটারের মধ্যে দিন');return}
+ if(!(gr>=0&&gr<=240)||st.length<2){alert('সময় ও ছাড় সঠিক দিন');return}
+ try{const o={lat:la,lng:lo,rad:rd,start:(+st[0])*60+(+st[1]),grace:gr};await update(R('attQr/cfg'),o);Object.assign(TQ.cfg,o);alert('সংরক্ষিত হয়েছে।')}catch(e){alert('সংরক্ষণ হয়নি: '+(e.code||e.message))}};
+
+/* ---------- শিক্ষক: আমার হাজিরা + স্ক্যান ---------- */
+TQ.loadMe=async function(){if(role!=='teacher')return;const days=[],d=new Date();for(let i=0;i<30;i++){days.push(new Date(d.getTime()-i*864e5-d.getTimezoneOffset()*6e4).toISOString().slice(0,10))}
+ const rs=await Promise.all(days.map(k=>get(R('tqr/'+k+'/'+myTeacher)).then(s=>({k:k,v:s.val()})).catch(()=>({k:k,v:null}))));
+ TQ.me=rs;if(tab==='tself')TQ.selfDraw()};
+TQ.selfDraw=function(){const m=TQ.me,t=m&&m.find(x=>x.k===localDay()),v=t&&t.v||{},i=v.in,o=v.out;
+ let st=!i?'<span style="color:var(--mute)">এখনো হাজিরা হয়নি</span>':tqBadge(tqSt,i.st)+(o?' <span style="color:#1f9d6b">• সম্পূর্ণ</span>':'');
+ const w=(i&&i.ls&&i.ls!=='inside'&&i.ls!=='manual')||(o&&o.ls&&o.ls!=='inside'&&o.ls!=='manual');
+ const wm=(i&&i.ls==='outside')||(o&&o.ls==='outside')?'⚠ আপনার বর্তমান অবস্থান প্রতিষ্ঠানের নির্ধারিত এলাকার বাইরে।':'⚠ আপনার অবস্থান যাচাই করা যায়নি।';
+ const row=(a,b)=>'<div style="display:flex;justify-content:space-between;padding:7px 0;border-bottom:1px solid #0001"><span style="color:var(--mute)">'+a+'</span><b>'+b+'</b></div>';
+ const hist=(m||[]).filter(x=>x.v&&x.v.in&&x.k!==localDay()).map(x=>{const a=x.v.in,b=x.v.out;return '<div style="'+tqBox+';margin:6px 0;padding:10px"><div style="display:flex;justify-content:space-between"><b>'+dd(x.k)+'</b>'+tqBadge(tqSt,a.st)+'</div><small>চেক-ইন '+tqT(a.t)+' • চেক-আউট '+tqT(b&&b.t)+(a.lm?' • দেরি '+bn(a.lm)+' মি':'')+'</small><br>'+tqBadge(tqLs,a.ls||'manual')+'</div>'}).join('');
+ shell('শিক্ষক হাজিরা','<div style="'+tqBox+'">'+row('আজকের তারিখ',dd(Date.now()))+row('অবস্থা',st)+row('চেক-ইন (আগমন)',tqT(i&&i.t))+row('চেক-আউট (প্রস্থান)',tqT(o&&o.t))+(i&&i.lm?row('দেরি',bn(i.lm)+' মিনিট'):'')+row('অবস্থান',i?tqBadge(tqLs,(o&&o.ls)||i.ls||'manual'):'—')+(i&&i.dist!=null?row('দূরত্ব',tqDist(i.dist)):'')+
+  (w?'<p style="color:#e6951f;margin:10px 0 0"><b>'+wm+'</b></p>':'')+'</div><button class="tile" style="background:var(--g);width:100%;padding:16px;font-size:17px" onclick="__tq.scan()">QR Code স্ক্যান করুন</button><h3>আগের হাজিরা</h3>'+(m?(hist||'<p class="note">আগের কোনো হাজিরা নেই।</p>'):'<p class="note">লোড হচ্ছে...</p>'),'home')};
+TQ.self=function(){if(role!=='teacher')return;TQ.selfDraw();TQ.loadMe()};
+TQ.stop=function(){const d=document.getElementById('md');if(d&&d.getAttribute('data-qs'))d.remove();if(TQ.stream){TQ.stream.getTracks().forEach(t=>t.stop());TQ.stream=null}};
+TQ.scan=async function(){if(role!=='teacher'||!hasPerm('att_take')){alert('এই কাজের অনুমতি আপনার নেই');return}
+ if(!navigator.mediaDevices||!navigator.mediaDevices.getUserMedia){alert('এই ব্রাউজারে ক্যামেরা সমর্থিত নয়।');return}
+ TQ.loc=tqGeo();
+ try{TQ.stream=await navigator.mediaDevices.getUserMedia({video:{facingMode:{ideal:'environment'}},audio:false})}catch(e){alert('ক্যামেরার অনুমতি দিন, তারপর আবার চেষ্টা করুন।');return}
+ cl();const d=document.createElement('div');d.id='md';d.setAttribute('data-qs','1');d.style.cssText='position:fixed;inset:0;background:#000;z-index:60;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:12px';
+ d.innerHTML='<video id="qsv" playsinline muted style="width:100%;max-width:440px;border-radius:16px;background:#111"></video><p style="color:#fff;text-align:center">প্রতিষ্ঠানের QR কোডটি ক্যামেরার সামনে ধরুন</p><button class="tile" style="background:#5b6b7d;padding:12px 30px" onclick="__tq.stop()">বাতিল</button>';
+ document.body.appendChild(d);const v=document.getElementById('qsv');v.srcObject=TQ.stream;try{await v.play()}catch(e){}
+ let det=null;if('BarcodeDetector' in window){try{det=new BarcodeDetector({formats:['qr_code']})}catch(e){}}
+ if(!det){try{await new Promise((ok,no)=>{if(window.jsQR)return ok();const s=document.createElement('script');s.src='https://cdnjs.cloudflare.com/ajax/libs/jsQR/1.4.0/jsQR.min.js';s.onload=ok;s.onerror=no;document.head.appendChild(s)})}catch(e){TQ.stop();alert('স্ক্যানার লোড হয়নি। ইন্টারনেট দেখে আবার চেষ্টা করুন।');return}}
+ const cv=document.createElement('canvas'),cx=cv.getContext('2d',{willReadFrequently:true});let done=0;
+ const tick=async()=>{if(done||!document.getElementById('qsv')){if(!done)TQ.stop();return}
+  try{let txt='';if(det){const r=await det.detect(v);if(r.length)txt=r[0].rawValue}else if(v.videoWidth){cv.width=v.videoWidth;cv.height=v.videoHeight;cx.drawImage(v,0,0);const im=cx.getImageData(0,0,cv.width,cv.height),q=window.jsQR(im.data,im.width,im.height);if(q)txt=q.data}
+   if(txt){done=1;TQ.stop();TQ.process(txt);return}}catch(e){}
+  setTimeout(tick,250)};tick()};
+TQ.process=async function(text){
+ const bad=m=>{hideLd();alert(m)};showLd();
+ try{const p=String(text).split('|');
+  if(p.length!==4||p[0]!=='MMQ1')return bad('এটি এই অ্যাপের হাজিরা QR নয়।');
+  if(p[1]!==MID)return bad('এই QR অন্য প্রতিষ্ঠানের। এখানে হাজিরা দেওয়া যাবে না।');
+  const so=await tqSO(),cfgS=await get(R('attQr/cfg'));
+  if(!cfgS.exists()||cfgS.val().active!==true)return bad('QR এখন সক্রিয় নেই। Admin-এর সাথে যোগাযোগ করুন।');
+  const c=cfgS.val();if(c.qid!==p[2])return bad('এই QR বাতিল বা পুরোনো। নতুন QR স্ক্যান করুন।');
+  const dk=localDay(),tS=await get(R('tqr/'+dk+'/'+myTeacher)),cur=tS.val()||{};
+  if(cur.in&&cur.out)return bad('আজকের শিক্ষক হাজিরা সম্পূর্ণ হয়েছে।');
+  const now=Date.now()+so;
+  if(cur.in&&now-cur.in.t<300000)return bad('চেক-ইনের ৫ মিনিট পরে চেক-আউট করা যাবে।');
+  const g=await TQ.loc||{ok:0},rec={t:serverTimestamp(),mid:MID,tok:p[3],qid:p[2],tn:((teachers.find(x=>x.id===myTeacher)||{}).n||'').slice(0,80)};
+  if(g.ok&&c.lat!=null&&c.lng!=null){const ds=tqHav(g.lat,g.lng,c.lat,c.lng),rd=c.rad||100;rec.tla=+g.lat.toFixed(5);rec.tlo=+g.lng.toFixed(5);rec.mla=+(+c.lat).toFixed(5);rec.mlo=+(+c.lng).toFixed(5);rec.dist=Math.round(ds);rec.rad=rd;
+   if(ds<=rd)rec.ls='inside';else{rec.ls='outside';rec.le='Teacher is outside the allowed attendance area'}}
+  else{rec.ls='location_unavailable';rec.le=g.ok?'Madrasa location is not set':'Device location unavailable';if(g.ok){rec.tla=+g.lat.toFixed(5);rec.tlo=+g.lng.toFixed(5)}}
+  let kind='in';if(cur.in)kind='out';
+  if(kind==='in'){const mn=Math.floor(((now+(c.tz||360)*6e4)%864e5)/6e4),late=mn>c.start+c.grace;rec.mn=mn;rec.st=late?'late':'present';rec.lm=late?mn-c.start:0}
+  await set(R('tqr/'+dk+'/'+myTeacher+'/'+kind),rec);
+  hideLd();let msg=kind==='in'?'চেক-ইন সম্পন্ন'+(rec.st==='late'?' (দেরি '+bn(rec.lm)+' মিনিট)':' (উপস্থিত)'):'চেক-আউট সম্পন্ন';
+  if(rec.ls==='outside')msg+='\n⚠ আপনার বর্তমান অবস্থান প্রতিষ্ঠানের নির্ধারিত এলাকার বাইরে।';else if(rec.ls==='location_unavailable')msg+='\n⚠ আপনার অবস্থান যাচাই করা যায়নি।';
+  alert(msg);TQ.loadMe()}
+ catch(e){bad((e.code==='PERMISSION_DENIED'||/permission/i.test(e.message||''))?'হাজিরা গ্রহণ করা যায়নি: QR বাতিল/নিষ্ক্রিয় হয়ে থাকতে পারে, বা আপনার অনুমতি নেই।':'সমস্যা: '+(e.code||e.message))}};
+
+/* ---------- Admin: শিক্ষক হাজিরা রিপোর্ট ---------- */
+TQ.report=async function(){if(role!=='admin')return;if(!TQ.rd)TQ.rd=localDay();TQ.repDraw();
+ try{TQ.rep=(await get(R('tqr/'+TQ.rd))).val()||{}}catch(e){TQ.rep={};alert('রিপোর্ট পড়া যায়নি: '+(e.code||e.message))}
+ if(tab==='tqrep')TQ.repDraw()};
+TQ.repDraw=function(){const r=TQ.rep,L=teachers||[];let cnt={p:0,l:0,n:0,o:0};
+ const rows=L.map(t=>{const v=r&&r[t.id]||{},i=v.in,o=v.out;if(r){if(!i)cnt.n++;else{if(i.st==='late')cnt.l++;else if(i.st==='present')cnt.p++;if((i.ls&&i.ls!=='inside'&&i.ls!=='manual')||(o&&o.ls&&o.ls!=='inside'&&o.ls!=='manual'))cnt.o++}}
+  return '<div style="'+tqBox+';margin:6px 0;padding:10px"><div style="display:flex;justify-content:space-between;align-items:center"><b>'+xe(t.n||t.id)+'</b>'+(i?tqBadge(tqSt,i.st):'<span style="color:var(--mute)">রেকর্ড নেই</span>')+'</div>'+
+   (i?'<small>চেক-ইন '+tqT(i.t)+' • চেক-আউট '+tqT(o&&o.t)+(i.lm?' • দেরি '+bn(i.lm)+' মি':'')+'</small><br>'+tqBadge(tqLs,(o&&o.ls&&o.ls!=='inside'?o.ls:i.ls)||'manual')+(i.dist!=null?' <small>দূরত্ব: '+tqDist(i.dist)+'</small>':'')+((i.ae||(o&&o.ae))?' <small style="color:#7a5fc4">• Admin সম্পাদিত</small>':''):'')+
+   '<div style="text-align:right"><button class="tile" style="background:#5b6b7d;padding:6px 14px;display:inline-block;width:auto" onclick="__tq.edit(\''+t.id+'\')">'+(i?'সম্পাদনা':'যোগ করুন')+'</button></div></div>'}).join('');
+ shell('Teacher Attendance','<div style="display:flex;gap:6px;align-items:center;margin-bottom:8px"><button class="tile" style="background:#5b6b7d;padding:10px 14px;width:auto" onclick="__tq.day(-1)">‹</button><input id="tqd" type="date" value="'+TQ.rd+'" onchange="__tq.setDay(this.value)" style="flex:1;padding:10px;border-radius:10px;border:1px solid #0003;background:var(--bg);color:var(--ink)"><button class="tile" style="background:#5b6b7d;padding:10px 14px;width:auto" onclick="__tq.day(1)">›</button></div>'+
+  (r?'<div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:6px"><small>উপস্থিত: <b>'+bn(cnt.p)+'</b></small><small>দেরি: <b>'+bn(cnt.l)+'</b></small><small>রেকর্ড নেই: <b>'+bn(cnt.n)+'</b></small><small>অবস্থান সমস্যা: <b>'+bn(cnt.o)+'</b></small></div>':'')+(r?(rows||'<p class="note">কোনো শিক্ষক নেই।</p>'):'<p class="note">লোড হচ্ছে...</p>'),'home')};
+TQ.setDay=function(v){if(!v)return;TQ.rd=v;TQ.rep=null;TQ.report()};
+TQ.day=function(n){const d=new Date(TQ.rd+'T12:00:00');d.setDate(d.getDate()+n);TQ.setDay(d.getFullYear()+'-'+tqP(d.getMonth()+1)+'-'+tqP(d.getDate()))};
+TQ.edit=function(tid){const v=(TQ.rep&&TQ.rep[tid])||{},i=v.in,o=v.out,t=teachers.find(x=>x.id===tid)||{};cl();
+ const d=document.createElement('div');d.id='md';d.style.cssText='position:fixed;inset:0;background:#0009;z-index:60;display:flex;align-items:center;justify-content:center;padding:14px';
+ const s='style="width:100%;padding:10px;border-radius:10px;border:1px solid #0003;background:var(--bg);color:var(--ink);box-sizing:border-box"';
+ d.innerHTML='<div style="background:var(--card);color:var(--ink);width:100%;max-width:400px;border-radius:18px;padding:16px;max-height:90%;overflow:auto"><h3 style="margin:0 0 4px">'+xe(t.n||tid)+'</h3><small>'+dd(TQ.rd)+'</small><br><small>অবস্থা</small><select id="qes" '+s+'>'+Object.keys(tqSt).map(k=>'<option value="'+k+'"'+((i&&i.st)===k?' selected':'')+'>'+tqSt[k][0]+'</option>').join('')+'</select><small>চেক-ইন সময়</small><input id="qei" type="time" value="'+(i?tqHM(i.t):'')+'" '+s+'><small>চেক-আউট সময় (ফাঁকা = নেই)</small><input id="qeo" type="time" value="'+(o?tqHM(o.t):'')+'" '+s+'><small>দেরি (মিনিট)</small><input id="qel" type="text" inputmode="numeric" value="'+((i&&i.lm)||0)+'" '+s+'><div style="display:flex;gap:10px;margin-top:12px"><button class="tile" style="background:var(--g);flex:1;padding:12px" onclick="__tq.saveEdit(\''+tid+'\')">সংরক্ষণ</button><button class="tile" style="background:#5b6b7d;flex:1;padding:12px" onclick="cl()">বাতিল</button></div></div>';
+ document.body.appendChild(d)};
+TQ.saveEdit=async function(tid){const g=id=>document.getElementById(id).value.trim(),st=g('qes'),ti=g('qei'),to=g('qeo'),lm=parseInt(g('qel'),10);
+ if(!ti){alert('চেক-ইন সময় দিন');return}if(!(lm>=0&&lm<=1440)){alert('দেরি ০–১৪৪০ মিনিটের মধ্যে দিন');return}
+ const ms=h=>new Date(TQ.rd+'T'+h+':00').getTime(),v=(TQ.rep&&TQ.rep[tid])||{},b='tqr/'+TQ.rd+'/'+tid,u={},tn=((teachers.find(x=>x.id===tid)||{}).n||'').slice(0,80),me=auth.currentUser.uid;
+ const ed=p=>{u[b+'/'+p+'/ae']=true;u[b+'/'+p+'/eb']=me;u[b+'/'+p+'/ea']=serverTimestamp()};
+ if(v.in){u[b+'/in/t']=ms(ti);u[b+'/in/st']=st;u[b+'/in/lm']=lm;ed('in')}else{u[b+'/in']={t:ms(ti),mid:MID,st:st,lm:lm,ls:'manual',tn:tn,ae:true,eb:me,ea:serverTimestamp()}}
+ if(to){if(v.out){u[b+'/out/t']=ms(to);ed('out')}else u[b+'/out']={t:ms(to),mid:MID,ls:'manual',tn:tn,ae:true,eb:me,ea:serverTimestamp()}}else if(v.out)u[b+'/out']=null;
+ try{await upd(u);cl();TQ.report()}catch(e){alert('সংরক্ষণ হয়নি: '+(e.code||e.message))}};
 </script>
 <script>
 /* ===== Android Back Button / History হ্যান্ডলিং =====
@@ -1570,6 +1706,7 @@ var D={
 'ডাটাবেসে সংরক্ষণ হয়নি':'Not saved to the database',
 'ডেটা লোডে সমস্যা':'Problem loading data',
 'ডেভেলপারের সাথে যোগাযোগ':'Contact the developer',
+'শিক্ষক হাজিরা':'Teacher Attendance','শিক্ষক QR হাজিরা সেটিংস':'Teacher QR Attendance Settings','শিক্ষক হাজিরা রিপোর্ট':'Teacher Attendance Report','QR Code স্ক্যান করুন':'Scan QR Code','আজকের তারিখ':'Today','অবস্থা':'Status','চেক-ইন (আগমন)':'Check-in','চেক-আউট (প্রস্থান)':'Check-out','অবস্থান':'Location','আগের হাজিরা':'Previous attendance','সম্পাদনা':'Edit','যোগ করুন':'Add','সংরক্ষণ':'Save','বাতিল':'Cancel',
 'তথ্য ও ছবি সম্পাদনা':'Edit info & photo',
 'তথ্য খোঁজা':'Searching info',
 'তথ্য জমা হয়েছে':'Info submitted',
@@ -2017,6 +2154,73 @@ walk(document.body);retr();btns();
 
 window.nhubV=function(){var it=[['Notification Settings','নোটিফিকেশন চালু/বন্ধ ও টেমপ্লেট','nset'],['নোটিফিকেশন পাঠান','অভিভাবক ও শিক্ষকদের জন্য','nann'],['Notification History','কাকে কী পাঠানো হয়েছে','nlog']];
  shell('নোটিফিকেশন',it.map(function(x){return '<button class="link" onclick="tab=\''+x[2]+'\';draw()"><span><small>'+x[0]+'</small>'+x[1]+'</span>›</button>'}).join(''),'set')};
+</script>
+<script>
+/* ছোট QR এনকোডার (বাইট মোড, ECC=M, ভার্সন ১–১০) */
+window.mmQR=(function(){
+var ECPB=[0,10,16,26,18,24,16,18,22,22,26],NB=[0,1,1,1,2,2,4,4,4,5,5];
+function rawMods(v){var r=(16*v+128)*v+64;if(v>=2){var na=Math.floor(v/7)+2;r-=(25*na-10)*na-55;if(v>=7)r-=36}return r}
+function dataCw(v){return Math.floor(rawMods(v)/8)-ECPB[v]*NB[v]}
+var EXP=[],LOG=[];(function(){var x=1;for(var i=0;i<255;i++){EXP[i]=x;LOG[x]=i;x<<=1;if(x&256)x^=0x11d}for(i=255;i<512;i++)EXP[i]=EXP[i-255]})();
+function gm(a,b){return a&&b?EXP[LOG[a]+LOG[b]]:0}
+function rsGen(d){var r=[1];for(var i=0;i<d;i++){var n=r.length+1,nr=[];for(var j=0;j<n;j++)nr[j]=0;for(j=0;j<r.length;j++){nr[j]^=r[j];nr[j+1]^=gm(r[j],EXP[i])}r=nr}return r}
+function rsRem(data,deg){var g=rsGen(deg),res=[];for(var i=0;i<deg;i++)res[i]=0;
+ data.forEach(function(b){var f=b^res.shift();res.push(0);for(var i=0;i<deg;i++)res[i]^=gm(g[i+1],f)});return res}
+function utf8(s){return Array.from(unescape(encodeURIComponent(s)),function(c){return c.charCodeAt(0)})}
+function make(text){
+ var bytes=utf8(text),v=1;
+ for(;v<=10;v++){if(4+8+bytes.length*8<=dataCw(v)*8)break}
+ if(v>10)throw new Error('QR text too long');
+ var bits=[];function put(val,len){for(var i=len-1;i>=0;i--)bits.push((val>>>i)&1)}
+ put(4,4);put(bytes.length,8);bytes.forEach(function(b){put(b,8)});
+ var cap=dataCw(v)*8;put(0,Math.min(4,cap-bits.length));while(bits.length%8)bits.push(0);
+ for(var pad=0xEC;bits.length<cap;pad^=0xEC^0x11)put(pad,8);
+ var cw=[];for(var i=0;i<bits.length;i+=8){var b=0;for(var j=0;j<8;j++)b=b<<1|bits[i+j];cw.push(b)}
+ var nb=NB[v],ec=ECPB[v],raw=Math.floor(rawMods(v)/8),ns=nb-raw%nb,sl=Math.floor(raw/nb),blocks=[],k=0;
+ for(i=0;i<nb;i++){var dl=sl-ec+(i<ns?0:1),d=cw.slice(k,k+dl);k+=dl;blocks.push({d:d,e:rsRem(d,ec)})}
+ var all=[];for(i=0;i<blocks[blocks.length-1].d.length;i++)blocks.forEach(function(bl){if(i<bl.d.length)all.push(bl.d[i])});
+ for(i=0;i<ec;i++)blocks.forEach(function(bl){all.push(bl.e[i])});
+ var size=v*4+17,m=[],f=[];for(i=0;i<size;i++){m.push(new Array(size).fill(false));f.push(new Array(size).fill(false))}
+ function set(x,y,d){if(x>=0&&x<size&&y>=0&&y<size){m[y][x]=d;f[y][x]=true}}
+ function finder(cx,cy){for(var dy=-4;dy<=4;dy++)for(var dx=-4;dx<=4;dx++){var d=Math.max(Math.abs(dx),Math.abs(dy));set(cx+dx,cy+dy,d!==2&&d!==4)}}
+ for(i=0;i<size;i++){set(6,i,i%2==0);set(i,6,i%2==0)}
+ finder(3,3);finder(size-4,3);finder(3,size-4);
+ var ap=[];if(v>1){var na=Math.floor(v/7)+2,step=Math.ceil((v*4+4)/(na*2-2))*2;ap=[6];for(var p=size-7;ap.length<na;p-=step)ap.splice(1,0,p)}
+ ap.forEach(function(ax,ia){ap.forEach(function(ay,ja){if((ia===0&&ja===0)||(ia===0&&ja===ap.length-1)||(ia===ap.length-1&&ja===0))return;
+  for(var dy=-2;dy<=2;dy++)for(var dx=-2;dx<=2;dx++)set(ax+dx,ay+dy,Math.max(Math.abs(dx),Math.abs(dy))!==1)})});
+ function fmt(mask){var d=(0<<3)|mask,r=d;for(var i=0;i<10;i++)r=(r<<1)^((r>>>9)*0x537);var bitsF=((d<<10)|r)^0x5412;
+  function g(i){return((bitsF>>>i)&1)!==0}
+  for(var i=0;i<=5;i++)set(8,i,g(i));set(8,7,g(6));set(8,8,g(7));set(7,8,g(8));for(i=9;i<15;i++)set(14-i,8,g(i));
+  for(i=0;i<8;i++)set(size-1-i,8,g(i));for(i=8;i<15;i++)set(8,size-15+i,g(i));set(8,size-8,true)}
+ fmt(0);
+ if(v>=7){var r2=v;for(i=0;i<12;i++)r2=(r2<<1)^((r2>>>11)*0x1F25);var vb=(v<<12)|r2;
+  for(i=0;i<18;i++){var bt=((vb>>>i)&1)!==0,a=size-11+i%3,b2=Math.floor(i/3);set(a,b2,bt);set(b2,a,bt)}}
+ var idx=0,tot=all.length*8;
+ for(var right=size-1;right>=1;right-=2){if(right===6)right=5;
+  for(var vert=0;vert<size;vert++)for(var j=0;j<2;j++){var x=right-j,up=((right+1)&2)===0,y=up?size-1-vert:vert;
+   if(!f[y][x]&&idx<tot){m[y][x]=((all[idx>>>3]>>>(7-(idx&7)))&1)!==0;idx++}}}
+ var best=null,bp=1e9;
+ for(var mask=0;mask<8;mask++){
+  var mm=m.map(function(r){return r.slice()});
+  for(var y=0;y<size;y++)for(var x=0;x<size;x++){if(f[y][x])continue;var inv;
+   switch(mask){case 0:inv=(x+y)%2==0;break;case 1:inv=y%2==0;break;case 2:inv=x%3==0;break;case 3:inv=(x+y)%3==0;break;case 4:inv=(Math.floor(x/3)+Math.floor(y/2))%2==0;break;case 5:inv=x*y%2+x*y%3==0;break;case 6:inv=(x*y%2+x*y%3)%2==0;break;default:inv=((x+y)%2+x*y%3)%2==0}
+   if(inv)mm[y][x]=!mm[y][x]}
+  var sv=m;m=mm;fmt(mask);var pen=0;
+  for(y=0;y<size;y++){var run=1;for(x=1;x<size;x++){if(m[y][x]===m[y][x-1]){run++;if(run===5)pen+=3;else if(run>5)pen++}else run=1}}
+  for(x=0;x<size;x++){run=1;for(y=1;y<size;y++){if(m[y][x]===m[y-1][x]){run++;if(run===5)pen+=3;else if(run>5)pen++}else run=1}}
+  for(y=0;y<size-1;y++)for(x=0;x<size-1;x++)if(m[y][x]===m[y][x+1]&&m[y][x]===m[y+1][x]&&m[y][x]===m[y+1][x+1])pen+=3;
+  if(pen<bp){bp=pen;best=m.map(function(r){return r.slice()})}
+  m=sv}
+ return best}
+function svg(text,px){var q=make(text),n=q.length,s=4,d='';
+ for(var y=0;y<n;y++)for(var x=0;x<n;x++)if(q[y][x])d+='M'+(x+s)+','+(y+s)+'h1v1h-1z';
+ return '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 '+(n+2*s)+' '+(n+2*s)+'" width="'+(px||240)+'" height="'+(px||240)+'" shape-rendering="crispEdges"><rect width="100%" height="100%" fill="#fff"/><path d="'+d+'" fill="#000"/></svg>'}
+return {svg:svg,make:make}})();
+
+window.tqsV=function(){window.__tq&&__tq.settings()};
+window.tqrepV=function(){window.__tq&&__tq.report()};
+window.tselfV=function(){window.__tq&&__tq.self()};
+TABN.tself=['att_take'];TABN.tqs=['__admin'];TABN.tqrep=['__admin'];
 </script>
 <script>
 /* শুধু সেটিংসের নিচের তিনটি বাটনের আইকন (ব্যাকআপ/রিস্টোর/সব মুছুন) */

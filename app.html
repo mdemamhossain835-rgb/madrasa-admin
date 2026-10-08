@@ -313,8 +313,8 @@ function homeList(){
  return t}
 const NAVG={
  admin:[['📚 ছাত্র ও শিক্ষক',['students','teachers']],['📋 দৈনন্দিন কাজ',['catt','fees','tqs','tqrep']],['📖 একাডেমিক',['rtnv','hwSet','res','hhist']],['📢 যোগাযোগ',['notices']],['📊 বিশ্লেষণ ও সিস্টেম',['rep','set']]],
- teacher:[['📋 দৈনন্দিন কাজ',['catt','tself','hwSet','fees']],['📚 একাডেমিক',['rtnv','students','teachers','res','subj']],['📢 যোগাযোগ',['notif','nann','nlog','notices']],['📊 ইতিহাস ও রিপোর্ট',['hhist','rep','set']]]};
-function groupTiles(t){const defs=NAVG[role]||[],used=new Set(),out=[];
+ teacher:[['📋 দৈনন্দিন কাজ',['catt','tself','hwSet','fees']],['📚 একাডেমিক',['rtnv','students','teachers','res','subj']],['📢 যোগাযোগ',['notif','nann','nlog']],['📊 ইতিহাস ও রিপোর্ট',['hhist','rep','set']]]};
+function groupTiles(t){if(role==='teacher')t=t.filter(x=>x[4]!=='notices');const defs=NAVG[role]||[],used=new Set(),out=[];
  defs.forEach(d=>{const it=d[1].map(k=>t.find(x=>x[4]===k)).filter(Boolean);it.forEach(x=>used.add(x));if(it.length)out.push([d[0],it])});
  const rest=t.filter(x=>!used.has(x));if(rest.length)out.push(['🧩 অন্যান্য',rest]);return out}
 function tileH(x){return `<button class="tile" style="background:${x[3]}" onclick="${x[4]?`tab='${x[4]}';draw()`:`alert('${x[2]} পেজ পরের ধাপে তৈরি হবে')`}"><b>${x[0]}</b>${x[1]}${x[2]==='Notif'&&typeof getUnread==='function'&&getUnread()?' ('+bn(getUnread())+')':''}<span>${x[2]}</span></button>`}
@@ -324,7 +324,7 @@ function navTabs(){
  if(role==='teacher'){const T=[['home','🏠','হোম']];if(tabOK('students'))T.push(['students','🎓','ছাত্র']);if(tabOK('catt'))T.push(['catt','✅','হাজিরা']);T.push(['hwSet','📚','হোমওয়ার্ক']);if(hasPerm('ph_hist'))T.push(['hhist','🕌','ইতিহাস']);T.push(['notif','🔔','নোটিফিকেশন']);return T}
  return [['home','🏠','হোম'],['students','🎓','ছাত্র'],['teachers','👨‍🏫','শিক্ষক'],['fees','৳','ফি'],['rep','📊','রিপোর্ট'],['set','⚙️','সেটিংস']]}
 function guardGroups(){const it={Attendance:['✅','উপস্থিতি','Attendance','#7a3fc4'],HW:['🕌','নামাজ ও হোমওয়ার্ক','HW','#0b6b4a'],Fees:['৳','ফি ও বকেয়া','Fees','#e8891a'],Result:['📝','ফলাফল','Result','#128a94'],Routine:['📅','ক্লাস রুটিন','Routine','#1f6fe0'],Notice:['📢','নোটিস','Notice','#d6455d'],Contact:['☎️','যোগাযোগ','Contact','#5b6b7d'],Notif:['🔔','নোটিফিকেশন','Notif','#d6455d']};
- return [['👦 সন্তান',['Attendance']],['📚 একাডেমিক',['Routine','HW','Result']],['💰 ফি ও পেমেন্ট',['Fees']],['📢 যোগাযোগ',['Notice','Contact','Notif']]].map(g=>[g[0],g[1].map(k=>it[k])])}
+ return [['👦 সন্তান',['Attendance']],['📚 একাডেমিক',['Routine','HW','Result']],['💰 ফি ও পেমেন্ট',['Fees']],['📢 যোগাযোগ',['Contact','Notif']]].map(g=>[g[0],g[1].map(k=>it[k])])}
 function home(){
  const t=homeList();
  const who=role==='teacher'&&myTeacher?(teachers.find(t=>t.id===myTeacher)||{}).n||'শিক্ষক':role==='admin'?(adminInfo.n||'Admin'):'Admin';
@@ -354,7 +354,7 @@ function child(){const s=stu_(myChild);
 function tglHTML(on,fn,extra){return '<button type="button" class="tgl'+(on?' on':'')+'" role="switch" aria-checked="'+(on?'true':'false')+'" '+(extra||'')+' onclick="tglGo(this,function(){'+fn+'})"></button>'}
 function tglGo(el,f){if(el.dataset.b)return;el.dataset.b='1';const was=el.classList.contains('on');el.classList.toggle('on',!was);el.setAttribute('aria-checked',String(!was));
  setTimeout(function(){try{f()}catch(e){console.error(e)}setTimeout(function(){if(el.isConnected){el.classList.toggle('on',was);el.setAttribute('aria-checked',String(was));delete el.dataset.b}},80)},180)}
-function ldHTML(){const lg=role&&profile&&profile.logo&&/^(data:image|https?:)/.test(profile.logo)?'<img src="'+profile.logo+'" alt="">':'🕌';return '<div class="ldw"><div class="ldb"><span class="ldr"></span><span class="ldr2"></span><div class="ldl">'+lg+'</div></div><div class="ldd"><b></b><b></b><b></b></div></div>'}
+function ldHTML(){const lg=role&&profile&&profile.logo&&/^(data:image|https?:)/.test(profile.logo)?'<img src="'+profile.logo+'" alt="">':Array.from(String(profile&&profile.name||'M').trim()||'M')[0];return '<div class="ldw"><div class="ldb"><span class="ldr"></span><span class="ldr2"></span><div class="ldl">'+lg+'</div></div><div class="ldd"><b></b><b></b><b></b></div></div>'}
 function hideLd(){clearTimeout(window.__ldT);const d=document.getElementById('ldo');if(d)d.remove()}
 function showLd(){if(document.getElementById('ldo'))return;const d=document.createElement('div');d.id='ldo';d.className='ldo';d.innerHTML=ldHTML();document.body.appendChild(d);clearTimeout(window.__ldT);window.__ldT=setTimeout(hideLd,45000)}
 app.innerHTML=ldHTML();
@@ -369,6 +369,8 @@ let notices=load('mm_n',[{t:'শুক্রবার ক্লাস বন্�
 let cur,fh;
 const esc=s=>String(s==null?'':s).replace(/"/g,'&quot;');
 const nid=(a,p)=>p+String(Math.max(0,...a.map(x=>+x.id.slice(3)))+1).padStart(a===students?3:2,'0');
+function mcode(){var m=(window.getMid&&window.getMid())||'',h=5381,i;for(i=0;i<m.length;i++)h=((h*33)^m.charCodeAt(i))>>>0;var c=h.toString(36).toUpperCase();while(c.length<4)c='0'+c;return c.slice(-4)}
+function nidM(a,k){var c=mcode(),pre=c+(k==='T'?'-T':'-'),mx=0;a.forEach(function(x){var i=String(x.id||'');if(i.indexOf(pre)===0){var n=parseInt(i.slice(pre.length),10);if(n>mx)mx=n}});return pre+String(mx+1).padStart(k==='T'?3:4,'0')}
 function form(title,f,v,h){fh=h;const d=document.createElement('div');d.id='md';d.style.cssText='position:fixed;inset:0;background:#0009;z-index:20;display:flex;align-items:flex-end;justify-content:center';
 d.innerHTML=`<div style="background:var(--card);width:100%;max-width:480px;border-radius:20px 20px 0 0;padding:18px;max-height:90vh;overflow:auto"><h3 style="margin:0 0 6px">${title}</h3>${f.map(x=>x[2]==='perms'?permHTML(v):x[2]==='month'?`<label style="display:block;font-size:13px;color:var(--mute);margin-top:8px">${x[1]}<select class="search" style="margin:4px 0 0" name="${x[0]}">${monthOptions().map(k=>`<option value="${k}" ${k===v[x[0]]?'selected':''}>${monLabel(k)}</option>`).join('')}</select></label>`:x[2]==='photo'?`<div style="text-align:center;margin-top:8px"><div id="pv_${x[0]}" class="av" style="width:80px;height:80px;margin:0 auto;font-size:28px">${v[x[0]]?`<img src="${v[x[0]]}" style="width:100%;height:100%;object-fit:cover;border-radius:50%">`:(v.n?v.n[0]:'+')}</div><label style="display:block;font-size:13px;color:var(--mute);margin-top:6px">${x[1]}<input type="file" accept="image/*" style="display:block;margin:6px auto" onchange="phSel(this,'h_${x[0]}','pv_${x[0]}')"></label><input type="hidden" name="${x[0]}" id="h_${x[0]}" value="${esc(v[x[0]])}"></div>`:(x[0]==='c'||x[0]==='cls')?`<label style="display:block;font-size:13px;color:var(--mute);margin-top:8px">${x[1]}<select class="search" style="margin:4px 0 0" name="${x[0]}">${classes.map(c=>`<option value="${esc(c)}" ${c===v[x[0]]?'selected':''}>${c}</option>`).join('')}</select></label>`:(x[2]&&x[2].indexOf('select:')===0?`<label style="display:block;font-size:13px;color:var(--mute);margin-top:8px">${x[1]}<select class="search" style="margin:4px 0 0" name="${x[0]}">${x[2].slice(7).split(',').map(o=>`<option value="${esc(o)}" ${o===v[x[0]]?'selected':''}>${o}</option>`).join('')}</select></label>`:`<label style="display:block;font-size:13px;color:var(--mute);margin-top:8px">${x[1]}<input class="search" style="margin:4px 0 0" name="${x[0]}" value="${esc(v[x[0]])}" ${x[2]||''}></label>`)).join('')}<datalist id="subdl">${(typeof subjList==='function'?subjList():[]).map(sb=>`<option value="${esc(sb)}">`).join('')}</datalist><div style="display:flex;gap:10px;margin-top:14px"><button class="tile" style="background:var(--g);flex:1;padding:12px" onclick="sv()">সংরক্ষণ করুন</button><button class="tile" style="background:#5b6b7d;flex:1;padding:12px" onclick="cl()">বাতিল</button></div></div>`;document.body.appendChild(d)}
 function cl(){window.__formReq=null;const m=document.getElementById('md');if(m)m.remove()}
@@ -404,7 +406,7 @@ function profV(){const s=students.find(x=>x.id===cur);if(!s){tab='students';retu
  shell('ছাত্র প্রোফাইল',`<div class="hello"><div class="av">${avHTML(s.photo,s.n[0])}</div><div><b>${s.n}</b><br><small style="color:var(--mute)">ID: ${s.id} | রোল: ${bn(s.r)}</small></div></div><h3>বিস্তারিত</h3>`+
  [['ক্লাস',s.c||'৩ (আম)'],['ধার্যকৃত মাসিক বেতন',tk(feeOf(s.id))+((s.fee!=null&&s.fee!=='')?' (নিজস্ব)':(classFee[s.c]!=null&&classFee[s.c]!==''?' (শ্রেণী অনুযায়ী)':' (সাধারণ)'))],['অভিভাবক',s.g||'—'],['ফোন',s.ph||'—'],['ঠিকানা',[s.vil,s.po,s.upz,s.dist].filter(Boolean).join(', ')||'—']].map(x=>`<div class="link"><span><small>${x[0]}</small>${x[1]}</span></div>`).join('')+
  msgBlock(s)+((hasPerm('stu_edit')||hasPerm('stu_del'))?`<div class="act" data-keep="1" style="grid-template-columns:${hasPerm('stu_edit')&&hasPerm('stu_del')?'1fr 1fr':'1fr'}">${hasPerm('stu_edit')?'<button onclick="editS()"><b>✏️</b>সম্পাদনা</button>':''}${hasPerm('stu_del')?'<button onclick="delS()"><b><i class=idel></i></b>মুছে ফেলুন</button>':''}</div>`:''),role==='guardian'?'child':'students')}
-function addS(){if(!hasPerm('stu_add')){deny();return}form('নতুন ছাত্র ভর্তি',SF,{c:stuCls||selClass||'৩ (আম)'},o=>{ensureClass(o.c);students.push({n:o.n,pw:o.pw,id:nid(students,'STU'),r:+o.r||students.length+1,c:o.c,fee:o.fee,photo:o.photo,g:o.g,ph:o.ph,vil:o.vil,po:o.po,upz:o.upz,dist:o.dist,s:'Present'});save('mm_s',students);tab='students';draw()});stuFormMark(true)}
+function addS(){if(!hasPerm('stu_add')){deny();return}form('নতুন ছাত্র ভর্তি',SF,{c:stuCls||selClass||'৩ (আম)'},o=>{ensureClass(o.c);students.push({n:o.n,pw:o.pw,id:nidM(students,'S'),r:+o.r||students.length+1,c:o.c,fee:o.fee,photo:o.photo,g:o.g,ph:o.ph,vil:o.vil,po:o.po,upz:o.upz,dist:o.dist,s:'Present'});save('mm_s',students);tab='students';draw()});stuFormMark(true)}
 function editS(){if(!hasPerm('stu_edit')){deny();return}const s=students.find(x=>x.id===cur);form('তথ্য সম্পাদনা',SF,s,o=>{ensureClass(o.c);Object.assign(s,o,{r:+o.r||s.r});save('mm_s',students);draw()});stuFormMark(false)}
 function delS(){if(!hasPerm('stu_del')){deny();return}if(confirm('এই ছাত্রকে মুছে ফেলবেন? এটি ফেরানো যাবে না।')){students=students.filter(x=>x.id!==cur);save('mm_s',students);tab='students';draw()}}
 /* ===== অনুমতি (রোল ও পারমিশন): ক্যাটালগ ===== */
@@ -450,7 +452,7 @@ function subjList(){return[...new Set(teachers.map(t=>t.sub).filter(Boolean))]}
 const TF=[['n','শিক্ষকের নাম'],['photo','ছবি','photo'],['pw','শিক্ষকের পাসওয়ার্ড (লগইনের জন্য)','type=text placeholder=খালি রাখলে ডিফল্ট পাসওয়ার্ড চলবে'],['sal','মাসিক বেতন (৳)','type=number'],['ph','মোবাইল নম্বর','type=tel'],['em','জিমেইল','type=email'],['edu','শিক্ষাগত যোগ্যতা (যেমন: দাওরায়ে হাদিস, অনার্স)'],['vil','গ্রাম/মহল্লা'],['po','ডাকঘর'],['upz','উপজেলা/থানা'],['dist','জেলা'],['perm','অনুমতি (রোল ও পারমিশন) — অ্যাডমিন চাইলে নিজের কিছু ক্ষমতা এই শিক্ষককে দিতে পারবেন','perms']];
 function teachV(){shell('Teacher Management',`<div class="stats" style="grid-template-columns:1fr 1fr"><div class="stat"><b>${bn(teachers.length)}</b><small>মোট শিক্ষক</small></div><div class="stat"><b>৳ ${bn(teachers.reduce((a,t)=>a+(+t.sal||0),0).toLocaleString('en-US'))}</b><small>মাসিক বেতন</small></div></div>`+
  (teachers.map(t=>`<div class="row"><div class="av">${avHTML(t.photo,t.n[0])}</div><div class="info"><b>${t.n}</b><small>${window.tSummary?window.tSummary(t.id):''}<br>বেতন: ৳ ${bn(t.sal||0)}${(function(){const n=effPerm(t.id).length;return n?'<br>অনুমতি: '+bn(n)+'টি':'<br>অনুমতি: নেই'})()}</small></div>${hasPerm('sal_pay')?`<button aria-label="বেতন দিন" onclick="paySal('${t.id}')">💵</button>`:''}<button aria-label="কল করুন" onclick="callT('${t.id}')">📞</button>${hasPerm('tch_edit')?`<button aria-label="সম্পাদনা" onclick="editT('${t.id}')">✏️</button>`:''}${hasPerm('tch_del')?`<button aria-label="মুছুন" onclick="delT('${t.id}')"><i class=idel></i></button>`:''}</div>`).join('')||'<p class="note">কোনো শিক্ষক নেই।'+(hasPerm('tch_add')?' ＋ চেপে যোগ করুন।':'')+'</p>'),'home',hasPerm('tch_add')?'addT()':'')}
-function addT(){if(!hasPerm('tch_add')){deny();return}const id=nid(teachers,'TCH');form('নতুন শিক্ষক',TF,{perm:PBASE.slice()},o=>{const perm=o.perm;delete o.perm;teachers.push(Object.assign({id:id,s:'Present'},o));save('mm_t',teachers);if(hasPerm('adm_perm'))window.savePerm(id,perm||[]);draw()})}
+function addT(){if(!hasPerm('tch_add')){deny();return}const id=nidM(teachers,'T');form('নতুন শিক্ষক',TF,{perm:PBASE.slice()},o=>{const perm=o.perm;delete o.perm;teachers.push(Object.assign({id:id,s:'Present'},o));save('mm_t',teachers);if(hasPerm('adm_perm'))window.savePerm(id,perm||[]);draw()})}
 function editT(id){if(!hasPerm('tch_edit')){deny();return}const t=teachers.find(x=>x.id===id);form('শিক্ষকের তথ্য সম্পাদনা',TF,Object.assign({},t,{perm:effPerm(id)}),o=>{const perm=o.perm;delete o.perm;Object.assign(t,o);save('mm_t',teachers);if(hasPerm('adm_perm')&&perm)window.savePerm(id,perm);draw()})}
 function delT(id){if(!hasPerm('tch_del')){deny();return}if(confirm('এই শিক্ষককে মুছে ফেলবেন?')){teachers=teachers.filter(x=>x.id!==id);save('mm_t',teachers);if(hasPerm('adm_perm'))window.savePerm(id,null);draw()}}
 function noteV(){const A=role==='admin';shell('Notice',(role==='guardian'?gm():'')+notices.map((n,i)=>`<div class="row" style="display:block"><b>${n.t}</b><br><small style="color:var(--mute)">${n.d}</small><p style="margin-top:6px">${n.b||''}</p>${A?`<button onclick="delN(${i})" style="color:var(--not);margin-top:4px"><i class=idel></i> মুছুন</button>`:''}</div>`).join('')||'<p class="note">এখনো কোনো নোটিস নেই।</p>',role==='guardian'?'':'home',A?'addN()':'')}
@@ -562,7 +564,7 @@ function finV(){const ms=x=>x.filter(e=>e.m===M0),days=Object.keys(at).filter(d=
  '<h3>ফলাফল</h3>'+K('ফলাফল আছে',bn(rl.length)+' জন')+K('পাসের হার',rl.length?bn(Math.round(rl.filter(c=>!c.f).length/rl.length*100))+'%':'—')+
  '<h3>শিক্ষক</h3>'+K('মোট মাসিক বেতন',tk(sum(teachers.map(t=>({a:t.sal}))))),'rep')}
 /* সেটিংস, ব্যাকআপ */
-function setV(){shell('Settings',`${role==='admin'?'<button class="link" onclick="planV()"><span><small>প্ল্যান</small>ট্রায়াল ও মাসিক সাবস্ক্রিপশন (৳৩০০)</span>›</button>':''}<button class="link" onclick="profEdit()"><span><small>মাদ্রাসার তথ্য</small>নাম, ঠিকানা ও প্রতিষ্ঠার তারিখ</span>›</button><button class="link" onclick="adminEdit()"><span><small>অ্যাডমিনের তথ্য</small>নাম, ছবি, ফোন ও ইমেইল</span>›</button><button class="link" onclick="tab='nhub';draw()"><span><small>Notification</small>চালু/বন্ধ, টেমপ্লেট, পাঠানো ও ইতিহাস</span>›</button><button class="link" onclick="tab='classFee';draw()"><span><small>মাসিক ফি</small>ফি নির্ধারণ</span>›</button><button class="link" onclick="purgeRollKeys()"><span><small>একবারের কাজ</small>রোল নম্বর দিয়ে অভিভাবক লগইন বন্ধ করুন</span>›</button><div class="act"><button onclick="bk()"><b>💾</b>ব্যাকআপ কপি</button><button onclick="rst()"><b>♻️</b>রিস্টোর</button><button onclick="wipe()"><b><i class=idel></i></b>সব মুছুন</button></div><p class="note">ব্যাকআপ কপি করে নিরাপদ জায়গায় রেখে দিন। "সব মুছুন" চাপলে সব তথ্য চলে যাবে।</p>`,'home');setFilt()}
+function setV(){shell('Settings',`${role==='admin'?'<button class="link" onclick="planV()"><span><small>প্ল্যান</small>ট্রায়াল ও মাসিক সাবস্ক্রিপশন (৳৩০০)</span>›</button>':''}<button class="link" onclick="profEdit()"><span><small>মাদ্রাসার তথ্য</small>নাম, লোগো, ঠিকানা ও প্রতিষ্ঠার তারিখ</span>›</button><button class="link" onclick="adminEdit()"><span><small>অ্যাডমিনের তথ্য</small>নাম, ছবি, ফোন ও ইমেইল</span>›</button><button class="link" onclick="tab='nhub';draw()"><span><small>Notification</small>চালু/বন্ধ, টেমপ্লেট, পাঠানো ও ইতিহাস</span>›</button><button class="link" onclick="tab='classFee';draw()"><span><small>মাসিক ফি</small>ফি নির্ধারণ</span>›</button><button class="link" onclick="purgeRollKeys()"><span><small>একবারের কাজ</small>রোল নম্বর দিয়ে অভিভাবক লগইন বন্ধ করুন</span>›</button><div class="act"><button onclick="bk()"><b>💾</b>ব্যাকআপ কপি</button><button onclick="rst()"><b>♻️</b>রিস্টোর</button><button onclick="wipe()"><b><i class=idel></i></b>সব মুছুন</button></div><p class="note">ব্যাকআপ কপি করে নিরাপদ জায়গায় রেখে দিন। "সব মুছুন" চাপলে সব তথ্য চলে যাবে।</p>`,'home');setFilt()}
 function classFeeV(){shell('মাসিক ফি (শ্রেণী অনুযায়ী)',`<div class="row"><div class="info"><b>সাধারণ (ডিফল্ট) ফি</b><small>যে শ্রেণীর নিজস্ব ফি সেট করা নেই, তাদের জন্য প্রযোজ্য</small></div><b>${tk(MF)}</b><button aria-label="পরিবর্তন" onclick="setDefaultFee()">✏️</button></div>`+
  classes.map(c=>`<div class="row"><div class="info"><b>${c}</b><small>বর্তমান ফি: ${tk(classFee[c]!=null&&classFee[c]!==''?classFee[c]:MF)}${classFee[c]!=null&&classFee[c]!==''?'':' (সাধারণ)'}</small></div><button aria-label="পরিবর্তন" onclick="setClassFee('${esc(c)}')">✏️</button></div>`).join(''),'set')}
 function setDefaultFee(){form('সাধারণ (ডিফল্ট) মাসিক ফি',[['n','পরিমাণ (৳)','type=number']],{n:MF},o=>{MF=+o.n||MF;save('mm_mf',MF);draw()})}
@@ -615,7 +617,7 @@ function homeV(){const s=stu_(cur),hl=getHWToday(s.c,T0);shell('নামাজ 
 function profEdit(){form('মাদ্রাসার তথ্য',[['logo','মাদ্রাসার লোগো','photo'],['n','মাদ্রাসার নাম'],['addr','ঠিকানা'],['est','প্রতিষ্ঠার তারিখ (যেমন: ১ জানুয়ারি ২০১০)'],['ph','যোগাযোগ নম্বর','type=tel']],{n:profile.name,addr:profile.addr,est:profile.est,logo:profile.logo,ph:profile.ph},o=>{profile={name:o.n||'Madrasa Management',addr:o.addr,est:o.est,logo:o.logo,ph:o.ph};save('mm_profile',profile);draw()})}
 function devShow(){box(`<h3 style="text-align:center;margin:0 0 10px">👨‍💻 ডেভেলপার সম্পর্কে</h3><div class="link"><span><small>নাম</small>${DEV.n}</span></div><a class="link" href="mailto:${DEV.em}" style="text-decoration:none;color:inherit"><span><small>ইমেইল</small>${DEV.em}</span></a><a class="link" href="${DEV.fb}" target="_blank" style="text-decoration:none;color:inherit"><span><small>ফেসবুক</small>প্রোফাইল দেখুন</span></a><a class="link" href="${DEV.wal}" target="_blank" rel="noopener" style="text-decoration:none;color:inherit"><span><small>WhatsApp</small>${DEV.wa}</span></a>`)}
 const avHTML=(ph,ch)=>ph?`<img src="${ph}" alt="">`:ch;
-function phSel(inp,hid,prev){const f=inp.files&&inp.files[0];if(!f)return;const rd=new FileReader();rd.onload=()=>{const im=new Image();im.onload=()=>{const sc=Math.min(1,220/Math.max(im.width,im.height));const c=document.createElement('canvas');c.width=im.width*sc;c.height=im.height*sc;c.getContext('2d').drawImage(im,0,0,c.width,c.height);const url=c.toDataURL('image/jpeg',0.85);const p=document.getElementById(prev);if(p)p.innerHTML=`<img src="${url}" style="width:100%;height:100%;object-fit:cover;border-radius:50%">`;const h=document.getElementById(hid);if(h)h.value=url};im.src=rd.result};rd.readAsDataURL(f)}
+function phSel(inp,hid,prev){const f=inp.files&&inp.files[0];if(!f)return;const rd=new FileReader();rd.onload=()=>{const im=new Image();im.onload=()=>{const sc=Math.min(1,160/Math.max(im.width,im.height));const c=document.createElement('canvas');c.width=im.width*sc;c.height=im.height*sc;const cx=c.getContext('2d');cx.fillStyle='#fff';cx.fillRect(0,0,c.width,c.height);cx.drawImage(im,0,0,c.width,c.height);const url=c.toDataURL('image/jpeg',0.7);const p=document.getElementById(prev);if(p)p.innerHTML=`<img src="${url}" style="width:100%;height:100%;object-fit:cover;border-radius:50%">`;const h=document.getElementById(hid);if(h)h.value=url};im.src=rd.result};rd.readAsDataURL(f)}
 let adminPic=_ld('mm_adminpic','');
 let adminInfo=_ld('mm_admininfo',{n:'Admin',ph:'',em:''});
 function adminEdit(){form('অ্যাডমিনের তথ্য',[['photo','ছবি','photo'],['n','নাম'],['ph','ফোন','type=tel'],['em','ইমেইল','type=email'],['pw','নতুন পাসওয়ার্ড (খালি রাখলে অপরিবর্তিত)','type=password']],{n:adminInfo.n,ph:adminInfo.ph,em:adminInfo.em,photo:adminPic},o=>{if(o.pw&&window.changeOwnPw)window.changeOwnPw(o.pw);adminInfo={n:o.n||'Admin',ph:o.ph,em:o.em};adminPic=o.photo;save('mm_admininfo',adminInfo);save('mm_adminpic',adminPic);draw()})}
@@ -745,7 +747,7 @@ function hwSet(){if(role==='teacher'){if(!myTeacher){tab='home';return draw()}
 function saveHW(cls){const v=document.getElementById('hwtxt').value.trim();const t=teachers.find(x=>x.id===myTeacher);if(!v){alert('হোমওয়ার্ক লিখুন');return}
  if(role!=='teacher'||!t||!hwSubj||!((window.tAssign(myTeacher)[cls])||[]).includes(hwSubj)){alert('ক্লাস রুটিন অনুযায়ী এই ক্লাস ও বিষয়ে হোমওয়ার্ক দেওয়ার অনুমতি আপনার নেই');return}
  setHW(cls,hwDate,hwSubj,{t:v,by:t.n,tid:t.id,sj:hwSubj,ts:Date.now()});alert('সংরক্ষণ হয়েছে');draw()}
-function contactV(){shell('মাদ্রাসায় যোগাযোগ',`<div class="hello"><div class="av">${profile.logo?`<img src="${profile.logo}">`:'🕌'}</div><div><b>${profile.name||'Madrasa Management'}</b><br><small style="color:var(--mute)">${profile.addr||'ঠিকানা যোগ করা হয়নি'}</small></div></div>
+function contactV(){shell('মাদ্রাসায় যোগাযোগ',`<div class="hello"><div class="av">${profile.logo?`<img src="${profile.logo}" style="width:100%;height:100%;object-fit:contain;border-radius:50%">`:xe0(Array.from(String(profile.name||'M').trim()||'M')[0])}</div><div><b>${profile.name||'Madrasa Management'}</b><br><small style="color:var(--mute)">${profile.addr||'ঠিকানা যোগ করা হয়নি'}</small></div></div>
  <div class="act" style="grid-template-columns:1fr 1fr"><button onclick="dial('${profile.ph||''}')"><b>📞</b>কল করুন</button><button onclick="if('${profile.ph||''}')window.open('sms:${profile.ph||''}','_blank');else alert('যোগাযোগ নম্বর নেই')"><b>💬</b>SMS পাঠান</button></div>
  ${!profile.ph?'<p class="note">মাদ্রাসার যোগাযোগ নম্বর এখনো যোগ করা হয়নি।</p>':''}`,'child')}
 </script>
@@ -798,7 +800,7 @@ const _home=home;window.home=function(){_home()};
 const _dr=draw;window.draw=function(){if(tab==='hhist'){if(role==='admin'||(role==='teacher'&&hasPerm('ph_hist')))return hhV();tab=role==='guardian'?'child':'home'}_dr()};
 /* অভিভাবক: সব শিক্ষকের নম্বরে যোগাযোগ */
 window.contactV=function(){const T=(window.contactT||[]).filter(t=>t.ph);window.contactTF=T;
- shell('মাদ্রাসায় যোগাযোগ',`<div class="hello"><div class="av">${profile.logo?`<img src="${profile.logo}">`:'🕌'}</div><div><b>${profile.name||'Madrasa Management'}</b><br><small style="color:var(--mute)">${profile.addr||'ঠিকানা যোগ করা হয়নি'}</small></div></div>
+ shell('মাদ্রাসায় যোগাযোগ',`<div class="hello"><div class="av">${profile.logo?`<img src="${profile.logo}" style="width:100%;height:100%;object-fit:contain;border-radius:50%">`:xe0(Array.from(String(profile.name||'M').trim()||'M')[0])}</div><div><b>${profile.name||'Madrasa Management'}</b><br><small style="color:var(--mute)">${profile.addr||'ঠিকানা যোগ করা হয়নি'}</small></div></div>
  <div class="act" style="grid-template-columns:1fr 1fr"><button onclick="dial('${profile.ph||''}')"><b>📞</b>কল করুন</button><button onclick="if('${profile.ph||''}')window.open('sms:${profile.ph||''}','_blank');else alert('যোগাযোগ নম্বর নেই')"><b>💬</b>SMS পাঠান</button></div>
  ${!profile.ph?'<p class="note">মাদ্রাসার যোগাযোগ নম্বর এখনো যোগ করা হয়নি।</p>':''}<h3>শিক্ষকদের সাথে যোগাযোগ</h3>`+
  (T.map((t,i)=>R_(xe0((t.n||'?')[0]),xe0(t.n),xe0(t.ph||''),`<button class="chip Present" style="min-width:0" aria-label="কল করুন" onclick="dial(contactTF[${i}].ph)">📞</button> <button class="chip Late" style="min-width:0" aria-label="SMS পাঠান" onclick="window.open('sms:'+contactTF[${i}].ph,'_blank')">💬</button>`)).join('')||'<p class="note">শিক্ষকদের নম্বর এখনো যোগ করা হয়নি।</p>'),'child')};
@@ -862,7 +864,7 @@ const cfg={apiKey:"AIzaSyCE-tUb4wySKM7nrUJ_cxnfNm-EybJTLdE",authDomain:"madrasa-
 const app=initializeApp(cfg),auth=initializeAuth(app,{persistence:[indexedDBLocalPersistence,browserLocalPersistence]}),db=getDatabase(app),auth2=getAuth(initializeApp(cfg,'sec'));
 const DEFAULT_MID='CURRENT_MADRASA_001';
 let MID=(()=>{try{const q=new URLSearchParams(location.search).get('m');if(q&&/^[A-Za-z0-9_]{3,40}$/.test(q)){localStorage.setItem('mid',q);return q}return localStorage.getItem('mid')||DEFAULT_MID}catch(e){return DEFAULT_MID}})();
-const GLB=/^(users|licenses)(\/|$)/;
+const GLB=/^(users|licenses|loginMap)(\/|$)/;window.getMid=()=>MID;
 const upd=U=>{const o={};for(const k in U){let v=U[k];if(/^users\/[^\/]+$/.test(k)&&v&&typeof v==='object'&&!v.mid)v=Object.assign({},v,{mid:MID});o[GLB.test(k)?k:'madrasas/'+MID+'/'+k]=v}return update(ref(db),o)};
 const R=p=>ref(db,GLB.test(p)?p:'madrasas/'+MID+(p?'/'+p:'')),clean=o=>JSON.parse(JSON.stringify(o));
 const norm=s=>String(s==null?'':s).trim().toLowerCase().replace(/\s+/g,'');
@@ -881,31 +883,56 @@ const denied=e=>/permission/i.test(e.message||'')?'এই কাজের অন
 /* অ্যাকাউন্ট তৈরি (দ্বিতীয় অ্যাপ দিয়ে, যাতে অ্যাডমিন লগআউট না হয়) */
 async function acct(email,pw){const c=await createUserWithEmailAndPassword(auth2,email,pw);await signOut(auth2);return c.user.uid}
 async function freeKeys(ids){const ks=[];for(const [v,free] of ids){const k=key(v);if(!k||ks.includes(k))continue;if(free&&(await get(R('loginIndex/'+k))).exists())continue;ks.push(k)}return ks}
+const mapOwner=async k=>{try{const sn=await get(R('loginMap/'+k));return sn.exists()&&typeof sn.val()==='string'?sn.val():null}catch(e){return null}};
+async function xChk(list,strict){for(const [v,lbl] of list){const k=key(v);if(!k)continue;const ow=await mapOwner(k);if(ow&&ow!==MID)throw new Error('এই '+lbl+' ('+v+') অন্য মাদ্রাসায় ব্যবহৃত হচ্ছে, তাই ব্যবহার করা যাবে না');if(strict&&(await get(R('loginIndex/'+k))).exists())throw new Error('এই '+lbl+' ('+v+') এই মাদ্রাসায় আগে থেকেই ব্যবহৃত হচ্ছে')}}
+async function sibDup(pe,selfKey,pw){if(!pe||!pw)return false;const em=[];if(pe.kids)Object.keys(pe.kids).forEach(k=>{if(k!==selfKey)em.push(pe.kids[k])});else if(pe.email&&!selfKey)em.push(pe.email);
+ for(const e of em.slice(0,8)){try{await signInWithEmailAndPassword(auth2,e,pw);try{await signOut(auth2)}catch(x){}return true}catch(x){}}return false}
+async function relink(U,k,o,em,rl){const sk=key(o.id);if(rl!=='guardian'){U['loginIndex/'+k]={email:em,role:rl};return}
+ if(k===sk){U['loginIndex/'+k]={email:em,role:rl,sid:o.id};return}
+ let e=null;try{const g=await get(R('loginIndex/'+k));if(g.exists())e=g.val()}catch(x){}
+ if(e&&e.kids){U['loginIndex/'+k+'/kids/'+sk]=em;if(e.sid===o.id)U['loginIndex/'+k+'/email']=em}else U['loginIndex/'+k]={email:em,role:rl,sid:o.id}}
+async function unlink(U,k,sid,col){const sk=key(sid);let e=null;try{const g=await get(R('loginIndex/'+k));if(g.exists())e=g.val()}catch(x){}
+ if(col==='students'&&e&&e.kids&&k!==sk){const kids=Object.assign({},e.kids);delete kids[sk];const ks=Object.keys(kids);
+  if(!ks.length){U['loginIndex/'+k]=null;U['loginMap/'+k]=null;return}
+  U['loginIndex/'+k+'/kids/'+sk]=null;
+  if(e.sid===sid){const n=ks[0],st=students.find(x=>key(x.id)===n);U['loginIndex/'+k+'/email']=kids[n];U['loginIndex/'+k+'/sid']=st?st.id:n}
+  return}
+ U['loginIndex/'+k]=null;U['loginMap/'+k]=null}
 /* ছাত্র ও শিক্ষকের ডেটা লেখা */
 async function push(col,arr){const K=col==='students'?'S':'T';if(!ready[K])return;
  const L=last[col],U={},creds=[],ids=new Set(arr.map(x=>x.id));let pwOk=[],pwBad=[],blocked=0;
  for(const o of arr){const c=strip(o);let nu=null;if(col==='teachers')c.perm=c.perm||[];
   if(!L[o.id]){if(!hasPerm(col==='students'?'stu_add':'tch_add')){blocked=1;continue}const pw=(o.pw&&o.pw.length>=6)?o.pw:gen();
    try{
-    if(col==='students'){const em=AL('s-'+o.id.toLowerCase()),uid=await acct(em,pw),ks=await freeKeys([[o.id],[o.ph,1]]);
-     c.uid=uid;c.lk=ks;U['users/'+uid]={role:'guardian',ref:o.id,email:em};ks.forEach(k=>U['loginIndex/'+k]={email:em,role:'guardian'});
+    if(col==='students'){const em=AL('s-'+o.id.toLowerCase()),sk=key(o.id),pk=key(o.ph);
+     await xChk([[o.id,'ছাত্র ID'],[o.ph,'ফোন নম্বর']]);
+     let pe=null;if(pk&&pk!==sk){const g=await get(R('loginIndex/'+pk));if(g.exists())pe=g.val()}
+     if(pe&&pe.role!=='guardian')throw new Error('এই ফোন নম্বর শিক্ষক/অ্যাডমিনের অ্যাকাউন্টে ব্যবহৃত হচ্ছে');
+     if(pe&&await sibDup(pe,'',pw))throw new Error('এই পাসওয়ার্ড ভাইবোনের পাসওয়ার্ডের সাথে মিলে গেছে, ভিন্ন পাসওয়ার্ড দিন');
+     const uid=await acct(em,pw),ks=[sk];if(pk&&pk!==sk)ks.push(pk);
+     c.uid=uid;c.lk=ks;U['users/'+uid]={role:'guardian',ref:o.id,email:em};U['loginIndex/'+sk]={email:em,role:'guardian',sid:o.id};
+     if(pk&&pk!==sk){if(pe){if(!pe.kids){const ps=pe.sid||(students.find(x=>(x.lk||[]).includes(pk))||{}).id;if(ps){U['loginIndex/'+pk+'/kids/'+key(ps)]=pe.email;if(!pe.sid)U['loginIndex/'+pk+'/sid']=ps}}U['loginIndex/'+pk+'/kids/'+sk]=em}else U['loginIndex/'+pk]={email:em,role:'guardian',sid:o.id}}
+     ks.forEach(k=>{U['loginMap/'+k]=MID});
      creds.push(o.n+' — অভিভাবক লগইন: '+o.id+' / পাসওয়ার্ড: '+pw)}
-    else{let em=(o.em&&o.em.indexOf('@')>0)?o.em.trim().toLowerCase():AL('t-'+o.id.toLowerCase()),uid;
+    else{await xChk([[o.ph,'ফোন নম্বর'],[o.em,'ইমেইল']],1);await xChk([[o.id,'শিক্ষক ID']]);
+     let em=(o.em&&o.em.indexOf('@')>0)?o.em.trim().toLowerCase():AL('t-'+o.id.toLowerCase()),uid;
      try{uid=await acct(em,pw)}catch(e){if(e.code==='auth/email-already-in-use'){em=AL('t-'+o.id.toLowerCase());uid=await acct(em,pw)}else throw e}
      const ks=await freeKeys([[o.ph,1],[o.em,1],[o.id]]);c.uid=uid;c.lk=ks;
-     U['users/'+uid]={role:'teacher',ref:o.id,email:em};ks.forEach(k=>U['loginIndex/'+k]={email:em,role:'teacher'});
+     U['users/'+uid]={role:'teacher',ref:o.id,email:em};ks.forEach(k=>{U['loginIndex/'+k]={email:em,role:'teacher'};U['loginMap/'+k]=MID});
      creds.push(o.n+' — লগইন: '+(o.ph||o.em||o.id)+' / পাসওয়ার্ড: '+pw)}
    }catch(e){alert(o.n+': অ্যাকাউন্ট তৈরি হয়নি ('+(e.code||e.message)+')');continue}
   }else if(o.pw){const pw=o.pw;delete o.pw;toast('পাসওয়ার্ড পরিবর্তন হচ্ছে, অপেক্ষা করুন...');
    if(!(role==='admin'||hasPerm(col==='students'?'grd_pw':'adm_tpw')||(col==='students'&&hasPerm('adm_gpw'))))pwBad.push(o.n+': পাসওয়ার্ড বদলানোর অনুমতি নেই');
    else if(pw.length<6)pwBad.push(o.n+': পাসওয়ার্ড কমপক্ষে ৬ অক্ষরের হতে হবে');
-   else{try{const rl=col==='students'?'guardian':'teacher',em=AL((col==='students'?'s-':'t-')+o.id.toLowerCase()),uid=await tmo(acct(em,pw),30000,'নতুন অ্যাকাউন্ট তৈরি');toast('অ্যাকাউন্ট তৈরি হয়েছে, ডাটাবেসে সংরক্ষণ হচ্ছে...');
-    U['users/'+uid]={role:rl,ref:o.id,email:em};(c.lk&&c.lk.length?c.lk:[key(o.id)]).forEach(k=>U['loginIndex/'+k]={email:em,role:rl});
+   else{try{const rl=col==='students'?'guardian':'teacher',em=AL((col==='students'?'s-':'t-')+o.id.toLowerCase()),lks=(c.lk&&c.lk.length?c.lk:[key(o.id)]);
+    if(col==='students')for(const k of lks){if(k===key(o.id))continue;const g=await get(R('loginIndex/'+k));if(g.exists()&&g.val().kids&&await sibDup(g.val(),key(o.id),pw))throw new Error('এই পাসওয়ার্ড ভাইবোনের পাসওয়ার্ডের সাথে মিলে গেছে, ভিন্ন পাসওয়ার্ড দিন')}
+    const uid=await tmo(acct(em,pw),30000,'নতুন অ্যাকাউন্ট তৈরি');toast('অ্যাকাউন্ট তৈরি হয়েছে, ডাটাবেসে সংরক্ষণ হচ্ছে...');
+    U['users/'+uid]={role:rl,ref:o.id,email:em};for(const k of lks)await relink(U,k,o,em,rl);
     if(c.uid)U['users/'+c.uid]=null;nu=uid;o.uid=uid;pwOk.push(o.n)}catch(e){pwBad.push(o.n+': '+(e.code||e.message))}}}
   if(nu){let base={};try{base=JSON.parse(L[o.id])}catch(e){}const c0=Object.assign({},c);if(base.uid)c0.uid=base.uid;else delete c0.uid;
    c.uid=nu;if(sj(c0)!==L[o.id])U[col+'/'+o.id]=toDB(col,c);else U[col+'/'+o.id+'/uid']=nu}
   else if(sj(c)!==L[o.id])U[col+'/'+o.id]=toDB(col,c)}
- for(const id of Object.keys(L))if(!ids.has(id)){const p=JSON.parse(L[id]);U[col+'/'+id]=null;if(p.uid)U['users/'+p.uid]=null;(p.lk||[]).forEach(x=>U['loginIndex/'+x]=null);if(col==='students')U['attendance/byStudent/'+id]=null}
+ for(const id of Object.keys(L))if(!ids.has(id)){const p=JSON.parse(L[id]);U[col+'/'+id]=null;if(p.uid)U['users/'+p.uid]=null;for(const x of (p.lk||[]))await unlink(U,x,id,col);if(col==='students')U['attendance/byStudent/'+id]=null}
  if(Object.keys(U).length){try{await tmo(upd(U),40000,'ডাটাবেসে সংরক্ষণ')}catch(e){pwOk.length&&pwBad.push(pwOk.join(', ')+': ডাটাবেসে সংরক্ষণ হয়নি ('+denied(e)+')');pwOk=[];if(!pwBad.length)alert('সংরক্ষণ হয়নি: '+denied(e));restore(col)}}
  toast('');
  if(blocked){alert('শুধু অ্যাডমিন নতুন ছাত্র/শিক্ষক যোগ করতে পারেন।');restore(col)}
@@ -988,8 +1015,11 @@ function cleanup(){lm={};unsub.forEach(f=>f());unsub=[];tAll=0;tAtt=0;tEx=0;tpAl
 window.pwGo=async function(r){const idv=document.getElementById('pwid').value,pw=document.getElementById('pwin').value,er=document.getElementById('pwerr');
  const bad=c=>{hideLd();er.textContent='ভুল তথ্য, আবার চেষ্টা করুন'+(c?' ['+c+']':'');document.getElementById('pwin').value=''};
  if(!key(idv)||!pw){bad('খালি');return}er.textContent='';showLd();
- try{const ix=await tmo(get(R('loginIndex/'+key(idv))),25000,'লগইন তথ্য খোঁজা');if(!ix.exists()||ix.val().role!==r){bad(!ix.exists()?'ID পাওয়া যায়নি':'অন্য ধরনের অ্যাকাউন্ট');return}
-  const cr=await tmo(signInWithEmailAndPassword(auth,ix.val().email,pw),25000,'পাসওয়ার্ড যাচাই');
+ try{const k0=key(idv),ow=await tmo(mapOwner(k0),15000,'মাদ্রাসা খোঁজা');if(ow&&ow!==MID){MID=ow;try{localStorage.setItem('mid',ow)}catch(e){}}
+  const ix=await tmo(get(R('loginIndex/'+k0)),25000,'লগইন তথ্য খোঁজা');if(!ix.exists()||ix.val().role!==r){bad(!ix.exists()?'ID পাওয়া যায়নি':'অন্য ধরনের অ্যাকাউন্ট');return}
+  const v0=ix.val(),ems=[v0.email].concat(Object.values(v0.kids||{})).filter((x,i,a)=>x&&a.indexOf(x)===i).slice(0,10);let cr=null,le=null;
+  for(const em of ems){try{cr=await tmo(signInWithEmailAndPassword(auth,em,pw),25000,'পাসওয়ার্ড যাচাই');break}catch(e){le=e;if(!(e.code==='auth/invalid-credential'||e.code==='auth/wrong-password'||e.code==='auth/user-not-found'))throw e}}
+  if(!cr)throw le;
   const u=await tmo(get(R('users/'+cr.user.uid)),25000,'অ্যাকাউন্ট তথ্য');if(!u.exists()||u.val().role!==r){await signOut(auth);bad('users রেকর্ড মেলেনি');return}{const lk=await licMsg(u.val());if(lk){await lockScr(lk);return}}
   cleanup();role=r;myChild=r==='guardian'?u.val().ref:'';myTeacher=r==='teacher'?u.val().ref:'';tab=r==='guardian'?'child':'home';
   listen()
@@ -1020,7 +1050,7 @@ window.lgForgot=function(){lgPage('fgmd',`<div class="lgc"><h2>পাসওয�
 window.lgReset=async function(){const v=document.getElementById('fgid').value.trim(),er=document.getElementById('fger');er.style.color='#b42323';
  if(!v){er.textContent='ইমেইল বা মোবাইল নম্বর দিন';return}
  const b=document.getElementById('fgbtn');b.disabled=true;showLd();
- try{let em=norm(v);const ix=await tmo(get(R('loginIndex/'+key(v))),20000,'তথ্য খোঁজা');
+ try{let em=norm(v);{const ow=await mapOwner(key(v));if(ow&&ow!==MID){MID=ow;try{localStorage.setItem('mid',ow)}catch(e){}}}const ix=await tmo(get(R('loginIndex/'+key(v))),20000,'তথ্য খোঁজা');
   if(ix.exists()){if(ix.val().role!=='admin'){hideLd();b.disabled=false;er.textContent='এটি অ্যাডমিন অ্যাকাউন্ট নয়। শিক্ষক/অভিভাবক অ্যাডমিনের সাথে যোগাযোগ করুন।';return}em=ix.val().email}
   else if(v.indexOf('@')<0){hideLd();b.disabled=false;er.textContent='এই নম্বরে কোনো অ্যাডমিন পাওয়া যায়নি';return}
   await tmo(sendPasswordResetEmail(auth,em),25000,'ইমেইল পাঠানো');hideLd();b.disabled=false;er.style.color='#0a4d33';er.textContent='রিসেট লিংক '+maskEm(em)+' ঠিকানায় পাঠানো হয়েছে (যদি অ্যাকাউন্ট থাকে)। ইনবক্স ও স্প্যাম দেখুন।'
@@ -1032,6 +1062,7 @@ window.lgRegGo=async function(){const g=id=>document.getElementById(id).value.tr
  const n=g('rgn'),ad=g('rga'),an=g('rgan'),ph=g('rgph'),em=g('rgem').toLowerCase(),pw=document.getElementById('rgpw').value,pw2=document.getElementById('rgpw2').value,pk=key(ph);
  er.textContent='';if(!n)return bad('মাদ্রাসার নাম দিন');if(!an)return bad('অ্যাডমিনের নাম দিন');if(!/^[0-9]{10,14}$/.test(pk))return bad('সঠিক মোবাইল নম্বর দিন');if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(em))return bad('সঠিক ইমেইল দিন');if(pw.length<6)return bad('পাসওয়ার্ড কমপক্ষে ৬ অক্ষরের হতে হবে');if(pw!==pw2)return bad('দুই পাসওয়ার্ড মেলেনি');
  btn.disabled=true;showLd();let step='অ্যাকাউন্ট তৈরি',resume=false;
+ {const o1=await mapOwner(pk);if(o1){hideLd();btn.disabled=false;return bad('এই মোবাইল নম্বর ইতিমধ্যে অন্য মাদ্রাসায় ব্যবহৃত হচ্ছে। অন্য নম্বর দিন।')}}
  try{const so=await new Promise(r=>{let d=0,u;const f=v=>{if(d)return;d=1;try{u&&u()}catch(e){}r(v)};try{u=onValue(ref(db,'.info/serverTimeOffset'),s=>f(+s.val()||0),()=>f(0))}catch(e){f(0)}setTimeout(()=>f(0),4000)}),now=Date.now()+so;let c;
   try{c=await createUserWithEmailAndPassword(auth,em,pw)}catch(e){if(e.code!=='auth/email-already-in-use')throw e;c=await signInWithEmailAndPassword(auth,em,pw);if((await get(ref(db,'users/'+c.user.uid))).exists()){await signOut(auth);throw {code:'exists'}}resume=true}
   const uid=c.user.uid,mid='M'+uid,soft=async(p,v)=>{try{await set(ref(db,p),v)}catch(e){if(!(resume&&/permission/i.test(e.code+e.message)))throw e}};
@@ -1039,7 +1070,7 @@ window.lgRegGo=async function(){const g=id=>document.getElementById(id).value.tr
   step='ট্রায়াল সেট';await soft('licenses/'+mid,{trialStart:now,trialEnd:now+15*864e5,subStart:0,subEnd:0,suspended:false});
   step='অ্যাডমিন সংযোগ';await set(ref(db,'users/'+uid),{email:em,role:'admin',mid});
   step='লগইন তথ্য';const U={};U['madrasas/'+mid+'/config/profile']={name:n,addr:ad,ph:ph,est:'',logo:''};U['madrasas/'+mid+'/config/setup']={by:uid,at:now};
-  [em,ph].forEach(i=>{const k=key(i);if(k)U['madrasas/'+mid+'/loginIndex/'+k]={email:em,role:'admin'}});await update(ref(db),U);
+  [em,ph].forEach(i=>{const k=key(i);if(k){U['madrasas/'+mid+'/loginIndex/'+k]={email:em,role:'admin'};U['loginMap/'+k]=mid}});await update(ref(db),U);
   try{localStorage.setItem('mid',mid)}catch(e){}hideLd();
   const link=location.origin+location.pathname+'?m='+mid;
   lgPage('rgmd',`<div class="lgc" style="text-align:center"><div style="font-size:46px">🎉</div><h2>নিবন্ধন সফল!</h2><p class="s">${xe(n)} — ১৫ দিনের ফ্রি ট্রায়াল শুরু হয়েছে।</p><div class="lgnote" style="text-align:left">আপনার মাদ্রাসার লিংক (শিক্ষক ও অভিভাবকদের দিন):<br><b style="word-break:break-all;font-size:12.5px">${xe(link)}</b></div><button class="lgbt" style="background:#5b6b7d" onclick="navigator.clipboard&&navigator.clipboard.writeText('${link}');this.textContent='কপি হয়েছে ✓'">লিংক কপি করুন</button><button class="lgbt" onclick="location.href='${link}'">অ্যাপে প্রবেশ করুন</button></div>`,"location.href='"+link+"'")
@@ -1232,8 +1263,8 @@ const setRs=(v,one)=>{const o={};if(one){if(v)o[one]=Object.values(v).map(nrmRes
 async function pushRs(o){const U={};Object.keys(o).forEach(s=>{if(rsKnown[s]!==stab(o[s]))U['results/'+s]=clean(o[s])});
  if(Object.keys(U).length)try{await upd(U)}catch(e){fail('ফলাফল সংরক্ষণ হয়নি',e,['results',sn=>setRs(sn.val())])}}
 /* নোটিস */
-const onNotices=sn=>{const v=sn.val()||{};notices=Object.values(v).sort((a,b)=>b.ts-a.ts);nKnown=new Set(notices.map(n=>n.id));redraw()};
-async function pushNotices(arr){const U={},ids=new Set();arr.forEach(n=>{if(!n.id){n.id=rid('N');n.ts=Date.now()}ids.add(n.id);if(!nKnown.has(n.id))U['notices/'+n.id]=clean(n)});
+const onNotices=sn=>{const v=sn.val()||{};notices=Object.values(v).sort((a,b)=>b.ts-a.ts);nKnown=new Set(notices.map(n=>n.id));window.nSig={};notices.forEach(n=>{window.nSig[n.id]=JSON.stringify([n.t,n.b])});redraw()};
+async function pushNotices(arr){const U={},ids=new Set();arr.forEach(n=>{if(!n.id){n.id=rid('N');n.ts=Date.now()}ids.add(n.id);if(!nKnown.has(n.id)||(window.nSig&&window.nSig[n.id]!==JSON.stringify([n.t,n.b])))U['notices/'+n.id]=clean(n)});
  nKnown.forEach(id=>{if(!ids.has(id))U['notices/'+id]=null});
  if(Object.keys(U).length)try{await upd(U)}catch(e){fail('নোটিস সংরক্ষণ হয়নি',e,['notices',onNotices])}}
 /* শিক্ষকের দেওয়া হোমওয়ার্ক (ক্লাস → তারিখ → বিষয়) */
@@ -1337,7 +1368,7 @@ window.migratePerms=async function(){if(role!=='admin'||!ready.T||!tpOk||migBusy
  Object.keys(G).forEach(n=>{const f=window[n];if(typeof f!=='function')return;window[n]=function(){const g=typeof G[n]==='function'?G[n].apply(null,arguments):G[n];if(!hasPerm(g)){deny();return}return f.apply(this,arguments)}});
  ['cyc','finalizeClass'].forEach(n=>{const f=window[n];if(typeof f!=='function')return;window[n]=function(){if(!canAny('att_take','att_edit')){deny();return}return f.apply(this,arguments)}});
  const fa=window.annForm;if(typeof fa==='function')window.annForm=function(){if(!canAny('notif_send','msg_grd','msg_tch')){deny();return}return fa.apply(this,arguments)}})();
-onValue(R('config/profile'),sn=>{if(sn.val()){profile=sn.val();if(!role)paint()}},()=>{});
+onValue(R('config/profile'),sn=>{if(sn.val()){profile=sn.val();if(!role)paint();else if(window.mmLgoSync)mmLgoSync()}},()=>{});
 /* ===== persistent login: অ্যাপ খুললে আগের সেশন ফিরিয়ে আনে ===== */
 window.changeOwnPw=async pw=>{if(pw.length<6){alert('পাসওয়ার্ড কমপক্ষে ৬ অক্ষরের হতে হবে');return}const u=auth.currentUser;if(!u||role!=='admin'){alert('শুধু অ্যাডমিন');return}
  try{await updatePassword(u,pw);alert('আপনার পাসওয়ার্ড সফলভাবে পরিবর্তন হয়েছে।')}catch(e){alert(e.code==='auth/requires-recent-login'?'নিরাপত্তার জন্য একবার লগআউট করে নতুন করে লগইন করুন, তারপর সঙ্গে সঙ্গে পাসওয়ার্ড বদলান।':'পাসওয়ার্ড পরিবর্তন হয়নি: '+(e.code||e.message))}};
@@ -1774,6 +1805,7 @@ var D={
 'এখনো কোনো নোটিফিকেশন নেই':'No notifications yet',
 'এখনো কোনো নোটিফিকেশন পাঠানো হয়নি':'No notifications sent yet',
 'এখনো কোনো নোটিস নেই':'No notices yet',
+'নোটিশ বোর্ড':'Notice board','সব দেখুন ›':'View all ›','নোটিস সম্পাদনা':'Edit notice','সম্পাদনা করতে চাপুন':'Tap to edit','সম্পাদিত':'edited','＋ নতুন নোটিশ':'＋ New notice','এখনো কোনো নোটিশ নেই। নতুন নোটিশ দিন।':'No notices yet. Add a new one.',
 'এখনো কোনো পেমেন্ট নেই':'No payments yet',
 'এখনো কোনো ফলাফল নেই':'No results yet',
 'এখনো কোনো মাসিক ফি পরিশোধ হয়নি':'No monthly fee paid yet',
@@ -2037,7 +2069,7 @@ var D={
 'মাদ্রাসায় উপস্থিত হয়েছে':'has arrived at the madrasa',
 'মাদ্রাসার নাম দিন':'Enter madrasa name',
 'মাদ্রাসার যোগাযোগ নম্বর এখনো যোগ করা হয়নি':'The madrasa\'s contact number has not been added yet',
-'মাদ্রাসার লোগো':'Madrasa logo',
+'মাদ্রাসার লোগো':'Madrasa logo','নাম, লোগো, ঠিকানা ও প্রতিষ্ঠার তারিখ':'Name, logo, address & founding date',
 'মাসভিত্তিক বেতন ও উপস্থিতি':'Monthly fee & attendance',
 'মাসিক উপস্থিতি':'Monthly attendance',
 'মাসিক প্ল্যান':'Monthly plan',
@@ -2466,17 +2498,43 @@ var SUN='<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v
 function cur(){return document.documentElement.getAttribute('data-theme')==='dark'?'dark':'light'}
 function icon(b){b.innerHTML=cur()==='dark'?SUN:MOON;b.title=cur()==='dark'?'লাইট মোড':'ডার্ক মোড'}
 window.mmTheme=function(){var n=cur()==='dark'?'light':'dark';document.documentElement.setAttribute('data-theme',n);try{localStorage.setItem('mm_theme',n)}catch(e){}var b=document.getElementById('thm');if(b)icon(b)};
+window.mmLgoFill=function(el){var p=(typeof profile!=='undefined'&&profile)||{},lg=p.logo,ok=typeof lg==='string'&&/^(data:image\/|https:)/.test(lg),nm=String(p.name||'').trim(),sig=ok?'i'+lg.length+lg.slice(-24):'n'+nm;
+ if(el.dataset.sig===sig)return;el.dataset.sig=sig;el.setAttribute('aria-hidden','true');el.textContent='';
+ var ini=function(){el.className='lgo ini';el.textContent=Array.from(nm||'Madrasa')[0].toUpperCase()};
+ if(ok){el.className='lgo';var im=document.createElement('img');im.alt='';im.decoding='async';im.onerror=ini;im.src=lg;el.appendChild(im)}else ini()};
+window.mmLgoSync=function(){var t=document.querySelector('#app .top .lgo');if(t)mmLgoFill(t)};
+(function(){var c=document.createElement('style');c.id='mmLgoCss';c.textContent='.top .lgo{width:34px;height:34px;border-radius:50%;background:#fff;border:1px solid var(--line);overflow:hidden;padding:2px;box-sizing:border-box;display:grid;place-items:center;flex:none}.top .lgo img{width:100%;height:100%;object-fit:contain;border-radius:50%;display:block}.top .lgo.ini{background:var(--g);color:#fff;border:0;padding:0;font-weight:700;font-size:16px;line-height:1}';document.head.appendChild(c)})();
 function fix(){
  var top=document.querySelector('#app .top');
  if(top&&!document.getElementById('thm')){var b=document.createElement('button');b.id='thm';b.setAttribute('aria-label','থিম পরিবর্তন');b.onclick=window.mmTheme;icon(b);top.appendChild(b)}
 
- if(top&&!top.querySelector('.lgo')&&top.querySelector('button[aria-label="মেনু"]')){var h=top.querySelector('h1');if(h){var l=document.createElement('span');l.className='lgo';l.innerHTML='<svg viewBox="0 0 24 24"><path d="M12 3c-2 2-3 3.5-3 5a3 3 0 006 0c0-1.5-1-3-3-5z"/><path d="M4 21V12h16v9M3 21h18M10 21v-3a2 2 0 014 0v3"/></svg>';top.insertBefore(l,h)}}
+ if(top&&!top.querySelector('.lgo')&&top.querySelector('button[aria-label="মেনু"]')){var h=top.querySelector('h1');if(h){var l=document.createElement('span');l.className='lgo';mmLgoFill(l);top.insertBefore(l,h)}}
+ if(top){var ex=top.querySelector('.lgo');if(ex)mmLgoFill(ex)}
  var CL={'📚':'#059669','📋':'#7c3aed','📖':'#2563eb','📢':'#e11d48','📊':'#ea580c'};
  document.querySelectorAll('#app main h3:not([data-sh])').forEach(function(h){h.setAttribute('data-sh','1');var n=h.firstChild;if(!n||n.nodeType!==3)return;var m=/^(\S{1,3})\s+/.exec(n.nodeValue);if(!m||!CL[m[1].replace(/\uFE0F/g,'')])return;var s=document.createElement('span');s.className='shi';s.style.setProperty('--tc',CL[m[1].replace(/\uFE0F/g,'')]);s.textContent=m[1];n.nodeValue=n.nodeValue.slice(m[0].length);h.insertBefore(s,n)});
  document.querySelectorAll('#app .grid .tile:not([data-tc])').forEach(function(e){var c=e.style.backgroundColor||'';e.setAttribute('data-tc','1');if(c)e.style.setProperty('--tc',c)})}
 var sch=0,ob=new MutationObserver(function(){if(!sch){sch=1;requestAnimationFrame(function(){sch=0;fix()})}});
 function go(){var a=document.getElementById('app');if(!a)return setTimeout(go,100);ob.observe(a,{childList:true,subtree:true});fix()}
 go()})();
+</script>
+<script>
+/* নোটিশ ড্যাশবোর্ড + নোটিস সম্পাদনা */
+(function(){
+ function E(x){return String(x==null?'':x).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;')}
+ function canEd(){return role==='admin'||(role==='teacher'&&hasPerm('not_edit'))}
+ function css(){if(document.getElementById('ndbCss'))return;var st=document.createElement('style');st.id='ndbCss';
+  st.textContent='.ndb{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:12px;margin:0 0 12px}.ndbh{display:flex;justify-content:space-between;align-items:center;margin-bottom:4px}.ndbh b{font-size:15px}.ndbh a{color:var(--g);font-size:13px;cursor:pointer;white-space:nowrap}.ndi{padding:9px 10px;border-radius:12px;background:rgba(127,127,127,.09);margin-top:7px;cursor:pointer;border-left:3px solid #d6455d}.ndi b{display:block;font-size:14px;word-break:break-word}.ndi small{color:var(--mute);font-size:11.5px}.ndi p{margin:4px 0 0;font-size:13px;opacity:.88;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;white-space:pre-wrap;word-break:break-word}.ndbe{color:var(--mute);font-size:13px;padding:6px 2px}.ndba{margin-top:6px;background:var(--g);color:#fff;border:0;border-radius:10px;padding:8px 14px;font:inherit;font-size:13px;cursor:pointer}';
+  document.head.appendChild(st)}
+ window.ndbHTML=function(){css();if(role==='teacher'&&!tabOK('notices'))return '';var L=notices.slice(0,3),h='<div class="ndb"><div class="ndbh"><b>📢 নোটিশ বোর্ড</b><a onclick="tab=\'notices\';draw()">সব দেখুন ›</a></div>';
+  if(!L.length){if(role!=='admin')return '';return h+'<div class="ndbe">এখনো কোনো নোটিশ নেই। নতুন নোটিশ দিন।</div><button class="ndba" onclick="addN()">＋ নতুন নোটিশ</button></div>'}
+  return h+L.map(function(n,i){return '<div class="ndi" onclick="ndbOpen('+i+')"><b>'+E(n.t)+'</b><small>'+E(n.d||'')+(n.ed?' • সম্পাদিত':'')+'</small>'+(n.b?'<p>'+E(n.b)+'</p>':'')+'</div>'}).join('')+'</div>'};
+ window.ndbOpen=function(i){var n=notices[i];if(!n)return;if(canEd()){editN(i);return}
+  box('<h3 style="margin:0 0 4px;word-break:break-word">'+E(n.t)+'</h3><small style="color:var(--mute)">'+E(n.d||'')+'</small><p style="margin-top:10px;white-space:pre-wrap;word-break:break-word">'+E(n.b||'')+'</p>')};
+ window.editN=function(i){var n=notices[i];if(!n||!canEd())return;form('নোটিস সম্পাদনা',[['n','শিরোনাম'],['b','বিস্তারিত']],{n:n.t,b:n.b||''},function(o){if(!o.n||!String(o.n).trim()){alert('শিরোনাম লিখুন');return}n.t=String(o.n).trim();n.b=o.b||'';n.ed=new Date().toLocaleDateString('bn-BD');save('mm_n',notices);draw()})};
+ window.noteV=function(){css();var A=role==='admin',ed=canEd();
+  shell('Notice',(role==='guardian'&&typeof gm==='function'?gm():'')+notices.map(function(n,i){return '<div class="row" style="display:block'+(ed?';cursor:pointer':'')+'" onclick="'+(ed?'editN(':'ndbOpen(')+i+')"><b>'+E(n.t)+'</b><br><small style="color:var(--mute)">'+E(n.d||'')+(n.ed?' • সম্পাদিত':'')+'</small><p style="margin-top:6px;white-space:pre-wrap;word-break:break-word">'+E(n.b||'')+'</p>'+(ed?'<small style="color:var(--g)">✏️ সম্পাদনা করতে চাপুন</small>':'')+(A?'<button onclick="event.stopPropagation();delN('+i+')" style="color:var(--not);margin-left:12px"><i class=idel></i> মুছুন</button>':'')+'</div>'}).join('')||'<p class="note">এখনো কোনো নোটিস নেই।</p>',role==='guardian'?'':'home',A?'addN()':'')};
+ var _sh=shell;shell=function(t,b,bk,pl){var on=(role==='admin'&&tab==='home')||(role==='teacher'&&tab==='home')||(role==='guardian'&&tab==='child');if(on&&typeof b==='string'&&b.indexOf('class="ndb"')<0){try{b=ndbHTML()+b}catch(e){}}return _sh.call(this,t,b,bk,pl)};
+})();
 </script>
 </body>
 </html>

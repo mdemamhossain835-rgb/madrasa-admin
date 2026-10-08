@@ -57,18 +57,29 @@ function dash(){
   const ids=Object.keys(M),cnt={active:0,trial:0,expired:0,suspended:0};ids.forEach(i=>cnt[st(L[i])]++);
   const rows=ids.filter(i=>{const m=M[i],s=st(L[i]);if(flt!=='all'&&s!==flt)return false;
     const h=[i,m.name,m.adminName,m.adminPhone].join(' ').toLowerCase();return !q||h.includes(q.toLowerCase())}).sort();
-  root.innerHTML=`<div class="bar"><h2 style="flex:1;margin:0">Super Admin Dashboard</h2><button class="s" id="rf">রিফ্রেশ</button><button class="s" id="mg">ডেটা মাইগ্রেশন</button><button class="s d" id="lo">লগআউট</button></div>
+  root.innerHTML=`<div class="bar"><h2 style="flex:1;margin:0">Super Admin Dashboard</h2><button class="s" id="rf">রিফ্রেশ</button><button class="s" id="mg">ডেটা মাইগ্রেশন</button><button class="s" id="lmap">লগইন-ম্যাপ তৈরি</button><button class="s d" id="lo">লগআউট</button></div>
 <div class="g"><div class="card"><b>${ids.length}</b><span>Total Madrasa</span></div>${Object.keys(cnt).map(k=>`<div class="card"><b>${cnt[k]}</b><span>${SN[k]}</span></div>`).join('')}</div>
 <div class="bar"><input id="sq" placeholder="নাম / ID / অ্যাডমিন / ফোন দিয়ে খুঁজুন" value="${esc(q)}"><select id="sf">${['all','active','trial','expired','suspended'].map(k=>`<option value="${k}" ${k===flt?'selected':''}>${k==='all'?'All':SN[k]}</option>`).join('')}</select><button id="ad">+ নতুন মাদ্রাসা</button></div>
 ${rows.map(i=>{const m=M[i],l=L[i]||{},s=st(l);return `<div class="card it"><h3>${esc(m.name)} <span class="bd ${s}">${SN[s]}</span></h3>
 <small>ID: ${esc(i)} · অ্যাডমিন: ${esc(m.adminName)} (${esc(m.adminPhone)})</small><small>Trial শেষ: ${show(l.trialEnd)} · Subscription শেষ: ${show(l.subEnd)}</small>
-<div class="act"><button class="s" data-a="v" data-i="${i}">View</button><button class="s" data-a="e" data-i="${i}">Edit</button><button class="s" data-a="t" data-i="${i}">Extend Trial</button><button class="s" data-a="u" data-i="${i}">Extend Subscription</button><button class="s" data-a="pw" data-i="${i}">🔑 Admin পাসওয়ার্ড</button><button class="s d" data-a="del" data-i="${i}">🗑️ মাদ্রাসা ডিলিট</button>
+<div class="act"><button class="s" data-a="v" data-i="${i}">View</button><button class="s" data-a="e" data-i="${i}">Edit</button><button class="s" data-a="t" data-i="${i}">Extend Trial</button><button class="s" data-a="u" data-i="${i}">Extend Subscription</button><button class="s" data-a="lg" data-i="${i}">🖼️ লোগো</button><button class="s" data-a="pw" data-i="${i}">🔑 Admin পাসওয়ার্ড</button><button class="s d" data-a="del" data-i="${i}">🗑️ মাদ্রাসা ডিলিট</button>
 ${l.suspended?`<button class="s" data-a="on" data-i="${i}">Activate</button>`:`<button class="s d" data-a="off" data-i="${i}">Suspend</button>`}</div></div>`}).join('')||'<div class="card">কোনো মাদ্রাসা পাওয়া যায়নি</div>'}`;
   $('#lo').onclick=()=>{sessionStorage.removeItem(CK);signOut(auth)};
-  $('#rf').onclick=async()=>{await load(true);dash()};$('#ad').onclick=()=>form();$('#mg').onclick=migrate;
+  $('#rf').onclick=async()=>{await load(true);dash()};$('#ad').onclick=()=>form();$('#mg').onclick=migrate;$('#lmap').onclick=buildMap;
   $('#sq').oninput=e=>{q=e.target.value;clearTimeout(window.__t);window.__t=setTimeout(()=>{dash();const x=$('#sq');x.focus();x.setSelectionRange(99,99)},250)};
   $('#sf').onchange=e=>{flt=e.target.value;dash()};
   root.querySelectorAll('[data-a]').forEach(b=>b.onclick=()=>act(b.dataset.a,b.dataset.i))}
+
+/* ---------- লগইন-ম্যাপ তৈরি (একবার চালান; আগের ID/ফোন/ইমেইল → মাদ্রাসা) ---------- */
+async function buildMap(){const b=$('#lmap');b.disabled=true;b.textContent='চলছে...';
+  try{const ids=Object.keys(M),add={},conf=[];let had=0,tot=0;
+    for(const mid of ids){const ix=(await get(ref(db,'madrasas/'+mid+'/loginIndex'))).val()||{};
+      for(const k of Object.keys(ix)){tot++;const cur=add[k];if(cur&&cur!==mid){conf.push(k.replace(/,/g,'.')+' ('+cur+' / '+mid+')');continue}
+        const ex=(await get(ref(db,'loginMap/'+k))).val();if(ex){if(ex===mid)had++;else conf.push(k.replace(/,/g,'.')+' ('+ex+' / '+mid+')');continue}add[k]=mid}}
+    const ks=Object.keys(add);for(let i=0;i<ks.length;i+=200){const U={};ks.slice(i,i+200).forEach(k=>U['loginMap/'+k]=add[k]);await update(ref(db),U)}
+    alert('মোট এন্ট্রি: '+tot+'\nনতুন যোগ হয়েছে: '+ks.length+'\nআগে থেকেই ছিল: '+had+'\nদ্বন্দ্ব (দুই মাদ্রাসায় একই): '+conf.length+(conf.length?'\n\n'+conf.slice(0,20).join('\n')+'\n\nদ্বন্দ্বগুলো সংশ্লিষ্ট মাদ্রাসার ছাত্র/শিক্ষকের ফোন বা ID বদলে ঠিক করুন।':''))
+  }catch(e){alert('হয়নি: '+(e.code||e.message)+(/permission/i.test(e.message||'')?'\n(নতুন Rules Publish করেছেন কি?)':''))}
+  b.disabled=false;b.textContent='লগইন-ম্যাপ তৈরি'}
 /* ---------- modal ---------- */
 function modal(h){const m=document.createElement('div');m.className='m';m.innerHTML='<div>'+h+'</div>';m.onclick=e=>{if(e.target===m)m.remove()};document.body.appendChild(m);return m}
 async function patch(mid,p,meta){ // শুধু পরিবর্তিত field লেখা (duplicate write বন্ধ)
@@ -77,7 +88,7 @@ async function patch(mid,p,meta){ // শুধু পরিবর্তিত fi
   if(!Object.keys(U).length)return;await update(ref(db),U);
   L[mid]=Object.assign({},o,p);if(meta)M[mid]=Object.assign({},M[mid],meta);save()}
 async function act(a,i){
-  if(a==='del')return delM(i);if(a==='v')return view(i);if(a==='e')return form(i);if(a==='pw')return pwAdmin(i);
+  if(a==='del')return delM(i);if(a==='v')return view(i);if(a==='e')return form(i);if(a==='pw')return pwAdmin(i);if(a==='lg')return logoM(i);
   if(a==='off'||a==='on'){if(!confirm((a==='off'?'Suspend':'Activate')+' করবেন? '+M[i].name))return;
     try{await patch(i,{suspended:a==='off'});dash()}catch(e){alert(e.message)}return}
   const k=a==='t'?'trialEnd':'subEnd',cur=(L[i]||{})[k]||0;
@@ -87,6 +98,15 @@ async function act(a,i){
   m.querySelectorAll('[data-d]').forEach(b=>b.onclick=()=>{const base=Math.max(cur,Date.now()),e=new Date(base+b.dataset.d*DAY);sv(d2(ms2d(e.getTime()),1))});
   $('#cs').onclick=()=>{const v=$('#cd').value;if(!v)return alert('তারিখ দিন');sv(d2(v,1))};$('#cx').onclick=()=>m.remove()}
 
+async function logoM(i){
+  let cur='';try{cur=(await get(ref(db,'madrasas/'+i+'/config/profile/logo'))).val()||''}catch(e){}
+  const pv=u=>u?`<img src="${esc(u)}" style="width:100%;height:100%;object-fit:contain">`:'<span style="color:#888;font-size:12px">লোগো নেই</span>';
+  const m=modal(`<h3>লোগো — ${esc((M[i]||{}).name||i)}</h3><div id="lp" style="width:96px;height:96px;margin:8px auto;border-radius:50%;background:#fff;border:1px solid #cbd5d0;display:grid;place-items:center;overflow:hidden">${pv(cur)}</div><input type="file" id="lf" accept="image/*"><div class="er" id="er"></div><div class="act"><button id="ls">সেভ</button><button class="s d" id="lr">লোগো মুছুন</button><button class="s" id="cx">বাতিল</button></div>`);
+  let nu=null;$('#cx').onclick=()=>m.remove();
+  $('#lf').onchange=e=>{const f=e.target.files[0];if(!f)return;const rd=new FileReader();rd.onload=()=>{const im=new Image();im.onload=()=>{const sc=Math.min(1,220/Math.max(im.width,im.height)),c=document.createElement('canvas');c.width=Math.max(1,Math.round(im.width*sc));c.height=Math.max(1,Math.round(im.height*sc));const x=c.getContext('2d');x.fillStyle='#fff';x.fillRect(0,0,c.width,c.height);x.drawImage(im,0,0,c.width,c.height);nu=c.toDataURL('image/jpeg',.85);$('#lp').innerHTML=pv(nu);$('#er').textContent=''};im.onerror=()=>{$('#er').textContent='ছবিটি পড়া যায়নি'};im.src=rd.result};rd.readAsDataURL(f)};
+  const put=async v=>{$('#ls').disabled=$('#lr').disabled=true;try{const U={};U['madrasas/'+i+'/config/profile/logo']=v;await update(ref(db),U);m.remove();alert(v?'লোগো সংরক্ষিত হয়েছে':'লোগো মুছে ফেলা হয়েছে')}catch(e){$('#ls').disabled=$('#lr').disabled=false;$('#er').textContent=/permission/i.test(e.message)?'অনুমতি নেই: Rules-এ Super Admin-এর madrasas/'+i+'/config/profile লেখার অনুমতি লাগবে। (অ্যাডমিন নিজে অ্যাপের Settings → মাদ্রাসার তথ্য থেকে লোগো দিতে পারবেন।)':e.message}};
+  $('#ls').onclick=()=>{if(!nu)return $('#er').textContent='আগে ছবি বাছাই করুন';put(nu)};
+  $('#lr').onclick=()=>{if(confirm('লোগো মুছে ফেলবেন?'))put('')}}
 async function delM(i){
   const m=modal(`<h3>⚠️ মাদ্রাসা স্থায়ীভাবে ডিলিট</h3><p><b>${esc((M[i]||{}).name||i)}</b> (ID: ${esc(i)})<br>এর সব ছাত্র, শিক্ষক, হাজিরা, ফি, লাইসেন্স ও ব্যবহারকারীর রেকর্ড Firebase Database থেকে মুছে যাবে। <b>ফেরত আনা যাবে না।</b></p><label>নিশ্চিত করতে মাদ্রাসার ID লিখুন: <b>${esc(i)}</b></label><input id="dc" autocomplete="off"><div class="act"><button class="s d" id="dy">চিরতরে ডিলিট</button><button class="s" id="cx">বাতিল</button></div><p id="dm"></p>`);
   $('#cx').onclick=()=>m.remove();
@@ -148,10 +168,11 @@ function form(i){
         const U={};U['madrasaMeta/'+mid]=Object.assign({},meta,{createdAt:Date.now()});U['licenses/'+mid]=Object.assign({},lic,{suspended:false});
         U['madrasas/'+mid+'/config/profile']={name:meta.name,addr:meta.addr,ph:meta.adminPhone,est:'',logo:''};U['madrasas/'+mid+'/config/setup']={at:Date.now(),by:auth.currentUser.uid};
         const pw=$('#apw').value;if(meta.adminEmail&&pw){if(pw.length<6)throw new Error('পাসওয়ার্ড কমপক্ষে ৬ অক্ষর');
+          {const _k=[meta.adminEmail.toLowerCase().replace(/\./g,','),(meta.adminPhone||'').replace(/[^0-9a-z]/gi,'').toLowerCase()];for(const kk of _k){if(kk&&(await get(ref(db,'loginMap/'+kk))).exists())throw new Error('এই ইমেইল/ফোন নম্বর অন্য মাদ্রাসায় ব্যবহৃত হচ্ছে')}}
           const c=await createUserWithEmailAndPassword(auth2,meta.adminEmail,pw);await signOut(auth2);
           U['users/'+c.user.uid]={email:meta.adminEmail,role:'admin',mid};
-          const ek=meta.adminEmail.toLowerCase().replace(/\./g,',');U['madrasas/'+mid+'/loginIndex/'+ek]={email:meta.adminEmail,role:'admin'};
-          const pk=meta.adminPhone.replace(/[^0-9a-z]/gi,'').toLowerCase();if(pk)U['madrasas/'+mid+'/loginIndex/'+pk]={email:meta.adminEmail,role:'admin'}}
+          const ek=meta.adminEmail.toLowerCase().replace(/\./g,',');U['madrasas/'+mid+'/loginIndex/'+ek]={email:meta.adminEmail,role:'admin'};U['loginMap/'+ek]=mid;
+          const pk=meta.adminPhone.replace(/[^0-9a-z]/gi,'').toLowerCase();if(pk){U['madrasas/'+mid+'/loginIndex/'+pk]={email:meta.adminEmail,role:'admin'};U['loginMap/'+pk]=mid}}
         await update(ref(db),U);M[mid]=U['madrasaMeta/'+mid];L[mid]=U['licenses/'+mid];save();alert('তৈরি হয়েছে: '+mid)}
       m.remove();dash()}catch(e){b.disabled=false;$('#er').textContent=e.code==='auth/email-already-in-use'?'এই ইমেইলে অ্যাকাউন্ট আগেই আছে':e.message}}}
 /* ---------- migration (বর্তমান মাদ্রাসার data কপি) ---------- */

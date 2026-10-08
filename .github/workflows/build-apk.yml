@@ -1,0 +1,53 @@
+name: Build APK
+on:
+  workflow_dispatch:
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 17
+      - name: Install
+        run: npm install
+      - name: Add Android
+        run: npx cap add android
+      - name: App icon
+        run: |
+          if [ -f assets/icon.png ]; then
+            npx capacitor-assets generate --android --iconBackgroundColor '#ffffff' --iconBackgroundColorDark '#ffffff'
+          else
+            echo "no icon.png, default icon used"
+          fi
+      - name: Permissions and version
+        run: |
+          M=android/app/src/main/AndroidManifest.xml
+          sed -i 's#<application#<uses-permission android:name="android.permission.CAMERA" />\n    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />\n    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />\n    <uses-feature android:name="android.hardware.camera" android:required="false" />\n    <application#' $M
+          sed -i "s/versionCode 1/versionCode ${{ github.run_number }}/; s/versionName \"1.0\"/versionName \"1.${{ github.run_number }}\"/" android/app/build.gradle
+      - name: Build and sign
+        env:
+          KS: ${{ secrets.KEYSTORE_BASE64 }}
+          KP: ${{ secrets.KEYSTORE_PASSWORD }}
+        run: |
+          cd android
+          chmod +x gradlew
+          if [ -n "$KS" ] && [ -n "$KP" ]; then
+            ./gradlew assembleRelease
+            echo "$KS" | base64 -d > ../madrasa.keystore
+            BT=$(ls -d $ANDROID_HOME/build-tools/* | sort -V | tail -1)
+            UN=$(ls app/build/outputs/apk/release/*.apk | head -1)
+            $BT/zipalign -p -f 4 "$UN" ../aligned.apk
+            $BT/apksigner sign --ks ../madrasa.keystore --ks-key-alias madrasa --ks-pass env:KP --out ../madrasa-app.apk ../aligned.apk
+          else
+            ./gradlew assembleDebug
+            cp app/build/outputs/apk/debug/app-debug.apk ../madrasa-app.apk
+          fi
+      - uses: actions/upload-artifact@v4
+        with:
+          name: madrasa-app-apk
+          path: madrasa-app.apk

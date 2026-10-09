@@ -2,6 +2,7 @@
 <html lang="bn">
 <head>
 <meta charset="utf-8">
+<meta name="app-build" content="2026-10-09.1">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>মাদ্রাসা ম্যানেজমেন্ট সিস্টেম</title>
 <script>try{document.documentElement.setAttribute('data-theme',localStorage.getItem('mm_theme')==='dark'?'dark':'light')}catch(e){document.documentElement.setAttribute('data-theme','light')}</script>
@@ -336,7 +337,7 @@ function stu(){if(stuCls&&!classes.includes(stuCls))stuCls='';return stuCls?stuI
 function stuInClass(){
  const list=students.filter(s=>s.c===stuCls&&(s.n+s.id+s.r).includes(q)).sort(rollCmp);
  shell('Student Management',`<h3 style="margin:4px 0 8px">${xe0(stuCls)} — ${bn(students.filter(s=>s.c===stuCls).length)} জন ছাত্র</h3><input class="search" placeholder="ছাত্রের নাম, আইডি বা রোল খুঁজুন..." value="${q}" oninput="q=this.value;stuList(this)" aria-label="ছাত্র খুঁজুন"><div id="sl">${rows(list)}</div>`,"students';stuCls='")}
-function clsCards(){return classes.map(c=>{const n=students.filter(s=>s.c===c).length,m=hasPerm('cls_edit')||hasPerm('cls_del');return `<div class="row"><div class="av">${xe0(c[0])}</div><div class="info" style="cursor:pointer" onclick="stuOpen('${esc(c)}')"><b>${xe0(c)}</b><small>${bn(n)} জন ছাত্র</small></div>${m?`<button class="kb" aria-label="আরও অপশন" onclick="clsMenu('${esc(c)}')">⋮</button>`:''}</div>`}).join('')||'<p class="note">কোনো ক্লাস নেই।'+(hasPerm('cls_add')?' ＋ চেপে যোগ করুন।':'')+'</p>'}
+function clsCards(){return classes.map((c,i)=>{const n=students.filter(s=>s.c===c).length,m=hasPerm('cls_edit')||hasPerm('cls_del');return `<div class="row"><div class="av">${bn(i+1)}</div><div class="info" style="cursor:pointer" onclick="stuOpen('${esc(c)}')"><b>${xe0(c)}</b><small>ক্রম ${bn(i+1)} • ${bn(n)} জন ছাত্র</small></div>${m?`<button class="kb" aria-label="আরও অপশন" onclick="clsMenu('${esc(c)}')">⋮</button>`:''}</div>`}).join('')||'<p class="note">কোনো ক্লাস নেই।'+(hasPerm('cls_add')?' ＋ চেপে যোগ করুন।':'')+'</p>'}
 function stuClasses(){shell('ক্লাস ব্যবস্থাপনা',`<input class="search" placeholder="ছাত্রের নাম, আইডি বা রোল খুঁজুন..." value="${q}" oninput="q=this.value;clsFilter()" aria-label="ছাত্র খুঁজুন"><div id="cl">${q?rows(students.filter(s=>(s.n+s.id+s.r).includes(q))):clsCards()}</div>`,'home',hasPerm('cls_add')?'clsAdd()':'')}
 function clsFilter(){document.getElementById('cl').innerHTML=q?rows(students.filter(s=>(s.n+s.id+s.r).includes(q))):clsCards()}
 function stuOpen(c){stuCls=c;selClass=c;q='';draw()}
@@ -374,7 +375,7 @@ const nid=(a,p)=>p+String(Math.max(0,...a.map(x=>+x.id.slice(3)))+1).padStart(a=
 function mcode(){var m=(window.getMid&&window.getMid())||'',h=5381,i;for(i=0;i<m.length;i++)h=((h*33)^m.charCodeAt(i))>>>0;var c=h.toString(36).toUpperCase();while(c.length<4)c='0'+c;return c.slice(-4)}
 function nidM(a,k){var c=mcode(),pre=c+(k==='T'?'-T':'-'),mx=0;a.forEach(function(x){var i=String(x.id||'');if(i.indexOf(pre)===0){var n=parseInt(i.slice(pre.length),10);if(n>mx)mx=n}});return pre+String(mx+1).padStart(k==='T'?3:4,'0')}
 function form(title,f,v,h){fh=h;const d=document.createElement('div');d.id='md';d.style.cssText='position:fixed;inset:0;background:#0009;z-index:20;display:flex;align-items:flex-end;justify-content:center';
-d.innerHTML=`<div style="background:var(--card);width:100%;max-width:480px;border-radius:20px 20px 0 0;padding:18px;max-height:90vh;overflow:auto"><h3 style="margin:0 0 6px">${title}</h3>${f.map(x=>x[2]==='perms'?permHTML(v):x[2]==='month'?`<label style="display:block;font-size:13px;color:var(--mute);margin-top:8px">${x[1]}<select class="search" style="margin:4px 0 0" name="${x[0]}">${monthOptions().map(k=>`<option value="${k}" ${k===v[x[0]]?'selected':''}>${monLabel(k)}</option>`).join('')}</select></label>`:x[2]==='photo'?`<div style="text-align:center;margin-top:8px"><div id="pv_${x[0]}" class="av" style="width:80px;height:80px;margin:0 auto;font-size:28px">${v[x[0]]?`<img src="${v[x[0]]}" style="width:100%;height:100%;object-fit:cover;border-radius:50%">`:(v.n?v.n[0]:'+')}</div><label style="display:block;font-size:13px;color:var(--mute);margin-top:6px">${x[1]}<input type="file" accept="image/*" style="display:block;margin:6px auto" onchange="phSel(this,'h_${x[0]}','pv_${x[0]}')"></label><input type="hidden" name="${x[0]}" id="h_${x[0]}" value="${esc(v[x[0]])}"></div>`:(x[0]==='c'||x[0]==='cls')?`<label style="display:block;font-size:13px;color:var(--mute);margin-top:8px">${x[1]}<select class="search" style="margin:4px 0 0" name="${x[0]}">${classes.map(c=>`<option value="${esc(c)}" ${c===v[x[0]]?'selected':''}>${c}</option>`).join('')}</select></label>`:(x[2]&&x[2].indexOf('select:')===0?`<label style="display:block;font-size:13px;color:var(--mute);margin-top:8px">${x[1]}<select class="search" style="margin:4px 0 0" name="${x[0]}">${x[2].slice(7).split(',').map(o=>`<option value="${esc(o)}" ${o===v[x[0]]?'selected':''}>${o}</option>`).join('')}</select></label>`:`<label style="display:block;font-size:13px;color:var(--mute);margin-top:8px">${x[1]}<input class="search" style="margin:4px 0 0" name="${x[0]}" value="${esc(v[x[0]])}" ${x[2]||''}></label>`)).join('')}<datalist id="subdl">${(typeof subjList==='function'?subjList():[]).map(sb=>`<option value="${esc(sb)}">`).join('')}</datalist><div style="display:flex;gap:10px;margin-top:14px"><button class="tile" style="background:var(--g);flex:1;padding:12px" onclick="sv()">সংরক্ষণ করুন</button><button class="tile" style="background:#5b6b7d;flex:1;padding:12px" onclick="cl()">বাতিল</button></div></div>`;document.body.appendChild(d)}
+d.innerHTML=`<div style="background:var(--card);width:100%;max-width:480px;border-radius:20px 20px 0 0;padding:18px;max-height:90vh;overflow:auto"><h3 style="margin:0 0 6px">${title}</h3>${f.map(x=>x[2]==='perms'?permHTML(v):x[2]==='month'?`<label style="display:block;font-size:13px;color:var(--mute);margin-top:8px">${x[1]}<select class="search" style="margin:4px 0 0" name="${x[0]}">${monthOptions().map(k=>`<option value="${k}" ${k===v[x[0]]?'selected':''}>${monLabel(k)}</option>`).join('')}</select></label>`:x[2]==='photo'?`<div style="text-align:center;margin-top:8px"><div id="pv_${x[0]}" class="av" style="width:80px;height:80px;margin:0 auto;font-size:28px">${v[x[0]]?`<img src="${v[x[0]]}" style="width:100%;height:100%;object-fit:cover;border-radius:50%">`:(v.n?v.n[0]:'+')}</div><label style="display:block;font-size:13px;color:var(--mute);margin-top:6px">${x[1]}<input type="file" accept="image/*" style="display:block;margin:6px auto" onchange="phSel(this,'h_${x[0]}','pv_${x[0]}')"></label><button type="button" onclick="phClr('h_${x[0]}','pv_${x[0]}')" style="display:block;margin:2px auto 0;padding:7px 16px;border-radius:10px;border:1px solid var(--line);background:var(--card);color:#d64545;font:inherit;font-size:13px;cursor:pointer"><i class=idel></i> ছবি মুছুন</button><input type="hidden" name="${x[0]}" id="h_${x[0]}" value="${esc(v[x[0]])}"></div>`:(x[0]==='c'||x[0]==='cls')?`<label style="display:block;font-size:13px;color:var(--mute);margin-top:8px">${x[1]}<select class="search" style="margin:4px 0 0" name="${x[0]}">${classes.map(c=>`<option value="${esc(c)}" ${c===v[x[0]]?'selected':''}>${c}</option>`).join('')}</select></label>`:(x[2]&&x[2].indexOf('select:')===0?`<label style="display:block;font-size:13px;color:var(--mute);margin-top:8px">${x[1]}<select class="search" style="margin:4px 0 0" name="${x[0]}">${x[2].slice(7).split(',').map(o=>`<option value="${esc(o)}" ${o===v[x[0]]?'selected':''}>${o}</option>`).join('')}</select></label>`:`<label style="display:block;font-size:13px;color:var(--mute);margin-top:8px">${x[1]}<input class="search" style="margin:4px 0 0" name="${x[0]}" value="${esc(v[x[0]])}" ${x[2]||''}></label>`)).join('')}<datalist id="subdl">${(typeof subjList==='function'?subjList():[]).map(sb=>`<option value="${esc(sb)}">`).join('')}</datalist><div style="display:flex;gap:10px;margin-top:14px"><button class="tile" style="background:var(--g);flex:1;padding:12px" onclick="sv()">সংরক্ষণ করুন</button><button class="tile" style="background:#5b6b7d;flex:1;padding:12px" onclick="cl()">বাতিল</button></div></div>`;document.body.appendChild(d)}
 function cl(){window.__formReq=null;const m=document.getElementById('md');if(m)m.remove()}
 function sv(){const o={};document.querySelectorAll('#md input,#md select').forEach(i=>{o[i.name]=i.type==='checkbox'?i.checked:i.value.trim()});if(!o.n){alert('নাম লিখুন');return}const rq=window.__formReq;if(rq){for(const r of rq){const v=o[r[0]]||'';if(!v&&r[1]){alert(r[1]+' অবশ্যই লিখতে হবে');return}if(v&&r[2]&&!r[2](v)){alert(r[3]);return}}}const perm=[];Object.keys(o).forEach(k=>{if(k.indexOf('perm_')===0){if(o[k])perm.push(k.slice(5));delete o[k]}});if(perm.length||document.getElementById('md').querySelector('[name^="perm_"]'))o.perm=perm;cl();fh(o)}
 function shell(title,body,back,plus){
@@ -458,7 +459,7 @@ function addT(){if(!hasPerm('tch_add')){deny();return}const id=nidM(teachers,'T'
 function editT(id){if(!hasPerm('tch_edit')){deny();return}const t=teachers.find(x=>x.id===id);form('শিক্ষকের তথ্য সম্পাদনা',TF,Object.assign({},t,{perm:effPerm(id)}),o=>{const perm=o.perm;delete o.perm;Object.assign(t,o);save('mm_t',teachers);if(hasPerm('adm_perm')&&perm)window.savePerm(id,perm);draw()})}
 function delT(id){if(!hasPerm('tch_del')){deny();return}if(confirm('এই শিক্ষককে মুছে ফেলবেন?')){teachers=teachers.filter(x=>x.id!==id);save('mm_t',teachers);if(hasPerm('adm_perm'))window.savePerm(id,null);draw()}}
 function noteV(){const A=role==='admin';shell('Notice',(role==='guardian'?gm():'')+notices.map((n,i)=>`<div class="row" style="display:block"><b>${n.t}</b><br><small style="color:var(--mute)">${n.d}</small><p style="margin-top:6px">${n.b||''}</p>${A?`<button onclick="delN(${i})" style="color:var(--not);margin-top:4px"><i class=idel></i> মুছুন</button>`:''}</div>`).join('')||'<p class="note">এখনো কোনো নোটিস নেই।</p>',role==='guardian'?'':'home',A?'addN()':'')}
-function addN(){form('নতুন নোটিস',[['n','শিরোনাম'],['b','বিস্তারিত']],{},o=>{notices.unshift({t:o.n,b:o.b,d:new Date().toLocaleDateString('bn-BD')});save('mm_n',notices);draw()})}
+function addN(){form('নতুন নোটিস',[['n','শিরোনাম'],['b','বিস্তারিত']],{},o=>{notices.unshift({t:o.n,b:o.b,d:fmtDMY(new Date())});save('mm_n',notices);draw()})}
 function delN(i){if(confirm('নোটিসটি মুছে ফেলবেন?')){notices.splice(i,1);save('mm_n',notices);draw()}}
 </script>
 <script>
@@ -482,7 +483,7 @@ function gm(){const l=msgs.filter(m=>m.sid===myChild);return l.length?'<h3>আ�
 <script>
 const localDay=()=>new Date(Date.now()-new Date().getTimezoneOffset()*6e4).toISOString().slice(0,10);
 const T0=localDay(),M0=T0.slice(0,7);
-const tk=n=>'৳ '+bn((+n||0).toLocaleString('en-US')),dd=d=>new Date(d).toLocaleDateString('bn-BD'),sum=l=>l.reduce((a,x)=>a+(+x.a||0),0);
+const tk=n=>'৳ '+bn((+n||0).toLocaleString('en-US')),dd=d=>fmtDMY(d),sum=l=>l.reduce((a,x)=>a+(+x.a||0),0);
 let MF=load('mm_mf',1000),classFee=load('mm_classfee',{});
 let fp=load('mm_f',[1,2,3,4].map(i=>({id:'RCP-000'+i,sid:'STU00'+i,a:1000,t:'মাসিক ফি',d:T0,m:M0})));
 let ex=load('mm_e',[{t:'বিদ্যুৎ বিল',a:2500,d:T0,m:M0,c:'খরচ'}]);
@@ -598,10 +599,11 @@ function pwEdit(){form('পাসওয়ার্ড পরিবর্তন'
 <script>
 let classes=load('mm_cls',[...new Set(students.map(s=>s.c).filter(Boolean))].length?[...new Set(students.map(s=>s.c).filter(Boolean))]:['৩ (আম)']);
 function ensureClass(name){if(name&&!classes.includes(name)){classes.push(name);save('mm_cls',classes)}}
+function clsPlace(name,k){var i=classes.indexOf(name);if(i>-1)classes.splice(i,1);k=parseInt(String(k==null?'':k).replace(/[০-৯]/g,function(d){return '০১২৩৪৫৬৭৮৯'.indexOf(d)}),10);if(!(k>=1))k=classes.length+1;classes.splice(Math.min(k-1,classes.length),0,name)}
 let selClass=load('mm_selc',classes[0]);
-function classesV(){shell('ক্লাস ব্যবস্থাপনা',classes.map(c=>{const n=students.filter(s=>s.c===c).length;return `<div class="row"><div class="av">${c[0]}</div><div class="info"><b>${c}</b><small>${bn(n)} জন ছাত্র</small></div>${hasPerm('cls_edit')?`<button aria-label="সম্পাদনা" onclick="clsEdit('${esc(c)}')">✏️</button>`:''}${hasPerm('cls_del')?`<button aria-label="মুছুন" onclick="clsDel('${esc(c)}')"><i class=idel></i></button>`:''}</div>`}).join('')||'<p class="note">কোনো ক্লাস নেই।'+(hasPerm('cls_add')?' ＋ চেপে যোগ করুন।':'')+'</p>',role==='admin'?'home':'students',hasPerm('cls_add')?'clsAdd()':'')}
-function clsAdd(){if(!hasPerm('cls_add')){deny();return}form('নতুন শ্রেণি যোগ',[['n','শ্রেণির নাম (যেমন: ৪র্থ শ্রেণি)']],{},o=>{if(classes.includes(o.n)){alert('এই নামে ক্লাস আগে থেকেই আছে');return}classes.push(o.n);save('mm_cls',classes);draw()})}
-function clsEdit(old){if(!hasPerm('cls_edit')){deny();return}form('শ্রেণির নাম সম্পাদনা',[['n','শ্রেণির নাম']],{n:old},o=>{if(o.n!==old&&classes.includes(o.n)){alert('এই নামে ক্লাস আগে থেকেই আছে');return}classes=classes.map(c=>c===old?o.n:c);students.forEach(s=>{if(s.c===old)s.c=o.n});if(selClass===old)selClass=o.n;save('mm_cls',classes);save('mm_s',students);save('mm_selc',selClass);draw()})}
+function classesV(){shell('ক্লাস ব্যবস্থাপনা',classes.map((c,i)=>{const n=students.filter(s=>s.c===c).length;return `<div class="row"><div class="av">${bn(i+1)}</div><div class="info"><b>${c}</b><small>ক্রম ${bn(i+1)} • ${bn(n)} জন ছাত্র</small></div>${hasPerm('cls_edit')?`<button aria-label="সম্পাদনা" onclick="clsEdit('${esc(c)}')">✏️</button>`:''}${hasPerm('cls_del')?`<button aria-label="মুছুন" onclick="clsDel('${esc(c)}')"><i class=idel></i></button>`:''}</div>`}).join('')||'<p class="note">কোনো ক্লাস নেই।'+(hasPerm('cls_add')?' ＋ চেপে যোগ করুন।':'')+'</p>',role==='admin'?'home':'students',hasPerm('cls_add')?'clsAdd()':'')}
+function clsAdd(){if(!hasPerm('cls_add')){deny();return}form('নতুন শ্রেণি যোগ',[['n','শ্রেণির নাম (যেমন: ৪র্থ শ্রেণি)'],['o','ক্রমিক নম্বর (সিরিয়াল)','type=text inputmode=numeric']],{o:String(classes.length+1)},o=>{o.n=String(o.n||'').trim();if(!o.n){alert('শ্রেণির নাম লিখুন');return}if(classes.includes(o.n)){alert('এই নামে ক্লাস আগে থেকেই আছে');return}clsPlace(o.n,o.o);save('mm_cls',classes);draw()})}
+function clsEdit(old){if(!hasPerm('cls_edit')){deny();return}form('শ্রেণি সম্পাদনা',[['n','শ্রেণির নাম'],['o','ক্রমিক নম্বর (সিরিয়াল)','type=text inputmode=numeric']],{n:old,o:String(classes.indexOf(old)+1)},o=>{o.n=String(o.n||'').trim();if(!o.n){alert('শ্রেণির নাম লিখুন');return}if(o.n!==old&&classes.includes(o.n)){alert('এই নামে ক্লাস আগে থেকেই আছে');return}classes=classes.map(c=>c===old?o.n:c);clsPlace(o.n,o.o);students.forEach(s=>{if(s.c===old)s.c=o.n});if(selClass===old)selClass=o.n;save('mm_cls',classes);save('mm_s',students);save('mm_selc',selClass);draw()})}
 function clsDel(name){if(!hasPerm('cls_del')){deny();return}if(students.some(s=>s.c===name)){alert('এই ক্লাসে ছাত্র আছে, তাই মুছা যাবে না। আগে ছাত্রদের অন্য ক্লাসে সরান।');return}if(confirm('"'+name+'" শ্রেণিটি মুছে ফেলবেন?')){classes=classes.filter(c=>c!==name);save('mm_cls',classes);draw()}}
 function pickClass(c){selClass=c;save('mm_selc',c);draw()}
 function cattV(){const list=students.filter(s=>s.c===selClass),n=k=>list.filter(s=>s.s===k).length;
@@ -620,6 +622,7 @@ function profEdit(){form('মাদ্রাসার তথ্য',[['logo','�
 function devShow(){box(`<h3 style="text-align:center;margin:0 0 10px">👨‍💻 ডেভেলপার সম্পর্কে</h3><div class="link"><span><small>নাম</small>${DEV.n}</span></div><a class="link" href="mailto:${DEV.em}" style="text-decoration:none;color:inherit"><span><small>ইমেইল</small>${DEV.em}</span></a><a class="link" href="${DEV.fb}" target="_blank" style="text-decoration:none;color:inherit"><span><small>ফেসবুক</small>প্রোফাইল দেখুন</span></a><a class="link" href="${DEV.wal}" target="_blank" rel="noopener" style="text-decoration:none;color:inherit"><span><small>WhatsApp</small>${DEV.wa}</span></a>`)}
 const avHTML=(ph,ch)=>ph?`<img src="${ph}" alt="">`:ch;
 function phSel(inp,hid,prev){const f=inp.files&&inp.files[0];if(!f)return;const rd=new FileReader();rd.onload=()=>{const im=new Image();im.onload=()=>{const sc=Math.min(1,160/Math.max(im.width,im.height));const c=document.createElement('canvas');c.width=im.width*sc;c.height=im.height*sc;const cx=c.getContext('2d');cx.fillStyle='#fff';cx.fillRect(0,0,c.width,c.height);cx.drawImage(im,0,0,c.width,c.height);const url=c.toDataURL('image/jpeg',0.7);const p=document.getElementById(prev);if(p)p.innerHTML=`<img src="${url}" style="width:100%;height:100%;object-fit:cover;border-radius:50%">`;const h=document.getElementById(hid);if(h)h.value=url};im.src=rd.result};rd.readAsDataURL(f)}
+function phClr(hid,prev){var h=document.getElementById(hid);if(h)h.value='';var p=document.getElementById(prev);if(p){var nm=document.querySelector('#md input[name="n"]');p.textContent=(nm&&nm.value?Array.from(nm.value)[0]:'+')}var f=document.querySelector('#md input[type=file]');if(f)f.value=''}
 let adminPic=_ld('mm_adminpic','');
 let adminInfo=_ld('mm_admininfo',{n:'Admin',ph:'',em:''});
 function adminEdit(){form('অ্যাডমিনের তথ্য',[['photo','ছবি','photo'],['n','নাম'],['ph','ফোন','type=tel'],['em','ইমেইল','type=email'],['pw','নতুন পাসওয়ার্ড (খালি রাখলে অপরিবর্তিত)','type=password']],{n:adminInfo.n,ph:adminInfo.ph,em:adminInfo.em,photo:adminPic},o=>{if(o.pw&&window.changeOwnPw)window.changeOwnPw(o.pw);adminInfo={n:o.n||'Admin',ph:o.ph,em:o.em};adminPic=o.photo;save('mm_admininfo',adminInfo);save('mm_adminpic',adminPic);draw()})}
@@ -789,7 +792,7 @@ function hhV(){const key=role+myTeacher;
   let body;if(hhData===null)body='<p class="note">লোড হচ্ছে...</p>';
   else{const f=hhFrom(),days=[];for(let d=T0;d>=f;d=dayAdd(d,-1))if(d.slice(0,7)===mon)days.push(d);
    body=days.map(d=>`<div class="row" style="display:block"><b>${dd(d)}</b>${hhRec((hhData[d]||{})[st.id])}</div>`).join('')||'<p class="note">এই মাসে কোনো তারিখ নেই।</p>'}
-  return shell('নামাজ ও হোমওয়ার্ক ইতিহাস',`<div class="hello"><div class="av">${avHTML(st.photo,st.n[0])}</div><div><b>${xe0(st.n)}</b><br><small style="color:var(--mute)">${xe0(st.c)} • রোল ${bn(st.r)}</small></div></div><button class="chip" style="min-width:auto;background:var(--card);border:1px solid var(--line);margin-bottom:12px" onclick="hhBack()">← শিক্ষার্থীর তালিকা</button><select class="search" onchange="hhPickMon(this.value)">${mons.map(m=>`<option value="${m}" ${m===mon?'selected':''}>${bn(m.slice(5))} / ${bn(m.slice(0,4))}</option>`).join('')}</select><p class="note" style="text-align:left">শুধু শেষ ৩০ দিনের ইতিহাস সংরক্ষিত থাকে।</p>`+body,'home')}
+  return shell('নামাজ ও হোমওয়ার্ক ইতিহাস',`<div class="hello"><div class="av">${avHTML(st.photo,st.n[0])}</div><div><b>${xe0(st.n)}</b><br><small style="color:var(--mute)">${xe0(st.c)} • রোল ${bn(st.r)}</small></div></div><button class="chip" style="min-width:auto;background:var(--card);border:1px solid var(--line);margin-bottom:12px" onclick="hhBack()">← শিক্ষার্থীর তালিকা</button><select class="search" onchange="hhPickMon(this.value)">${mons.map(m=>`<option value="${m}" ${m===mon?'selected':''}>${monLabel(m)}</option>`).join('')}</select><p class="note" style="text-align:left">শুধু শেষ ৩০ দিনের ইতিহাস সংরক্ষিত থাকে।</p>`+body,'home')}
  const ss=(sel?all.filter(s=>s.c===sel):all).slice().sort((x,y)=>(+x.r||0)-(+y.r||0));
  shell('নামাজ ও হোমওয়ার্ক ইতিহাস',`<select class="search" onchange="hhPickCls(this.value)"><option value="">সকল ক্লাস</option>${cl.map(c=>`<option value="${esc(c)}" ${c===sel?'selected':''}>${xe0(c)}</option>`).join('')}</select>`+
  (ss.map(s=>`<div class="row" style="cursor:pointer" onclick="hhOpen('${esc(s.id)}')"><div class="av">${avHTML(s.photo,s.n[0])}</div><div class="info"><b>${xe0(s.n)}</b><small>রোল ${bn(s.r)}</small></div>›</div>`).join('')||'<p class="note">কোনো শিক্ষার্থী পাওয়া যায়নি।</p>'),'home')}
@@ -875,7 +878,7 @@ const AL=x=>x+'-'+Date.now().toString(36)+'@madrasa.app';
 const gen=()=>Array.from(crypto.getRandomValues(new Uint8Array(8)),b=>'abcdefghjkmnpqrstuvwxyz23456789'[b%31]).join('');
 const sj=o=>JSON.stringify(o,Object.keys(o).sort());
 const CODE={P:'Present',A:'Absent',L:'Late'},RC={Present:'P',Absent:'A',Late:'L'},FROM='2026-01-01';
-const strip=o=>{const c=clean(o);['pw','s','sd'].forEach(k=>delete c[k]);Object.keys(c).forEach(k=>{if(!k||/[.#$\/\[\]]/.test(k))delete c[k]});Object.keys(c).forEach(k=>{if(c[k]==null)delete c[k]});return c};
+const strip=o=>{const c=clean(o);['pw','s','sd'].forEach(k=>delete c[k]);if(c.photo==='')delete c.photo;Object.keys(c).forEach(k=>{if(!k||/[.#$\/\[\]]/.test(k))delete c[k]});Object.keys(c).forEach(k=>{if(c[k]==null)delete c[k]});return c};
 const fromDB=(col,d)=>{const c=Object.assign({},d);if(col==='teachers')c.perm=Object.keys(d.perm||{});return c};
 const toDB=(col,c)=>{const x=Object.assign({},c);if(col==='teachers'){const m={};(x.perm||[]).forEach(k=>m[k]=true);if(Object.keys(m).length)x.perm=m;else delete x.perm}return x};
 const ready={S:0,T:0,A:0},last={students:{},teachers:{}},snap={students:[],teachers:[]};
@@ -957,7 +960,7 @@ window.save=function(k,v){
   if(hasPerm('fee_edit')&&k==='mm_mf')set(R('config/fees/MF'),v).catch(()=>{});
   if(hasPerm('fee_edit')&&k==='mm_classfee')set(R('config/fees/classFee'),clean(v)).catch(e=>alert('ফি সংরক্ষণ হয়নি: '+denied(e)));
   if(role==='admin'&&k==='mm_profile')set(R('config/profile'),clean(v)).catch(e=>alert('সংরক্ষণ হয়নি: '+denied(e)));
-  if(canAny('cls_add','cls_edit','cls_del')&&k==='mm_cls')set(R('config/classes'),{list:v}).catch(async e=>{alert('ক্লাস সংরক্ষণ হয়নি: '+denied(e));try{const sn=await get(R('config/classes')),l=sn.val()&&sn.val().list;if(l){classes=Array.isArray(l)?l:Object.values(l);draw()}}catch(x){}});
+  if(canAny('cls_add','cls_edit','cls_del')&&k==='mm_cls')set(R('config/classes'),{list:v}).catch(async e=>{alert('ক্লাস সংরক্ষণ হয়নি: '+denied(e));try{const sn=await get(R('config/classes')),l=sn.val()&&sn.val().list;if(l){classes=Array.isArray(l)?l:Object.keys(l).sort((a,b)=>a-b).map(k=>l[k]);draw()}}catch(x){}});
   if(canAny('sub_add','sub_edit','sub_del')&&k==='mm_subj')set(R('config/subjects'),{list:v}).catch(e=>alert('সংরক্ষণ হয়নি: '+denied(e)));
  }
  _save(k,v)};
@@ -1010,7 +1013,7 @@ function listen(){try{localStorage.removeItem(LKK)}catch(e){}queueMicrotask(list
   if(!tpAll&&hasPerm('adm_perm')){tpAll=1;on(R('teacherPerms'),setTP)}};
  if(role==='teacher'){on(R('teachers/'+myTeacher),sn=>{if(!tAll)one('teachers',1)(sn);applyTPerm()});
   on(R('teacherPerms/'+myTeacher),sn=>{const v=sn.val();if(v&&v.v2)tperm[myTeacher]=Object.keys(v).filter(k=>PKEYS.has(k));else delete tperm[myTeacher];tpOk=1;applyTPerm();redraw()})}
- on(R('config/classes'),sn=>{const l=sn.val()&&sn.val().list;if(l){classes=Array.isArray(l)?l:Object.values(l);if(ready.S&&ready.T&&ready.A&&role)draw()}})}
+ on(R('config/classes'),sn=>{const l=sn.val()&&sn.val().list;if(l){classes=Array.isArray(l)?l.slice():Object.keys(l).sort((a,b)=>a-b).map(k=>l[k]);students.forEach(s=>{if(s.c&&!classes.includes(s.c))classes.push(s.c)});if(ready.S&&ready.T&&ready.A&&role)draw()}})}
 let lm={};
 function cleanup(){lm={};unsub.forEach(f=>f());unsub=[];tAll=0;tAtt=0;tEx=0;tpAll=0;tpOk=0;tperm={};ready.S=0;ready.T=0;ready.A=0;last.students={};last.teachers={};at={};tat={};students=[];teachers=[];fp=[];nlist=[];nlogL=[];nunread=0;nraw={};ngrp={};tFee=0;feeKnown.clear();ncfg=mergeCfg(null);ex=[];rs={};notices=[];hw={};hwAssign={};exKnown=new Set();nKnown=new Set();rsKnown={};hwKnown={};hwLogKnown={};rtn={};Object.keys(hwByClass).forEach(k=>delete hwByClass[k]);hwAtt.clear();rtnAtt.clear();role='';myChild='';myTeacher=''}
 /* লগইন */
@@ -1081,7 +1084,7 @@ window.lgRegGo=async function(){const g=id=>document.getElementById(id).value.tr
 window.planV=async function(){const d=document.createElement('div');d.id='md';d.style.cssText='position:fixed;inset:0;background:#0009;z-index:20;display:flex;align-items:flex-end;justify-content:center';
  d.onclick=e=>{if(e.target===d)cl()};d.innerHTML='<div class="sheet" style="width:100%;max-width:480px;background:var(--bg);border-radius:20px 20px 0 0;padding:18px;max-height:90vh;overflow:auto"><p class="note" id="plb">লোড হচ্ছে...</p></div>';document.body.appendChild(d);
  let l={};try{l=(await get(R('licenses/'+MID))).val()||{}}catch(e){}
- const n=Date.now(),dt=t=>t?new Date(t).toLocaleDateString('bn-BD'):'—',days=t=>Math.max(0,Math.ceil((t-n)/864e5));
+ const n=Date.now(),dt=t=>t?fmtDMY(t):'—',days=t=>Math.max(0,Math.ceil((t-n)/864e5));
  const st=l.suspended===true?['⛔ বন্ধ আছে','সুপার অ্যাডমিনের সাথে যোগাযোগ করুন']:(l.subEnd||0)>n?['✅ সাবস্ক্রিপশন চালু','মেয়াদ শেষ: '+dt(l.subEnd)+' (বাকি '+bn(days(l.subEnd))+' দিন)']:(l.trialEnd||0)>n?['🎁 ফ্রি ট্রায়াল চলছে','বাকি '+bn(days(l.trialEnd))+' দিন • শেষ: '+dt(l.trialEnd)]:['⚠️ মেয়াদ শেষ','চালিয়ে যেতে প্ল্যান নিন'];
  const link=location.origin+location.pathname+'?m='+MID;
  d.firstChild.innerHTML=`<h3 style="text-align:center;margin:0 0 12px">💳 প্ল্যান</h3><div class="link" style="display:block"><b>${st[0]}</b><br><small style="color:var(--mute)">${st[1]}</small></div>
@@ -1286,7 +1289,7 @@ const rtnList=(c,d)=>Object.values(((rtn[c]||{})[d])||{}).filter(Boolean).sort((
 window.rtnList=rtnList;window.fbSet=(p,v)=>set(R(p),v==null?null:clean(v));window.fbErr=denied;
 /* রুটিন = শিক্ষক + ক্লাস + বিষয়ের মূল সোর্স। রুটিনের এন্ট্রি: {p:পিরিয়ড, tm:সময়, n:বিষয়, tid:শিক্ষকের ID, t:শিক্ষকের নামের কপি} */
 const tName=(id,snap)=>{const t=teachers.find(x=>x.id===id)||(window.contactT||[]).find(x=>x.id===id);return t?t.n:(snap||'(মুছে ফেলা শিক্ষক)')};
-window.tAssign=tid=>{const a={};Object.keys(rtn).forEach(c=>Object.keys(rtn[c]||{}).forEach(d=>Object.values(rtn[c][d]||{}).forEach(e=>{if(e&&e.tid===tid&&e.n){(a[c]=a[c]||[]);if(!a[c].includes(e.n))a[c].push(e.n)}})));return a};
+window.tAssign=tid=>{const a={};Object.keys(rtn).sort((x,y)=>{const i=classes.indexOf(x),j=classes.indexOf(y);return (i<0?999:i)-(j<0?999:j)}).forEach(c=>Object.keys(rtn[c]||{}).forEach(d=>Object.values(rtn[c][d]||{}).forEach(e=>{if(e&&e.tid===tid&&e.n){(a[c]=a[c]||[]);if(!a[c].includes(e.n))a[c].push(e.n)}})));return a};
 window.tClasses=tid=>Object.keys(window.tAssign(tid));
 window.tSlots=(tid,c,sj)=>DAYS.map(d=>{const p=rtnList(c,d[0]).filter(e=>e.tid===tid&&e.n===sj).map(e=>e.p?bn(e.p):'-').join(', ');return p?d[1]+' '+p+' নং':''}).filter(Boolean).join(' • ');
 window.tSummary=tid=>{const a=window.tAssign(tid),k=Object.keys(a);return k.length?'রুটিনে: '+k.map(c=>xe(c)+' ('+a[c].map(xe).join(', ')+')').join(' | '):'রুটিনে এখনো যুক্ত নয়'};
@@ -1585,6 +1588,7 @@ window.__hwClean=hwClean;
   }
   try{history.replaceState({mm:0},'',location.href)}catch(e){}
 
+  function capApp(){try{var C=window.Capacitor;if(!C)return null;var A=C.Plugins&&C.Plugins.App;if(!A&&C.registerPlugin&&(!C.isPluginAvailable||C.isPluginAvailable('App')))A=C.registerPlugin('App');return A||null}catch(e){return null}}
   function exitClose(){var d=$('exitdlg');if(d)d.remove()}
   function hint(){
     var t=document.createElement('div');t.id='exhint';
@@ -1595,7 +1599,7 @@ window.__hwClean=hwClean;
   function doExit(){
     exitClose();exiting=true;guard=false;
     /* ১) নেটিভ র‍্যাপার থাকলে সরাসরি অ্যাপ বন্ধ */
-    try{var A=window.Capacitor&&Capacitor.Plugins&&Capacitor.Plugins.App;if(A&&A.exitApp){A.exitApp();return}}catch(e){}
+    try{var A=capApp();if(A&&A.exitApp){A.exitApp();return}}catch(e){}
     try{if(navigator.app&&navigator.app.exitApp){navigator.app.exitApp();return}}catch(e){}
     var names=['Android','AndroidInterface','AndroidApp','AppInterface','JSInterface','Native'],fns=['exitApp','exit','closeApp','finish','close'];
     for(var i=0;i<names.length;i++){try{var o=window[names[i]];if(o)for(var j=0;j<fns.length;j++)if(typeof o[fns[j]]==='function'){o[fns[j]]();return}}catch(e){}}
@@ -1623,7 +1627,7 @@ window.__hwClean=hwClean;
     if($('pwmd')){$('pwmd').remove();return}               /* লগইন ডায়ালগ */
     if($('md')){cl();return}                               /* ফর্ম / রসিদ / ডায়ালগ */
     if(inApp()){
-      var b=document.querySelector('#app .top button[aria-label="ফিরে যান"]');
+      var b=document.querySelector('#app .top button[aria-label="ফিরে যান"]')||document.querySelector('#app .top .bk')||(function(){var f=document.querySelector('#app .top > button');return f&&/^\u2190/.test((f.textContent||'').trim())?f:null})()||(function(){var f=document.querySelector('#app button.bk');return f&&/^\u2190/.test((f.textContent||'').trim())?f:null})();
       if(b){b.click();return}                              /* আগের পেজে (অ্যাপের নিজস্ব ← বাটনের মতোই) */
       if(tab!==rootTab()){tab=rootTab();draw();return}     /* ← বাটন নেই এমন সাব-পেজ হলে হোমে */
     }
@@ -1642,7 +1646,8 @@ window.__hwClean=hwClean;
 
   /* Cordova / Capacitor র‍্যাপারের জন্য */
   document.addEventListener('backbutton',function(e){if(e&&e.preventDefault)e.preventDefault();onBack()},false);
-  try{var CA=window.Capacitor&&Capacitor.Plugins&&Capacitor.Plugins.App;if(CA&&CA.addListener)CA.addListener('backButton',onBack)}catch(e){}
+  var capBound=false;function bindCap(){if(capBound)return;var A=capApp();if(A&&A.addListener){try{A.addListener('backButton',function(){onBack()});capBound=true}catch(e){}}}
+  bindCap();[300,1000,2500,5000].forEach(function(t){setTimeout(bindCap,t)})
 })();
 </script>
 <script>
@@ -2306,6 +2311,36 @@ var D={
 'ইতিহাস':'History',
 'নোটস':'Notes'
 };
+var X={
+'ছাত্র ও শিক্ষক':'Students & Teachers','দৈনন্দিন কাজ':'Daily Tasks','একাডেমিক':'Academic','বিশ্লেষণ ও সিস্টেম':'Analytics & System','ইতিহাস ও রিপোর্ট':'History & Reports','ফি ও বকেয়া':'Fees & Dues','ফি ও পেমেন্ট':'Fees & Payment','আরও অপশন':'More options',
+'হাজিরা':'Attendance','হাজিরার':'attendance','নামাজ ও হোমওয়ার্ক':'Prayer & Homework','নামাজের তথ্য':'Prayer info','আয়-ব্যয়':'Income & Expense','রিপোর্ট':'Report','গুরুত্বপূর্ণ':'Important',
+'অনুমতি (রোল ও পারমিশন)':'Permissions (Roles & Permission)','যে কাজের অনুমতি দেবেন শিক্ষক শুধু সেটিই দেখতে ও করতে পারবেন।':'The teacher can see and do only the tasks you permit.','যে কাজের অনুমতি দেবেন শিক্ষক শুধু সেটিই দেখতে ও করতে পারবেন':'The teacher can see and do only the tasks you permit','সব অনুমতি দিলে প্রায় পূর্ণ অ্যাক্সেস পাবেন।':'If all permissions are given, they get almost full access.','সব অনুমতি দিলে প্রায় পূর্ণ অ্যাক্সেস পাবেন':'If all permissions are given, they get almost full access','অ্যাডমিন চাইলে নিজের কিছু ক্ষমতা এই শিক্ষককে দিতে পারবেন':'The admin can give some of their powers to this teacher',
+'মাসিক বেতন (৳)':'Monthly salary (৳)','বেতন: ৳':'Salary: ৳','পরিমাণ (৳)':'Amount (৳)','কুরআন মাজীদ':'Quran Majeed','আরবি':'Arabic','ইংরেজি':'English','গণিত':'Math','দ্বীনিয়াত':'Deeniyat','১০০ এর মধ্যে':'out of 100',
+'হাজিরা না নেওয়া দিন ছুটি ধরা হয়।':'Days without attendance are counted as holidays.','যেসব দিন হাজিরা নেওয়া হয়েছে':'days when attendance was taken','মোট কার্যদিবস:':'Total working days:','সবকিছু একসাথে':'All together',
+'ট্রায়াল ও মাসিক সাবস্ক্রিপশন (৳৩০০)':'Trial & monthly subscription (৳300)','চালু/বন্ধ, টেমপ্লেট, পাঠানো ও ইতিহাস':'On/off, templates, sending & history','খালি রাখলে সাধারণ ফি প্রযোজ্য হবে':'If left empty, the general fee applies','৳ আংশিক':'৳ Partial','৳ বকেয়া':'৳ Due','এই মাস (সমষ্টি)':'This month (total)',
+'হোমওয়ার্ক করেছে / করেনি — একটি বেছে নিন':'Homework done / not done — choose one','এই ছাত্রের':'This student\'s','মাসের বেতন ইতিমধ্যে পরিশোধ করা হয়েছে।':'month\'s fee has already been paid.',
+'অ্যাডমিন তৈরি হয়েছে। এখন Admin Login করুন।':'Admin created. Now log in as Admin.','ইমেইল না পেলে স্প্যাম ফোল্ডার দেখুন। তবুও না পেলে বা ইমেইল ব্যবহার না করলে নিচের ঠিকানায় যোগাযোগ করুন — পুরনো পাসওয়ার্ড ছাড়াই নতুন পাসওয়ার্ড সেট করে দেওয়া হবে।':'If you do not receive the email, check your spam folder. If still not, or if you do not use email, contact the address below — a new password will be set without the old one.',
+'নিবন্ধনের পর':'After registration','১৫ দিন ফ্রি ট্রায়াল':'15-day free trial','এরপর মাসিক ৩০০ টাকার প্ল্যান।':'Then a monthly ৳300 plan.',
+'বাটন চাপলে ফোনের মেসেজ অ্যাপ খুলবে; সেখানে Send চাপলে আপনার SIM থেকে যাবে।':'Tapping the button opens your phone\'s messaging app; pressing Send there sends it from your SIM.','আপনার সন্তান':'Your child','আজ মাদ্রাসায় দেরিতে এসেছে।':'came late to madrasa today.','আজ মাদ্রাসায় অনুপস্থিত।':'is absent from madrasa today.','নম্বর নেই':'No number',
+'হাজিরার পর অনুপস্থিত/দেরি ছাত্রের অভিভাবককে':'After attendance, to guardians of absent/late students','শিক্ষক বাছাই করুন':'Choose teacher','নির্দিষ্ট শিক্ষক':'Specific teacher','নং পিরিয়ড':'no. period','প্রয়োগ করা হয়নি':'Not applied',
+'আপনার মাদ্রাসার সফটওয়্যার ব্যবহারের মেয়াদ শেষ হয়েছে।':'Your madrasa\'s software subscription has expired.','সফটওয়্যার প্রদানকারীর সাথে যোগাযোগ করুন।':'Contact the software provider.','আপনার মাদ্রাসার সফটওয়্যার Access বন্ধ করা হয়েছে।':'Your madrasa\'s software access has been disabled.',
+'অন্য মাদ্রাসায় ব্যবহৃত হচ্ছে, তাই ব্যবহার করা যাবে না':'is used in another madrasa, so it cannot be used','এই মাদ্রাসায় আগে থেকেই ব্যবহৃত হচ্ছে':'is already used in this madrasa','এই ফোন নম্বর শিক্ষক/অ্যাডমিনের অ্যাকাউন্টে ব্যবহৃত হচ্ছে':'This phone number is used by a teacher/admin account','এই পাসওয়ার্ড ভাইবোনের পাসওয়ার্ডের সাথে মিলে গেছে, ভিন্ন পাসওয়ার্ড দিন':'This password matches a sibling\'s password; use a different password','এই মোবাইল নম্বর ইতিমধ্যে অন্য মাদ্রাসায় ব্যবহৃত হচ্ছে। অন্য নম্বর দিন।':'This mobile number is already used in another madrasa. Use another number.',
+'রোল ১ বা তার বেশি সংখ্যা হতে হবে':'Roll must be 1 or greater','অভিভাবকের মোবাইল নম্বর':'Guardian\'s mobile number','বিকল্প মোবাইল নম্বর সঠিক নয়':'Alternative mobile number is not valid','ধার্যকৃত মাসিক বেতন':'Assigned monthly fee','বিকল্প ফোন':'Alternative phone','ছাত্র অপশন':'Student options','অপশন':'Options','ডিলিট':'Delete','থিম পরিবর্তন':'Change theme','লাইট মোড':'Light mode','ডার্ক মোড':'Dark mode','শিরোনাম লিখুন':'Enter a title','একটি বেছে নিন':'choose one','শ্রেণির নাম লিখুন':'Enter the class name',
+'ক্রম':'Serial','ক্রমিক নম্বর (সিরিয়াল)':'Serial number','শ্রেণি সম্পাদনা':'Edit class','ছবি মুছুন':'Remove photo','নতুন নোটিশ':'New notice',
+'আইডি (নির্দিষ্ট ছাত্রের ক্ষেত্রে, যেমন':'ID (for a specific student, e.g.','আইডি (নির্দিষ্ট ছাত্র/শিক্ষকের ক্ষেত্রে, যেমন':'ID (for a specific student/teacher, e.g.',
+'শিক্ষকদের হাজিরার জন্য একটি QR তৈরি করে প্রিন্ট করে প্রতিষ্ঠানে লাগিয়ে রাখুন। শিক্ষকরা সেটি স্ক্যান করবেন; প্রতিষ্ঠানের অবস্থানের মধ্যে আছেন কি না তা যাচাই হবে। এই পেজ খোলা রাখতে হবে না। ইচ্ছা করলে যেকোনো সময় নতুন QR তৈরি করা যাবে।':'Create a QR for teacher attendance, print it and put it up at the institution. Teachers will scan it, and whether they are within the institution\'s location will be verified. This page does not need to stay open. You can create a new QR at any time.',
+'নতুন QR তৈরি করুন':'Create new QR','অবস্থা:':'Status:','সক্রিয়':'Active','নিষ্ক্রিয়':'Inactive','সক্রিয় করুন':'Activate','নিষ্ক্রিয় করুন':'Deactivate','QR লোড হচ্ছে...':'Loading QR...','QR নিষ্ক্রিয়। শিক্ষকরা এখন হাজিরা দিতে পারবেন না।':'QR is inactive. Teachers cannot mark attendance now.',
+'প্রিন্ট করুন':'Print','ছবি সংরক্ষণ':'Save photo','নতুন QR তৈরি':'Create new QR','নতুন QR তৈরি করলে আগের প্রিন্ট করা QR আর কাজ করবে না।':'Creating a new QR will make the previously printed QR stop working.',
+'প্রতিষ্ঠানের অবস্থান ও সময়':'Institution location & time','আমার বর্তমান অবস্থান নিন (প্রতিষ্ঠানে থেকে চাপুন)':'Use my current location (tap while at the institution)','অনুমোদিত দূরত্ব (মিটার)':'Allowed distance (meters)','শুরুর সময়':'Start time','দেরি ধরার আগে ছাড় (মিনিট)':'Grace before counting late (minutes)',
+'শিক্ষক হাজিরা QR':'Teacher attendance QR','অ্যাপ থেকে "শিক্ষক হাজিরা" খুলে এই QR স্ক্যান করুন।':'Open "Teacher Attendance" in the app and scan this QR.','অ্যাপ থেকে "শিক্ষক হাজিরা" খুলে এই QR স্ক্যান করুন':'Open "Teacher Attendance" in the app and scan this QR','প্রথম স্ক্যান = আগমন, দ্বিতীয় স্ক্যান = প্রস্থান।':'First scan = arrival, second scan = departure.','প্রথম স্ক্যান = আগমন, দ্বিতীয় স্ক্যান = প্রস্থান':'First scan = arrival, second scan = departure','প্রিন্ট':'Print',
+'QR সেটিংস পড়া যায়নি:':'Could not read QR settings:','QR তৈরি হয়নি:':'QR was not created:','হয়নি:':'Failed:','নতুন QR তৈরি করলে আগের প্রিন্ট করা সব QR বাতিল হবে। নিশ্চিত?':'Creating a new QR will cancel all previously printed QRs. Are you sure?','ছবি তৈরি হয়নি':'Could not create the image','অবস্থান পাওয়া যায়নি। ফোনের Location ও ব্রাউজারের অনুমতি চালু করুন।':'Location unavailable. Turn on the phone Location and browser permission.','সঠিক Latitude/Longitude দিন':'Enter valid Latitude/Longitude','দূরত্ব ২০–৫০০০ মিটারের মধ্যে দিন':'Enter a distance between 20–5000 meters','সময় ও ছাড় সঠিক দিন':'Enter a valid time and grace','সংরক্ষিত হয়েছে।':'Saved.',
+'প্রতিষ্ঠানের মধ্যে':'Inside institution','প্রতিষ্ঠানের বাইরে':'Outside institution','অবস্থান যাচাই করা যায়নি':'Location could not be verified','ম্যানুয়াল':'Manual','কিমি':'km','মি':'m','এখনো হাজিরা হয়নি':'Not marked yet','সম্পূর্ণ':'Complete','আপনার বর্তমান অবস্থান প্রতিষ্ঠানের নির্ধারিত এলাকার বাইরে।':'Your current location is outside the institution\'s designated area.','আপনার অবস্থান যাচাই করা যায়নি।':'Your location could not be verified.','চেক-ইন':'Check-in','চেক-আউট':'Check-out','দূরত্ব':'Distance','আগের কোনো হাজিরা নেই।':'No previous attendance.',
+'এই ব্রাউজারে ক্যামেরা সমর্থিত নয়।':'Camera is not supported in this browser.','ক্যামেরার অনুমতি দিন, তারপর আবার চেষ্টা করুন।':'Allow camera permission, then try again.','কোডটি ক্যামেরার সামনে ধরুন':'Hold the code in front of the camera','স্ক্যানার লোড হয়নি। ইন্টারনেট দেখে আবার চেষ্টা করুন।':'Scanner did not load. Check your internet and try again.','এটি এই অ্যাপের হাজিরা QR নয়।':'This is not an attendance QR for this app.','এটি অন্য প্রতিষ্ঠানের। এখানে হাজিরা দেওয়া যাবে না।':'This belongs to another institution. Attendance cannot be marked here.','QR এখন সক্রিয় নেই। Admin-এর সাথে যোগাযোগ করুন।':'QR is not active now. Contact the Admin.','এই QR বাতিল বা পুরোনো। নতুন QR স্ক্যান করুন।':'This QR is cancelled or outdated. Scan the new QR.','আজকের শিক্ষক হাজিরা সম্পূর্ণ হয়েছে।':'Today\'s teacher attendance is complete.','চেক-ইনের ৫ মিনিট পরে চেক-আউট করা যাবে।':'Check-out is allowed 5 minutes after check-in.',
+'চেক-ইন সম্পন্ন':'Check-in complete','চেক-আউট সম্পন্ন':'Check-out complete','(উপস্থিত)':'(Present)','হাজিরা গ্রহণ করা যায়নি: QR বাতিল/নিষ্ক্রিয় হয়ে থাকতে পারে, বা আপনার অনুমতি নেই।':'Attendance could not be recorded: the QR may be cancelled/inactive, or you do not have permission.','সমস্যা:':'Problem:','রিপোর্ট পড়া যায়নি':'Could not read the report','রেকর্ড নেই':'No record','চেক-ইন সময়':'Check-in time','চেক-আউট সময়':'Check-out time','চেক-ইন সময় দিন':'Enter the check-in time','দেরি ০–১৪৪০ মিনিটের মধ্যে দিন':'Enter late within 0–1440 minutes','স্ক্যান করুন':'Scan','আগমন':'Arrival','প্রস্থান':'Departure',
+'সব দেখুন':'View all',"(নিজস্ব)":"(own)","(শ্রেণী অনুযায়ী)":"(by class)","অবশ্যই লিখতে হবে":"is required","অভিভাবকের নাম":"Guardian's name","অভিভাবকের পাসওয়ার্ড (লগইনের জন্য)":"Guardian's password (for login)","অ্যাপ থেকে":"from the app","আগে Settings → Subject Management থেকে এই শ্রেণীর বিষয় যোগ করুন":"First add this class's subjects from Settings → Subject Management","এই QR অন্য প্রতিষ্ঠানের। এখানে হাজিরা দেওয়া যাবে না।":"This QR belongs to another institution. Attendance cannot be recorded here.","এই বছরে এখনো কোনো রেকর্ড নেই।":"No records for this year yet.","এই মাসে এখনো হাজিরা নেওয়া হয়নি।":"No attendance has been taken this month yet.","এখনো কোনো নোটিশ নেই।":"No notices yet.","কোনো শ্রেণী নেই।":"No classes.","খুলে এই QR স্ক্যান করুন":"open and scan this QR","খুলে এই QR স্ক্যান করুন।":"open and scan this QR.","চেক-আউট সময় (ফাঁকা = নেই)":"Check-out time (blank = none)","জন শিক্ষার্থী":"students","টি পিরিয়ড বদলে যাবে)":" periods will change)","টি মোছা যায়নি":" could not be deleted","তথ্য সম্পাদনা":"Edit details","দিন/মাস/সাল":"DD/MM/YYYY","ধার্যকৃত মাসিক বেতন (৳)":"Fixed monthly salary (৳)","নং":"No.","পরিমাণ (৳)":"Amount (৳)","পরিমাণ (৳) — খালি রাখলে সাধারণ ফি প্রযোজ্য হবে":"Amount (৳) — leave blank to use the default fee","প্রতিষ্ঠানের QR কোডটি ক্যামেরার সামনে ধরুন":"Hold the institution's QR code in front of the camera","প্রতিষ্ঠানের অবস্থানের মধ্যে আছেন কি না তা যাচাই হবে। এই পেজ খোলা রাখতে হবে না। ইচ্ছা করলে যেকোনো সময় নতুন QR তৈরি করা যাবে।":"Your presence within the institution's location will be verified. This page does not need to stay open. You can generate a new QR at any time.","ফোন নম্বর":"Phone number","বিকল্প মোবাইল নম্বর":"Alternative mobile number","বাটন চাপলে ফোনের মেসেজ অ্যাপ খুলবে":"Pressing the button opens the phone's messaging app","বেতন: ৳":"Salary: ৳","মাদ্রাসা খোঁজা":"Finding madrasa","মাসিক বেতন (৳)":"Monthly salary (৳)","মোট শিক্ষার্থী (প্রতিষ্ঠান)":"Total students (institution)","শিক্ষকদের হাজিরার জন্য একটি QR তৈরি করে প্রিন্ট করে প্রতিষ্ঠানে লাগিয়ে রাখুন। শিক্ষকরা সেটি স্ক্যান করবেন":"Generate a QR for teacher attendance, print it and place it at the institution. Teachers will scan it","শ্রেণী অনুযায়ী দেখুন":"View by class","সঠিক মোবাইল নম্বর দিন (১১ সংখ্যা, যেমন 01712345678)":"Enter a valid mobile number (11 digits, e.g. 01712345678)","সিমে মেসেজ বন্ধ আছে। Settings → Notification → Notification Settings থেকে চালু করুন।":"SMS via SIM is off. Turn it on from Settings → Notification → Notification Settings.","সেখানে Send চাপলে আপনার SIM থেকে যাবে।":"Press Send there and it will go from your SIM.","📱 SIM দিয়ে SMS (হাজিরার পর অনুপস্থিত/দেরি ছাত্রের অভিভাবককে)":"📱 SMS via SIM (to guardians of absent/late students after attendance)","📱 SIM দিয়ে SMS পাঠান":"📱 Send SMS via SIM","ক্রম":"Serial","সংস্করণ":"Version","প্রিন্ট করুন":"Print","ছবি সংরক্ষণ":"Save image","সক্রিয়":"Active","নিষ্ক্রিয়":"Inactive","অবস্থা:":"Status:",
+'নতুন':'New'
+};
+for(var xk in X)D[xk]=X[xk];
 var keys=Object.keys(D).sort(function(a,b){return b.length-a.length}),B='\\u0980-\\u09FF';
 var RX=new RegExp('(?<!['+B+'])('+keys.map(function(s){return s.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')}).join('|')+')(?!['+B+'])','g');
 var lang='bn';try{lang=localStorage.getItem('mm_lang')==='en'?'en':'bn'}catch(e){}
@@ -2532,10 +2567,45 @@ go()})();
   return h+L.map(function(n,i){return '<div class="ndi" onclick="ndbOpen('+i+')"><b>'+E(n.t)+'</b><small>'+E(n.d||'')+(n.ed?' • সম্পাদিত':'')+'</small>'+(n.b?'<p>'+E(n.b)+'</p>':'')+'</div>'}).join('')+'</div>'};
  window.ndbOpen=function(i){var n=notices[i];if(!n)return;if(canEd()){editN(i);return}
   box('<h3 style="margin:0 0 4px;word-break:break-word">'+E(n.t)+'</h3><small style="color:var(--mute)">'+E(n.d||'')+'</small><p style="margin-top:10px;white-space:pre-wrap;word-break:break-word">'+E(n.b||'')+'</p>')};
- window.editN=function(i){var n=notices[i];if(!n||!canEd())return;form('নোটিস সম্পাদনা',[['n','শিরোনাম'],['b','বিস্তারিত']],{n:n.t,b:n.b||''},function(o){if(!o.n||!String(o.n).trim()){alert('শিরোনাম লিখুন');return}n.t=String(o.n).trim();n.b=o.b||'';n.ed=new Date().toLocaleDateString('bn-BD');save('mm_n',notices);draw()})};
+ window.editN=function(i){var n=notices[i];if(!n||!canEd())return;form('নোটিস সম্পাদনা',[['n','শিরোনাম'],['b','বিস্তারিত']],{n:n.t,b:n.b||''},function(o){if(!o.n||!String(o.n).trim()){alert('শিরোনাম লিখুন');return}n.t=String(o.n).trim();n.b=o.b||'';n.ed=fmtDMY(new Date());save('mm_n',notices);draw()})};
  window.noteV=function(){css();var A=role==='admin',ed=canEd();
   shell('Notice',(role==='guardian'&&typeof gm==='function'?gm():'')+notices.map(function(n,i){return '<div class="row" style="display:block'+(ed?';cursor:pointer':'')+'" onclick="'+(ed?'editN(':'ndbOpen(')+i+')"><b>'+E(n.t)+'</b><br><small style="color:var(--mute)">'+E(n.d||'')+(n.ed?' • সম্পাদিত':'')+'</small><p style="margin-top:6px;white-space:pre-wrap;word-break:break-word">'+E(n.b||'')+'</p>'+(ed?'<small style="color:var(--g)">✏️ সম্পাদনা করতে চাপুন</small>':'')+(A?'<button onclick="event.stopPropagation();delN('+i+')" style="color:var(--not);margin-left:12px"><i class=idel></i> মুছুন</button>':'')+'</div>'}).join('')||'<p class="note">এখনো কোনো নোটিস নেই।</p>',role==='guardian'?'':'home',A?'addN()':'')};
  var _sh=shell;shell=function(t,b,bk,pl){var on=false;if(on&&typeof b==='string'&&b.indexOf('class="ndb"')<0){try{b=ndbHTML()+b}catch(e){}}return _sh.call(this,t,b,bk,pl)};
+})();
+</script>
+<script>
+/* ===== তারিখ সব জায়গায় দিন/মাস/সাল (dd/mm/yyyy) ===== */
+(function(){
+ var BD='০১২৩৪৫৬৭৮৯';
+ function p2(n){return (n<10?'0':'')+n}
+ window.fmtDMY=function(d,en){var s;
+  if(typeof d==='string'&&/^\d{4}-\d{2}-\d{2}/.test(d))s=d.slice(8,10)+'/'+d.slice(5,7)+'/'+d.slice(0,4);
+  else{var t=new Date(d);if(isNaN(t))return '—';s=p2(t.getDate())+'/'+p2(t.getMonth()+1)+'/'+t.getFullYear()}
+  return en?s:s.replace(/\d/g,function(c){return BD.charAt(+c)})};
+ var oD=Date.prototype.toLocaleDateString,oS=Date.prototype.toLocaleString;
+ Date.prototype.toLocaleDateString=function(l,x){if(!x&&(l==='bn-BD'||l==='en-GB'))return fmtDMY(this,l==='en-GB');return oD.call(this,l,x)};
+ Date.prototype.toLocaleString=function(l,x){if((l==='bn-BD'||l==='en-GB')&&x&&x.dateStyle){var tm=this.toLocaleTimeString(l,{hour:'numeric',minute:'2-digit'});return fmtDMY(this,l==='en-GB')+', '+tm}return oS.call(this,l,x)};
+ /* <input type=date>: ফোনের ভাষা যাই হোক, দেখাবে দিন/মাস/সাল */
+ function show(i,v){v.textContent=i.value?fmtDMY(i.value):'দিন/মাস/সাল'}
+ function enhance(){var l=document.querySelectorAll('input[type=date]:not([data-dmy])');
+  for(var k=0;k<l.length;k++){(function(i){i.setAttribute('data-dmy','1');var w=document.createElement('div');w.style.cssText='position:relative;display:block';i.parentNode.insertBefore(w,i);w.appendChild(i);
+   var v=document.createElement('div');v.style.cssText='position:absolute;left:0;right:34px;top:0;bottom:0;display:flex;align-items:center;padding:0 12px;pointer-events:none;color:var(--ink);font-size:15px;background:var(--card);border-radius:10px;margin:1px';
+   w.appendChild(v);i.style.position='relative';i.style.color='transparent';i.style.width='100%';i.style.boxSizing='border-box';show(i,v);
+   i.addEventListener('input',function(){show(i,v)});i.addEventListener('change',function(){show(i,v)})})(l[k])}}
+ var q=0;new MutationObserver(function(){if(q)return;q=setTimeout(function(){q=0;try{enhance()}catch(e){}},60)}).observe(document.body,{childList:true,subtree:true});
+ try{enhance()}catch(e){}
+})();
+</script>
+<script>
+/* সংস্করণ চিহ্ন + পুরনো কপি থাকলে নিজে থেকে নতুন সংস্করণ লোড */
+(function(){
+ var mt=document.querySelector('meta[name="app-build"]'),B=mt?mt.content:'';window.APP_BUILD=B;
+ function chk(){try{fetch(location.pathname+'?_c='+Date.now(),{cache:'no-store'}).then(function(r){return r.text()}).then(function(t){
+   var m=t.match(/name="app-build" content="([^"]+)"/);if(!m||!B||m[1]===B||m[1].indexOf('(')>-1)return;
+   var k='mm_rl_'+m[1];try{if(sessionStorage.getItem(k))return;sessionStorage.setItem(k,'1')}catch(e){}
+   var u=new URL(location.href);u.searchParams.set('_r',Date.now());location.replace(u.toString())}).catch(function(){})}catch(e){}}
+ setTimeout(chk,4000);document.addEventListener('visibilitychange',function(){if(!document.hidden)setTimeout(chk,1500)});
+ var _om=window.openMenu;if(typeof _om==='function')window.openMenu=function(){var r=_om.apply(this,arguments);try{var m=document.getElementById('mnu');if(m&&!m.querySelector('.bld')){var d=document.createElement('div');d.className='bld';d.style.cssText='text-align:center;color:var(--mute);font-size:12px;padding:12px 0';d.textContent='সংস্করণ: '+B;m.appendChild(d)}}catch(e){}return r};
 })();
 </script>
 </body>

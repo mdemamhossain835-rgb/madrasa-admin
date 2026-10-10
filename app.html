@@ -1633,10 +1633,12 @@ window.__hwClean=hwClean;
     }
     exitAsk()}                                             /* হোম/লগইনে: বের হওয়ার নিশ্চিতকরণ */
 
+  /* Capacitor ব্যাক চাপলে প্লাগিন-লিসনার ও document 'backbutton' দুটোই ডাকে; একবার চাপায় দুইবার কাজ না করতে ৪৫০ms-এর মধ্যে দ্বিতীয় ডাক বাদ */
+  var lastBack=0;function onBackOnce(){var t=Date.now();if(t-lastBack<450)return;lastBack=t;onBack()}
   window.addEventListener('popstate',function(){
     guard=false;actG=false;
     if(exiting)return;
-    onBack();arm()});
+    onBackOnce();arm()});
   arm();setTimeout(arm,600);
 
   /* প্রথম ট্যাপের পর গার্ড বসে (ব্রাউজার ট্যাপ ছাড়া history এন্ট্রি বাদ দেয়) */
@@ -1645,8 +1647,8 @@ window.__hwClean=hwClean;
   document.addEventListener('touchend',touch,{capture:true,passive:true});
 
   /* Cordova / Capacitor র‍্যাপারের জন্য */
-  document.addEventListener('backbutton',function(e){if(e&&e.preventDefault)e.preventDefault();onBack()},false);
-  var capBound=false;function bindCap(){if(capBound)return;var A=capApp();if(A&&A.addListener){try{A.addListener('backButton',function(){onBack()});capBound=true}catch(e){}}}
+  document.addEventListener('backbutton',function(e){if(e&&e.preventDefault)e.preventDefault();onBackOnce()},false);
+  var capBound=false;function bindCap(){if(capBound)return;var A=capApp();if(A&&A.addListener){try{A.addListener('backButton',function(){onBackOnce()});capBound=true}catch(e){}}}
   bindCap();[300,1000,2500,5000].forEach(function(t){setTimeout(bindCap,t)})
 })();
 </script>

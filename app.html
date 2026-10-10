@@ -618,7 +618,7 @@ function homeV(){const s=stu_(cur),hl=getHWToday(s.c,T0);shell('নামাজ 
  <div class="link" style="display:block"><small>আজকের বাড়ির কাজ (${s.c||'—'})</small>${hl.length?hl.map(x=>`<div style="margin-top:8px"><b>${x.sj}</b><p style="margin-top:2px">${x.e.t}</p><small style="color:var(--mute)">দিয়েছেন: ${x.e.by}</small></div>`).join(''):'<p style="margin-top:6px">আজ এখনো শিক্ষক বাড়ির কাজ দেননি।</p>'}</div>`+homeBlock(s),'child')}
 </script>
 <script>
-function profEdit(){form('মাদ্রাসার তথ্য',[['logo','মাদ্রাসার লোগো','photo'],['n','মাদ্রাসার নাম'],['addr','ঠিকানা'],['est','প্রতিষ্ঠার তারিখ (যেমন: ১ জানুয়ারি ২০১০)'],['ph','যোগাযোগ নম্বর','type=tel']],{n:profile.name,addr:profile.addr,est:profile.est,logo:profile.logo,ph:profile.ph},o=>{profile={name:o.n||'Madrasa Management',addr:o.addr,est:o.est,logo:o.logo,ph:o.ph};save('mm_profile',profile);draw()})}
+function profEdit(){form('মাদ্রাসার তথ্য',[['logo','মাদ্রাসার লোগো','photo'],['n','মাদ্রাসার নাম'],['addr','ঠিকানা'],['est','প্রতিষ্ঠার তারিখ (যেমন: ১ জানুয়ারি ২০১০)'],['ph','যোগাযোগ নম্বর','type=tel']],{n:profile.name,addr:profile.addr,est:profile.est,logo:profile.logo,ph:profile.ph},o=>{profile=Object.assign({},profile,{name:o.n||'Madrasa Management',addr:o.addr,est:o.est,logo:o.logo,ph:o.ph});save('mm_profile',profile);draw()})}
 function devShow(){box(`<h3 style="text-align:center;margin:0 0 10px">👨‍💻 ডেভেলপার সম্পর্কে</h3><div class="link"><span><small>নাম</small>${DEV.n}</span></div><a class="link" href="mailto:${DEV.em}" style="text-decoration:none;color:inherit"><span><small>ইমেইল</small>${DEV.em}</span></a><a class="link" href="${DEV.fb}" target="_blank" style="text-decoration:none;color:inherit"><span><small>ফেসবুক</small>প্রোফাইল দেখুন</span></a><a class="link" href="${DEV.wal}" target="_blank" rel="noopener" style="text-decoration:none;color:inherit"><span><small>WhatsApp</small>${DEV.wa}</span></a>`)}
 const avHTML=(ph,ch)=>ph?`<img src="${ph}" alt="">`:ch;
 function phSel(inp,hid,prev){const f=inp.files&&inp.files[0];if(!f)return;const rd=new FileReader();rd.onload=()=>{const im=new Image();im.onload=()=>{const sc=Math.min(1,160/Math.max(im.width,im.height));const c=document.createElement('canvas');c.width=im.width*sc;c.height=im.height*sc;const cx=c.getContext('2d');cx.fillStyle='#fff';cx.fillRect(0,0,c.width,c.height);cx.drawImage(im,0,0,c.width,c.height);const url=c.toDataURL('image/jpeg',0.7);const p=document.getElementById(prev);if(p)p.innerHTML=`<img src="${url}" style="width:100%;height:100%;object-fit:cover;border-radius:50%">`;const h=document.getElementById(hid);if(h)h.value=url};im.src=rd.result};rd.readAsDataURL(f)}
@@ -1373,7 +1373,7 @@ window.migratePerms=async function(){if(role!=='admin'||!ready.T||!tpOk||migBusy
  Object.keys(G).forEach(n=>{const f=window[n];if(typeof f!=='function')return;window[n]=function(){const g=typeof G[n]==='function'?G[n].apply(null,arguments):G[n];if(!hasPerm(g)){deny();return}return f.apply(this,arguments)}});
  ['cyc','finalizeClass'].forEach(n=>{const f=window[n];if(typeof f!=='function')return;window[n]=function(){if(!canAny('att_take','att_edit')){deny();return}return f.apply(this,arguments)}});
  const fa=window.annForm;if(typeof fa==='function')window.annForm=function(){if(!canAny('notif_send','msg_grd','msg_tch')){deny();return}return fa.apply(this,arguments)}})();
-onValue(R('config/profile'),sn=>{if(sn.val()){profile=sn.val();if(!role)paint();else if(window.mmLgoSync)mmLgoSync()}},()=>{});
+onValue(R('config/profile'),sn=>{if(sn.val()){const oh=profile&&profile.hjOff;profile=sn.val();if(!role)paint();else{if(window.mmLgoSync)mmLgoSync();if(oh!==profile.hjOff&&(tab==='home'||tab==='child')&&!document.getElementById('md'))draw()}}},()=>{});
 /* ===== persistent login: অ্যাপ খুললে আগের সেশন ফিরিয়ে আনে ===== */
 window.changeOwnPw=async pw=>{if(pw.length<6){alert('পাসওয়ার্ড কমপক্ষে ৬ অক্ষরের হতে হবে');return}const u=auth.currentUser;if(!u||role!=='admin'){alert('শুধু অ্যাডমিন');return}
  try{await updatePassword(u,pw);alert('আপনার পাসওয়ার্ড সফলভাবে পরিবর্তন হয়েছে।')}catch(e){alert(e.code==='auth/requires-recent-login'?'নিরাপত্তার জন্য একবার লগআউট করে নতুন করে লগইন করুন, তারপর সঙ্গে সঙ্গে পাসওয়ার্ড বদলান।':'পাসওয়ার্ড পরিবর্তন হয়নি: '+(e.code||e.message))}};
@@ -2342,6 +2342,42 @@ var X={
 'সব দেখুন':'View all',"(নিজস্ব)":"(own)","(শ্রেণী অনুযায়ী)":"(by class)","অবশ্যই লিখতে হবে":"is required","অভিভাবকের নাম":"Guardian's name","অভিভাবকের পাসওয়ার্ড (লগইনের জন্য)":"Guardian's password (for login)","অ্যাপ থেকে":"from the app","আগে Settings → Subject Management থেকে এই শ্রেণীর বিষয় যোগ করুন":"First add this class's subjects from Settings → Subject Management","এই QR অন্য প্রতিষ্ঠানের। এখানে হাজিরা দেওয়া যাবে না।":"This QR belongs to another institution. Attendance cannot be recorded here.","এই বছরে এখনো কোনো রেকর্ড নেই।":"No records for this year yet.","এই মাসে এখনো হাজিরা নেওয়া হয়নি।":"No attendance has been taken this month yet.","এখনো কোনো নোটিশ নেই।":"No notices yet.","কোনো শ্রেণী নেই।":"No classes.","খুলে এই QR স্ক্যান করুন":"open and scan this QR","খুলে এই QR স্ক্যান করুন।":"open and scan this QR.","চেক-আউট সময় (ফাঁকা = নেই)":"Check-out time (blank = none)","জন শিক্ষার্থী":"students","টি পিরিয়ড বদলে যাবে)":" periods will change)","টি মোছা যায়নি":" could not be deleted","তথ্য সম্পাদনা":"Edit details","দিন/মাস/সাল":"DD/MM/YYYY","ধার্যকৃত মাসিক বেতন (৳)":"Fixed monthly salary (৳)","নং":"No.","পরিমাণ (৳)":"Amount (৳)","পরিমাণ (৳) — খালি রাখলে সাধারণ ফি প্রযোজ্য হবে":"Amount (৳) — leave blank to use the default fee","প্রতিষ্ঠানের QR কোডটি ক্যামেরার সামনে ধরুন":"Hold the institution's QR code in front of the camera","প্রতিষ্ঠানের অবস্থানের মধ্যে আছেন কি না তা যাচাই হবে। এই পেজ খোলা রাখতে হবে না। ইচ্ছা করলে যেকোনো সময় নতুন QR তৈরি করা যাবে।":"Your presence within the institution's location will be verified. This page does not need to stay open. You can generate a new QR at any time.","ফোন নম্বর":"Phone number","বিকল্প মোবাইল নম্বর":"Alternative mobile number","বাটন চাপলে ফোনের মেসেজ অ্যাপ খুলবে":"Pressing the button opens the phone's messaging app","বেতন: ৳":"Salary: ৳","মাদ্রাসা খোঁজা":"Finding madrasa","মাসিক বেতন (৳)":"Monthly salary (৳)","মোট শিক্ষার্থী (প্রতিষ্ঠান)":"Total students (institution)","শিক্ষকদের হাজিরার জন্য একটি QR তৈরি করে প্রিন্ট করে প্রতিষ্ঠানে লাগিয়ে রাখুন। শিক্ষকরা সেটি স্ক্যান করবেন":"Generate a QR for teacher attendance, print it and place it at the institution. Teachers will scan it","শ্রেণী অনুযায়ী দেখুন":"View by class","সঠিক মোবাইল নম্বর দিন (১১ সংখ্যা, যেমন 01712345678)":"Enter a valid mobile number (11 digits, e.g. 01712345678)","সিমে মেসেজ বন্ধ আছে। Settings → Notification → Notification Settings থেকে চালু করুন।":"SMS via SIM is off. Turn it on from Settings → Notification → Notification Settings.","সেখানে Send চাপলে আপনার SIM থেকে যাবে।":"Press Send there and it will go from your SIM.","📱 SIM দিয়ে SMS (হাজিরার পর অনুপস্থিত/দেরি ছাত্রের অভিভাবককে)":"📱 SMS via SIM (to guardians of absent/late students after attendance)","📱 SIM দিয়ে SMS পাঠান":"📱 Send SMS via SIM","ক্রম":"Serial","সংস্করণ":"Version","প্রিন্ট করুন":"Print","ছবি সংরক্ষণ":"Save image","সক্রিয়":"Active","নিষ্ক্রিয়":"Inactive","অবস্থা:":"Status:",
 'নতুন':'New',
 'অ':'A',
+'বৈশাখ':'Boishakh',
+'জ্যৈষ্ঠ':'Joishtho',
+'আষাঢ়':'Ashar',
+'শ্রাবণ':'Srabon',
+'ভাদ্র':'Bhadro',
+'আশ্বিন':'Ashwin',
+'কার্তিক':'Kartik',
+'অগ্রহায়ণ':'Agrahayan',
+'পৌষ':'Poush',
+'মাঘ':'Magh',
+'ফাল্গুন':'Falgun',
+'চৈত্র':'Choitro',
+'মুহাররম':'Muharram',
+'সফর':'Safar',
+'রবিউল আউয়াল':'Rabi al-Awwal',
+'রবিউস সানি':'Rabi al-Thani',
+'জমাদিউল আউয়াল':'Jumada al-Awwal',
+'জমাদিউস সানি':'Jumada al-Thani',
+'রজব':'Rajab',
+'শাবান':'Shaban',
+'রমজান':'Ramadan',
+'শাওয়াল':'Shawwal',
+'জিলকদ':'Dhul Qadah',
+'জিলহজ':'Dhul Hijjah',
+'বঙ্গাব্দ':'BS',
+'হিজরি':'AH',
+'আরবি তারিখ সংশোধন':'Adjust Hijri date',
+'সংশোধিত':'Adjusted',
+'অ্যাপ নিজে সৌদি হিসাব থেকে আরবি তারিখ বের করে। বাংলাদেশে চাঁদ দেখা অনুযায়ী ১–২ দিন আলাদা হলে এখানে ঠিক করুন, সবার ফোনে ঠিক তারিখ দেখাবে।':'The app calculates the Hijri date from the Saudi calendar. If the moon sighting in Bangladesh differs by 1–2 days, adjust it here and everyone will see the correct date.',
+'অটো তারিখ:':'Auto date:',
+'এখন দেখাচ্ছে:':'Showing now:',
+
+'− ১ দিন':'− 1 day',
+'+ ১ দিন':'+ 1 day',
+'অটো':'Auto',
+'ঠিক আছে':'OK',
 'জন':'people',
 'এই':'This',
 'খালি':'Empty',
@@ -2623,6 +2659,36 @@ go()})();
    var u=new URL(location.href);u.searchParams.set('_r',Date.now());location.replace(u.toString())}).catch(function(){})}catch(e){}}
  setTimeout(chk,4000);document.addEventListener('visibilitychange',function(){if(!document.hidden)setTimeout(chk,1500)});
  var _om=window.openMenu;if(typeof _om==='function')window.openMenu=function(){var r=_om.apply(this,arguments);try{var m=document.getElementById('mnu');if(m&&!m.querySelector('.bld')){var d=document.createElement('div');d.className='bld';d.style.cssText='text-align:center;color:var(--mute);font-size:12px;padding:12px 0';d.textContent='সংস্করণ: '+B;m.appendChild(d)}}catch(e){}return r};
+})();
+</script>
+<script>
+/* তারিখ কার্ড: ইংরেজি + বাংলা (বাংলাদেশ সংশোধিত) + আরবি/হিজরি (অটো, অ্যাডমিন সংশোধন ±৩ দিন) */
+(function(){
+ var BM=['বৈশাখ','জ্যৈষ্ঠ','আষাঢ়','শ্রাবণ','ভাদ্র','আশ্বিন','কার্তিক','অগ্রহায়ণ','পৌষ','মাঘ','ফাল্গুন','চৈত্র'];
+ var HM=['মুহাররম','সফর','রবিউল আউয়াল','রবিউস সানি','জমাদিউল আউয়াল','জমাদিউস সানি','রজব','শাবান','রমজান','শাওয়াল','জিলকদ','জিলহজ'];
+ var GM=['জানুয়ারি','ফেব্রুয়ারি','মার্চ','এপ্রিল','মে','জুন','জুলাই','আগস্ট','সেপ্টেম্বর','অক্টোবর','নভেম্বর','ডিসেম্বর'];
+ var WD=['রবিবার','সোমবার','মঙ্গলবার','বুধবার','বৃহস্পতিবার','শুক্রবার','শনিবার'];
+ var DAY=86400000;
+ function E(x){return String(x==null?'':x).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}
+ function todayMs(){try{var o={};new Intl.DateTimeFormat('en-CA',{timeZone:'Asia/Dhaka',year:'numeric',month:'2-digit',day:'2-digit'}).formatToParts(new Date()).forEach(function(p){o[p.type]=p.value});if(o.year)return Date.UTC(+o.year,+o.month-1,+o.day)}catch(e){}var n=new Date();return Date.UTC(n.getFullYear(),n.getMonth(),n.getDate())}
+ function leap(y){return (y%4===0&&y%100!==0)||y%400===0}
+ /* বাংলাদেশ সংশোধিত বঙ্গাব্দ: ১৪ এপ্রিল পহেলা বৈশাখ; বৈশাখ–আশ্বিন ৩১, কার্তিক–চৈত্র ৩০, ফাল্গুন ২৯ (লিপ বছরে ৩০) */
+ window.mmBnDate=function(ms){var y=new Date(ms).getUTCFullYear(),Y=ms>=Date.UTC(y,3,14)?y:y-1,idx=Math.round((ms-Date.UTC(Y,3,14))/DAY),L=[31,31,31,31,31,31,30,30,30,30,leap(Y+1)?30:29,30],mi=0;while(mi<11&&idx>=L[mi]){idx-=L[mi];mi++}return {d:idx+1,m:mi,y:Y-593}};
+ function tabular(ms){var dt=new Date(ms),y=dt.getUTCFullYear(),m=dt.getUTCMonth()+1,d=dt.getUTCDate(),a=Math.floor((14-m)/12),yy=y+4800-a,mm=m+12*a-3,jd=d+Math.floor((153*mm+2)/5)+365*yy+Math.floor(yy/4)-Math.floor(yy/100)+Math.floor(yy/400)-32045,l=jd-1948440+10632,n=Math.floor((l-1)/10631);l=l-10631*n+354;var j=Math.floor((10985-l)/5316)*Math.floor((50*l)/17719)+Math.floor(l/5670)*Math.floor((43*l)/15238);l=l-Math.floor((30-j)/15)*Math.floor((17719*j)/50)-Math.floor(j/16)*Math.floor((15238*j)/43)+29;var hm=Math.floor((24*l)/709);return {d:l-Math.floor((709*hm)/24),m:hm-1,y:30*n+j-30}}
+ window.mmHjDate=function(ms){try{var f=new Intl.DateTimeFormat('en-u-ca-islamic-umalqura-nu-latn',{timeZone:'UTC',day:'numeric',month:'numeric',year:'numeric'});if(/islamic/.test(f.resolvedOptions().calendar)){var o={};f.formatToParts(new Date(ms+43200000)).forEach(function(p){o[p.type]=p.value});var y=parseInt(o.year,10),m=parseInt(o.month,10),d=parseInt(o.day,10);if(y>1300&&y<1700&&m>=1&&m<=12&&d>=1)return {d:d,m:m-1,y:y}}}catch(e){}return tabular(ms)};
+ function off(){var o=Math.round(+(profile&&profile.hjOff)||0);return Math.max(-3,Math.min(3,o))}
+ function hs(h){return bn(h.d)+' '+HM[h.m]+' '+bn(h.y)+' হিজরি'}
+ function css(){if(document.getElementById('dtcCss'))return;var st=document.createElement('style');st.id='dtcCss';
+  st.textContent='.dtc{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:10px 12px;margin:12px 0 0}.dtc1{font-weight:700;font-size:14px}.dtc2{display:flex;flex-wrap:wrap;gap:4px 14px;margin-top:6px;font-size:12.5px;color:var(--mute);align-items:center}.dtc2 b{color:var(--ink);font-weight:600}.dtce{border:1px solid var(--line);background:transparent;color:var(--g);border-radius:50%;width:24px;height:24px;font-size:12px;line-height:1;cursor:pointer;padding:0}#md.hjm{position:fixed;inset:0;z-index:30;background:rgba(0,0,0,.5);display:flex;padding:16px;overflow-y:auto}.hjb{background:var(--card);color:var(--ink);width:100%;max-width:420px;margin:auto;border-radius:18px;padding:18px}.hjb h3{margin:0 0 6px;font-size:16px}.hjb p{margin:6px 0;font-size:13px;color:var(--mute);line-height:1.5}.hjr{display:flex;gap:8px;margin-top:12px}.hjr button{flex:1;padding:11px 4px;border-radius:12px;border:1px solid var(--line);background:var(--card);color:var(--ink);font:inherit;font-size:14px;cursor:pointer}.hjr button.p{background:var(--g);color:#fff;border-color:var(--g)}';
+  document.head.appendChild(st)}
+ window.dateCardHTML=function(){css();var t=todayMs(),g=new Date(t),b=mmBnDate(t),o=off(),h=mmHjDate(t+o*DAY);
+  return '<div class="dtc"><div class="dtc1">📅 '+WD[g.getUTCDay()]+', '+bn(g.getUTCDate())+' '+GM[g.getUTCMonth()]+' '+bn(g.getUTCFullYear())+'</div><div class="dtc2"><span>🌙 <b>'+hs(h)+'</b></span><span>🌾 <b>'+bn(b.d)+' '+BM[b.m]+' '+bn(b.y)+' বঙ্গাব্দ</b></span>'+(role==='admin'?'<button class="dtce" aria-label="আরবি তারিখ সংশোধন" onclick="hjEdit()">✏️</button>'+(o?'<span style="font-size:11px">সংশোধিত '+(o>0?'+':'−')+bn(Math.abs(o))+'</span>':''):'')+'</div></div>'};
+ window.hjSet=function(n){if(role!=='admin')return;n=Math.max(-3,Math.min(3,n));profile=Object.assign({},profile,{hjOff:n});save('mm_profile',profile);draw();hjEdit()};
+ window.hjEdit=function(){if(role!=='admin')return;css();cl();var t=todayMs(),o=off(),a=mmHjDate(t),c=mmHjDate(t+o*DAY),d=document.createElement('div');d.id='md';d.className='hjm';
+  d.onclick=function(e){if(e.target===d)d.remove()};
+  d.innerHTML='<div class="hjb"><h3>🌙 আরবি তারিখ সংশোধন</h3><p>অ্যাপ নিজে সৌদি হিসাব থেকে আরবি তারিখ বের করে। বাংলাদেশে চাঁদ দেখা অনুযায়ী ১–২ দিন আলাদা হলে এখানে ঠিক করুন, সবার ফোনে ঠিক তারিখ দেখাবে।</p><p>অটো তারিখ: <b style="color:var(--ink)">'+hs(a)+'</b></p><p>এখন দেখাচ্ছে: <b style="color:var(--ink)">'+hs(c)+'</b>'+(o?' ('+(o>0?'+':'−')+bn(Math.abs(o))+')':'')+'</p><div class="hjr"><button onclick="hjSet('+(o-1)+')"'+(o<=-3?' disabled':'')+'>− ১ দিন</button><button onclick="hjSet(0)">অটো</button><button onclick="hjSet('+(o+1)+')"'+(o>=3?' disabled':'')+'>+ ১ দিন</button></div><div class="hjr"><button class="p" onclick="cl()">ঠিক আছে</button></div></div>';
+  document.body.appendChild(d)};
+ var _n=window.ndbHTML;window.ndbHTML=function(){var h='';try{h=dateCardHTML()}catch(e){}return h+(_n?_n():'')};
 })();
 </script>
 </body>

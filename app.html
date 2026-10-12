@@ -567,7 +567,7 @@ function finV(){const ms=x=>x.filter(e=>e.m===M0),days=Object.keys(at).filter(d=
  '<h3>ফলাফল</h3>'+K('ফলাফল আছে',bn(rl.length)+' জন')+K('পাসের হার',rl.length?bn(Math.round(rl.filter(c=>!c.f).length/rl.length*100))+'%':'—')+
  '<h3>শিক্ষক</h3>'+K('মোট মাসিক বেতন',tk(sum(teachers.map(t=>({a:t.sal}))))),'rep')}
 /* সেটিংস, ব্যাকআপ */
-function setV(){shell('Settings',`${role==='admin'?'<button class="link" onclick="planV()"><span><small>প্ল্যান</small>ট্রায়াল ও মাসিক সাবস্ক্রিপশন (৳৩০০)</span>›</button>':''}<button class="link" onclick="profEdit()"><span><small>মাদ্রাসার তথ্য</small>নাম, লোগো, ঠিকানা ও প্রতিষ্ঠার তারিখ</span>›</button><button class="link" onclick="adminEdit()"><span><small>অ্যাডমিনের তথ্য</small>নাম, ছবি, ফোন ও ইমেইল</span>›</button><button class="link" onclick="tab='nhub';draw()"><span><small>Notification</small>চালু/বন্ধ, টেমপ্লেট, পাঠানো ও ইতিহাস</span>›</button><button class="link" onclick="tab='classFee';draw()"><span><small>মাসিক ফি</small>ফি নির্ধারণ</span>›</button><button class="link" onclick="purgeRollKeys()"><span><small>একবারের কাজ</small>রোল নম্বর দিয়ে অভিভাবক লগইন বন্ধ করুন</span>›</button><div class="act"><button onclick="bk()"><b>💾</b>ব্যাকআপ কপি</button><button onclick="rst()"><b>♻️</b>রিস্টোর</button><button onclick="wipe()"><b><i class=idel></i></b>সব মুছুন</button></div><p class="note">ব্যাকআপ কপি করে নিরাপদ জায়গায় রেখে দিন। "সব মুছুন" চাপলে সব তথ্য চলে যাবে।</p>`,'home');setFilt()}
+function setV(){shell('Settings',`${role==='admin'?'<button class="link" onclick="planV()"><span><small>প্ল্যান</small>ট্রায়াল ও মাসিক সাবস্ক্রিপশন (৳৩০০)</span>›</button>':''}<button class="link" onclick="profEdit()"><span><small>মাদ্রাসার তথ্য</small>নাম, লোগো, ঠিকানা ও প্রতিষ্ঠার তারিখ</span>›</button><button class="link" onclick="adminEdit()"><span><small>অ্যাডমিনের তথ্য</small>নাম, ছবি, ফোন ও ইমেইল</span>›</button><button class="link wgrow" style="display:none" onclick="wgPin()"><span><small>হোম স্ক্রিন উইজেট</small>উইজেট হোম স্ক্রিনে যোগ করুন</span>›</button><button class="link" onclick="tab='nhub';draw()"><span><small>Notification</small>চালু/বন্ধ, টেমপ্লেট, পাঠানো ও ইতিহাস</span>›</button><button class="link" onclick="tab='classFee';draw()"><span><small>মাসিক ফি</small>ফি নির্ধারণ</span>›</button><button class="link" onclick="purgeRollKeys()"><span><small>একবারের কাজ</small>রোল নম্বর দিয়ে অভিভাবক লগইন বন্ধ করুন</span>›</button><div class="act"><button onclick="bk()"><b>💾</b>ব্যাকআপ কপি</button><button onclick="rst()"><b>♻️</b>রিস্টোর</button><button onclick="wipe()"><b><i class=idel></i></b>সব মুছুন</button></div><p class="note">ব্যাকআপ কপি করে নিরাপদ জায়গায় রেখে দিন। "সব মুছুন" চাপলে সব তথ্য চলে যাবে।</p>`,'home');setFilt()}
 function classFeeV(){shell('মাসিক ফি (শ্রেণী অনুযায়ী)',`<div class="row"><div class="info"><b>সাধারণ (ডিফল্ট) ফি</b><small>যে শ্রেণীর নিজস্ব ফি সেট করা নেই, তাদের জন্য প্রযোজ্য</small></div><b>${tk(MF)}</b><button aria-label="পরিবর্তন" onclick="setDefaultFee()">✏️</button></div>`+
  classes.map(c=>`<div class="row"><div class="info"><b>${c}</b><small>বর্তমান ফি: ${tk(classFee[c]!=null&&classFee[c]!==''?classFee[c]:MF)}${classFee[c]!=null&&classFee[c]!==''?'':' (সাধারণ)'}</small></div><button aria-label="পরিবর্তন" onclick="setClassFee('${esc(c)}')">✏️</button></div>`).join(''),'set')}
 function setDefaultFee(){form('সাধারণ (ডিফল্ট) মাসিক ফি',[['n','পরিমাণ (৳)','type=number']],{n:MF},o=>{MF=+o.n||MF;save('mm_mf',MF);draw()})}
@@ -2343,6 +2343,15 @@ var X={
 'নতুন':'New',
 'রবিউল আখির':'Rabi al-Thani','জমাদিউল আখির':'Jumada al-Thani',
 'অ':'A',
+'হোম স্ক্রিন উইজেট':'Home screen widget',
+'উইজেট হোম স্ক্রিনে যোগ করুন':'Add the widget to your home screen',
+'হোম স্ক্রিনে উইজেট যোগ করুন':'Add the widget to your home screen',
+'তারিখ ও দ্রুত বোতাম সরাসরি হোম স্ক্রিনে':'Dates and quick buttons right on your home screen',
+'ফোনের বার্তায় "যোগ করুন" চাপুন':'Tap "Add" in the phone prompt',
+'১. ফোনের হোম স্ক্রিনের ফাঁকা জায়গায় আঙুল চেপে ধরুন।':'1. Press and hold an empty spot on your home screen.',
+'উইজেট':'Widgets',
+'৩. তালিকা থেকে':'3. From the list pick',
+'বেছে হোম স্ক্রিনে বসান।':'and place it on the home screen.',
 'আরবি তারিখ মাগরিবের সময় পরের দিনে বদলায়। অ্যাপ নিজে সৌদি হিসাব থেকে তারিখ বের করে। বাংলাদেশে চাঁদ দেখা অনুযায়ী ১–২ দিন আলাদা হলে এখানে ঠিক করুন, সবার ফোনে ঠিক তারিখ দেখাবে।':'The Hijri date changes to the next day at Maghrib. The app calculates it from the Saudi calendar. If the moon sighting in Bangladesh differs by 1–2 days, adjust it here and everyone will see the correct date.',
 'আজ মাগরিব:':'Maghrib today:',
 'প্রতিষ্ঠানের অবস্থান ধরে':'based on the madrasa location',
@@ -2736,10 +2745,23 @@ go()})();
    var ok={students:1,catt:1,fees:1,dues:1,set:1,hwSet:1,tself:1,notif:1,notices:1};
    if(!ok[g])return;if(role==='teacher'&&typeof tabOK==='function'&&!tabOK(g))return;
    tab=g;draw()}catch(e){}};
- var _d=window.draw;window.draw=function(){var r=_d.apply(this,arguments);setTimeout(function(){wgSync(false);takePending()},500);return r};
+ /* হোম স্ক্রিনে উইজেট যোগ করার অপশন (শুধু APK-তে) */
+ var wst={known:false,has:false,sup:false},wasked=false;
+ function wgRefresh(cb){var p=P();if(!p||!p.status)return;try{p.status().then(function(r){wst={known:true,has:!!(r&&r.has),sup:!!(r&&r.supported)};if(cb)cb()}).catch(function(){})}catch(e){}}
+ function wgDismissed(){try{return !!localStorage.getItem('mm_wg_x')}catch(e){return false}}
+ function say(m){if(typeof toast==='function')toast(m);else alert(m)}
+ window.wgX=function(){try{localStorage.setItem('mm_wg_x','1')}catch(e){}draw()};
+ window.wgHelp=function(){box('<h3 style="margin:0 0 6px">📱 হোম স্ক্রিনে উইজেট যোগ করুন</h3><p style="line-height:1.7;margin:0">১. ফোনের হোম স্ক্রিনের ফাঁকা জায়গায় আঙুল চেপে ধরুন।<br>২. <b>উইজেট</b> (Widgets) চাপুন।<br>৩. তালিকা থেকে <b>Madrasa Management</b> বেছে হোম স্ক্রিনে বসান।</p>')};
+ window.wgPin=function(){var p=P();if(!p||!p.pin){wgHelp();return}try{p.pin().then(function(r){if(r&&r.ok){say('ফোনের বার্তায় "যোগ করুন" চাপুন');setTimeout(function(){wgRefresh(function(){draw()})},5000)}else wgHelp()}).catch(function(){wgHelp()})}catch(e){wgHelp()}};
+ function wgBanner(){if(!P()||!wst.known||wst.has||wgDismissed())return '';
+  if(!document.getElementById('wgCss')){var st=document.createElement('style');st.id='wgCss';st.textContent='.wgb{display:flex;align-items:center;gap:10px;background:var(--card);border:1px solid var(--line);border-radius:16px;padding:10px 12px;margin:12px 0}.wgi{font-size:24px}.wgt{flex:1;min-width:0}.wgt b{display:block;font-size:14px}.wgt small{display:block;color:var(--mute);font-size:12px;margin-top:2px}.wgb button{background:var(--g);color:#fff;border:0;border-radius:10px;padding:8px 12px;font:inherit;font-size:13px;cursor:pointer;white-space:nowrap}.wgb a{color:var(--mute);padding:4px 6px;cursor:pointer}';document.head.appendChild(st)}
+  return '<div class="wgb"><span class="wgi">📱</span><div class="wgt"><b>হোম স্ক্রিনে উইজেট যোগ করুন</b><small>তারিখ ও দ্রুত বোতাম সরাসরি হোম স্ক্রিনে</small></div><button onclick="wgPin()">যোগ করুন</button><a onclick="wgX()" aria-label="বন্ধ">✕</a></div>'}
+ function wgRows(){try{var on=!!(P()&&wst.known);[].forEach.call(document.querySelectorAll('.wgrow'),function(e){e.style.display=on?'':'none'})}catch(e){}}
+ var _nd=window.ndbHTML;window.ndbHTML=function(){var h=_nd?_nd():'';try{h+=wgBanner()}catch(e){}return h};
+ var _d=window.draw;window.draw=function(){var r=_d.apply(this,arguments);wgRows();setTimeout(function(){wgSync(false);takePending();wgRows();if(P()&&role&&!wasked){wasked=true;wgRefresh(function(){draw()})}},500);return r};
  /* লগআউট হলে উইজেটের তথ্য মুছে ফেলা (গোপনীয়তা) — ২.৫ সেকেন্ড পরপর দেখা হয় */
  setInterval(function(){try{var p=P();if(p&&!role&&seen){seen='';last='';p.clear()}}catch(e){}takePending()},2500);
- document.addEventListener('visibilitychange',function(){if(document.hidden)wgSync(true);else takePending()});
+ document.addEventListener('visibilitychange',function(){if(document.hidden)wgSync(true);else{takePending();if(wst.known)wgRefresh(function(){wgRows()})}});
 })();
 </script>
 </body>

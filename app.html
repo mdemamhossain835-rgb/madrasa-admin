@@ -500,7 +500,7 @@ const R_=(av,t,sub,r)=>`<div class="row"><div class="av">${av}</div><div class="
 const K=(a,b)=>`<div class="link"><span>${a}</span><b>${b}</b></div>`;
 const _mb=msgBlock;msgBlock=function(s){return role==='guardian'?'':_mb(s)};
 function box(h){cl();const d=document.createElement('div');d.id='md';d.style.cssText='position:fixed;inset:0;background:#0009;z-index:20;display:flex;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:16px';d.innerHTML=`<div style="background:var(--card);width:100%;max-width:440px;border-radius:18px;padding:18px;margin:auto">${h}<div style="display:flex;gap:10px;margin-top:14px"><button class="tile" style="background:var(--g);flex:1;padding:12px" onclick="print()">প্রিন্ট</button><button class="tile" style="background:#5b6b7d;flex:1;padding:12px" onclick="cl()">বন্ধ করুন</button></div></div>`;document.body.appendChild(d)}
-function draw(){const R={home:home,students:stu,teachers:teachV,fees:fees,notices:noteV,prof:profV,child:child,dues:duesV,rcpt:rcptV,inc:incV,exp:expV,res:resV,card:cardV,att:attV,rep:repV,set:setV,classes:classesV,catt:cattV,feePick:feePick,homev:homeV,tatt:tattV,srep:srepV,chist:chist,shist:shist,trep:trepV,thist:thist,fin:finV,scal:scalV,tcal:tcalV,hwSet:hwSet,contact:contactV,aprof:aprof,classFee:classFeeV,notif:notifV,nhub:nhubV,tqs:tqsV,tqrep:tqrepV,tself:tselfV,nset:nsetV,sset:ssetV,nlog:nlogV,nann:nannV,rtnv:rtnvV};
+function draw(){const R={home:home,students:stu,teachers:teachV,fees:fees,notices:noteV,prof:profV,child:child,dues:duesV,rcpt:rcptV,inc:incV,exp:expV,res:resV,card:cardV,att:attV,rep:repV,set:setV,classes:classesV,catt:cattV,feePick:feePick,homev:homeV,tatt:tattV,srep:srepV,chist:chist,shist:shist,trep:trepV,thist:thist,fin:finV,scal:scalV,tcal:tcalV,hwSet:hwSet,contact:contactV,aprof:aprof,classFee:classFeeV,notif:notifV,nhub:nhubV,tqs:tqsV,tqrep:tqrepV,tself:tselfV,nset:nsetV,sset:ssetV,nlog:nlogV,nann:nannV,rtnv:rtnvV,bell:bellV};
  if(role==='teacher'&&!tabOK(tab))tab='home';
  if(role==='guardian'&&!['child','notices','fees','res','att','prof','homev','contact','notif','rtnv'].includes(tab))tab='child';
  (R[tab]||home)()}
@@ -567,7 +567,7 @@ function finV(){const ms=x=>x.filter(e=>e.m===M0),days=Object.keys(at).filter(d=
  '<h3>ফলাফল</h3>'+K('ফলাফল আছে',bn(rl.length)+' জন')+K('পাসের হার',rl.length?bn(Math.round(rl.filter(c=>!c.f).length/rl.length*100))+'%':'—')+
  '<h3>শিক্ষক</h3>'+K('মোট মাসিক বেতন',tk(sum(teachers.map(t=>({a:t.sal}))))),'rep')}
 /* সেটিংস, ব্যাকআপ */
-function setV(){shell('Settings',`${role==='admin'?'<button class="link" onclick="planV()"><span><small>প্ল্যান</small>ট্রায়াল ও মাসিক সাবস্ক্রিপশন (৳৩০০)</span>›</button>':''}<button class="link" onclick="profEdit()"><span><small>মাদ্রাসার তথ্য</small>নাম, লোগো, ঠিকানা ও প্রতিষ্ঠার তারিখ</span>›</button><button class="link" onclick="adminEdit()"><span><small>অ্যাডমিনের তথ্য</small>নাম, ছবি, ফোন ও ইমেইল</span>›</button><button class="link wgrow" style="display:none" onclick="wgPin()"><span><small>হোম স্ক্রিন উইজেট</small>উইজেট হোম স্ক্রিনে যোগ করুন</span>›</button><button class="link" onclick="tab='nhub';draw()"><span><small>Notification</small>চালু/বন্ধ, টেমপ্লেট, পাঠানো ও ইতিহাস</span>›</button><button class="link" onclick="tab='classFee';draw()"><span><small>মাসিক ফি</small>ফি নির্ধারণ</span>›</button><button class="link" onclick="purgeRollKeys()"><span><small>একবারের কাজ</small>রোল নম্বর দিয়ে অভিভাবক লগইন বন্ধ করুন</span>›</button><div class="act"><button onclick="bk()"><b>💾</b>ব্যাকআপ কপি</button><button onclick="rst()"><b>♻️</b>রিস্টোর</button><button onclick="wipe()"><b><i class=idel></i></b>সব মুছুন</button></div><p class="note">ব্যাকআপ কপি করে নিরাপদ জায়গায় রেখে দিন। "সব মুছুন" চাপলে সব তথ্য চলে যাবে।</p>`,'home');setFilt()}
+function setV(){shell('Settings',`${role==='admin'?'<button class="link" onclick="planV()"><span><small>প্ল্যান</small>ট্রায়াল ও মাসিক সাবস্ক্রিপশন (৳৩০০)</span>›</button>':''}<button class="link" onclick="profEdit()"><span><small>মাদ্রাসার তথ্য</small>নাম, লোগো, ঠিকানা ও প্রতিষ্ঠার তারিখ</span>›</button><button class="link" onclick="adminEdit()"><span><small>অ্যাডমিনের তথ্য</small>নাম, ছবি, ফোন ও ইমেইল</span>›</button><button class="link wgrow" style="display:none" onclick="wgPin()"><span><small>হোম স্ক্রিন উইজেট</small>উইজেট হোম স্ক্রিনে যোগ করুন</span>›</button>${role==='admin'||role==='teacher'?'<button class="link" onclick="tab=\'bell\';draw()"><span><small>ঘণ্টা</small>পিরিয়ডের ঘণ্টার সময়সূচি</span>›</button>':''}<button class="link" onclick="tab='nhub';draw()"><span><small>Notification</small>চালু/বন্ধ, টেমপ্লেট, পাঠানো ও ইতিহাস</span>›</button><button class="link" onclick="tab='classFee';draw()"><span><small>মাসিক ফি</small>ফি নির্ধারণ</span>›</button><button class="link" onclick="purgeRollKeys()"><span><small>একবারের কাজ</small>রোল নম্বর দিয়ে অভিভাবক লগইন বন্ধ করুন</span>›</button><div class="act"><button onclick="bk()"><b>💾</b>ব্যাকআপ কপি</button><button onclick="rst()"><b>♻️</b>রিস্টোর</button><button onclick="wipe()"><b><i class=idel></i></b>সব মুছুন</button></div><p class="note">ব্যাকআপ কপি করে নিরাপদ জায়গায় রেখে দিন। "সব মুছুন" চাপলে সব তথ্য চলে যাবে।</p>`,'home');setFilt()}
 function classFeeV(){shell('মাসিক ফি (শ্রেণী অনুযায়ী)',`<div class="row"><div class="info"><b>সাধারণ (ডিফল্ট) ফি</b><small>যে শ্রেণীর নিজস্ব ফি সেট করা নেই, তাদের জন্য প্রযোজ্য</small></div><b>${tk(MF)}</b><button aria-label="পরিবর্তন" onclick="setDefaultFee()">✏️</button></div>`+
  classes.map(c=>`<div class="row"><div class="info"><b>${c}</b><small>বর্তমান ফি: ${tk(classFee[c]!=null&&classFee[c]!==''?classFee[c]:MF)}${classFee[c]!=null&&classFee[c]!==''?'':' (সাধারণ)'}</small></div><button aria-label="পরিবর্তন" onclick="setClassFee('${esc(c)}')">✏️</button></div>`).join(''),'set')}
 function setDefaultFee(){form('সাধারণ (ডিফল্ট) মাসিক ফি',[['n','পরিমাণ (৳)','type=number']],{n:MF},o=>{MF=+o.n||MF;save('mm_mf',MF);draw()})}
@@ -1115,12 +1115,12 @@ async function pushFees(arr){const nw=arr.filter(p=>!feeKnown.has(p.id)),U={},dl
  nw.forEach(p=>notifyFee(p).catch(()=>{}))}
 /* ===== নোটিফিকেশন ও SMS ===== */
 const xe=s=>String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-const DEF={on:{attendance:1,teacherAtt:1,fee:1,announce:1,message:1,sim:0},
+const DEF={on:{attendance:1,teacherAtt:1,fee:1,announce:1,message:1,sim:0},bell:{on:0,days:'0,1,2,3,4,6',list:[{t:'09:00',k:'s'},{t:'10:00',k:'p'},{t:'11:00',k:'p'},{t:'12:00',k:'p'},{t:'13:00',k:'e'}]},
  tpl:{attendance:'আলহামদুলিল্লাহ, আপনার সন্তান {studentName} আজ {time} মাদ্রাসায় উপস্থিত হয়েছে।',
   fee:'আলহামদুলিল্লাহ, আপনার সন্তান {studentName}-এর {month} মাসের {feeType} ৳{amount} সফলভাবে গ্রহণ করা হয়েছে।',
   teacherAtt:'আলহামদুলিল্লাহ, আপনার হাজিরা সফলভাবে গ্রহণ করা হয়েছে। সময়: {time}'}};
 let ncfg=JSON.parse(JSON.stringify(DEF)),nlist=[],nlogL=[],nunread=0;const feeKnown=new Set();Object.defineProperty(window,'__ncfgOn',{get:function(){return ncfg&&ncfg.on},configurable:true});
-const mergeCfg=v=>{const d=JSON.parse(JSON.stringify(DEF));if(v)['on','tpl'].forEach(g=>Object.assign(d[g],v[g]||{}));return d};
+const mergeCfg=v=>{const d=JSON.parse(JSON.stringify(DEF));if(v)['on','tpl'].forEach(g=>Object.assign(d[g],v[g]||{}));if(v&&v.bell){const b=v.bell;d.bell={on:b.on?1:0,days:typeof b.days==='string'?b.days:d.bell.days,list:Object.values(b.list||{}).filter(x=>x&&/^\d{2}:\d{2}$/.test(x.t)).sort((x,y)=>x.t<y.t?-1:x.t>y.t?1:0)}}return d};
 const fill=(t,v)=>String(t).replace(/\{(\w+)\}/g,(m,k)=>v[k]!=null?v[k]:m);
 const bTime=d=>{const hh=d.getHours(),p=hh<4?'রাত':hh<12?'সকাল':hh<15?'দুপুর':hh<18?'বিকাল':hh<20?'সন্ধ্যা':'রাত';return p+' '+bn(hh%12||12)+':'+bn(String(d.getMinutes()).padStart(2,'0'))+' মিনিটে'};
 const KT={attendance:'হাজিরা',fee:'ফি পরিশোধ',teacherAtt:'হাজিরা',announce:'ঘোষণা',message:'মেসেজ'};
@@ -1199,6 +1199,49 @@ window.ntgl=(g,k)=>{ncfg[g][k]=ncfg[g][k]?0:1;saveCfg()};
 window.tplEdit=k=>form('মেসেজ টেমপ্লেট',[['n','টেমপ্লেট (ভেরিয়েবল: {studentName} {time} {month} {amount} {feeType} {date} {teacherName})']],{n:ncfg.tpl[k]},o=>{ncfg.tpl[k]=o.n;saveCfg()});
 window.nsetV=function(){const L=[['attendance','ছাত্রের হাজিরা নোটিফিকেশন'],['teacherAtt','শিক্ষকের হাজিরা নোটিফিকেশন'],['fee','ফি পরিশোধ নোটিফিকেশন'],['announce','সাধারণ ঘোষণা নোটিফিকেশন'],['sim','📱 SIM দিয়ে SMS (হাজিরার পর অনুপস্থিত/দেরি ছাত্রের অভিভাবককে)']],T=[['attendance','ছাত্রের হাজিরা'],['fee','ফি পরিশোধ'],['teacherAtt','শিক্ষকের হাজিরা']];
  shell('Notification Settings',L.map(x=>`<div class="row"><div class="info"><b>${x[1]}</b></div>${sw(ncfg.on[x[0]],`ntgl('on','${x[0]}')`)}</div>`).join('')+'<h3>মেসেজ টেমপ্লেট</h3>'+T.map(x=>`<div class="row"><div class="info"><b>${x[1]}</b><small>${xe(ncfg.tpl[x[0]])}</small></div><button aria-label="সম্পাদনা" onclick="tplEdit('${x[0]}')">✏️</button></div>`).join(''),'nhub')};
+
+/* ===== পিরিয়ডের ঘণ্টার সময়সূচি (config/notif/bell) ===== */
+window.bellKinds=[['s','স্কুল শুরুর ঘণ্টা','🔔'],['p','পিরিয়ড শেষের ঘণ্টা','⏰'],['e','ছুটির ঘণ্টা','🏫']];
+const bellKL=k=>window.bellKinds.find(x=>x[0]===k)||window.bellKinds[1];
+const bellTm=t=>{const a=String(t).split(':'),h=+a[0],w=h<4?'রাত':h<6?'ভোর':h<12?'সকাল':h<15?'দুপুর':h<18?'বিকাল':h<20?'সন্ধ্যা':'রাত';return bn(h%12||12)+':'+bn(a[1])+' '+w};
+window.bellTgl=()=>{ncfg.bell.on=ncfg.bell.on?0:1;saveCfg()};
+window.bellDay=d=>{if(role!=='admin')return;const a=new Set(ncfg.bell.days.split(',').filter(x=>x!=='').map(Number));if(a.has(d))a.delete(d);else a.add(d);if(!a.size){alert('কমপক্ষে একটি দিন চালু রাখুন');return}ncfg.bell.days=[...a].sort().join(',');saveCfg()};
+window.bellEdit=i=>{const L=ncfg.bell.list,e=i>=0?L[i]:{t:'',k:'p'};
+ form(i>=0?'ঘণ্টা সম্পাদনা':'নতুন ঘণ্টা',[['tm','সময় (নির্বাচন করতে চাপুন)','type=time'],['n','ঘণ্টার ধরন','select:'+window.bellKinds.map(x=>x[1]).join(',')]],{tm:e.t,n:bellKL(e.k)[1]},o=>{
+  if(!/^\d{2}:\d{2}$/.test(o.tm||'')){alert('সময় বাছাই করুন');return}
+  const k=(window.bellKinds.find(x=>x[1]===o.n)||window.bellKinds[1])[0];
+  if(L.some((x,j)=>j!==i&&x.t===o.tm)){alert('এই সময়ে আগেই একটি ঘণ্টা আছে');return}
+  const nl=L.slice();if(i>=0)nl[i]={t:o.tm,k:k};else nl.push({t:o.tm,k:k});nl.sort((x,y)=>x.t<y.t?-1:x.t>y.t?1:0);ncfg.bell.list=nl;saveCfg()})};
+window.bellDel=i=>{if(!confirm('এই ঘণ্টাটি মুছবেন?'))return;ncfg.bell.list.splice(i,1);saveCfg()};
+
+const bellP=()=>{try{return window.__mmP?window.__mmP():null}catch(e){return null}};
+window.__bellNat=null;
+window.bellPush=function(){const p=bellP();if(!p||!p.bellSet||(role!=='admin'&&role!=='teacher'))return;try{const B=ncfg.bell,d=JSON.stringify({on:B.on?1:0,days:B.days,list:B.list.map(x=>({t:x.t,k:x.k}))});if(d===window.__bellLast)return;window.__bellLast=d;p.bellSet({data:d}).then(()=>window.bellNatLoad(true)).catch(()=>{})}catch(e){}};
+window.bellNatLoad=function(force){const p=bellP();if(!p)return;if(!p.bellInfo){window.__bellNat='old';return}try{p.bellInfo().then(r=>{const j=JSON.stringify(r);if(force||j!==window.__bellNatS){window.__bellNatS=j;window.__bellNat=r;if(tab==='bell')redraw()}}).catch(()=>{if(window.__bellNat!=='old'){window.__bellNat='old';if(tab==='bell')redraw()}})}catch(e){}};
+window.bellLoc=function(){const p=bellP(),n=window.__bellNat;if(!p||!n||n==='old')return;p.bellLocal({on:!n.local}).then(()=>window.bellNatLoad(true)).catch(()=>{})};
+window.bellTest=function(k){const p=bellP();if(p&&p.bellTest)p.bellTest({k:k}).catch(()=>{})};
+window.bellBat=function(){const p=bellP();if(p&&p.bellBattery)p.bellBattery().catch(()=>{})};
+window.bellExa=function(){const p=bellP();if(p&&p.bellExact)p.bellExact().catch(()=>{})};
+document.addEventListener('visibilitychange',()=>{if(!document.hidden&&tab==='bell')window.bellNatLoad(true)});
+const bellNext=(ms,k)=>{const d=new Date(ms),n=new Date(),p2=x=>String(x).padStart(2,'0'),a=new Date(n.getFullYear(),n.getMonth(),n.getDate()).getTime(),b=new Date(d.getFullYear(),d.getMonth(),d.getDate()).getTime(),df=Math.round((b-a)/86400000),dn=['রবি','সোম','মঙ্গল','বুধ','বৃহঃ','শুক্র','শনি'];return (df===0?'আজ':df===1?'আগামীকাল':dn[d.getDay()]+'বার')+' '+bellTm(p2(d.getHours())+':'+p2(d.getMinutes()))+' ('+bellKL(k===2?'e':'p')[1]+')'};
+
+const nativeBlock=B=>{if(!bellP())return '';const nat=window.__bellNat,H='<h3>এই ফোনের সেটিং</h3>';
+ if(nat===null){window.bellNatLoad();return H+'<p class="note">লোড হচ্ছে…</p>'}
+ if(nat==='old')return H+'<p class="note" style="text-align:left">ঘণ্টা বাজাতে অ্যাপের নতুন সংস্করণ (APK) ইনস্টল করতে হবে।</p>';
+ return H+`<div class="row"><div class="info"><b>এই ফোনে ঘণ্টা বাজবে</b><small>বন্ধ করলে শুধু এই ফোনে বাজবে না</small></div>${sw(nat.local,'bellLoc()')}</div>`
+  +(nat.local&&B.on&&nat.next?`<p class="note" style="text-align:left">পরের ঘণ্টা: ${bellNext(nat.next,nat.nextK)}</p>`:(nat.local&&B.on?'<p class="note" style="text-align:left">পরের কোনো ঘণ্টা নেই (সময় বা দিন যোগ করুন)।</p>':''))
+  +(!nat.battery?`<div class="row" style="display:block"><b>⚠️ ব্যাটারি সীমা আছে</b><small style="display:block;color:var(--mute)">কিছু ফোন অ্যাপ বন্ধ থাকলে ঘণ্টা আটকে দেয়। নিচের বোতামে চেপে "Allow/অনুমতি দিন" চাপুন।</small><button ${btn} onclick="bellBat()">🔋 ব্যাটারি সীমা তুলুন</button></div>`:'')
+  +(!nat.exact?`<div class="row" style="display:block"><b>⚠️ সঠিক সময়ে অ্যালার্মের অনুমতি নেই</b><small style="display:block;color:var(--mute)">ঘণ্টা কয়েক মিনিট দেরিতে বাজতে পারে। নিচের বোতামে চেপে অনুমতি চালু করুন।</small><button ${btn} onclick="bellExa()">⏰ অনুমতি দিন</button></div>`:'')
+  +`<button ${btn} onclick="bellTest(1)">🔔 সাধারণ ঘণ্টা শুনুন</button><button ${btn} onclick="bellTest(2)">🏫 ছুটির ঘণ্টা শুনুন</button>`};
+window.bellV=function(){const A=role==='admin',B=ncfg.bell,L=B.list,order=[6,0,1,2,3,4,5],dn=['রবি','সোম','মঙ্গল','বুধ','বৃহঃ','শুক্র','শনি'],on=new Set(B.days.split(',').filter(x=>x!=='').map(Number));
+ shell('ঘণ্টার সময়সূচি',
+  `<div class="row"><div class="info"><b>পিরিয়ডের ঘণ্টা</b><small>${A?'চালু থাকলে নিচের সময়ে সবার ফোনে ঘণ্টা বাজবে':'এই সময়সূচি অ্যাডমিন ঠিক করেন'}</small></div>${A?sw(B.on,'bellTgl()'):`<b>${B.on?'চালু':'বন্ধ'}</b>`}</div>`
+  +'<h3>যেসব দিন বাজবে</h3><div style="display:flex;gap:8px;flex-wrap:wrap;padding-bottom:4px">'+order.map(d=>`<button class="chip" style="min-width:auto;white-space:nowrap;${chipS(on.has(d))}" ${A?`onclick="bellDay(${d})"`:''}>${dn[d]}</button>`).join('')+'</div>'
+  +'<h3>ঘণ্টার সময়</h3>'
+  +(L.map((e,i)=>{const k=bellKL(e.k);return `<div class="row"><div class="av">${k[2]}</div><div class="info"><b>${bellTm(e.t)}</b><small>${k[1]}</small></div>${A?`<button aria-label="সম্পাদনা" onclick="bellEdit(${i})">✏️</button><button aria-label="মুছুন" onclick="bellDel(${i})"><i class=idel></i></button>`:''}</div>`}).join('')||'<p class="note">কোনো ঘণ্টা যোগ করা হয়নি।</p>')
+  +(A?`<button ${btn} onclick="bellEdit(-1)">＋ ঘণ্টা যোগ করুন</button>`:'')
+  +nativeBlock(B)
+  +'<p class="note" style="margin-top:12px">সবার ফোনে একই সময়ে ঘণ্টা বাজে। অ্যাডমিন সময় বদলালে প্রতিটি ফোনে অ্যাপ একবার খুললে নতুন সময় পৌঁছায়।</p>','set')};
 window.ssetV=function(){tab='set';draw()};
 /* মোছা: এডমিন/শিক্ষক মুছলে সব প্রাপকের কপি+গ্রুপ+লগ মুছে যায়; অভিভাবক মুছলে শুধু নিজের কপি মুছে যায় */
 const purging=new Set();
@@ -1243,7 +1286,7 @@ window.annForm=function(){const T=role==='teacher',mc=T?window.tClasses(myTeache
 /* লিসেনার */
 function listen2(){const er=e=>console.error(e),on=(r,f)=>unsub.push(onValue(r,f,er)),qN=p=>query(R(p),orderByChild('ts'),limitToLast(60));
  const nrebuild=window.nrebuild=()=>{const v=nraw;nlist=Object.keys(v).map(k=>Object.assign({id:k},v[k])).filter(n=>n.ts>=nCut()).sort((a,b)=>b.ts-a.ts);if(role==='guardian'){if(nSeen){nlist.forEach(n=>{if(!nSeen.has(n.id)&&!n.read)sysAlert(n)})}nSeen=new Set(nlist.map(n=>n.id))}nunread=nlist.filter(n=>!n.read).length;redraw()};const onNList=sn=>{nraw=sn.val()||{};nrebuild()};
- const onCfg=sn=>{ncfg=mergeCfg(sn.val());if(tab==='nset'||tab==='sset')redraw()};
+ const onCfg=sn=>{ncfg=mergeCfg(sn.val());if(tab==='nset'||tab==='sset'||tab==='bell')redraw();try{bellPush()}catch(e){}};
  on(R('config/fees'),sn=>{const v=sn.val();if(v){if(v.MF!=null)MF=v.MF;if(v.classFee)classFee=v.classFee;redraw()}});
  setTimeout(()=>{window.expireOld();window.hhExpire()},2500);
  if(role==='guardian'){on(R('feesByStudent/'+myChild),onFees);on(qN('notifications/guardian/'+myChild),onNList);nSeen=null}
@@ -2729,6 +2772,7 @@ go()})();
 (function(){
  var pl=null,seen='',busy=false,last='',lastT=0;
  function P(){if(pl)return pl;try{var C=window.Capacitor;if(C&&C.registerPlugin&&(!C.isPluginAvailable||C.isPluginAvailable('WidgetBridge')))pl=C.registerPlugin('WidgetBridge');else if(C&&C.Plugins&&C.Plugins.WidgetBridge)pl=C.Plugins.WidgetBridge}catch(e){}return pl}
+ window.__mmP=P;
  function sum(l){return l.reduce(function(a,x){return a+(+x.a||0)},0)}
  window.wgBuild=function(){var o={v:1,role:role,name:(profile&&profile.name)||'',hj:+(profile&&profile.hjOff)||0};
   if(profile&&+profile.lat&&+profile.lng){o.lat=+profile.lat;o.lng=+profile.lng}
@@ -2761,7 +2805,7 @@ go()})();
  var _nd=window.ndbHTML;window.ndbHTML=function(){var h=_nd?_nd():'';try{h+=wgBanner()}catch(e){}return h};
  var _d=window.draw;window.draw=function(){var r=_d.apply(this,arguments);wgRows();setTimeout(function(){wgSync(false);takePending();wgRows();if(P()&&role&&!wasked){wasked=true;wgRefresh(function(){draw()})}},500);return r};
  /* লগআউট হলে উইজেটের তথ্য মুছে ফেলা (গোপনীয়তা) — ২.৫ সেকেন্ড পরপর দেখা হয় */
- setInterval(function(){try{var p=P();if(p&&!role&&seen){seen='';last='';p.clear()}}catch(e){}takePending()},2500);
+ setInterval(function(){try{var p=P();if(p&&!role&&seen){seen='';last='';p.clear();try{if(p.bellClear)p.bellClear().catch(function(){})}catch(e2){}window.__bellLast=''}}catch(e){}takePending()},2500);
  document.addEventListener('visibilitychange',function(){if(document.hidden)wgSync(true);else{takePending();if(wst.known)wgRefresh(function(){wgRows()})}});
 })();
 </script>

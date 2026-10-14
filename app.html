@@ -1222,6 +1222,8 @@ window.bellPush=function(){const p=bellP();if(!p||!p.bellSet||(role!=='admin'&&r
 const bellRe=()=>{const y=window.scrollY;draw();window.scrollTo(0,y);requestAnimationFrame(()=>window.scrollTo(0,y))};
 window.bellNatLoad=function(force){const p=bellP();if(!p)return;if(!p.bellInfo){window.__bellNat='old';return}try{p.bellInfo().then(r=>{const j=JSON.stringify(r);if(force||j!==window.__bellNatS){window.__bellNatS=j;window.__bellNat=r;if(tab==='bell')bellRe()}}).catch(()=>{if(window.__bellNat!=='old'){window.__bellNat='old';if(tab==='bell')bellRe()}})}catch(e){}};
 window.bellLoc=function(){const p=bellP(),n=window.__bellNat;if(!p||!n||n==='old')return;p.bellLocal({on:!n.local}).then(()=>window.bellNatLoad(true)).catch(()=>{})};
+window.bellFgTgl=function(){const p=bellP(),n=window.__bellNat;if(!p||!n||n==='old'||!p.bellFg)return;p.bellFg({on:!n.fg}).then(()=>window.bellNatLoad(true)).catch(()=>{})};
+window.bellNotif=function(){const p=bellP();if(p&&p.bellNotifAsk)p.bellNotifAsk().then(()=>setTimeout(()=>window.bellNatLoad(true),1500)).catch(()=>{})};
 window.bellTest=function(k,n){const p=bellP();if(p&&p.bellTest)p.bellTest({k:k,n:n||3}).catch(()=>{})};
 window.bellBat=function(){const p=bellP();if(p&&p.bellBattery)p.bellBattery().catch(()=>{})};
 window.bellExa=function(){const p=bellP();if(p&&p.bellExact)p.bellExact().catch(()=>{})};
@@ -1232,6 +1234,8 @@ const nativeBlock=B=>{if(!bellP())return '';const nat=window.__bellNat,H='<h3>�
  if(nat===null){window.bellNatLoad();return H+'<p class="note">লোড হচ্ছে…</p>'}
  if(nat==='old')return H+'<p class="note" style="text-align:left">ঘণ্টা বাজাতে অ্যাপের নতুন সংস্করণ (APK) ইনস্টল করতে হবে।</p>';
  return H+`<div class="row"><div class="info"><b>এই ফোনে ঘণ্টা বাজবে</b><small>বন্ধ করলে শুধু এই ফোনে বাজবে না</small></div>${sw(nat.local,'bellLoc()')}</div>`
+  +(typeof nat.fg==='boolean'&&nat.local?`<div class="row"><div class="info"><b>ঘণ্টা সবসময় চালু রাখুন</b><small>নোটিফিকেশন বারে ছোট একটা বার্তা থাকবে। এতে রিসেন্ট অ্যাপস থেকে সরালেও ঘণ্টা বাজবে।</small></div>${sw(nat.fg,'bellFgTgl()')}</div>`:'')
+  +(typeof nat.fg==='boolean'&&nat.local&&nat.fg&&nat.notif===false?`<div class="row" style="display:block"><b>⚠️ নোটিফিকেশনের অনুমতি নেই</b><small style="display:block;color:var(--mute)">ওই ছোট বার্তা দেখাতে ফোন অনুমতি চায়। না দিলে কিছু ফোনে সরালে ঘণ্টা বন্ধ হয়ে যেতে পারে।</small><button ${btn} onclick="bellNotif()">✅ অনুমতি দিন</button></div>`:'')
   +(nat.local&&B.on&&nat.next?`<p class="note" style="text-align:left">পরের ঘণ্টা: ${bellNext(nat.next,nat.nextK,nat.nextN)}</p>`:(nat.local&&B.on?'<p class="note" style="text-align:left">পরের কোনো ঘণ্টা নেই (সময় বা দিন যোগ করুন)।</p>':''))
   +(nat.battery?`<div class="row" style="display:block"><b>🔋 ব্যাটারি সীমা: তোলা আছে ✅</b><small style="display:block;color:var(--mute)">অ্যাপ বন্ধ থাকলেও ঘণ্টা বাজবে। তবু না বাজলে ফোনের Settings → Apps → এই অ্যাপ → Battery/Autostart-এ গিয়ে "No restrictions" বা Autostart চালু করুন।</small></div>`:`<div class="row" style="display:block"><b>🔋 ব্যাটারি সীমা আছে ⚠️</b><small style="display:block;color:var(--mute)">কিছু ফোন অ্যাপ বন্ধ থাকলে ঘণ্টা আটকে দেয়। নিচের বোতামে চেপে "Allow/অনুমতি দিন" চাপুন।</small><button ${btn} onclick="bellBat()">🔋 ব্যাটারি সীমা তুলুন</button></div>`)
   +(!nat.exact?`<div class="row" style="display:block"><b>⚠️ সঠিক সময়ে অ্যালার্মের অনুমতি নেই</b><small style="display:block;color:var(--mute)">ঘণ্টা কয়েক মিনিট দেরিতে বাজতে পারে। নিচের বোতামে চেপে অনুমতি চালু করুন।</small><button ${btn} onclick="bellExa()">⏰ অনুমতি দিন</button></div>`:'')

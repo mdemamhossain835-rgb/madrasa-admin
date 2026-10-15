@@ -626,7 +626,9 @@ function phSel(inp,hid,prev){const f=inp.files&&inp.files[0];if(!f)return;const 
 function phClr(hid,prev){var h=document.getElementById(hid);if(h)h.value='';var p=document.getElementById(prev);if(p){var nm=document.querySelector('#md input[name="n"]');p.textContent=(nm&&nm.value?Array.from(nm.value)[0]:'+')}var f=document.querySelector('#md input[type=file]');if(f)f.value=''}
 let adminPic=_ld('mm_adminpic','');
 let adminInfo=_ld('mm_admininfo',{n:'Admin',ph:'',em:''});
-function adminEdit(){form('অ্যাডমিনের তথ্য',[['photo','ছবি','photo'],['n','নাম'],['ph','ফোন','type=tel'],['em','ইমেইল','type=email'],['pw','নতুন পাসওয়ার্ড (খালি রাখলে অপরিবর্তিত)','type=password']],{n:adminInfo.n,ph:adminInfo.ph,em:adminInfo.em,photo:adminPic},o=>{if(o.pw&&window.changeOwnPw)window.changeOwnPw(o.pw);adminInfo={n:o.n||'Admin',ph:o.ph,em:o.em};adminPic=o.photo;save('mm_admininfo',adminInfo);save('mm_adminpic',adminPic);draw()})}
+function adminEdit(){form('অ্যাডমিনের তথ্য',[['photo','ছবি','photo'],['n','নাম'],['ph','ফোন','type=tel'],['em','ইমেইল','type=email'],['pw','নতুন পাসওয়ার্ড (খালি রাখলে অপরিবর্তিত)','type=password']],{n:adminInfo.n,ph:adminInfo.ph,em:adminInfo.em,photo:adminPic},async o=>{const oldPh=adminInfo.ph||'',newPh=String(o.ph||'').trim();
+ if(newPh!==String(oldPh).trim()&&window.adminPhoneChange){try{await window.adminPhoneChange(oldPh,newPh);alert(newPh?'নম্বর বদলানো হয়েছে। এখন থেকে নতুন নম্বর দিয়ে লগইন করতে হবে, পুরনো নম্বর আর চলবে না।':'নম্বর সরানো হয়েছে। এখন থেকে শুধু ইমেইল দিয়ে লগইন চলবে।')}catch(e){alert('নম্বর বদলানো যায়নি: '+(e.message||e)+'\nআগের নম্বরই থাকছে।');o.ph=oldPh}}
+ if(o.pw&&window.changeOwnPw)window.changeOwnPw(o.pw);adminInfo={n:o.n||'Admin',ph:o.ph,em:o.em};adminPic=o.photo;save('mm_admininfo',adminInfo);save('mm_adminpic',adminPic);draw()})}
 function aprof(){shell('অ্যাডমিন প্রোফাইল',`<div class="hello"><div class="av">${avHTML(adminPic,'অ')}</div><div><b>${adminInfo.n||'Admin'}</b><br><small style="color:var(--mute)">প্রশাসক</small></div></div>`+K('ফোন',adminInfo.ph||'—')+K('ইমেইল',adminInfo.em||'—')+`<button class="tile" style="background:var(--g);width:100%;margin-top:10px;padding:12px" onclick="adminEdit()">✏️ তথ্য ও ছবি সম্পাদনা</button>`,'home')}
 function picEdit(){cl();
  const d=document.createElement('div');d.id='md';d.style.cssText='position:fixed;inset:0;background:#0009;z-index:20;display:flex;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:16px';
@@ -947,6 +949,21 @@ async function acct(email,pw){const c=await createUserWithEmailAndPassword(auth2
 async function freeKeys(ids){const ks=[];for(const [v,free] of ids){const k=key(v);if(!k||ks.includes(k))continue;if(free&&(await get(R('loginIndex/'+k))).exists())continue;ks.push(k)}return ks}
 const mapOwner=async k=>{try{const sn=await get(R('loginMap/'+k));return sn.exists()&&typeof sn.val()==='string'?sn.val():null}catch(e){return null}};
 async function xChk(list,strict){for(const [v,lbl] of list){const k=key(v);if(!k)continue;const ow=await mapOwner(k);if(ow&&ow!==MID)throw new Error('এই '+lbl+' ('+v+') অন্য মাদ্রাসায় ব্যবহৃত হচ্ছে, তাই ব্যবহার করা যাবে না');if(strict&&(await get(R('loginIndex/'+k))).exists())throw new Error('এই '+lbl+' ('+v+') এই মাদ্রাসায় আগে থেকেই ব্যবহৃত হচ্ছে')}}
+window.adminPhoneChange=async function(oldPh,newPh){
+ const kn=key(newPh),cand=[key(oldPh)];try{if(profile&&profile.ph)cand.push(key(profile.ph))}catch(e){}
+ if(kn&&!/^[0-9]{10,14}$/.test(kn))throw new Error('সঠিক মোবাইল নম্বর দিন (১০-১৪ অঙ্ক)');
+ const em=auth.currentUser&&auth.currentUser.email;if(!em)throw new Error('লগইন ইমেইল পাওয়া যায়নি, আবার লগইন করে চেষ্টা করুন');
+ const eml=String(em).toLowerCase(),U={};
+ if(kn){await xChk([[newPh,'ফোন নম্বর']],false);
+  const ex=await get(R('loginIndex/'+kn));
+  if(ex.exists()&&(ex.val().role!=='admin'||String(ex.val().email).toLowerCase()!==eml))throw new Error('এই নম্বর এই মাদ্রাসায় আগে থেকেই অন্য কারো লগইন আইডি হিসেবে ব্যবহৃত হচ্ছে');
+  U['loginIndex/'+kn]={email:em,role:'admin'};U['loginMap/'+kn]=MID}
+ for(const ko of [...new Set(cand)]){
+  if(!ko||ko===kn||ko.indexOf('@')>-1)continue;
+  const ox=await get(R('loginIndex/'+ko));
+  if(ox.exists()&&ox.val().role==='admin'&&String(ox.val().email).toLowerCase()===eml){U['loginIndex/'+ko]=null;if((await mapOwner(ko))===MID)U['loginMap/'+ko]=null}}
+ U['config/profile/ph']=String(newPh||'').trim();
+ await upd(U)};
 async function sibDup(pe,selfKey,pw){if(!pe||!pw)return false;const em=[];if(pe.kids)Object.keys(pe.kids).forEach(k=>{if(k!==selfKey)em.push(pe.kids[k])});else if(pe.email&&!selfKey)em.push(pe.email);
  for(const e of em.slice(0,8)){try{await signInWithEmailAndPassword(auth2,e,pw);try{await signOut(auth2)}catch(x){}return true}catch(x){}}return false}
 async function relink(U,k,o,em,rl){const sk=key(o.id);if(rl!=='guardian'){U['loginIndex/'+k]={email:em,role:rl};return}

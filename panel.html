@@ -87,6 +87,31 @@ async function patch(mid,p,meta){ // শুধু পরিবর্তিত fi
   if(meta)for(const k in meta)if((M[mid]||{})[k]!==meta[k])U['madrasaMeta/'+mid+'/'+k]=meta[k];
   if(!Object.keys(U).length)return;await update(ref(db),U);
   L[mid]=Object.assign({},o,p);if(meta)M[mid]=Object.assign({},M[mid],meta);save()}
+/* ---------- Admin নম্বর বদল: নতুন নম্বরে লগইন চালু, পুরনো নম্বর বাদ ---------- */
+async function syncAdminPhone(mid,oldPh,newPh,emailHint){
+  const kn=kx(newPh),ko=kx(oldPh);if(kn===ko)return;
+  if(kn&&!/^[0-9]{10,14}$/.test(kn))throw new Error('সঠিক মোবাইল নম্বর দিন (১০-১৪ অঙ্ক)');
+  const ixAll=(await get(ref(db,'madrasas/'+mid+'/loginIndex'))).val()||{};
+  const adminKeys=Object.keys(ixAll).filter(k=>ixAll[k]&&ixAll[k].role==='admin');
+  let em=null;
+  if(ko&&ixAll[ko]&&ixAll[ko].role==='admin')em=ixAll[ko].email;
+  if(!em&&emailHint)em=emailHint;
+  if(!em&&adminKeys.length)em=ixAll[adminKeys[0]].email;
+  if(!em)throw new Error('এই মাদ্রাসার অ্যাডমিনের লগইন ইমেইল পাওয়া যায়নি। আগে Admin Email দিন।');
+  const eml=String(em).toLowerCase(),U={};
+  if(kn){
+    const ow=(await get(ref(db,'loginMap/'+kn))).val();
+    if(ow&&ow!==mid)throw new Error('এই নম্বর ('+newPh+') অন্য মাদ্রাসায় ব্যবহৃত হচ্ছে, তাই দেওয়া যাবে না');
+    const ex=ixAll[kn];
+    if(ex&&(ex.role!=='admin'||String(ex.email).toLowerCase()!==eml))throw new Error('এই নম্বর ('+newPh+') এই মাদ্রাসায় আগে থেকেই অন্য কারো লগইন আইডি হিসেবে ব্যবহৃত হচ্ছে');
+    U['madrasas/'+mid+'/loginIndex/'+kn]={email:em,role:'admin'};U['loginMap/'+kn]=mid}
+  for(const k of adminKeys){
+    if(k===kn||k.indexOf('@')>-1)continue;               // ইমেইল-আইডি থাকবে
+    if(String(ixAll[k].email).toLowerCase()!==eml)continue;  // অন্য অ্যাডমিনের নয়
+    U['madrasas/'+mid+'/loginIndex/'+k]=null;
+    const mo=(await get(ref(db,'loginMap/'+k))).val();if(mo===mid)U['loginMap/'+k]=null}
+  U['madrasas/'+mid+'/config/profile/ph']=String(newPh||'').trim();
+  await update(ref(db),U)}
 async function act(a,i){
   if(a==='del')return delM(i);if(a==='v')return view(i);if(a==='e')return form(i);if(a==='pw')return pwAdmin(i);if(a==='lg')return logoM(i);
   if(a==='off'||a==='on'){if(!confirm((a==='off'?'Suspend':'Activate')+' করবেন? '+M[i].name))return;
@@ -151,8 +176,9 @@ async function pwAdmin(mid){
       await update(ref(db),U);e.style.color='#0a7a4a';e.textContent='সম্পন্ন। এখন এই আইডি দিয়ে নতুন পাসওয়ার্ডে লগইন চলবে: '+(done.join(', ')||'(কোনো লগইন আইডি মেলেনি)')}
     catch(x){b.disabled=false;e.textContent=x.code==='auth/email-already-in-use'?'আবার চেষ্টা করুন':(x.code||x.message)}})}
 /* ---------- add / edit ---------- */
-function form(i){
-  const ed=!!i,m0=ed?M[i]:{},l=ed?L[i]||{}:{trialStart:Date.now(),trialEnd:Date.now()+14*DAY};
+async function form(i){
+  const ed=!!i;let m0=ed?M[i]:{};const l=ed?L[i]||{}:{trialStart:Date.now(),trialEnd:Date.now()+14*DAY};
+  if(ed){try{const pf=(await get(ref(db,'madrasas/'+i+'/config/profile/ph'))).val();if(pf!=null&&String(pf)!==String(m0.adminPhone||''))m0=Object.assign({},m0,{adminPhone:String(pf)})}catch(e){}}
   const f=(id,lb,v,t)=>`<label>${lb}</label><input id="${id}" type="${t||'text'}" value="${esc(v||'')}">`;
   const m=modal(`<h3>${ed?'Edit '+esc(i):'নতুন মাদ্রাসা'}</h3>${f('n','Madrasa Name',m0.name)}${f('a','Address',m0.addr)}${f('an','Admin Name',m0.adminName)}${f('ap','Admin Phone',m0.adminPhone)}${f('ae','Admin Email',m0.adminEmail,'email')}
   ${ed?'':f('apw','অ্যাডমিনের প্রাথমিক পাসওয়ার্ড (ঐচ্ছিক, কমপক্ষে ৬ অক্ষর)','','password')}
@@ -163,7 +189,7 @@ function form(i){
     const meta={name:v('n'),addr:v('a'),adminName:v('an'),adminPhone:v('ap'),adminEmail:v('ae')};
     const lic={trialStart:d2(v('ts')),trialEnd:d2(v('te'),1),subStart:d2(v('ss')),subEnd:d2(v('se'),1)};
     b.disabled=true;try{
-      if(ed){await patch(i,lic,meta)}else{
+      if(ed){await syncAdminPhone(i,m0.adminPhone,meta.adminPhone,meta.adminEmail||m0.adminEmail);await patch(i,lic,meta)}else{
         const mid='MAD'+String((await runTransaction(ref(db,'meta/counter'),n=>(n||0)+1)).snapshot.val()).padStart(3,'0');
         const U={};U['madrasaMeta/'+mid]=Object.assign({},meta,{createdAt:Date.now()});U['licenses/'+mid]=Object.assign({},lic,{suspended:false});
         U['madrasas/'+mid+'/config/profile']={name:meta.name,addr:meta.addr,ph:meta.adminPhone,est:'',logo:''};U['madrasas/'+mid+'/config/setup']={at:Date.now(),by:auth.currentUser.uid};

@@ -616,7 +616,7 @@ function feePick(){const list=students.filter(s=>s.c===selClass);
  shell('বেতন আদায় — ছাত্র নির্বাচন',`<p class="note" style="text-align:left;margin:0 0 8px">ক্লাস বেছে নিন, তারপর ছাত্র নির্বাচন করুন</p><div style="display:flex;gap:8px;overflow-x:auto;padding-bottom:4px;margin-bottom:12px">${classes.map(c=>`<button class="chip" style="min-width:auto;white-space:nowrap;${c===selClass?'background:var(--g);color:#fff':'background:var(--card);border:1px solid var(--line);color:var(--ink)'}" onclick="selClass='${esc(c)}';save('mm_selc',selClass);draw()">${c} (${bn(students.filter(s=>s.c===c).length)})</button>`).join('')}</div>`+
  (list.length?list.map(s=>R_(s.n[0],s.n,'রোল '+bn(s.r)+' • বকেয়া '+tk(dueOf(s.id)),`<button class="tile" style="background:var(--g);padding:8px 14px" onclick='payF({n:${s.r},a:${dueOf(s.id)>0?dueOf(s.id):feeOf(s.id)},t:"মাসিক ফি"})'>নির্বাচন</button>`)).join(''):'<p class="note">এই ক্লাসে কোনো ছাত্র নেই।</p>'),'fees')}
 function homeV(){const s=stu_(cur),hl=getHWToday(s.c,T0);shell('নামাজ ও হোমওয়ার্ক',`<div class="hello"><div class="av">${avHTML(s.photo,s.n[0])}</div><div><b>${s.n}</b><br><small style="color:var(--mute)">ID: ${s.id} | রোল: ${bn(s.r)}</small></div></div>
- <div class="link" style="display:block"><small>আজকের বাড়ির কাজ (${s.c||'—'})</small>${hl.length?hl.map(x=>`<div style="margin-top:8px"><b>${x.sj}</b><p style="margin-top:2px">${x.e.t}</p><small style="color:var(--mute)">দিয়েছেন: ${x.e.by}</small></div>`).join(''):'<p style="margin-top:6px">আজ এখনো শিক্ষক বাড়ির কাজ দেননি।</p>'}</div>`+homeBlock(s),'child')}
+ <div class="link" style="display:block"><small>আজকের বাড়ির কাজ (${s.c||'—'})</small>${hl.length?hl.map(x=>`<div style="margin-top:8px"><b>${x.sj}</b><p style="margin-top:2px">${x.e.t}</p>${x.e.v&&!hwvExpired(T0)?hwvPlayBtn(s.c,T0,x.sj,x.e.v):''}<small style="color:var(--mute)">দিয়েছেন: ${x.e.by}</small></div>`).join(''):'<p style="margin-top:6px">আজ এখনো শিক্ষক বাড়ির কাজ দেননি।</p>'}</div>`+homeBlock(s),'child')}
 </script>
 <script>
 function profEdit(){form('মাদ্রাসার তথ্য',[['logo','মাদ্রাসার লোগো','photo'],['n','মাদ্রাসার নাম'],['addr','ঠিকানা'],['est','প্রতিষ্ঠার তারিখ (যেমন: ১ জানুয়ারি ২০১০)'],['ph','যোগাযোগ নম্বর','type=tel']],{n:profile.name,addr:profile.addr,est:profile.est,logo:profile.logo,ph:profile.ph},o=>{profile=Object.assign({},profile,{name:o.n||'Madrasa Management',addr:o.addr,est:o.est,logo:o.logo,ph:o.ph});save('mm_profile',profile);draw()})}
@@ -733,14 +733,14 @@ function getHWToday(c,d){const ord=(window.rtnList?window.rtnList(c,DK[new Date(
 /* শিক্ষক: শুধু রুটিনে যে ক্লাস+বিষয়ে আছেন; অ্যাডমিন: ওই ক্লাসের Admin-যোগ করা বিষয় (দেখার জন্য) */
 function hwOpts(cls,editable){return editable?((window.tAssign(myTeacher)[cls])||[]).slice():(window.subjFor?window.subjFor(cls):[]).slice()}
 window.hwPickCls=function(c){hwCls=c;hwSubj='';draw()};
-function hwEditor(cls,editable){const subs=hwOpts(cls,editable);if(!subs.includes(hwSubj))hwSubj=subs[0]||'';
+function hwEditor(cls,editable){const subs=hwOpts(cls,editable);if(!subs.includes(hwSubj))hwSubj=subs[0]||'';if(editable&&hwRec.st!=='idle'&&hwRec.key!==hwvKey())window.hwvDiscard(true);
  const cu=hwSubj?getHW(cls,hwDate,hwSubj):null,cList=editable?Object.keys(window.tAssign(myTeacher)):classes,pk=editable?'hwPickCls':'pickClass';
  shell((editable?'হোমওয়ার্ক দিন — ':'হোমওয়ার্ক দেখুন — ')+cls,
  `${(!editable||cList.length>1)?`<div style="display:flex;gap:8px;overflow-x:auto;padding-bottom:4px;margin-bottom:12px">${cList.map(c=>`<button class="chip" style="min-width:auto;white-space:nowrap;${c===cls?'background:var(--g);color:#fff':'background:var(--card);border:1px solid var(--line);color:var(--ink)'}" onclick="${pk}('${esc(c)}')">${xe0(c)}</button>`).join('')}</div>`:''}
- ${!editable?(function(){const rows=Object.keys(hwAssign).map(k=>{const parts=k.split('|');return{c:parts[0],d:parts[1],sj:parts[2],e:hwAssign[k]}}).sort((a,b)=>b.d.localeCompare(a.d)).slice(0,8);return rows.length?'<h3>সাম্প্রতিক হোমওয়ার্ক (সব ক্লাস)</h3>'+rows.map(x=>`<div class="row" style="display:block"><b>${xe0(x.c)} • ${xe0(x.e.sj||x.sj)}</b><br><small style="color:var(--mute)">${dd(x.d)} • ${xe0(x.e.by)}</small><p style="margin-top:4px">${xe0(x.e.t)}</p></div>`).join(''):''})():''}
+ ${!editable?(function(){const rows=Object.keys(hwAssign).map(k=>{const parts=k.split('|');return{c:parts[0],d:parts[1],sj:parts[2],e:hwAssign[k]}}).sort((a,b)=>b.d.localeCompare(a.d)).slice(0,8);return rows.length?'<h3>সাম্প্রতিক হোমওয়ার্ক (সব ক্লাস)</h3>'+rows.map(x=>`<div class="row" style="display:block"><b>${xe0(x.c)} • ${xe0(x.e.sj||x.sj)}</b><br><small style="color:var(--mute)">${dd(x.d)} • ${xe0(x.e.by)}</small><p style="margin-top:4px">${xe0(x.e.t)}</p>${x.e.v&&!hwvExpired(x.d)?hwvPlayBtn(x.c,x.d,x.e.sj||x.sj,x.e.v):''}</div>`).join(''):''})():''}
  <label style="display:block;font-size:13px;color:var(--mute);margin-top:4px">তারিখ<input type="date" class="search" style="margin:4px 0 0" value="${hwDate}" onchange="hwDate=this.value;draw()"></label>
  ${subs.length?`<label style="display:block;font-size:13px;color:var(--mute);margin-top:10px">বিষয়<select class="search" style="margin:4px 0 0" onchange="hwSubj=this.value;draw()">${subs.map(sj=>`<option value="${esc(sj)}" ${sj===hwSubj?'selected':''}>${xe0(sj)}</option>`).join('')}</select></label>${editable&&hwSubj?`<p class="note" style="text-align:left;margin:6px 0 0">আপনার রুটিন: ${xe0(window.tSlots(myTeacher,cls,hwSubj))}</p>`:''}`:`<p class="note">${editable?'এই ক্লাসে রুটিন অনুযায়ী আপনার কোনো বিষয় নেই।':'এই শ্রেণীর কোনো বিষয় যোগ করা হয়নি (Settings → Subject Management)।'}</p>`}
- ${subs.length?`<label style="display:block;font-size:13px;color:var(--mute);margin-top:10px">বাড়ির কাজ<textarea id="hwtxt" class="search" style="min-height:110px;margin-top:4px" ${editable?'':'readonly'}>${esc(cu?cu.t:'')}</textarea></label>
+ ${subs.length?`<label style="display:block;font-size:13px;color:var(--mute);margin-top:10px">বাড়ির কাজ<textarea id="hwtxt" class="search" style="min-height:110px;margin-top:4px" ${editable?'':'readonly'}>${esc(cu&&cu.t!==HWV_PH?cu.t:'')}</textarea></label><div id="hwvbox">${hwvHTML(cu,editable,cls)}</div>
  ${editable?`<button class="tile" style="background:var(--g);width:100%;margin-top:10px;padding:12px" onclick="saveHW('${esc(cls)}')">সংরক্ষণ করুন</button>${cu?'<p class="note">সর্বশেষ সংরক্ষণ করেছেন: '+xe0(cu.by)+'</p>':''}`:(cu?`<p class="note">দিয়েছেন: ${xe0(cu.by)}</p>`:'<p class="note">এই তারিখ ও বিষয়ে কোনো হোমওয়ার্ক দেওয়া হয়নি।</p>')}`:''}`,'home')}
 function hwSet(){if(role==='teacher'){if(!myTeacher){tab='home';return draw()}
   if(!window.rtnLoaded()){shell('হোমওয়ার্ক দিন','<p class="note">রুটিন লোড হচ্ছে...</p>','home');return}
@@ -750,9 +750,65 @@ function hwSet(){if(role==='teacher'){if(!myTeacher){tab='home';return draw()}
   return hwEditor(hwCls,true)}
  if(role==='admin')return hwEditor(selClass||classes[0],false);
  tab='home';draw()}
-function saveHW(cls){const v=document.getElementById('hwtxt').value.trim();const t=teachers.find(x=>x.id===myTeacher);if(!v){alert('হোমওয়ার্ক লিখুন');return}
+/* ===== ভয়েস হোমওয়ার্ক (সর্বোচ্চ ৩০ সেকেন্ড; ৩ দিন পরে মুছে যায়) ===== */
+const HWV_MAX=30,HWV_PH='🎤 ভয়েস হোমওয়ার্ক';
+let hwRec={st:'idle',key:'',blob:null,url:'',secs:0,mime:'',rec:null,stream:null,t0:0,tick:null};
+const hwVCache={};let hwAudio=null,hwAudioKey='';
+function hwvKey(){return hwCls+'|'+hwDate+'|'+hwSubj}
+function hwvMinus(n){const x=new Date();x.setDate(x.getDate()-n);return new Date(x.getTime()-x.getTimezoneOffset()*6e4).toISOString().slice(0,10)}
+window.hwvExpired=function(d){return d<=hwvMinus(3)};
+const hwvMS=s=>{s=Math.max(0,Math.round(s));return bn(Math.floor(s/60))+':'+bn(String(s%60).padStart(2,'0'))};
+function hwvPlayBtn(c,d,sj,v){return `<button class="tile" style="background:#7c3aed;width:100%;margin-top:8px;padding:10px" onclick="hwPlay('${esc(c)}','${d}','${esc(sj)}',this)">▶ ভয়েস শুনুন (${bn(v)} সেকেন্ড)</button>`}
+function hwvHTML(cu,editable,cls){
+ const has=!!(cu&&cu.v&&!window.hwvExpired(hwDate)),R0=hwRec.key===hwvKey()?hwRec:{st:'idle'};
+ if(editable&&R0.st==='rec')return `<div class="row" style="display:block"><b>🔴 রেকর্ড হচ্ছে… <span id="hwvt">${hwvMS((Date.now()-hwRec.t0)/1000)}</span> / ${hwvMS(HWV_MAX)}</b><button class="tile" style="background:#dc2626;width:100%;margin-top:8px;padding:10px" onclick="hwvStop()">⏹ থামান</button></div>`;
+ if(editable&&R0.st==='ready')return `<div class="row" style="display:block"><b>🎤 ভয়েস প্রস্তুত (${bn(hwRec.secs)} সেকেন্ড)</b><audio controls src="${hwRec.url}" style="width:100%;margin-top:8px"></audio><small style="display:block;color:var(--mute);margin-top:4px">নিচে সংরক্ষণ চাপলে জমা হবে।</small><div style="display:flex;gap:8px;margin-top:8px"><button class="tile" style="background:var(--g);flex:1;padding:10px" onclick="hwvStart()">🔁 আবার রেকর্ড</button><button class="tile" style="background:#64748b;flex:1;padding:10px" onclick="hwvDiscard()">🗑 বাদ দিন</button></div></div>`;
+ let h='';
+ if(has)h+=`<div class="row" style="display:block"><b>🎤 ভয়েস দেওয়া আছে</b>${hwvPlayBtn(cls,hwDate,hwSubj,cu.v)}${editable?`<button class="tile" style="background:#64748b;width:100%;margin-top:8px;padding:10px" onclick="hwvDel()">🗑 ভয়েস মুছুন</button>`:''}</div>`;
+ else if(!editable&&cu&&cu.v)h+='<p class="note">ভয়েসটি মেয়াদ শেষে মুছে গেছে (৩ দিন পরে মুছে যায়)।</p>';
+ if(editable)h+=`<div class="row" style="display:block"><b>🎤 ভয়েসে হোমওয়ার্ক</b><small style="display:block;color:var(--mute)">সর্বোচ্চ ${bn(HWV_MAX)} সেকেন্ড। ভয়েস ৩ দিন পরে নিজে মুছে যায়।</small><button class="tile" style="background:var(--g);width:100%;margin-top:8px;padding:10px" onclick="hwvStart()">🎤 ${has?'নতুন ভয়েস রেকর্ড':'রেকর্ড শুরু'}</button></div>`;
+ return h}
+function hwvRender(){const el=document.getElementById('hwvbox');if(el){const cu=hwSubj?getHW(hwCls,hwDate,hwSubj):null;el.innerHTML=hwvHTML(cu,role==='teacher',hwCls)}}
+window.hwvStart=async function(){
+ if(!navigator.mediaDevices||!navigator.mediaDevices.getUserMedia||!window.MediaRecorder){alert('এই ফোনে ভয়েস রেকর্ড করা যাচ্ছে না');return}
+ window.hwvDiscard(true);
+ let stream;try{stream=await navigator.mediaDevices.getUserMedia({audio:true})}catch(e){alert('মাইক্রোফোনের অনুমতি দিতে হবে। ফোনের Settings → Apps → এই অ্যাপ → Permissions থেকে Microphone চালু করুন।');return}
+ const types=['audio/webm;codecs=opus','audio/webm','audio/mp4','audio/ogg;codecs=opus'];let mt='';for(const x of types){try{if(MediaRecorder.isTypeSupported(x)){mt=x;break}}catch(e){}}
+ let rec;try{rec=mt?new MediaRecorder(stream,{mimeType:mt,audioBitsPerSecond:20000}):new MediaRecorder(stream,{audioBitsPerSecond:20000})}catch(e){try{rec=new MediaRecorder(stream)}catch(e2){stream.getTracks().forEach(t=>t.stop());alert('রেকর্ড শুরু করা যায়নি');return}}
+ const ch=[];rec.ondataavailable=e=>{if(e.data&&e.data.size)ch.push(e.data)};
+ rec.onstop=()=>{clearInterval(hwRec.tick);stream.getTracks().forEach(t=>t.stop());
+  if(hwRec.rec!==rec)return;
+  const blob=new Blob(ch,{type:rec.mimeType||mt||'audio/webm'}),secs=Math.min(HWV_MAX,Math.max(1,Math.round((Date.now()-hwRec.t0)/1000)));
+  if(blob.size<500){hwRec.st='idle';hwRec.rec=null;hwvRender();alert('কোনো আওয়াজ রেকর্ড হয়নি, আবার চেষ্টা করুন');return}
+  hwRec.st='ready';hwRec.blob=blob;hwRec.mime=blob.type;hwRec.secs=secs;hwRec.url=URL.createObjectURL(blob);hwvRender()};
+ hwRec={st:'rec',key:hwvKey(),blob:null,url:'',secs:0,mime:'',rec:rec,stream:stream,t0:Date.now(),tick:null};
+ rec.start();
+ hwRec.tick=setInterval(()=>{const el=document.getElementById('hwvt'),sec=(Date.now()-hwRec.t0)/1000;if(el)el.textContent=hwvMS(sec);if(sec>=HWV_MAX)window.hwvStop()},250);
+ hwvRender()};
+window.hwvStop=function(){try{if(hwRec.rec&&hwRec.rec.state!=='inactive')hwRec.rec.stop()}catch(e){}};
+window.hwvDiscard=function(quiet){const r=hwRec.rec;hwRec.rec=null;clearInterval(hwRec.tick);try{if(r&&r.state!=='inactive')r.stop()}catch(e){}try{if(hwRec.stream)hwRec.stream.getTracks().forEach(t=>t.stop())}catch(e){}if(hwRec.url)URL.revokeObjectURL(hwRec.url);hwRec={st:'idle',key:'',blob:null,url:'',secs:0,mime:'',rec:null,stream:null,t0:0,tick:null};if(!quiet)hwvRender()};
+window.hwvDel=async function(){const cls=hwCls,cu=getHW(cls,hwDate,hwSubj);if(!cu||!cu.v)return;if(!confirm('এই ভয়েসটি মুছবেন?'))return;
+ try{await window.hwVoiceDel(cls,hwDate,hwSubj)}catch(e){alert('ভয়েস মোছা যায়নি');return}
+ const e=Object.assign({},cu);delete e.v;if(e.t===HWV_PH)e.t='ভয়েসটি মুছে ফেলা হয়েছে';setHW(cls,hwDate,hwSubj,e);delete hwVCache[cls+'|'+hwDate+'|'+sjk(hwSubj)];draw()};
+window.hwPlay=async function(c,d,sj,btn){const key=c+'|'+d+'|'+sjk(sj),lab=btn?btn.textContent:'';
+ if(hwAudio&&hwAudioKey===key&&!hwAudio.paused){hwAudio.pause();if(btn)btn.textContent=btn.getAttribute('data-l')||'▶ ভয়েস শুনুন';return}
+ if(btn&&!btn.getAttribute('data-l'))btn.setAttribute('data-l',lab);const back=()=>{if(btn)btn.textContent=btn.getAttribute('data-l')||'▶ ভয়েস শুনুন'};
+ try{if(hwAudio)hwAudio.pause();if(btn)btn.textContent='⏳ লোড হচ্ছে…';let v=hwVCache[key];if(!v){v=await window.hwVoiceGet(c,d,sj);if(v&&v.a)hwVCache[key]=v}
+  if(!v||!v.a){back();alert('ভয়েসটি পাওয়া যায়নি (৩ দিন পরে মুছে যায়)');return}
+  hwAudio=new Audio('data:'+v.m+';base64,'+v.a);hwAudioKey=key;hwAudio.onended=back;await hwAudio.play();if(btn)btn.textContent='⏸ থামান'}catch(e){back();alert('ভয়েস চালানো যায়নি')}};
+function hwvB64(b){return new Promise((res,rej)=>{const r=new FileReader();r.onload=()=>res(String(r.result).split(',')[1]||'');r.onerror=()=>rej(new Error('read'));r.readAsDataURL(b)})}
+async function saveHW(cls){if(window.__hwSaving)return;const v=document.getElementById('hwtxt').value.trim();const t=teachers.find(x=>x.id===myTeacher);
+ const cu=getHW(cls,hwDate,hwSubj),ready=hwRec.st==='ready'&&hwRec.key===hwvKey(),keepV=!!(cu&&cu.v&&!window.hwvExpired(hwDate));
+ if(hwRec.st==='rec'){alert('আগে রেকর্ড থামান');return}
+ if(!v&&!ready&&!keepV){alert('হোমওয়ার্ক লিখুন বা ভয়েস রেকর্ড করুন');return}
  if(role!=='teacher'||!t||!hwSubj||!((window.tAssign(myTeacher)[cls])||[]).includes(hwSubj)){alert('ক্লাস রুটিন অনুযায়ী এই ক্লাস ও বিষয়ে হোমওয়ার্ক দেওয়ার অনুমতি আপনার নেই');return}
- setHW(cls,hwDate,hwSubj,{t:v,by:t.n,tid:t.id,sj:hwSubj,ts:Date.now()});alert('সংরক্ষণ হয়েছে');draw()}
+ const e={t:v||HWV_PH,by:t.n,tid:t.id,sj:hwSubj,ts:Date.now()};
+ if(ready){window.__hwSaving=1;try{const b64=await hwvB64(hwRec.blob);if(!b64||b64.length>250000){alert('ভয়েস বেশি বড় হয়েছে, ছোট করে আবার রেকর্ড করুন');return}
+   await window.hwVoicePut(cls,hwDate,hwSubj,{a:b64,m:hwRec.mime,s:Math.min(HWV_MAX,Math.max(1,hwRec.secs))});e.v=Math.min(HWV_MAX,Math.max(1,hwRec.secs));delete hwVCache[cls+'|'+hwDate+'|'+sjk(hwSubj)]}
+  catch(err){alert('ভয়েস সংরক্ষণ হয়নি। ইন্টারনেট বা অনুমতি দেখুন।');return}finally{window.__hwSaving=0}}
+ else if(keepV)e.v=cu.v;
+ if(ready)window.hwvDiscard(true);
+ setHW(cls,hwDate,hwSubj,e);alert('সংরক্ষণ হয়েছে');draw()}
 function contactV(){shell('মাদ্রাসায় যোগাযোগ',`<div class="hello"><div class="av">${profile.logo?`<img src="${profile.logo}" style="width:100%;height:100%;object-fit:contain;border-radius:50%">`:xe0(Array.from(String(profile.name||'M').trim()||'M')[0])}</div><div><b>${profile.name||'Madrasa Management'}</b><br><small style="color:var(--mute)">${profile.addr||'ঠিকানা যোগ করা হয়নি'}</small></div></div>
  <div class="act" style="grid-template-columns:1fr 1fr"><button onclick="dial('${profile.ph||''}')"><b>📞</b>কল করুন</button><button onclick="if('${profile.ph||''}')window.open('sms:${profile.ph||''}','_blank');else alert('যোগাযোগ নম্বর নেই')"><b>💬</b>SMS পাঠান</button></div>
  ${!profile.ph?'<p class="note">মাদ্রাসার যোগাযোগ নম্বর এখনো যোগ করা হয়নি।</p>':''}`,'child')}
@@ -1234,7 +1290,7 @@ const nativeBlock=B=>{if(!bellP())return '';const nat=window.__bellNat,H='<h3>�
  if(nat===null){window.bellNatLoad();return H+'<p class="note">লোড হচ্ছে…</p>'}
  if(nat==='old')return H+'<p class="note" style="text-align:left">ঘণ্টা বাজাতে অ্যাপের নতুন সংস্করণ (APK) ইনস্টল করতে হবে।</p>';
  return H+`<div class="row"><div class="info"><b>এই ফোনে ঘণ্টা বাজবে</b><small>বন্ধ করলে শুধু এই ফোনে বাজবে না</small></div>${sw(nat.local,'bellLoc()')}</div>`
-  +(typeof nat.fg==='boolean'&&nat.local?`<div class="row"><div class="info"><b>ঘণ্টা সবসময় চালু রাখুন</b><small>নোটিফিকেশন বারে ছোট একটা বার্তা থাকবে। এতে রিসেন্ট অ্যাপস থেকে সরালেও ঘণ্টা বাজবে।</small></div>${sw(nat.fg,'bellFgTgl()')}</div>`:'')
+  +(typeof nat.fg==='boolean'&&nat.local?`<div class="row"><div class="info"><b>ঘণ্টা সবসময় চালু রাখুন</b><small>নোটিফিকেশন বারে ছোট একটা বার্তা থাকবে (স্ট্যাটাস বারে আইকন দেখাবে না)। এতে রিসেন্ট অ্যাপস থেকে সরালেও ঘণ্টা বাজবে। ঘণ্টা বাজার সময় আলাদা একটা বার্তাও আসবে।</small></div>${sw(nat.fg,'bellFgTgl()')}</div>`:'')
   +(typeof nat.fg==='boolean'&&nat.local&&nat.fg&&nat.notif===false?`<div class="row" style="display:block"><b>⚠️ নোটিফিকেশনের অনুমতি নেই</b><small style="display:block;color:var(--mute)">ওই ছোট বার্তা দেখাতে ফোন অনুমতি চায়। না দিলে কিছু ফোনে সরালে ঘণ্টা বন্ধ হয়ে যেতে পারে।</small><button ${btn} onclick="bellNotif()">✅ অনুমতি দিন</button></div>`:'')
   +(nat.local&&B.on&&nat.next?`<p class="note" style="text-align:left">পরের ঘণ্টা: ${bellNext(nat.next,nat.nextK,nat.nextN)}</p>`:(nat.local&&B.on?'<p class="note" style="text-align:left">পরের কোনো ঘণ্টা নেই (সময় বা দিন যোগ করুন)।</p>':''))
   +(nat.battery?`<div class="row" style="display:block"><b>🔋 ব্যাটারি সীমা: তোলা আছে ✅</b><small style="display:block;color:var(--mute)">অ্যাপ বন্ধ থাকলেও ঘণ্টা বাজবে। তবু না বাজলে ফোনের Settings → Apps → এই অ্যাপ → Battery/Autostart-এ গিয়ে "No restrictions" বা Autostart চালু করুন।</small></div>`:`<div class="row" style="display:block"><b>🔋 ব্যাটারি সীমা আছে ⚠️</b><small style="display:block;color:var(--mute)">কিছু ফোন অ্যাপ বন্ধ থাকলে ঘণ্টা আটকে দেয়। নিচের বোতামে চেপে "Allow/অনুমতি দিন" চাপুন।</small><button ${btn} onclick="bellBat()">🔋 ব্যাটারি সীমা তুলুন</button></div>`)
@@ -1323,7 +1379,7 @@ async function pushNotices(arr){const U={},ids=new Set();arr.forEach(n=>{if(!n.i
  nKnown.forEach(id=>{if(!ids.has(id))U['notices/'+id]=null});
  if(Object.keys(U).length)try{await upd(U)}catch(e){fail('নোটিস সংরক্ষণ হয়নি',e,['notices',onNotices])}}
 /* শিক্ষকের দেওয়া হোমওয়ার্ক (ক্লাস → তারিখ → বিষয়) */
-function rebuildHwa(){const o={};Object.keys(hwByClass).forEach(c=>{const v=hwByClass[c]||{};Object.keys(v).forEach(d=>Object.keys(v[d]).forEach(sj2=>{o[c+'|'+d+'|'+sj2]=v[d][sj2]}))});hwAssign=o;hwKnown=JSON.parse(JSON.stringify(o));redraw()}
+function rebuildHwa(){const o={};Object.keys(hwByClass).forEach(c=>{const v=hwByClass[c]||{};Object.keys(v).forEach(d=>Object.keys(v[d]).forEach(sj2=>{o[c+'|'+d+'|'+sj2]=v[d][sj2]}))});hwAssign=o;hwKnown=JSON.parse(JSON.stringify(o));redraw();clearTimeout(window.__hwvcT);window.__hwvcT=setTimeout(()=>{try{window.hwVoiceClean()}catch(e){}},4000)}
 async function pushHwa(o){const U={};Object.keys(o).forEach(k=>{if(stab(o[k])!==stab(hwKnown[k])){const p=k.split('|');U['homework/'+p[0]+'/'+p[1]+'/'+p[2]]=clean(o[k])}});
  if(Object.keys(U).length)try{await upd(U)}catch(e){hwAssign=JSON.parse(JSON.stringify(hwKnown));fail('হোমওয়ার্ক সংরক্ষণ হয়নি',e)}}
 function attachHW(){if(role==='admin')hwClean();const from=new Date(Date.now()-7*864e5).toISOString().slice(0,10);
@@ -1611,9 +1667,21 @@ TQ.wrap('tcalV',()=>[[M0+'-01',M0+'-31']],'tcal');
 /* হোমওয়ার্ক: ৭ দিনের পুরোনো এন্ট্রি Admin-এর অ্যাপ খুললে দিনে একবার মুছে যায় */
 async function hwClean(){try{if(!classes||!classes.length)return;const k='mm_hwc_'+MID,t0=localDay();if(localStorage.getItem(k)===t0)return;
  const cut=new Date(Date.now()-8*864e5-new Date().getTimezoneOffset()*6e4).toISOString().slice(0,10),U={};
- for(const c of classes){const s=await get(query(R('homework/'+c),orderByKey(),endAt(cut))),v=s.val()||{};for(const d in v){if(d>cut)continue;for(const sj in v[d])U['homework/'+c+'/'+d+'/'+sj]=null}}
+ for(const c of classes){const s=await get(query(R('homework/'+c),orderByKey(),endAt(cut))),v=s.val()||{};for(const d in v){if(d>cut)continue;for(const sj in v[d]){U['homework/'+c+'/'+d+'/'+sj]=null;U['hwVoice/'+c+'/'+d+'/'+sj]=null}}}
  if(Object.keys(U).length)await upd(U);localStorage.setItem(k,t0)}catch(e){console.error('hwClean',e)}}
 window.__hwClean=hwClean;
+/* ভয়েস হোমওয়ার্ক: hwVoice/{ক্লাস}/{তারিখ}/{বিষয়} = {a: base64, m: mime, s: সেকেন্ড} */
+window.hwVoicePut=async function(c,d,sj,o){await upd({['hwVoice/'+c+'/'+d+'/'+sjk(sj)]:clean(o)})};
+window.hwVoiceGet=async function(c,d,sj){const sn=await get(R('hwVoice/'+c+'/'+d+'/'+sjk(sj)));return sn.val()};
+window.__hwbc=hwByClass;
+window.hwVoiceClean=async function(){try{
+ if(role!=='admin'&&role!=='teacher')return;
+ const day=localDay(),k='mm_hwvc_'+MID+'_'+role;if(localStorage.getItem(k)===day)return;
+ const cut=hwvMinus(3),U={};
+ Object.keys(hwByClass).forEach(c=>{const v=hwByClass[c]||{};Object.keys(v).forEach(d=>{if(d>cut)return;Object.keys(v[d]||{}).forEach(sj=>{const n=v[d][sj];if(n&&n.v&&(role==='admin'||n.tid===myTeacher))U['hwVoice/'+c+'/'+d+'/'+sj]=null})})});
+ if(Object.keys(U).length)await upd(U);
+ localStorage.setItem(k,day)}catch(e){console.error('hwVoiceClean',e)}};
+window.hwVoiceDel=async function(c,d,sj){await upd({['hwVoice/'+c+'/'+d+'/'+sjk(sj)]:null})};
 </script>
 <script>
 /* ===== Android Back Button / History হ্যান্ডলিং =====

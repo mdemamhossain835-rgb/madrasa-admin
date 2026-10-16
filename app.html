@@ -141,12 +141,12 @@ html,body{overscroll-behavior-y:none}
 .dbi{width:52px;height:52px;border-radius:14px;display:grid;place-items:center;flex:none}
 .dbh .dbtt{margin:0;font-size:18px;font-weight:800;line-height:1.25;color:var(--ink)}
 .dbs{font-size:13px;color:var(--mute);margin-top:4px;line-height:1.4}
-.dbs i{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:5px}
+.dbs i{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:5px;background:var(--okt)}
 .dbacts{margin-left:auto;display:flex;gap:2px;flex:none}
 .dbb{position:relative;width:36px;height:36px;border-radius:10px;border:0;background:transparent;color:var(--mute);display:grid;place-items:center;cursor:pointer;padding:0}
 .dbb input{position:absolute;inset:0;opacity:0;width:100%;height:100%;cursor:pointer}
 .dbnav{display:flex;align-items:center;justify-content:space-between;background:var(--bg);border:1px solid var(--line);border-radius:14px;padding:6px 10px;margin-top:14px;font-size:14px;color:var(--ink)}
-.dbnav button{border:0;background:transparent;color:var(--g);font:inherit;font-weight:700;cursor:pointer;padding:6px 4px}
+.dbnav button{border:0;background:transparent;color:var(--okt);font:inherit;font-weight:700;cursor:pointer;padding:6px 4px}
 .dbnav button.off{opacity:.35;pointer-events:none}
 .dbnav .dbdt{position:relative;display:flex;align-items:center;gap:8px;font-weight:600}
 .dbnav .dbdt input{position:absolute;inset:0;opacity:0;width:100%;height:100%;cursor:pointer}
@@ -158,7 +158,7 @@ html,body{overscroll-behavior-y:none}
 .dbg3{grid-template-columns:repeat(3,1fr)}.dbg2{grid-template-columns:repeat(2,1fr)}
 .dbt{border:1px solid;border-radius:14px;padding:10px 12px;text-align:left;font:inherit;cursor:pointer;display:block;min-height:96px;width:100%}
 .dbtl{display:flex;align-items:center;gap:6px;font-weight:700;font-size:14px}
-.dbtl i{width:8px;height:8px;border-radius:50%;display:inline-block;flex:none}
+.dbtl i{width:8px;height:8px;border-radius:50%;display:inline-block;flex:none;background:currentColor}
 .dbn{display:block;font-size:30px;line-height:1.1;margin:6px 0 4px}
 .dbp{display:flex;justify-content:space-between;font-size:13px}
 .dbp em{font-style:normal}
@@ -167,7 +167,7 @@ html,body{overscroll-behavior-y:none}
 .dbl div{display:flex;justify-content:space-between;gap:8px;padding:9px 2px;border-bottom:1px solid var(--line);font-size:14px;color:var(--ink)}
 .dbl small{color:var(--mute)}
 .dbsep{height:1px;background:var(--line);margin:16px 0 4px}
-.dblink{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;border:0;background:transparent;color:var(--g);font:inherit;font-weight:700;padding:12px 4px;cursor:pointer}
+.dblink{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;border:0;background:transparent;color:var(--okt);font:inherit;font-weight:700;padding:12px 4px;cursor:pointer}
 .dbtb{margin-top:6px;font-size:13.5px}
 .dbtb .dbrow{display:grid;grid-template-columns:2.2fr 1fr 1fr 1fr 1.2fr;gap:6px;padding:8px 2px;border-bottom:1px solid var(--line);color:var(--ink);align-items:center}
 .dbtb .dbrow span+span{text-align:center}
@@ -181,6 +181,16 @@ html,body{overscroll-behavior-y:none}
 .dbtr small{display:block;color:var(--mute);margin-top:2px}
 .dbbd{display:inline-block;padding:3px 10px;border-radius:99px;font-size:12px;font-weight:700;white-space:nowrap}
 .dbt .dbp svg{width:20px;height:20px}
+
+:root{--dbv-bg:#e3ecfb;--dbv-t:#2a5cb8}
+[data-theme="dark"]{--dbv-bg:#1b2a46;--dbv-t:#8fb6ff}
+.dbt-p{background:var(--ok);color:var(--okt);border-color:color-mix(in srgb,var(--okt) 30%,transparent)}
+.dbt-a{background:var(--no);color:var(--not);border-color:color-mix(in srgb,var(--not) 30%,transparent)}
+.dbt-l{background:var(--late);color:var(--latet);border-color:color-mix(in srgb,var(--latet) 30%,transparent)}
+.dbt-v{background:var(--dbv-bg);color:var(--dbv-t);border-color:color-mix(in srgb,var(--dbv-t) 30%,transparent)}
+.dbi-g{background:color-mix(in srgb,var(--okt) 14%,transparent);color:var(--okt)}
+.dbi-s{color:#fff;background:linear-gradient(135deg,var(--g),var(--gd));box-shadow:0 6px 16px color-mix(in srgb,var(--g) 38%,transparent)}
+.dbbd.dbt-p,.dbbd.dbt-a,.dbbd.dbt-l,.dbbd.dbt-v{border:0}
 </style>
 <style id="ds">
 /* ===== Design System: Light / Dark টোকেন ===== */
@@ -378,8 +388,7 @@ function home(){
  const t=homeList();
  const who=role==='teacher'&&myTeacher?(teachers.find(t=>t.id===myTeacher)||{}).n||'শিক্ষক':role==='admin'?(adminInfo.n||'Admin'):'Admin';
  shell(profile.name||'Madrasa Management',`<div class="hello" ${role==='admin'?'style="cursor:pointer" onclick="tab=\'aprof\';draw()"':role==='teacher'?'style="cursor:pointer" onclick="tab=\'tself\';draw()"':''}><div class="av">${role==='admin'?avHTML(adminPic,'অ'):avHTML((teachers.find(t=>t.id===myTeacher)||{}).photo,'শ')}</div><div><b>আসসালামু আলাইকুম</b><br>${who}<br><small style="color:var(--mute)">আপনি ${role==='admin'?'এডমিন':'শিক্ষক'} প্যানেলে আছেন</small></div></div>
- ${role==='admin'&&typeof dashHTML==='function'?dashHTML():''}
-  ${typeof ndbHTML==='function'?ndbHTML():''}
+ ${typeof ndbHTML==='function'?ndbHTML():''}
  ${secsH(groupTiles(t))}
  <button class="strip" style="width:100%;border:0" onclick="devShow()">👨‍💻 ডেভেলপার সম্পর্কে তথ্য</button>`)}
 function stu(){if(stuCls&&!classes.includes(stuCls))stuCls='';return stuCls?stuInClass():stuClasses()}
@@ -977,6 +986,8 @@ const dbDate=d=>{const a=String(d).split('-');return bn(+a[2])+' '+DBM[+a[1]-1]+
 const dbShift=(d,n)=>{const t=new Date(d+'T00:00:00');t.setDate(t.getDate()+n);return t.getFullYear()+'-'+String(t.getMonth()+1).padStart(2,'0')+'-'+String(t.getDate()).padStart(2,'0')};
 const dbPc=(n,t)=>bn(t?Math.round(n*100/t):0)+'%';
 const dbCur=()=>DB.d||T0;
+const dbCol=r=>r>=80?'var(--okt)':r>=50?'var(--latet)':'var(--not)';
+const dbBar=r=>r>=80?'var(--okt)':r>=50?'var(--gold)':'var(--not)';
 const DBI={cal:'<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4.5" width="18" height="16" rx="3"/><path d="M8 2.5v4M16 2.5v4M3 9.5h18"/><path d="M8 13.5h.01M12 13.5h.01M16 13.5h.01M8 17h.01M12 17h.01M16 17h.01" stroke-width="2.4"/></svg>',
  dl:'<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="3.5" width="17" height="17" rx="3"/><path d="M12 7.5v7M8.8 11.8L12 15l3.2-3.2"/></svg>',
  rf:'<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20 12a8 8 0 10-2.3 5.6"/><path d="M20 5v5h-5"/></svg>',
@@ -986,8 +997,8 @@ function dbStu(d){const rec=(typeof at!=='undefined'&&at&&at[d])||{},c={P:0,A:0,
  return{c:c,by:by,lists:lists,total:students.length,taken:c.P+c.A+c.L}}
 function dbNavHTML(d,withIn){const isT=d===T0;
  return '<div class="dbnav"><button onclick="dbGo(-1)">‹ পূর্ববর্তী</button><div class="dbdt">'+DBI.cal.replace('width="22" height="22"','width="18" height="18"')+'<span>'+(isT?'আজ ('+dbDate(d)+')':dbDate(d))+'</span><input type="date" data-dmy="1" max="'+T0+'" value="'+d+'" onchange="dbPick(this.value)" aria-label="তারিখ বাছুন"></div><button class="'+(isT?'off':'')+'" onclick="dbGo(1)">পরবর্তী ›</button></div>'}
-function dashStuHTML(){const d=dbCur(),st=dbStu(d),T=st.total,rate=T?Math.round((st.c.P+st.c.L)*100/T):0,col=rate>=80?'#1aa260':rate>=50?'#e0a020':'#d64545';
- const tile=(k,lb,cl)=>'<button class="dbt'+(DB.sel===k?' on':'')+'" style="background:'+cl+'1f;border-color:'+cl+'66;color:'+cl+'" onclick="dbSel(\''+k+'\')"><div class="dbtl"><i style="background:'+cl+'"></i>'+lb+'</div><b class="dbn">'+bn(st.c[k])+'</b><div class="dbp"><span>'+dbPc(st.c[k],T)+'</span><em>›</em></div></button>';
+function dashStuHTML(){const d=dbCur(),st=dbStu(d),T=st.total,rate=T?Math.round((st.c.P+st.c.L)*100/T):0,col=dbCol(rate);
+ const tile=(k,lb,cl)=>'<button class="dbt dbt-'+cl+(DB.sel===k?' on':'')+'" onclick="dbSel(\''+k+'\')"><div class="dbtl"><i></i>'+lb+'</div><b class="dbn">'+bn(st.c[k])+'</b><div class="dbp"><span>'+dbPc(st.c[k],T)+'</span><em>›</em></div></button>';
  let list='';
  if(DB.sel&&st.lists[DB.sel]){const L=st.lists[DB.sel],nm={P:'উপস্থিত',A:'অনুপস্থিত',L:'বিলম্বে'}[DB.sel];
   list='<div class="dbl">'+(L.length?L.slice(0,80).map(s=>'<div><span>'+xe0(s.n)+'</span><small>'+xe0(s.c||'')+(s.r?' • রোল '+bn(s.r):'')+'</small></div>').join('')+(L.length>80?'<div><small>আরও '+bn(L.length-80)+' জন…</small></div>':''):'<div><small>'+nm+' কেউ নেই</small></div>')+'</div>'}
@@ -995,12 +1006,12 @@ function dashStuHTML(){const d=dbCur(),st=dbStu(d),T=st.total,rate=T?Math.round(
  if(DB.cls){const names=(typeof classes!=='undefined'?classes.filter(c=>st.by[c]):[]).concat(Object.keys(st.by).filter(c=>!(typeof classes!=='undefined'&&classes.includes(c))));
   cls='<div class="dbtb"><div class="dbrow dbhd"><span>শ্রেণি</span><span>উপস্থিত</span><span>অনুপস্থিত</span><span>দেরি</span><span>হার</span></div>'+names.map(c=>{const b=st.by[c];return '<div class="dbrow"><span>'+xe0(c)+'</span><span>'+bn(b.P)+'</span><span>'+bn(b.A)+'</span><span>'+bn(b.L)+'</span><span>'+dbPc(b.P+b.L,b.n)+'</span></div>'}).join('')+'</div>'}
  return '<div class="dbc">'
-  +'<div class="dbh"><div class="dbi" style="background:#1aa2601f;color:#1aa260">'+DBI.ok+'</div><div><div class="dbtt">দৈনিক উপস্থিতি<br>সারসংক্ষেপ</div><div class="dbs"><i style="background:#1aa260"></i>'+dbDate(d)+' • '+bn(T)+' মোট শিক্ষার্থী</div></div>'
+  +'<div class="dbh"><div class="dbi dbi-s">'+DBI.ok+'</div><div><div class="dbtt">দৈনিক উপস্থিতি<br>সারসংক্ষেপ</div><div class="dbs"><i></i>'+dbDate(d)+' • '+bn(T)+' মোট শিক্ষার্থী</div></div>'
   +'<div class="dbacts"><label class="dbb" aria-label="তারিখ">'+DBI.cal+'<input type="date" data-dmy="1" max="'+T0+'" value="'+d+'" onchange="dbPick(this.value)"></label><button class="dbb" onclick="dbCopy()" aria-label="রিপোর্ট কপি">'+DBI.dl+'</button><button class="dbb" onclick="dbRefresh()" aria-label="রিফ্রেশ">'+DBI.rf+'</button></div></div>'
   +dbNavHTML(d)
-  +'<div class="dbr"><span>সামগ্রিক উপস্থিতি হার</span><span style="color:'+col+'">'+bn(rate)+'%</span></div><div class="dbbar"><b style="width:'+rate+'%;background:'+col+'"></b></div>'
+  +'<div class="dbr"><span>সামগ্রিক উপস্থিতি হার</span><span style="color:'+col+'">'+bn(rate)+'%</span></div><div class="dbbar"><b style="width:'+rate+'%;background:'+dbBar(rate)+'"></b></div>'
   +(T&&!st.taken?'<div class="dbnote">এই দিনের হাজিরা এখনো নেওয়া হয়নি।</div>':'')
-  +'<div class="dbg dbg3">'+tile('P','উপস্থিত','#1aa260')+tile('A','অনুপস্থিত','#d64545')+tile('L','বিলম্বে','#e0a020')+'</div>'+list
+  +'<div class="dbg dbg3">'+tile('P','উপস্থিত','p')+tile('A','অনুপস্থিত','a')+tile('L','বিলম্বে','l')+'</div>'+list
   +'<div class="dbsep"></div><button class="dblink" onclick="dbCls()">শ্রেণিভিত্তিক বিস্তারিত '+(DB.cls?'লুকান':'দেখুন')+' <span>'+(DB.cls?'↑':'→')+'</span></button>'+cls
   +'</div>'}
 /* ===== শিক্ষক উপস্থিতি সারাংশ ===== */
@@ -1013,7 +1024,7 @@ const DBTI={cap:'<svg width="30" height="30" viewBox="0 0 24 24" fill="none" str
  clk:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/></svg>',
  x:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6.5 6.5l11 11M17.5 6.5l-11 11"/></svg>',
  chev:'<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>',
- ppl:'<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#1aa260" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8.5" r="3"/><path d="M3.5 19c0-3 2.5-5 5.5-5s5.5 2 5.5 5"/><circle cx="17" cy="9.5" r="2.4"/><path d="M16.5 14.2c2.6 0 4.5 1.7 4.5 4.3"/></svg>'};
+ ppl:'<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8.5" r="3"/><path d="M3.5 19c0-3 2.5-5 5.5-5s5.5 2 5.5 5"/><circle cx="17" cy="9.5" r="2.4"/><path d="M16.5 14.2c2.6 0 4.5 1.7 4.5 4.3"/></svg>'};
 function dbtLoad(d,force){if(typeof window.__tqrDay!=='function')return;const fresh=DBT.cache[d]&&(d!==T0||Date.now()-(DBT.ts[d]||0)<60000);if(DBT.busy[d]||(fresh&&!force))return;DBT.busy[d]=1;
  window.__tqrDay(d).then(v=>{DBT.cache[d]=v||{};DBT.ts[d]=Date.now()}).catch(()=>{if(!DBT.cache[d])DBT.cache[d]={};DBT.ts[d]=Date.now()}).then(()=>{DBT.busy[d]=0;if(tab==='home')draw()})}
 function dbtData(d){const q=DBT.cache[d],tt=(typeof tat!=='undefined'&&tat&&tat[d])||{},c={P:0,V:0,L:0,A:0},rows=[];let rec=0;
@@ -1022,20 +1033,20 @@ function dbtData(d){const q=DBT.cache[d],tt=(typeof tat!=='undefined'&&tat&&tat[
   else if(tt[t.id]){const v=tt[t.id];k=v==='Present'?'P':v==='Late'?'L':'A';rec++;src='m'}
   c[k]++;rows.push({t:t,k:k,i:i,src:src})});
  return{c:c,rows:rows,total:teachers.length,rec:rec,loading:q===undefined}}
-function dashTchHTML(){const d=dbtCur();dbtLoad(d);const st=dbtData(d),T=st.total,rate=T?Math.round((st.c.P+st.c.L)*100/T):0,col=rate>=80?'#1aa260':rate>=50?'#e0a020':'#d64545',isT=d===T0;
- const tile=(k,lb,cl,ic)=>'<div class="dbt" style="background:'+cl+'1f;border-color:'+cl+'66;color:'+cl+'"><div class="dbtl"><i style="background:'+cl+'"></i>'+lb+'</div><b class="dbn">'+bn(st.c[k])+'</b><div class="dbp"><span>'+dbPc(st.c[k],T)+'</span>'+ic+'</div></div>';
- const bd={P:['উপস্থিত','#1aa260'],V:['ছুটিতে','#7a5fc4'],L:['বিলম্বে','#e0a020'],A:['অনুপস্থিত','#d64545']};
+function dashTchHTML(){const d=dbtCur();dbtLoad(d);const st=dbtData(d),T=st.total,rate=T?Math.round((st.c.P+st.c.L)*100/T):0,col=dbCol(rate),isT=d===T0;
+ const tile=(k,lb,cl,ic)=>'<div class="dbt dbt-'+cl+'"><div class="dbtl"><i></i>'+lb+'</div><b class="dbn">'+bn(st.c[k])+'</b><div class="dbp"><span>'+dbPc(st.c[k],T)+'</span>'+ic+'</div></div>';
+ const bd={P:['উপস্থিত','p'],V:['ছুটিতে','v'],L:['বিলম্বে','l'],A:['অনুপস্থিত','a']};
  let list='';
- if(DBT.open){list='<div class="dbl" style="max-height:320px">'+(st.rows.length?st.rows.map(r=>{const b=bd[r.k],ok=r.k==='P'||r.k==='L',tm=ok&&r.i&&r.i.t?dbtTm(r.i.t):'';return '<div class="dbtr"><span><b>'+xe0(r.t.n||r.t.id)+'</b>'+(tm||(ok&&r.i&&r.i.lm)?'<small>'+(tm?'চেক-ইন '+tm:'')+(ok&&r.i&&r.i.lm?(tm?' • ':'')+'দেরি '+bn(r.i.lm)+' মি':'')+'</small>':'')+'</span><span class="dbbd" style="background:'+b[1]+'26;color:'+b[1]+'">'+b[0]+'</span></div>'}).join(''):'<div><small>কোনো শিক্ষক নেই</small></div>')+'</div>'}
+ if(DBT.open){list='<div class="dbl" style="max-height:320px">'+(st.rows.length?st.rows.map(r=>{const b=bd[r.k],ok=r.k==='P'||r.k==='L',tm=ok&&r.i&&r.i.t?dbtTm(r.i.t):'';return '<div class="dbtr"><span><b>'+xe0(r.t.n||r.t.id)+'</b>'+(tm||(ok&&r.i&&r.i.lm)?'<small>'+(tm?'চেক-ইন '+tm:'')+(ok&&r.i&&r.i.lm?(tm?' • ':'')+'দেরি '+bn(r.i.lm)+' মি':'')+'</small>':'')+'</span><span class="dbbd dbt-'+b[1]+'">'+b[0]+'</span></div>'}).join(''):'<div><small>কোনো শিক্ষক নেই</small></div>')+'</div>'}
  const nav='<div class="dbnav"><button onclick="dbtGo(-1)">‹ পূর্ববর্তী</button><div class="dbdt">'+DBI.cal.replace('width="22" height="22"','width="18" height="18"')+'<span>'+(isT?'আজ, '+bn(+d.slice(8))+' '+DBM[+d.slice(5,7)-1]:dbDate(d))+'</span><input type="date" data-dmy="1" max="'+T0+'" value="'+d+'" onchange="dbtPick(this.value)" aria-label="তারিখ বাছুন"></div><button class="'+(isT?'off':'')+'" onclick="dbtGo(1)">পরবর্তী ›</button></div>';
  return '<div class="dbc">'
-  +'<div class="dbh"><div class="dbi" style="background:linear-gradient(135deg,#8b5cf6,#6d28d9);box-shadow:0 6px 16px #7c3aed55">'+DBTI.cap+'</div><div><div class="dbtt">শিক্ষক উপস্থিতি সারাংশ</div><div class="dbs"><i style="background:#1aa260"></i>'+dbDate(d)+' • '+bn(T)+' শিক্ষক</div></div>'
+  +'<div class="dbh"><div class="dbi dbi-s">'+DBTI.cap+'</div><div><div class="dbtt">শিক্ষক উপস্থিতি সারাংশ</div><div class="dbs"><i></i>'+dbDate(d)+' • '+bn(T)+' শিক্ষক</div></div>'
   +'<div class="dbacts"><label class="dbb" aria-label="তারিখ">'+DBI.cal+'<input type="date" data-dmy="1" max="'+T0+'" value="'+d+'" onchange="dbtPick(this.value)"></label><button class="dbb" onclick="dbtRefresh()" aria-label="রিফ্রেশ">'+DBI.rf+'</button></div></div>'
   +nav
-  +'<div class="dbr"><span>সামগ্রিক উপস্থিতি হার</span><span style="color:'+col+'">'+bn(rate)+'%</span></div><div class="dbbar"><b style="width:'+rate+'%;background:'+col+'"></b></div>'
+  +'<div class="dbr"><span>সামগ্রিক উপস্থিতি হার</span><span style="color:'+col+'">'+bn(rate)+'%</span></div><div class="dbbar"><b style="width:'+rate+'%;background:'+dbBar(rate)+'"></b></div>'
   +(st.loading?'<div class="dbnote">তথ্য আনা হচ্ছে…</div>':(T&&!st.rec?'<div class="dbnote">এই দিনে এখনো কারো হাজিরা রেকর্ড হয়নি, তাই সবাইকে অনুপস্থিত ধরা হয়েছে।</div>':''))
-  +'<div class="dbg dbg2">'+tile('P','উপস্থিত','#1aa260',DBTI.ck)+tile('V','ছুটিতে','#7a5fc4',DBTI.doc)+tile('L','বিলম্বে','#e0a020',DBTI.clk)+tile('A','অনুপস্থিত','#d64545',DBTI.x)+'</div>'
-  +'<button class="dbtog'+(DBT.open?' open':'')+'" onclick="dbtTog()"><span style="display:flex;align-items:center;gap:10px">'+DBTI.ppl+'শিক্ষকদের তালিকা '+(DBT.open?'লুকান':'দেখুন')+'<span class="dbcnt">'+bn(T)+'</span></span><span class="ch">'+DBTI.chev+'</span></button>'+list
+  +'<div class="dbg dbg2">'+tile('P','উপস্থিত','p',DBTI.ck)+tile('V','ছুটিতে','v',DBTI.doc)+tile('L','বিলম্বে','l',DBTI.clk)+tile('A','অনুপস্থিত','a',DBTI.x)+'</div>'
+  +'<button class="dbtog'+(DBT.open?' open':'')+'" onclick="dbtTog()"><span style="display:flex;align-items:center;gap:10px"><span style="color:var(--okt);display:flex">'+DBTI.ppl+'</span>শিক্ষকদের তালিকা '+(DBT.open?'লুকান':'দেখুন')+'<span class="dbcnt">'+bn(T)+'</span></span><span class="ch">'+DBTI.chev+'</span></button>'+list
   +'</div>'}
 function dbtGo(n){const d=dbShift(dbtCur(),n);if(d>T0)return;DBT.d=d===T0?'':d;draw()}
 function dbtPick(v){if(!/^\d{4}-\d{2}-\d{2}$/.test(v||''))return;if(v>T0)v=T0;DBT.d=v===T0?'':v;draw()}
@@ -2991,7 +3002,7 @@ go()})();
  /* মাগরিব বা মধ্যরাত পার হলে কার্ড নিজে নতুন তারিখ দেখায় */
  window.dtcRefresh=function(){var c=document.querySelector('.dtc');if(!c||document.getElementById('md'))return;var i=info();if(c.getAttribute('data-s')===i.sig)return;var t=document.createElement('div');t.innerHTML=dateCardHTML();c.replaceWith(t.firstChild)};
  setInterval(function(){try{dtcRefresh()}catch(e){}},30000);document.addEventListener('visibilitychange',function(){if(!document.hidden){try{dtcRefresh()}catch(e){}}});
- var _n=window.ndbHTML;window.ndbHTML=function(){var h='';try{h=dateCardHTML()}catch(e){}return h+(_n?_n():'')};
+ var _n=window.ndbHTML;window.ndbHTML=function(){var h='';try{h=dateCardHTML()}catch(e){}return h+(role==='admin'&&typeof dashHTML==='function'?dashHTML():'')+(_n?_n():'')};
 })();
 </script>
 <script>

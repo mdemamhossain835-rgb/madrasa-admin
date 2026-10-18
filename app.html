@@ -7,6 +7,7 @@
 <title>মাদ্রাসা ম্যানেজমেন্ট সিস্টেম</title>
 <script>try{document.documentElement.setAttribute('data-theme',localStorage.getItem('mm_theme')==='dark'?'dark':'light')}catch(e){document.documentElement.setAttribute('data-theme','light')}</script>
 <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Tiro+Bangla&text=%E0%A7%A6%E0%A7%A7%E0%A7%A8%E0%A7%A9%E0%A7%AA%E0%A7%AB%E0%A7%AC%E0%A7%AD%E0%A7%AE%E0%A7%AF%E0%A7%B3&display=swap" rel="stylesheet">
 <style>
 :root{--bg:#f2f5f3;--card:#fff;--ink:#16302a;--mute:#5f7570;--g:#0b6b4a;--gd:#084c36;--line:#e1e9e5;--gold:#d9a72e;--ok:#d6f3e2;--okt:#0b6b4a;--no:#fde0e0;--not:#b42323;--late:#ffecc7;--latet:#9a6400;
 box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
@@ -14,7 +15,7 @@ box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:en
 :root[data-theme="dark"]{--bg:#0e1a16;--card:#16261f;--ink:#e6f1ec;--mute:#93aca3;--line:#25382f;--ok:#12402d;--okt:#7fe0ae;--no:#4a1f1f;--not:#ff9b9b;--late:#4a3a12;--latet:#ffd27a}
 *{box-sizing:border-box;margin:0}
 html,body{height:100%}
-body{font-family:'Hind Siliguri','Noto Sans Bengali',system-ui,sans-serif;background:var(--bg);color:var(--ink);font-size:15px}
+body{font-family:'Tiro Bangla','Hind Siliguri','Noto Sans Bengali',system-ui,sans-serif;background:var(--bg);color:var(--ink);font-size:15px}
 #app{max-width:480px;margin:0 auto;min-height:100%;position:relative;background:var(--bg)}
 button{font:inherit;cursor:pointer;border:0;color:inherit;background:none}
 button:focus-visible,input:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
@@ -191,12 +192,85 @@ html,body{overscroll-behavior-y:none}
 .dbi-g{background:color-mix(in srgb,var(--okt) 14%,transparent);color:var(--okt)}
 .dbi-s{color:#fff;background:linear-gradient(135deg,var(--g),var(--gd));box-shadow:0 6px 16px color-mix(in srgb,var(--g) 38%,transparent)}
 .dbbd.dbt-p,.dbbd.dbt-a,.dbbd.dbt-l,.dbbd.dbt-v{border:0}
+
+/* ড্যাশবোর্ড: সংহত মাপ */
+.dbc{padding:14px;border-radius:18px;margin:10px 0}
+.dbi{width:44px;height:44px;border-radius:12px}
+.dbi svg{width:26px;height:26px}
+.dbh{gap:10px}
+.dbh .dbtt{font-size:16px;line-height:1.25}
+.dbs{font-size:12px;margin-top:3px;line-height:1.35}
+.dbs i{width:7px;height:7px;margin-right:4px}
+.dbb{width:32px;height:32px;border-radius:9px}
+.dbb svg{width:20px;height:20px}
+.dbacts{gap:0}
+.dbnav{padding:3px 6px;margin-top:12px;font-size:13px;border-radius:12px;gap:4px}
+.dbnav button{font-size:12.5px;padding:7px 3px;white-space:nowrap;flex:none}
+.dbnav .dbdt{gap:6px;font-size:13px;white-space:nowrap;min-width:0;overflow:hidden;text-overflow:ellipsis;flex:1;justify-content:center}
+.dbnav .dbdt svg{width:15px;height:15px;flex:none}
+.dbr{margin-top:12px;font-size:14px}
+.dbbar{height:8px;margin-top:6px}
+.dbnote{font-size:12px;margin-top:6px}
+.dbg{gap:8px;margin-top:12px}
+.dbt{padding:8px 10px;min-height:76px;border-radius:12px}
+.dbtl{font-size:13px;gap:5px}
+.dbtl i{width:7px;height:7px}
+.dbn{font-size:26px;margin:3px 0 2px}
+.dbp{font-size:12px}
+.dbt .dbp svg{width:17px;height:17px}
+.dbsep{margin:12px 0 2px}
+.dblink{font-size:14px;padding:10px 4px}
+.dbtog{margin-top:12px;padding:10px 12px;font-size:14px;border-radius:12px}
+.dbtog .dbcnt{font-size:12px;padding:1px 7px;margin-left:6px}
+.dbl{margin-top:10px}
+.dbl div,.dbtr{font-size:13px}
+.dbtb{font-size:12.5px}
+.dbtb .dbrow{padding:7px 2px}
+.dbbd{font-size:11.5px;padding:2px 9px}
+
+/* ড্যাশবোর্ড: ঘন ও ছোট মাপ (মোবাইলে এক স্ক্রিনে কম জায়গা) */
+.dbc{padding:12px;margin:10px 0;border-radius:16px}
+.dbh{gap:10px}
+.dbi{width:42px;height:42px;border-radius:12px}
+.dbi svg{width:24px;height:24px}
+.dbh .dbtt{font-size:15px;line-height:1.25}
+.dbs{font-size:11.5px;margin-top:3px;line-height:1.35}
+.dbs i{width:7px;height:7px;margin-right:4px}
+.dbb{width:30px;height:30px;border-radius:8px}
+.dbb svg{width:18px;height:18px}
+.dbacts{gap:0}
+.dbnav{margin-top:10px;padding:3px 6px;font-size:12px;border-radius:12px;gap:4px}
+.dbnav button{padding:6px 2px;font-size:12px;white-space:nowrap}
+.dbnav .dbdt{gap:5px;white-space:nowrap;font-size:12px;min-width:0}
+.dbnav .dbdt span{overflow:hidden;text-overflow:ellipsis}
+.dbnav .dbdt svg{width:14px;height:14px}
+.dbr{margin-top:10px;font-size:13px}
+.dbbar{height:7px;margin-top:6px}
+.dbnote{font-size:11px;margin-top:6px}
+.dbg{gap:8px;margin-top:10px}
+.dbt{padding:8px 10px;min-height:0;border-radius:12px}
+.dbtl{font-size:12px;gap:5px}
+.dbtl i{width:7px;height:7px}
+.dbn{font-size:22px;margin:3px 0 1px}
+.dbp{font-size:11.5px}
+.dbt .dbp svg{width:16px;height:16px}
+.dbl{margin-top:8px}
+.dbl div{padding:7px 2px;font-size:13px}
+.dbsep{margin:10px 0 2px}
+.dblink{padding:8px 4px;font-size:13px}
+.dbtb{font-size:12px}
+.dbtb .dbrow{padding:6px 2px}
+.dbtog{margin-top:10px;padding:8px 12px;font-size:13px;border-radius:12px}
+.dbtog .dbcnt{padding:1px 7px;font-size:12px;margin-left:6px}
+.dbtog svg{width:16px;height:16px}
+.dbtr{padding:8px 2px;font-size:13px}
+.dbbd{padding:2px 8px;font-size:11px}
 </style>
 <style id="ds">
 /* ===== Design System: Light / Dark টোকেন ===== */
 :root,:root[data-theme=light]{--bg:#F8FAFC;--card:#FFFFFF;--ink:#0F172A;--mute:#64748B;--g:#059669;--gd:#047857;--line:#E2E8F0;--soft:#F1F5F9;--gold:#F59E0B;--ok:#D1FAE5;--okt:#047857;--no:#FEE2E2;--not:#B91C1C;--late:#FEF3C7;--latet:#B45309;--sh:0 1px 2px rgba(15,23,42,.05),0 1px 3px rgba(15,23,42,.04);color-scheme:light}
 :root[data-theme=dark]{--bg:#111827;--card:#1F2937;--ink:#F9FAFB;--mute:#9CA3AF;--g:#10B981;--gd:#34D399;--line:#374151;--soft:#273244;--gold:#FBBF24;--ok:#064E3B;--okt:#6EE7B7;--no:#7F1D1D;--not:#FCA5A5;--late:#78350F;--latet:#FCD34D;--sh:none;color-scheme:dark}
-body{font-family:'Hind Siliguri','Noto Sans Bengali',system-ui,sans-serif;line-height:1.5;-webkit-font-smoothing:antialiased;font-size:15px}
+body{font-family:'Tiro Bangla','Hind Siliguri','Noto Sans Bengali',system-ui,sans-serif;line-height:1.5;-webkit-font-smoothing:antialiased;font-size:15px}
 h3{font-size:16px;font-weight:700}
 /* ===== Header ===== */
 .top{background:var(--bg);color:var(--ink);border-bottom:1px solid var(--line);padding:10px 12px;gap:4px}
@@ -279,7 +353,7 @@ body:has(#app .top) #thmfix{display:none}
 <style id="ui2">
 :root[data-theme="light"]{--bg:#F8FAFC;--card:#FFFFFF;--ink:#0F172A;--mute:#64748B;--g:#059669;--gd:#047857;--line:#E2E8F0}
 :root[data-theme="dark"]{--bg:#111827;--card:#1F2937;--ink:#F9FAFB;--mute:#9CA3AF;--g:#10B981;--gd:#059669;--line:#374151}
-body{font-family:'Hind Siliguri','Noto Sans Bengali',system-ui,sans-serif;line-height:1.5;-webkit-font-smoothing:antialiased}
+body{font-family:'Tiro Bangla','Hind Siliguri','Noto Sans Bengali',system-ui,sans-serif;line-height:1.5;-webkit-font-smoothing:antialiased}
 #app{overflow-x:hidden}
 .top{background:var(--bg)!important;color:var(--ink)!important;border-bottom:1px solid var(--line);padding:10px 12px;gap:6px}
 .top h1{font-size:17px;font-weight:700;line-height:1.3;min-width:0;overflow:hidden;text-overflow:ellipsis}
@@ -982,6 +1056,8 @@ window.delRcpt=function(id){if(!hasPerm('fee_del'))return deny();const p=fp.find
 /* ===== অ্যাডমিন হোমের ড্যাশবোর্ড: শিক্ষার্থীদের দৈনিক উপস্থিতি সারসংক্ষেপ ===== */
 var DB={d:'',sel:'',cls:0};
 const DBM=['জানুয়ারি','ফেব্রুয়ারি','মার্চ','এপ্রিল','মে','জুন','জুলাই','আগস্ট','সেপ্টেম্বর','অক্টোবর','নভেম্বর','ডিসেম্বর'];
+const DBMS=['জানু','ফেব্রু','মার্চ','এপ্রিল','মে','জুন','জুলাই','আগস্ট','সেপ্টে','অক্টো','নভে','ডিসে'];
+const dbDateS=d=>{const a=String(d).split('-');return bn(+a[2])+' '+DBMS[+a[1]-1]+', '+bn(a[0])};
 const dbDate=d=>{const a=String(d).split('-');return bn(+a[2])+' '+DBM[+a[1]-1]+', '+bn(a[0])};
 const dbShift=(d,n)=>{const t=new Date(d+'T00:00:00');t.setDate(t.getDate()+n);return t.getFullYear()+'-'+String(t.getMonth()+1).padStart(2,'0')+'-'+String(t.getDate()).padStart(2,'0')};
 const dbPc=(n,t)=>bn(t?Math.round(n*100/t):0)+'%';
@@ -996,7 +1072,7 @@ function dbStu(d){const rec=(typeof at!=='undefined'&&at&&at[d])||{},c={P:0,A:0,
  students.forEach(s=>{const v=rec[s.id],k=v==='Present'?'P':v==='Absent'?'A':v==='Late'?'L':'',cn=s.c||'—';by[cn]=by[cn]||{P:0,A:0,L:0,n:0};by[cn].n++;if(k){c[k]++;by[cn][k]++;lists[k].push(s)}});
  return{c:c,by:by,lists:lists,total:students.length,taken:c.P+c.A+c.L}}
 function dbNavHTML(d,withIn){const isT=d===T0;
- return '<div class="dbnav"><button onclick="dbGo(-1)">‹ পূর্ববর্তী</button><div class="dbdt">'+DBI.cal.replace('width="22" height="22"','width="18" height="18"')+'<span>'+(isT?'আজ ('+dbDate(d)+')':dbDate(d))+'</span><input type="date" data-dmy="1" max="'+T0+'" value="'+d+'" onchange="dbPick(this.value)" aria-label="তারিখ বাছুন"></div><button class="'+(isT?'off':'')+'" onclick="dbGo(1)">পরবর্তী ›</button></div>'}
+ return '<div class="dbnav"><button onclick="dbGo(-1)">‹ পূর্ববর্তী</button><div class="dbdt">'+DBI.cal.replace('width="22" height="22"','width="18" height="18"')+'<span>'+(isT?'আজ ('+dbDateS(d)+')':dbDateS(d))+'</span><input type="date" data-dmy="1" max="'+T0+'" value="'+d+'" onchange="dbPick(this.value)" aria-label="তারিখ বাছুন"></div><button class="'+(isT?'off':'')+'" onclick="dbGo(1)">পরবর্তী ›</button></div>'}
 function dashStuHTML(){const d=dbCur(),st=dbStu(d),T=st.total,rate=T?Math.round((st.c.P+st.c.L)*100/T):0,col=dbCol(rate);
  const tile=(k,lb,cl)=>'<button class="dbt dbt-'+cl+(DB.sel===k?' on':'')+'" onclick="dbSel(\''+k+'\')"><div class="dbtl"><i></i>'+lb+'</div><b class="dbn">'+bn(st.c[k])+'</b><div class="dbp"><span>'+dbPc(st.c[k],T)+'</span><em>›</em></div></button>';
  let list='';
@@ -1006,7 +1082,7 @@ function dashStuHTML(){const d=dbCur(),st=dbStu(d),T=st.total,rate=T?Math.round(
  if(DB.cls){const names=(typeof classes!=='undefined'?classes.filter(c=>st.by[c]):[]).concat(Object.keys(st.by).filter(c=>!(typeof classes!=='undefined'&&classes.includes(c))));
   cls='<div class="dbtb"><div class="dbrow dbhd"><span>শ্রেণি</span><span>উপস্থিত</span><span>অনুপস্থিত</span><span>দেরি</span><span>হার</span></div>'+names.map(c=>{const b=st.by[c];return '<div class="dbrow"><span>'+xe0(c)+'</span><span>'+bn(b.P)+'</span><span>'+bn(b.A)+'</span><span>'+bn(b.L)+'</span><span>'+dbPc(b.P+b.L,b.n)+'</span></div>'}).join('')+'</div>'}
  return '<div class="dbc">'
-  +'<div class="dbh"><div class="dbi dbi-s">'+DBI.ok+'</div><div><div class="dbtt">দৈনিক উপস্থিতি<br>সারসংক্ষেপ</div><div class="dbs"><i></i>'+dbDate(d)+' • '+bn(T)+' মোট শিক্ষার্থী</div></div>'
+  +'<div class="dbh"><div class="dbi dbi-s">'+DBI.ok+'</div><div><div class="dbtt">দৈনিক উপস্থিতি<br>সারসংক্ষেপ</div><div class="dbs"><i></i>'+dbDateS(d)+' • '+bn(T)+' মোট শিক্ষার্থী</div></div>'
   +'<div class="dbacts"><label class="dbb" aria-label="তারিখ">'+DBI.cal+'<input type="date" data-dmy="1" max="'+T0+'" value="'+d+'" onchange="dbPick(this.value)"></label><button class="dbb" onclick="dbCopy()" aria-label="রিপোর্ট কপি">'+DBI.dl+'</button><button class="dbb" onclick="dbRefresh()" aria-label="রিফ্রেশ">'+DBI.rf+'</button></div></div>'
   +dbNavHTML(d)
   +'<div class="dbr"><span>সামগ্রিক উপস্থিতি হার</span><span style="color:'+col+'">'+bn(rate)+'%</span></div><div class="dbbar"><b style="width:'+rate+'%;background:'+dbBar(rate)+'"></b></div>'
@@ -1038,9 +1114,9 @@ function dashTchHTML(){const d=dbtCur();dbtLoad(d);const st=dbtData(d),T=st.tota
  const bd={P:['উপস্থিত','p'],V:['ছুটিতে','v'],L:['বিলম্বে','l'],A:['অনুপস্থিত','a']};
  let list='';
  if(DBT.open){list='<div class="dbl" style="max-height:320px">'+(st.rows.length?st.rows.map(r=>{const b=bd[r.k],ok=r.k==='P'||r.k==='L',tm=ok&&r.i&&r.i.t?dbtTm(r.i.t):'';return '<div class="dbtr"><span><b>'+xe0(r.t.n||r.t.id)+'</b>'+(tm||(ok&&r.i&&r.i.lm)?'<small>'+(tm?'চেক-ইন '+tm:'')+(ok&&r.i&&r.i.lm?(tm?' • ':'')+'দেরি '+bn(r.i.lm)+' মি':'')+'</small>':'')+'</span><span class="dbbd dbt-'+b[1]+'">'+b[0]+'</span></div>'}).join(''):'<div><small>কোনো শিক্ষক নেই</small></div>')+'</div>'}
- const nav='<div class="dbnav"><button onclick="dbtGo(-1)">‹ পূর্ববর্তী</button><div class="dbdt">'+DBI.cal.replace('width="22" height="22"','width="18" height="18"')+'<span>'+(isT?'আজ, '+bn(+d.slice(8))+' '+DBM[+d.slice(5,7)-1]:dbDate(d))+'</span><input type="date" data-dmy="1" max="'+T0+'" value="'+d+'" onchange="dbtPick(this.value)" aria-label="তারিখ বাছুন"></div><button class="'+(isT?'off':'')+'" onclick="dbtGo(1)">পরবর্তী ›</button></div>';
+ const nav='<div class="dbnav"><button onclick="dbtGo(-1)">‹ পূর্ববর্তী</button><div class="dbdt">'+DBI.cal.replace('width="22" height="22"','width="18" height="18"')+'<span>'+(isT?'আজ, '+bn(+d.slice(8))+' '+DBMS[+d.slice(5,7)-1]:dbDateS(d))+'</span><input type="date" data-dmy="1" max="'+T0+'" value="'+d+'" onchange="dbtPick(this.value)" aria-label="তারিখ বাছুন"></div><button class="'+(isT?'off':'')+'" onclick="dbtGo(1)">পরবর্তী ›</button></div>';
  return '<div class="dbc">'
-  +'<div class="dbh"><div class="dbi dbi-s">'+DBTI.cap+'</div><div><div class="dbtt">শিক্ষক উপস্থিতি সারাংশ</div><div class="dbs"><i></i>'+dbDate(d)+' • '+bn(T)+' শিক্ষক</div></div>'
+  +'<div class="dbh"><div class="dbi dbi-s">'+DBTI.cap+'</div><div><div class="dbtt">শিক্ষক উপস্থিতি সারাংশ</div><div class="dbs"><i></i>'+dbDateS(d)+' • '+bn(T)+' শিক্ষক</div></div>'
   +'<div class="dbacts"><label class="dbb" aria-label="তারিখ">'+DBI.cal+'<input type="date" data-dmy="1" max="'+T0+'" value="'+d+'" onchange="dbtPick(this.value)"></label><button class="dbb" onclick="dbtRefresh()" aria-label="রিফ্রেশ">'+DBI.rf+'</button></div></div>'
   +nav
   +'<div class="dbr"><span>সামগ্রিক উপস্থিতি হার</span><span style="color:'+col+'">'+bn(rate)+'%</span></div><div class="dbbar"><b style="width:'+rate+'%;background:'+dbBar(rate)+'"></b></div>'

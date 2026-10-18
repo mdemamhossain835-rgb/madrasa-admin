@@ -758,7 +758,9 @@ function phClr(hid,prev){var h=document.getElementById(hid);if(h)h.value='';var 
 let adminPic=_ld('mm_adminpic','');
 let adminInfo=_ld('mm_admininfo',{n:'Admin',ph:'',em:''});
 function adminEdit(){form('অ্যাডমিনের তথ্য',[['photo','ছবি','photo'],['n','নাম'],['ph','ফোন','type=tel'],['em','ইমেইল','type=email'],['pw','নতুন পাসওয়ার্ড (খালি রাখলে অপরিবর্তিত)','type=password']],{n:adminInfo.n,ph:adminInfo.ph,em:adminInfo.em,photo:adminPic},async o=>{const oldPh=adminInfo.ph||'',newPh=String(o.ph||'').trim();
- if(newPh!==String(oldPh).trim()&&window.adminPhoneChange){try{await window.adminPhoneChange(oldPh,newPh);alert(newPh?'নম্বর বদলানো হয়েছে। এখন থেকে নতুন নম্বর দিয়ে লগইন করতে হবে, পুরনো নম্বর আর চলবে না।':'নম্বর সরানো হয়েছে। এখন থেকে শুধু ইমেইল দিয়ে লগইন চলবে।')}catch(e){alert('নম্বর বদলানো যায়নি: '+(e.message||e)+'\nআগের নম্বরই থাকছে।');o.ph=oldPh}}
+ if(window.adminPhoneChange&&(newPh||newPh!==String(oldPh).trim())){try{const r=await window.adminPhoneChange(oldPh,newPh);
+  if(r==='changed')alert(newPh?'নম্বর বদলানো হয়েছে। এখন থেকে নতুন নম্বর দিয়ে লগইন করতে হবে, পুরনো নম্বর আর চলবে না।':'নম্বর সরানো হয়েছে। এখন থেকে শুধু ইমেইল দিয়ে লগইন চলবে।');
+  else if(r==='repaired')alert('এই নম্বরটি লগইন-তালিকায় ছিল না, এখন যোগ করা হয়েছে। এই নম্বর দিয়ে লগইন করা যাবে।')}catch(e){alert('নম্বর বদলানো যায়নি: '+(e.message||e)+'\nআগের নম্বরই থাকছে।');o.ph=oldPh}}
  if(o.pw&&window.changeOwnPw)window.changeOwnPw(o.pw);adminInfo={n:o.n||'Admin',ph:o.ph,em:o.em};adminPic=o.photo;save('mm_admininfo',adminInfo);save('mm_adminpic',adminPic);draw()})}
 function aprof(){shell('অ্যাডমিন প্রোফাইল',`<div class="hello"><div class="av">${avHTML(adminPic,'অ')}</div><div><b>${adminInfo.n||'Admin'}</b><br><small style="color:var(--mute)">প্রশাসক</small></div></div>`+K('ফোন',adminInfo.ph||'—')+K('ইমেইল',adminInfo.em||'—')+`<button class="tile" style="background:var(--g);width:100%;margin-top:10px;padding:12px" onclick="adminEdit()">✏️ তথ্য ও ছবি সম্পাদনা</button>`,'home')}
 function picEdit(){cl();
@@ -1174,17 +1176,25 @@ window.adminPhoneChange=async function(oldPh,newPh){
  const kn=key(newPh),cand=[key(oldPh)];try{if(profile&&profile.ph)cand.push(key(profile.ph))}catch(e){}
  if(kn&&!/^[0-9]{10,14}$/.test(kn))throw new Error('সঠিক মোবাইল নম্বর দিন (১০-১৪ অঙ্ক)');
  const em=auth.currentUser&&auth.currentUser.email;if(!em)throw new Error('লগইন ইমেইল পাওয়া যায়নি, আবার লগইন করে চেষ্টা করুন');
- const eml=String(em).toLowerCase(),U={};
+ const eml=String(em).toLowerCase(),U={};let missing=false,stale=false;
  if(kn){await xChk([[newPh,'ফোন নম্বর']],false);
   const ex=await get(R('loginIndex/'+kn));
   if(ex.exists()&&(ex.val().role!=='admin'||String(ex.val().email).toLowerCase()!==eml))throw new Error('এই নম্বর এই মাদ্রাসায় আগে থেকেই অন্য কারো লগইন আইডি হিসেবে ব্যবহৃত হচ্ছে');
-  U['loginIndex/'+kn]={email:em,role:'admin'};U['loginMap/'+kn]=MID}
+  const own=await mapOwner(kn);
+  missing=!ex.exists()||own!==MID;
+  if(missing){U['loginIndex/'+kn]={email:em,role:'admin'};U['loginMap/'+kn]=MID}}
  for(const ko of [...new Set(cand)]){
   if(!ko||ko===kn||ko.indexOf('@')>-1)continue;
   const ox=await get(R('loginIndex/'+ko));
-  if(ox.exists()&&ox.val().role==='admin'&&String(ox.val().email).toLowerCase()===eml){U['loginIndex/'+ko]=null;if((await mapOwner(ko))===MID)U['loginMap/'+ko]=null}}
- U['config/profile/ph']=String(newPh||'').trim();
- await upd(U)};
+  if(ox.exists()&&ox.val().role==='admin'&&String(ox.val().email).toLowerCase()===eml){stale=true;U['loginIndex/'+ko]=null;if((await mapOwner(ko))===MID)U['loginMap/'+ko]=null}}
+ const pv=String(newPh||'').trim();
+ if(!Object.keys(U).length&&String((profile&&profile.ph)||'').trim()===pv)return 'ok';
+ U['config/profile/ph']=pv;
+ await upd(U);
+ if(kn){const v=await get(R('loginIndex/'+kn)),o=await mapOwner(kn);
+  if(!v.exists()||String(v.val().email).toLowerCase()!==eml||o!==MID)throw new Error('লেখার পরে যাচাই মেলেনি: নতুন নম্বরের লগইন-এন্ট্রি বসেনি')}
+ if(kn!==key(oldPh)||stale)return 'changed';
+ return missing?'repaired':'ok'};
 async function sibDup(pe,selfKey,pw){if(!pe||!pw)return false;const em=[];if(pe.kids)Object.keys(pe.kids).forEach(k=>{if(k!==selfKey)em.push(pe.kids[k])});else if(pe.email&&!selfKey)em.push(pe.email);
  for(const e of em.slice(0,8)){try{await signInWithEmailAndPassword(auth2,e,pw);try{await signOut(auth2)}catch(x){}return true}catch(x){}}return false}
 async function relink(U,k,o,em,rl){const sk=key(o.id);if(rl!=='guardian'){U['loginIndex/'+k]={email:em,role:rl};return}

@@ -699,7 +699,7 @@ function finV(){const ms=x=>x.filter(e=>e.m===M0),days=Object.keys(at).filter(d=
  '<h3>ফলাফল</h3>'+K('ফলাফল আছে',bn(rl.length)+' জন')+K('পাসের হার',rl.length?bn(Math.round(rl.filter(c=>!c.f).length/rl.length*100))+'%':'—')+
  '<h3>শিক্ষক</h3>'+K('মোট মাসিক বেতন',tk(sum(teachers.map(t=>({a:t.sal}))))),'rep')}
 /* সেটিংস, ব্যাকআপ */
-function setV(){shell('Settings',`${role==='admin'?'<button class="link" onclick="planV()"><span><small>প্ল্যান</small>ট্রায়াল ও মাসিক সাবস্ক্রিপশন (৳৩০০)</span>›</button>':''}<button class="link" onclick="profEdit()"><span><small>মাদ্রাসার তথ্য</small>নাম, লোগো, ঠিকানা ও প্রতিষ্ঠার তারিখ</span>›</button><button class="link" onclick="adminEdit()"><span><small>অ্যাডমিনের তথ্য</small>নাম, ছবি, ফোন ও ইমেইল</span>›</button><button class="link wgrow" style="display:none" onclick="wgPin()"><span><small>হোম স্ক্রিন উইজেট</small>উইজেট হোম স্ক্রিনে যোগ করুন</span>›</button>${role==='admin'||role==='teacher'?'<button class="link" onclick="window.__bellFrom=\'set\';tab=\'bell\';draw()"><span><small>ঘণ্টা</small>পিরিয়ডের ঘণ্টার সময়সূচি</span>›</button>':''}<button class="link" onclick="tab='nhub';draw()"><span><small>Notification</small>চালু/বন্ধ, টেমপ্লেট, পাঠানো ও ইতিহাস</span>›</button><button class="link" onclick="tab='classFee';draw()"><span><small>মাসিক ফি</small>ফি নির্ধারণ</span>›</button><button class="link" onclick="purgeRollKeys()"><span><small>একবারের কাজ</small>রোল নম্বর দিয়ে অভিভাবক লগইন বন্ধ করুন</span>›</button><div class="act"><button onclick="bk()"><b>💾</b>ব্যাকআপ কপি</button><button onclick="rst()"><b>♻️</b>রিস্টোর</button><button onclick="wipe()"><b><i class=idel></i></b>সব মুছুন</button></div><p class="note">ব্যাকআপ কপি করে নিরাপদ জায়গায় রেখে দিন। "সব মুছুন" চাপলে সব তথ্য চলে যাবে।</p>`,'home');setFilt()}
+function setV(){shell('Settings',`${role==='admin'?'<button class="link" onclick="planV()"><span><small>প্ল্যান</small>ট্রায়াল ও মাসিক সাবস্ক্রিপশন (৳৩০০)</span>›</button>':''}<button class="link" onclick="profEdit()"><span><small>মাদ্রাসার তথ্য</small>নাম, লোগো, ঠিকানা ও প্রতিষ্ঠার তারিখ</span>›</button><button class="link" onclick="adminEdit()"><span><small>অ্যাডমিনের তথ্য</small>নাম, ছবি, ফোন ও ইমেইল</span>›</button><button class="link" onclick="adminPhoneDiag()"><span><small>সমস্যা সমাধান</small>লগইন নম্বর যাচাই ও ঠিক করুন</span>›</button><button class="link wgrow" style="display:none" onclick="wgPin()"><span><small>হোম স্ক্রিন উইজেট</small>উইজেট হোম স্ক্রিনে যোগ করুন</span>›</button>${role==='admin'||role==='teacher'?'<button class="link" onclick="window.__bellFrom=\'set\';tab=\'bell\';draw()"><span><small>ঘণ্টা</small>পিরিয়ডের ঘণ্টার সময়সূচি</span>›</button>':''}<button class="link" onclick="tab='nhub';draw()"><span><small>Notification</small>চালু/বন্ধ, টেমপ্লেট, পাঠানো ও ইতিহাস</span>›</button><button class="link" onclick="tab='classFee';draw()"><span><small>মাসিক ফি</small>ফি নির্ধারণ</span>›</button><button class="link" onclick="purgeRollKeys()"><span><small>একবারের কাজ</small>রোল নম্বর দিয়ে অভিভাবক লগইন বন্ধ করুন</span>›</button><div class="act"><button onclick="bk()"><b>💾</b>ব্যাকআপ কপি</button><button onclick="rst()"><b>♻️</b>রিস্টোর</button><button onclick="wipe()"><b><i class=idel></i></b>সব মুছুন</button></div><p class="note">ব্যাকআপ কপি করে নিরাপদ জায়গায় রেখে দিন। "সব মুছুন" চাপলে সব তথ্য চলে যাবে।</p>`,'home');setFilt()}
 function classFeeV(){shell('মাসিক ফি (শ্রেণী অনুযায়ী)',`<div class="row"><div class="info"><b>সাধারণ (ডিফল্ট) ফি</b><small>যে শ্রেণীর নিজস্ব ফি সেট করা নেই, তাদের জন্য প্রযোজ্য</small></div><b>${tk(MF)}</b><button aria-label="পরিবর্তন" onclick="setDefaultFee()">✏️</button></div>`+
  classes.map(c=>`<div class="row"><div class="info"><b>${c}</b><small>বর্তমান ফি: ${tk(classFee[c]!=null&&classFee[c]!==''?classFee[c]:MF)}${classFee[c]!=null&&classFee[c]!==''?'':' (সাধারণ)'}</small></div><button aria-label="পরিবর্তন" onclick="setClassFee('${esc(c)}')">✏️</button></div>`).join(''),'set')}
 function setDefaultFee(){form('সাধারণ (ডিফল্ট) মাসিক ফি',[['n','পরিমাণ (৳)','type=number']],{n:MF},o=>{MF=+o.n||MF;save('mm_mf',MF);draw()})}
@@ -757,10 +757,11 @@ function phSel(inp,hid,prev){const f=inp.files&&inp.files[0];if(!f)return;const 
 function phClr(hid,prev){var h=document.getElementById(hid);if(h)h.value='';var p=document.getElementById(prev);if(p){var nm=document.querySelector('#md input[name="n"]');p.textContent=(nm&&nm.value?Array.from(nm.value)[0]:'+')}var f=document.querySelector('#md input[type=file]');if(f)f.value=''}
 let adminPic=_ld('mm_adminpic','');
 let adminInfo=_ld('mm_admininfo',{n:'Admin',ph:'',em:''});
-function adminEdit(){form('অ্যাডমিনের তথ্য',[['photo','ছবি','photo'],['n','নাম'],['ph','ফোন','type=tel'],['em','ইমেইল','type=email'],['pw','নতুন পাসওয়ার্ড (খালি রাখলে অপরিবর্তিত)','type=password']],{n:adminInfo.n,ph:adminInfo.ph,em:adminInfo.em,photo:adminPic},async o=>{const oldPh=adminInfo.ph||'',newPh=String(o.ph||'').trim();
+function adminEdit(){form('অ্যাডমিনের তথ্য • সংস্করণ ৭',[['photo','ছবি','photo'],['n','নাম'],['ph','ফোন','type=tel'],['em','ইমেইল','type=email'],['pw','নতুন পাসওয়ার্ড (খালি রাখলে অপরিবর্তিত)','type=password']],{n:adminInfo.n,ph:adminInfo.ph,em:adminInfo.em,photo:adminPic},async o=>{const oldPh=adminInfo.ph||'',newPh=String(o.ph||'').trim();
  if(window.adminPhoneChange&&(newPh||newPh!==String(oldPh).trim())){try{const r=await window.adminPhoneChange(oldPh,newPh);
   if(r==='changed')alert(newPh?'নম্বর বদলানো হয়েছে। এখন থেকে নতুন নম্বর দিয়ে লগইন করতে হবে, পুরনো নম্বর আর চলবে না।':'নম্বর সরানো হয়েছে। এখন থেকে শুধু ইমেইল দিয়ে লগইন চলবে।');
-  else if(r==='repaired')alert('এই নম্বরটি লগইন-তালিকায় ছিল না, এখন যোগ করা হয়েছে। এই নম্বর দিয়ে লগইন করা যাবে।')}catch(e){alert('নম্বর বদলানো যায়নি: '+(e.message||e)+'\nআগের নম্বরই থাকছে।');o.ph=oldPh}}
+  else if(r==='repaired')alert('এই নম্বরটি লগইন-তালিকায় ছিল না, এখন যোগ করা হয়েছে। এই নম্বর দিয়ে লগইন করা যাবে।')}catch(e){alert('নম্বর বদলানো যায়নি: '+(e.message||e)+'\nআগের নম্বরই থাকছে।');o.ph=oldPh}
+  if(window.adminLoginCheck){try{alert('লগইন যাচাই (সংস্করণ ৭)\n'+(await window.adminLoginCheck(o.ph)).join('\n'))}catch(e){}}}
  if(o.pw&&window.changeOwnPw)window.changeOwnPw(o.pw);adminInfo={n:o.n||'Admin',ph:o.ph,em:o.em};adminPic=o.photo;save('mm_admininfo',adminInfo);save('mm_adminpic',adminPic);draw()})}
 function aprof(){shell('অ্যাডমিন প্রোফাইল',`<div class="hello"><div class="av">${avHTML(adminPic,'অ')}</div><div><b>${adminInfo.n||'Admin'}</b><br><small style="color:var(--mute)">প্রশাসক</small></div></div>`+K('ফোন',adminInfo.ph||'—')+K('ইমেইল',adminInfo.em||'—')+`<button class="tile" style="background:var(--g);width:100%;margin-top:10px;padding:12px" onclick="adminEdit()">✏️ তথ্য ও ছবি সম্পাদনা</button>`,'home')}
 function picEdit(){cl();
@@ -1172,6 +1173,18 @@ async function acct(email,pw){const c=await createUserWithEmailAndPassword(auth2
 async function freeKeys(ids){const ks=[];for(const [v,free] of ids){const k=key(v);if(!k||ks.includes(k))continue;if(free&&(await get(R('loginIndex/'+k))).exists())continue;ks.push(k)}return ks}
 const mapOwner=async k=>{try{const sn=await get(R('loginMap/'+k));return sn.exists()&&typeof sn.val()==='string'?sn.val():null}catch(e){return null}};
 async function xChk(list,strict){for(const [v,lbl] of list){const k=key(v);if(!k)continue;const ow=await mapOwner(k);if(ow&&ow!==MID)throw new Error('এই '+lbl+' ('+v+') অন্য মাদ্রাসায় ব্যবহৃত হচ্ছে, তাই ব্যবহার করা যাবে না');if(strict&&(await get(R('loginIndex/'+k))).exists())throw new Error('এই '+lbl+' ('+v+') এই মাদ্রাসায় আগে থেকেই ব্যবহৃত হচ্ছে')}}
+window.adminLoginCheck=async function(ph){
+ const L=[],kn=key(ph);
+ try{const em=auth.currentUser&&auth.currentUser.email;L.push('লগইন ইমেইল: '+(em||'পাওয়া যায়নি'));
+  L.push('নম্বর (চাবি): '+(kn||'খালি'));L.push('মাদ্রাসা আইডি: '+MID);
+  if(!kn)return L.concat(['ফল: নম্বর নেই, শুধু ইমেইল দিয়ে লগইন চলবে']);
+  const own=await mapOwner(kn);L.push('loginMap: '+(own===MID?'এই মাদ্রাসা ✓':own?'অন্য মাদ্রাসা ('+own+') ✗':'নেই ✗'));
+  const ix=await get(R('loginIndex/'+kn));
+  if(ix.exists()){const v=ix.val();L.push('loginIndex: আছে (ভূমিকা '+v.role+', ইমেইল '+(String(v.email).toLowerCase()===String(em).toLowerCase()?'মেলে ✓':'মেলে না ✗')+')');
+   L.push(own===MID&&v.role==='admin'&&String(v.email).toLowerCase()===String(em).toLowerCase()?'ফল: এই নম্বর দিয়ে লগইন চলবে ✓':'ফল: লগইন চলবে না ✗')}
+  else{L.push('loginIndex: নেই ✗');L.push('ফল: লগইন চলবে না ✗')}
+ }catch(e){L.push('যাচাই করতে ত্রুটি: '+(e.code||'')+' '+(e.message||e))}
+ return L};
 window.adminPhoneChange=async function(oldPh,newPh){
  const kn=key(newPh),cand=[key(oldPh)];try{if(profile&&profile.ph)cand.push(key(profile.ph))}catch(e){}
  if(kn&&!/^[0-9]{10,14}$/.test(kn))throw new Error('সঠিক মোবাইল নম্বর দিন (১০-১৪ অঙ্ক)');
@@ -1195,6 +1208,27 @@ window.adminPhoneChange=async function(oldPh,newPh){
   if(!v.exists()||String(v.val().email).toLowerCase()!==eml||o!==MID)throw new Error('লেখার পরে যাচাই মেলেনি: নতুন নম্বরের লগইন-এন্ট্রি বসেনি')}
  if(kn!==key(oldPh)||stale)return 'changed';
  return missing?'repaired':'ok'};
+
+window.adminPhoneDiag=async function(){
+ const L=['সংস্করণ: final7'],ok=t=>L.push('✔ '+t),no=t=>L.push('✘ '+t);
+ const er=e=>((e&&e.code)?e.code+' ':'')+((e&&e.message)||e);
+ try{
+  const u=auth.currentUser;
+  if(!u){no('এই মুহূর্তে লগইন নেই (auth.currentUser নেই)');alert(L.join('\n'));return}
+  ok('লগইন ইমেইল: '+u.email);
+  const ph=String((adminInfo&&adminInfo.ph)||'').trim();L.push('ফোনের ঘরের নম্বর: '+(ph||'খালি'));
+  try{const us=(await get(ref(db,'users/'+u.uid))).val();us?ok('users রেকর্ড: role='+us.role+', mid='+(us.mid===MID?'ঠিক':us.mid)):no('users রেকর্ড নেই')}catch(e){no('users পড়া যায়নি: '+er(e))}
+  try{const lc=(await get(ref(db,'licenses/'+MID))).val();if(lc){const n=Date.now();ok('লাইসেন্স: ট্রায়াল '+(lc.trialEnd>n?'চলছে':'শেষ')+', সাবস্ক্রিপশন '+(lc.subEnd>n?'চালু':'নেই/শেষ')+(lc.suspended?' (স্থগিত!)':''))}else L.push('… লাইসেন্স রেকর্ড পাওয়া যায়নি')}catch(e){L.push('… লাইসেন্স পড়া যায়নি: '+er(e))}
+  const kn=key(ph);
+  if(!kn){no('ফোনের ঘরে নম্বর নেই');alert(L.join('\n'));return}
+  const mo=await mapOwner(kn);L.push('আগে: loginMap['+kn+'] = '+(mo===MID?'এই মাদ্রাসা':mo||'নেই'));
+  const ix=await get(R('loginIndex/'+kn));L.push('আগে: loginIndex['+kn+'] = '+(ix.exists()?'আছে':'নেই'));
+  try{const r=await window.adminPhoneChange(ph,ph);ok('মেরামত চালানো হয়েছে ('+r+')')}catch(e){no('মেরামত ব্যর্থ: '+er(e))}
+  const mo2=await mapOwner(kn),ix2=await get(R('loginIndex/'+kn));
+  L.push('পরে: loginMap = '+(mo2===MID?'এই মাদ্রাসা':mo2||'নেই')+' | loginIndex = '+(ix2.exists()?'আছে':'নেই'));
+  if(mo2===MID&&ix2.exists())ok('এখন এই নম্বর দিয়ে লগইন করা যাবে। লগআউট করে চেষ্টা করুন।');else no('এখনো লগইন-এন্ট্রি বসেনি, উপরের ত্রুটিটা আমাকে পাঠান')
+ }catch(e){no('ত্রুটি: '+er(e))}
+ alert(L.join('\n'))};
 async function sibDup(pe,selfKey,pw){if(!pe||!pw)return false;const em=[];if(pe.kids)Object.keys(pe.kids).forEach(k=>{if(k!==selfKey)em.push(pe.kids[k])});else if(pe.email&&!selfKey)em.push(pe.email);
  for(const e of em.slice(0,8)){try{await signInWithEmailAndPassword(auth2,e,pw);try{await signOut(auth2)}catch(x){}return true}catch(x){}}return false}
 async function relink(U,k,o,em,rl){const sk=key(o.id);if(rl!=='guardian'){U['loginIndex/'+k]={email:em,role:rl};return}

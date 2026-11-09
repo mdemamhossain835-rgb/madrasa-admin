@@ -2,7 +2,7 @@
 <html lang="bn">
 <head>
 <meta charset="utf-8">
-<meta name="app-build" content="2026-11-09.3">
+<meta name="app-build" content="2026-11-09.4">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>মাদ্রাসা ম্যানেজমেন্ট সিস্টেম</title>
 <script>try{document.documentElement.setAttribute('data-theme',localStorage.getItem('mm_theme')==='dark'?'dark':'light')}catch(e){document.documentElement.setAttribute('data-theme','light')}</script>
@@ -2061,6 +2061,44 @@ window.hwVoiceDel=async function(c,d,sj){await upd({['hwVoice/'+c+'/'+d+'/'+sjk(
 })();
 </script>
 <script>
+/* প্রশ্নপত্র (শুধু অ্যাডমিন): আলাদা ফাইলের টুলটি ভেতরে চলে; অন্য ট্যাবে গিয়ে ফিরলেও লেখা থাকে; লগআউট করলে সব মুছে যায়।
+   এই ব্লক স্ক্রল-স্ট্যাকের আগে বসেছে, যাতে ব্যাক করলে হোমের স্ক্রল-অবস্থান অন্য পেজের মতোই ফেরে। */
+(function(){
+ var host=null;
+ function src(){var e=document.getElementById('qp-src');return e?e.textContent.replace(/<\\\/script/gi,'</script').trim():''}
+ function mk(){
+  host=document.createElement('div');host.id='qpHost';
+  host.style.cssText='position:fixed;left:50%;transform:translateX(-50%);width:100%;max-width:480px;z-index:4;background:#fff;display:none';
+  var f=document.createElement('iframe');f.title='প্রশ্নপত্র';
+  f.style.cssText='width:100%;height:100%;border:0;display:block;background:#fff';
+  f.srcdoc=src();host.appendChild(f);document.body.appendChild(host)}
+ function destroy(){if(host){host.remove();host=null}}
+ function wipe(){try{localStorage.removeItem('mm_qp_draft_v2');localStorage.removeItem('mm_qp_logo_v2')}catch(e){}}
+ function hookLogin(){var l=window.login;if(typeof l==='function'&&!l.__qp){var w=function(){destroy();wipe();return l.apply(this,arguments)};w.__qp=1;window.login=w}}
+ function place(){
+  if(!host)return;
+  var t=document.querySelector('#app .top'),n=document.querySelector('#app .nav');
+  var tb=t?t.getBoundingClientRect().bottom:0,nt=n?n.getBoundingClientRect().top:window.innerHeight;
+  host.style.top=Math.max(0,tb)+'px';host.style.height=Math.max(0,nt-tb)+'px'}
+ function sync(){
+  hookLogin();
+  var on=(tab==='qpaper'&&role==='admin'&&document.querySelector('#app .nav'));
+  if(on){if(!host)mk();place();host.style.display='block';host.style.visibility='visible';host.style.pointerEvents='auto'}
+  else if(host){host.style.visibility='hidden';host.style.pointerEvents='none';if(document.querySelector('#app .login, .lgp'))destroy()}}
+ var _hl=homeList;
+ window.homeList=function(){var t=_hl.apply(this,arguments);if(role==='admin')t.push(['📄','Question Paper','প্রশ্নপত্র','#b45309','qpaper']);return t};
+ try{NAVG.admin.forEach(function(g){if(g[0].indexOf('একাডেমিক')>-1&&g[1].indexOf('qpaper')<0)g[1].push('qpaper')})}catch(e){}
+ var _d=window.draw;
+ window.draw=function(){
+  if(tab==='qpaper'){
+   if(role==='admin'){shell('প্রশ্নপত্র','<div style="min-height:50vh"></div>','home');sync();return}
+   tab='home'}
+  var r=_d.apply(this,arguments);sync();return r};
+ window.addEventListener('resize',sync);
+ setInterval(sync,400);
+})();
+</script>
+<script>
 /* ===== বাংলা / English ভাষা পরিবর্তন =====
    অনুবাদ কেন্দ্রীয় D অবজেক্টে (বাংলা → English)। নতুন অনুবাদ যোগ করতে শুধু D-তে লাইন যোগ করুন। */
 (function(){
@@ -3438,6 +3476,17 @@ go()})();
         #fitNote.warn { background: #fee2e2; color: #b91c1c; }
         #fitNote.info { background: #fff7e0; color: #92400e; }
 
+        .idel{display:inline-block;width:1.1em;height:1.1em;vertical-align:-.2em;background:currentColor;color:#d64545;-webkit-mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M3 6h18'/%3E%3Cpath d='M8 6V4a1 1 0 011-1h6a1 1 0 011 1v2'/%3E%3Cpath d='M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6'/%3E%3Cpath d='M10 11v6M14 11v6'/%3E%3C/svg%3E") center/contain no-repeat;mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M3 6h18'/%3E%3Cpath d='M8 6V4a1 1 0 011-1h6a1 1 0 011 1v2'/%3E%3Cpath d='M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6'/%3E%3Cpath d='M10 11v6M14 11v6'/%3E%3C/svg%3E") center/contain no-repeat}
+        .btn-delete-icon { background-color: #fde0e0; color: #b42323; border-radius: 99px; width: 56px; height: 38px; }
+        .btn-delete-icon .idel { color: #b42323; width: 1.25em; height: 1.25em; vertical-align: middle; }
+        .btn-remove-sub { display: inline-flex; align-items: center; justify-content: center; flex: none; background: #fde0e0; color: #b42323; border-radius: 99px; width: 46px; height: 36px; padding: 0; }
+        .btn-remove-sub .idel { color: #b42323; width: 1.2em; height: 1.2em; vertical-align: middle; }
+        .btn-new-question .idel { color: #fff; }
+        #dlNote { display: none; margin: 0 0 12px 0; padding: 10px 14px; border-radius: 8px; font-size: 14px; font-weight: bold; text-align: center; line-height: 1.5; }
+        #dlNote.busy { background: #e0ecff; color: #1e40af; }
+        #dlNote.ok { background: #d6f3e2; color: #0b6b4a; }
+        #dlNote.err { background: #fee2e2; color: #b91c1c; }
+
     </style>
 </head>
 <body>
@@ -3447,7 +3496,7 @@ go()})();
         <h2>📖 প্রশ্ন তৈরি করুন</h2>
         <p>জামাত → বিষয় → অধ্যায় → প্রশ্ন → PDF</p>
         <button class="btn-new-question" onclick="addNewQuestion()">+ নতুন প্রশ্ন যোগ করুন</button>
-        <button class="btn-new-question" style="background:transparent;color:#fff;border:1px solid #fff;font-size:14px;padding:8px 14px;margin-top:8px" onclick="resetAll()">🗑 সব মুছে নতুন শুরু</button>
+        <button class="btn-new-question" style="background:transparent;color:#fff;border:1px solid #fff;font-size:14px;padding:8px 14px;margin-top:8px" onclick="resetAll()"><i class="idel"></i> সব মুছে নতুন শুরু</button>
     </div>
 
     <div class="tools-box">
@@ -3570,6 +3619,7 @@ go()})();
     </div>
 
     <div id="fitNote"></div>
+    <div id="dlNote"></div>
 
     <div class="a4-scroll-container">
         <div id="a4Paper" class="a4-paper">
@@ -3729,12 +3779,7 @@ go()})();
         card.innerHTML = `
             <div class="card-header">
                 <span class="q-badge">প্রশ্ন ${qLabel}</span>
-                <button class="btn-delete-icon" onclick="deleteQuestion(${questionCount})" title="ডিলিট করুন">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor" viewBox="0 0 16 16">
-                      <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0z"/>
-                      <path d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4zM2.5 3h11V2h-11z"/>
-                    </svg>
-                </button>
+                <button class="btn-delete-icon" onclick="deleteQuestion(${questionCount})" title="ডিলিট করুন"><i class="idel"></i></button>
             </div>
             
             <div class="q-body">
@@ -3894,7 +3939,7 @@ go()})();
             <div class="sub-text">
                 <div class="form-control sub-text-input" contenteditable="true" data-ph="উপ-প্রশ্ন লিখুন..." style="background:#fff;"></div>
             </div>
-            <span class="btn-remove-sub" onclick="this.parentElement.remove(); scheduleSave();">✖</span>
+            <span class="btn-remove-sub" onclick="this.parentElement.remove(); scheduleSave();" aria-label="মুছুন"><i class="idel"></i></span>
         `;
         subContainer.appendChild(row);
         scheduleSave();
@@ -4095,11 +4140,72 @@ go()})();
         return (document.fonts && document.fonts.ready) ? document.fonts.ready : Promise.resolve();
     }
 
-    function downloadPDF() {
+    function dlStatus(msg, kind) {
+        const n = document.getElementById('dlNote');
+        n.className = kind || '';
+        n.textContent = msg;
+        n.style.display = msg ? 'block' : 'none';
+    }
+
+    function withTimeout(p, ms) {
+        return Promise.race([p, new Promise((_, rej) => setTimeout(() => rej(new Error('timeout')), ms))]);
+    }
+
+    function blobToBase64(blob) {
+        return new Promise((res, rej) => {
+            const r = new FileReader();
+            r.onload = () => res(String(r.result).split(',')[1]);
+            r.onerror = () => rej(r.error);
+            r.readAsDataURL(blob);
+        });
+    }
+
+    /* ফাইল সংরক্ষণ: ১) অ্যাপের Filesystem+Share প্লাগইন ২) ফোনের শেয়ার ৩) সাধারণ ডাউনলোড */
+    async function saveBlob(blob, name) {
+        try {
+            const C = (window.parent && window.parent.Capacitor) || window.Capacitor;
+            if (C && C.isPluginAvailable && C.isPluginAvailable('Filesystem') && C.isPluginAvailable('Share')) {
+                const FS = (C.Plugins && C.Plugins.Filesystem) || C.registerPlugin('Filesystem');
+                const SH = (C.Plugins && C.Plugins.Share) || C.registerPlugin('Share');
+                const data = await blobToBase64(blob);
+                const w = await FS.writeFile({ path: name, data: data, directory: 'CACHE' });
+                await SH.share({ title: name, url: w.uri, dialogTitle: 'প্রশ্নপত্র সংরক্ষণ করুন' });
+                return 'share';
+            }
+        } catch (e) {
+            if (/cancel|abort|dismiss/i.test(String((e && (e.message || e.name)) || e))) return 'cancel';
+        }
+        try {
+            const file = new File([blob], name, { type: blob.type });
+            if (navigator.canShare && navigator.canShare({ files: [file] })) {
+                await navigator.share({ files: [file], title: name });
+                return 'share';
+            }
+        } catch (e) {
+            if (e && e.name === 'AbortError') return 'cancel';
+        }
+        const a = document.createElement('a');
+        a.href = URL.createObjectURL(blob);
+        a.download = name;
+        document.body.appendChild(a);
+        a.click();
+        setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 4000);
+        return 'download';
+    }
+
+    function dlDone(method, label) {
+        if (method === 'cancel') { dlStatus(''); return; }
+        if (method === 'share') dlStatus('✅ ' + label + ' তৈরি হয়েছে। খোলা উইন্ডো থেকে সেভ করুন।', 'ok');
+        else dlStatus('✅ ' + label + ' ডাউনলোড চালু করা হয়েছে। ফোনের Downloads ফোল্ডার দেখুন। ফাইল না এলে অ্যাপে ফাইল সেভের সুবিধা চালু করতে হবে।', 'ok');
+    }
+
+    async function downloadPDF() {
+        if (typeof html2pdf === 'undefined') {
+            dlStatus('⚠️ PDF লাইব্রেরি লোড হয়নি। ইন্টারনেট সংযোগ দেখে আবার চেষ্টা করুন।', 'err');
+            return;
+        }
         const element = document.getElementById('a4Paper');
         const originalTransform = element.style.transform;
-        element.style.transform = 'scale(1)'; 
-        
         const layout = document.getElementById('layoutSelector').value;
         const orientation = layout === 'portrait' ? 'portrait' : 'landscape';
 
@@ -4110,31 +4216,40 @@ go()})();
             html2canvas:  { scale: 2, useCORS: true },
             jsPDF:        { unit: 'mm', format: 'a4', orientation: orientation }
         };
-        
-        alert("PDF ডাউনলোড হচ্ছে...");
-        fontsReady()
-            .then(() => html2pdf().set(opt).from(element).save())
-            .then(() => { element.style.transform = originalTransform; })
-            .catch(() => { element.style.transform = originalTransform; alert("PDF তৈরি করা যায়নি। ইন্টারনেট সংযোগ দেখে আবার চেষ্টা করুন।"); });
+
+        dlStatus('⏳ PDF তৈরি হচ্ছে... একটু অপেক্ষা করুন', 'busy');
+        element.style.transform = 'scale(1)';
+        try {
+            await fontsReady();
+            const blob = await withTimeout(html2pdf().set(opt).from(element).outputPdf('blob'), 60000);
+            dlDone(await saveBlob(blob, 'Question_Paper.pdf'), 'PDF');
+        } catch (e) {
+            dlStatus('⚠️ PDF তৈরি করা যায়নি। আবার চেষ্টা করুন।', 'err');
+        } finally {
+            element.style.transform = originalTransform;
+        }
     }
 
-    function downloadImage() {
+    async function downloadImage() {
+        if (typeof html2canvas === 'undefined') {
+            dlStatus('⚠️ ছবি তৈরির লাইব্রেরি লোড হয়নি। ইন্টারনেট সংযোগ দেখে আবার চেষ্টা করুন।', 'err');
+            return;
+        }
         const element = document.getElementById('a4Paper');
         const originalTransform = element.style.transform;
-        element.style.transform = 'scale(1)'; 
-        
-        alert("ছবি ডাউনলোড হচ্ছে...");
-        fontsReady()
-            .then(() => html2canvas(element, { scale: 2, useCORS: true }))
-            .then(canvas => {
-                const link = document.createElement('a');
-                link.download = 'Question_Paper.png';
-                link.href = canvas.toDataURL('image/png');
-                link.click();
-                
-                element.style.transform = originalTransform;
-            })
-            .catch(() => { element.style.transform = originalTransform; alert("ছবি তৈরি করা যায়নি। ইন্টারনেট সংযোগ দেখে আবার চেষ্টা করুন।"); });
+
+        dlStatus('⏳ ছবি তৈরি হচ্ছে... একটু অপেক্ষা করুন', 'busy');
+        element.style.transform = 'scale(1)';
+        try {
+            await fontsReady();
+            const canvas = await withTimeout(html2canvas(element, { scale: 2, useCORS: true }), 60000);
+            const blob = await new Promise((res, rej) => canvas.toBlob(b => b ? res(b) : rej(new Error('blob')), 'image/png'));
+            dlDone(await saveBlob(blob, 'Question_Paper.png'), 'ছবি');
+        } catch (e) {
+            dlStatus('⚠️ ছবি তৈরি করা যায়নি। আবার চেষ্টা করুন।', 'err');
+        } finally {
+            element.style.transform = originalTransform;
+        }
     }
 
     /* ---------- খসড়া সংরক্ষণ (রিফ্রেশ বা অ্যাপ বন্ধ করলেও লেখা থাকে) ---------- */
@@ -4267,43 +4382,6 @@ go()})();
 
 </body>
 </html>
-</script>
-<script>
-/* প্রশ্নপত্র (শুধু অ্যাডমিন): আলাদা ফাইলের টুলটি ভেতরে চলে; অন্য ট্যাবে গিয়ে ফিরলেও লেখা থাকে; লগআউট করলে সব মুছে যায় */
-(function(){
- var host=null;
- function src(){var e=document.getElementById('qp-src');return e?e.textContent.replace(/<\\\/script/gi,'</script').trim():''}
- function mk(){
-  host=document.createElement('div');host.id='qpHost';
-  host.style.cssText='position:fixed;left:50%;transform:translateX(-50%);width:100%;max-width:480px;z-index:4;background:#fff;display:none';
-  var f=document.createElement('iframe');f.title='প্রশ্নপত্র';
-  f.style.cssText='width:100%;height:100%;border:0;display:block;background:#fff';
-  f.srcdoc=src();host.appendChild(f);document.body.appendChild(host)}
- function destroy(){if(host){host.remove();host=null}}
- function wipe(){try{localStorage.removeItem('mm_qp_draft_v2');localStorage.removeItem('mm_qp_logo_v2')}catch(e){}}
- function hookLogin(){var l=window.login;if(typeof l==='function'&&!l.__qp){var w=function(){destroy();wipe();return l.apply(this,arguments)};w.__qp=1;window.login=w}}
- function place(){
-  if(!host)return;
-  var t=document.querySelector('#app .top'),n=document.querySelector('#app .nav');
-  var tb=t?t.getBoundingClientRect().bottom:0,nt=n?n.getBoundingClientRect().top:window.innerHeight;
-  host.style.top=Math.max(0,tb)+'px';host.style.height=Math.max(0,nt-tb)+'px'}
- function sync(){
-  hookLogin();
-  var on=(tab==='qpaper'&&role==='admin'&&document.querySelector('#app .nav'));
-  if(on){if(!host)mk();place();host.style.display='block'}
-  else if(host){host.style.display='none';if(document.querySelector('#app .login, .lgp'))destroy()}}
- var _hl=homeList;
- window.homeList=function(){var t=_hl.apply(this,arguments);if(role==='admin')t.push(['📄','Question Paper','প্রশ্নপত্র','#b45309','qpaper']);return t};
- try{NAVG.admin.forEach(function(g){if(g[0].indexOf('একাডেমিক')>-1&&g[1].indexOf('qpaper')<0)g[1].push('qpaper')})}catch(e){}
- var _d=window.draw;
- window.draw=function(){
-  if(tab==='qpaper'){
-   if(role==='admin'){shell('প্রশ্নপত্র','<div style="min-height:50vh"></div>','home');sync();return}
-   tab='home'}
-  var r=_d.apply(this,arguments);sync();return r};
- window.addEventListener('resize',sync);
- setInterval(sync,400);
-})();
 </script>
 </body>
 </html>

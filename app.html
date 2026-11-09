@@ -2,7 +2,7 @@
 <html lang="bn">
 <head>
 <meta charset="utf-8">
-<meta name="app-build" content="2026-10-09.1">
+<meta name="app-build" content="2026-11-09.3">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>মাদ্রাসা ম্যানেজমেন্ট সিস্টেম</title>
 <script>try{document.documentElement.setAttribute('data-theme',localStorage.getItem('mm_theme')==='dark'?'dark':'light')}catch(e){document.documentElement.setAttribute('data-theme','light')}</script>
@@ -3172,6 +3172,1137 @@ go()})();
  /* লগআউট হলে উইজেটের তথ্য মুছে ফেলা (গোপনীয়তা) — ২.৫ সেকেন্ড পরপর দেখা হয় */
  setInterval(function(){try{var p=P();if(p&&!role&&seen){seen='';last='';p.clear();try{if(p.bellClear)p.bellClear().catch(function(){})}catch(e2){}window.__bellLast=''}}catch(e){}takePending()},2500);
  document.addEventListener('visibilitychange',function(){if(document.hidden)wgSync(true);else{takePending();if(wst.known)wgRefresh(function(){wgRows()})}});
+})();
+</script>
+<script type="text/plain" id="qp-src">
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>প্রশ্ন তৈরি করুন</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;700&family=Noto+Serif+Bengali:wght@400;700&family=Noto+Sans+Bengali:wght@400;700&family=Tiro+Bangla&display=swap" rel="stylesheet">
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"><\/script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"><\/script>
+
+    <style>
+        :root {
+            --primary-color: #24634d;
+            --primary-light: #e8f4f0; 
+            --text-color: #333;
+            --bg-color: #f4f5f7;
+            --border-color: #d1d5db;
+            --font-family: 'Bornopata Regular', 'SolaimanLipi', 'Kalpurush', 'Hind Siliguri', 'Noto Sans Bengali', sans-serif; 
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: var(--font-family);
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            padding: 10px;
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: #fff;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+        }
+
+        .app-header {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 20px;
+            border-radius: 0 0 15px 15px;
+            margin: -20px -20px 20px -20px;
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+        .app-header h2 { font-size: 24px; font-weight: bold; display: flex; align-items: center; gap: 10px;}
+        .app-header p { font-size: 15px; opacity: 0.9; }
+        
+        .btn-new-question {
+            background: white;
+            color: var(--primary-color);
+            border: none;
+            padding: 12px 20px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 15px;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            width: max-content;
+        }
+
+        .form-row { display: flex; flex-wrap: wrap; gap: 15px; margin-bottom: 15px; }
+        .form-group { flex: 1 1 200px; display: flex; flex-direction: column; }
+        .form-group label { margin-bottom: 8px; font-weight: bold; font-size: 15px; color: var(--primary-color); }
+        .form-control { width: 100%; padding: 12px; border: 1px solid var(--border-color); border-radius: 8px; font-size: 15px; font-family: inherit; }
+        
+        .logo-upload-box { display: flex; flex-direction: column; gap: 5px; }
+        .file-upload-wrapper { position: relative; overflow: hidden; display: inline-block; width: 100%; }
+        .file-upload-wrapper input[type=file] { font-size: 100px; position: absolute; left: 0; top: 0; opacity: 0; cursor: pointer; height: 100%; width: 100%; }
+        .file-upload-btn { border: 1px dashed var(--primary-color); color: var(--primary-color); background-color: var(--primary-light); padding: 12px; border-radius: 8px; text-align: center; font-weight: bold; cursor: pointer; font-size: 14px;}
+        
+        .slider-row { display: flex; align-items: center; gap: 5px; font-size: 13px; margin-top: 5px; font-weight: bold; color: #555;}
+        .slider-row input[type="range"] { flex: 1; accent-color: var(--primary-color); }
+
+        .tools-box { background-color: var(--primary-light); padding: 15px; border-radius: 8px; border: 1px solid #bce3d4; margin-bottom: 20px; display: flex; flex-wrap: wrap; gap: 15px; }
+        .tool-item { flex: 1 1 200px; display: flex; flex-direction: column; gap: 5px;}
+        .tool-item label { font-weight: bold; margin: 0; color: var(--primary-color); font-size: 14px;}
+        .tool-item select { padding: 10px; border-radius: 6px; border: 1px solid var(--border-color); font-size: 15px; font-weight:bold; color:var(--primary-color); }
+        .btn-add-font { background: var(--primary-color); color: white; border: none; padding: 10px 15px; border-radius: 6px; cursor: pointer; font-weight: bold; font-size: 14px; align-self: flex-start;}
+
+        .section-header { display: flex; justify-content: space-between; align-items: center; border-top: 2px dashed #e5e7eb; padding-top: 20px; margin-top: 20px; margin-bottom: 20px; }
+        .section-header h3 { font-size: 20px; color: #000; font-weight:bold;}
+        .btn-add { background-color: var(--primary-color); color: white; border: none; padding: 10px 20px; border-radius: 8px; cursor: pointer; font-family: inherit; font-size: 15px; font-weight:bold;}
+
+        .question-card { background: #fff; border: 1px solid var(--border-color); border-radius: 12px; padding: 20px; margin-bottom: 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.02);}
+        .card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
+        .q-badge { background-color: var(--primary-light); color: var(--primary-color); padding: 5px 12px; border-radius: 6px; font-size: 14px; font-weight: bold; }
+        
+        .btn-delete-icon {
+            background-color: #fee2e2; color: #dc2626; border: none; border-radius: 50%; width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 18px; transition: 0.2s;
+        }
+
+        .q-body { display: flex; gap: 15px; align-items: flex-start; flex-wrap: wrap; }
+        .q-text-group { flex: 1 1 100%; }
+        
+        .q-label-row { display: flex; gap: 10px; margin-bottom: 10px; align-items: center; }
+        .q-label-input { width: 70px; padding: 8px; border: 1px solid var(--border-color); border-radius: 6px; font-size: 15px; text-align: center; font-weight: bold; background: #fff; }
+        
+        .rich-text-tools { margin-bottom: 12px; margin-top: 10px; display: flex; gap: 10px; padding: 5px 0; }
+        .rich-text-tools button { padding: 8px 16px; cursor: pointer; font-weight: bold; border: 1px solid var(--border-color); background: #f9f9f9; border-radius: 6px; font-size: 16px; transition: 0.2s;}
+        .rich-text-tools button:active { background-color: #ddd; }
+        
+        .q-footer { display: flex; gap: 10px; margin-top: 15px; width: 100%; justify-content: space-between; align-items: center;}
+        .q-marks-group { width: 100px; }
+
+        .table-container-area { margin-top: 15px; width: 100%; position: relative; }
+        
+        .resizable-table { border-collapse: collapse; font-size: 20px; transition: 0.2s; margin: 0 auto; position: relative; }
+        .resizable-table td { 
+            border: 1px solid #000; 
+            padding: 5px; 
+            text-align: center; 
+            vertical-align: middle; 
+            cursor: pointer;
+            user-select: none; 
+            -webkit-user-select: none;
+            -webkit-touch-callout: none; 
+        }
+        
+        .slider-group { display: flex; flex-direction: column; gap: 8px; margin-top: 15px; background: var(--primary-light); padding: 15px; border-radius: 8px; border: 1px solid #bce3d4; }
+        .slider-row-table { display: flex; align-items: center; gap: 15px; font-size: 14px; color: var(--primary-color); font-weight: bold; }
+        .slider-row-table input[type="range"] { flex: 1; accent-color: var(--primary-color); }
+
+        .sub-questions-section { margin-top: 20px; background: var(--primary-light); padding: 15px; border-radius: 8px; border: 1px solid #bce3d4; width: 100%; }
+        .sub-header { display: flex; justify-content: space-between; margin-bottom: 15px; font-size: 15px; color: var(--primary-color); font-weight: bold; align-items: center; flex-wrap: wrap; gap: 10px; }
+        .btn-group-actions { display: flex; gap: 10px; }
+        .btn-add-sub, .btn-add-table { cursor: pointer; background: #fff; padding: 8px 12px; border-radius: 6px; border: 1px solid var(--primary-color); color: var(--primary-color); font-size: 14px; font-weight:bold;}
+        
+        .sub-row { display: flex; gap: 10px; margin-bottom: 10px; align-items: center; }
+        .sub-label { width: 60px; }
+        .sub-text { flex-grow: 1; }
+        .btn-remove-sub { color: #dc2626; cursor: pointer; font-weight: bold; padding: 5px; font-size:18px;}
+
+        .btn-save { width: 100%; background-color: var(--primary-color); color: white; border: none; padding: 15px; border-radius: 8px; font-size: 18px; font-family: inherit; cursor: pointer; margin-top: 30px; display: flex; justify-content: center; align-items: center; gap: 10px; font-weight:bold;}
+
+        .preview-wrapper { display: none; margin-top: 30px; background: #e0e0e0; padding: 15px; border-radius: 12px; }
+        .preview-toolbar { display: flex; justify-content: center; gap: 15px; margin-bottom: 20px; flex-wrap: wrap; align-items:center;}
+        
+        .preview-size-control { display: flex; align-items: center; gap: 10px; background: #fff; padding: 10px 15px; border-radius: 8px; font-size: 14px; font-weight: bold; color: var(--primary-color);}
+        .preview-size-control input { accent-color: var(--primary-color); }
+
+        .btn-download { 
+            background-color: #fff; 
+            color: var(--primary-color); 
+            border: 2px solid var(--primary-color); 
+            padding: 10px 20px; 
+            border-radius: 8px; 
+            font-weight: bold; 
+            cursor: pointer; 
+            font-family: inherit;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 15px;
+            transition: 0.3s;
+        }
+        .btn-download:hover { background-color: var(--primary-color); color: #fff; }
+        .btn-download svg { width: 20px; height: 20px; fill: currentColor; }
+
+        .a4-scroll-container { width: 100%; overflow-x: auto; overflow-y: auto; -webkit-overflow-scrolling: touch; padding-bottom: 20px; display: flex; justify-content: center; background: #dcdcdc; border-radius: 8px; padding: 15px; }
+
+        /* A4 Paper Base */
+        .a4-paper {
+            background: #fff;
+            width: 297mm;
+            height: 210mm;
+            box-shadow: 0 0 15px rgba(0,0,0,0.2);
+            box-sizing: border-box;
+            color: #000;
+            flex-shrink: 0;
+            transform-origin: top center;
+            position: relative; 
+            transition: transform 0.2s;
+            
+            /* হাফ পেজ লেআউটের জন্য ফ্লেক্স */
+            display: flex;
+            flex-direction: row; 
+        }
+
+        /* ফুল পেজ সাইজ */
+        .a4-paper.full-page {
+            width: 210mm;
+            height: 297mm;
+            flex-direction: column;
+        }
+
+        /* হাফ পেজ সেকশন (১৪৮ মিমি প্রস্থ x ২১০ মিমি উচ্চতা) */
+        .exam-section {
+            width: 148mm; 
+            height: 210mm;
+            padding: 8mm 10mm;
+            box-sizing: border-box;
+            overflow: hidden; 
+            position: relative;
+        }
+
+        /* মোবাইলের স্ক্রিনে ফিট করার জন্য স্কেল */
+        @media (max-width: 800px) {
+            .a4-paper { transform: scale(0.45); margin-bottom: -120mm; }
+            .a4-paper.full-page { transform: scale(0.65); margin-bottom: -100mm; }
+        }
+        @media (max-width: 500px) {
+            .a4-paper { transform: scale(0.35); margin-bottom: -150mm; }
+            .a4-paper.full-page { transform: scale(0.48); margin-bottom: -150mm; }
+        }
+
+        .watermark-logo {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            opacity: 0.1; 
+            pointer-events: none;
+            z-index: 0;
+            display: none; 
+            filter: grayscale(100%); 
+        }
+
+        .paper-content { position: relative; z-index: 1; height: 100%; width: 100%; display: flex;}
+
+        .paper-header { text-align: center; margin-bottom: 5px; position: relative; }
+        .paper-header h1 { font-size: 18px; font-weight: bold; margin-bottom: 5px; }
+        .paper-header p { font-size: 13px; margin-bottom: 3px; font-weight: bold; }
+
+        .paper-info-row { display: flex; justify-content: space-between; font-weight: bold; font-size: 13px; margin-bottom: 5px; padding-bottom: 5px; margin-top: 10px; }
+        .paper-instruction { text-align: center; font-weight: bold; border-top: 1.5px solid #000; border-bottom: 1.5px solid #000; padding: 4px 0; margin-bottom: 10px; font-size: 13px; }
+
+        .preview-question-list { list-style: none; padding: 0; }
+        .preview-question-item { margin-bottom: 10px; font-size: 13px; line-height: 1.4; }
+        
+        .q-row { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 5px; }
+        .q-content { flex-grow: 1; padding-right: 10px; }
+        .q-marks { width: 30px; text-align: right; font-weight: bold; }
+
+        .preview-sub-questions { padding-left: 50px; margin-top: 5px; }
+        .preview-sub-item { margin-bottom: 3px; display: flex; gap: 5px; }
+
+        .print-table-wrapper { text-align: center; width: 100%; overflow-x: auto; margin-top: 5px; }
+        .print-table { border-collapse: collapse; margin: 0 auto; }
+        .print-table td { border: 1px solid #000; padding: 3px; text-align: center; }
+
+        .sub-text { min-width: 0; }
+        .sub-text-input { min-height: 44px; outline: none; word-break: break-word; }
+        [contenteditable][data-ph]:empty:before { content: attr(data-ph); color: #9ca3af; pointer-events: none; }
+        .sub-tools { margin: 0 0 10px 0; padding: 0; }
+        .exam-section > *:not(.section-wm) { position: relative; z-index: 1; }
+        .section-wm { z-index: 0; }
+        .exam-section:first-of-type { border-right: 1px dashed #888; }
+        .fit-box { width: 100%; height: 100%; padding: 15mm 20mm; overflow: hidden; position: relative; }
+        .preview-question-item { font-size: var(--qfs, 13px); }
+        #fitNote { display: none; margin: 0 0 12px 0; padding: 10px 14px; border-radius: 8px; font-size: 14px; font-weight: bold; text-align: center; }
+        #fitNote.warn { background: #fee2e2; color: #b91c1c; }
+        #fitNote.info { background: #fff7e0; color: #92400e; }
+
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="app-header">
+        <h2>📖 প্রশ্ন তৈরি করুন</h2>
+        <p>জামাত → বিষয় → অধ্যায় → প্রশ্ন → PDF</p>
+        <button class="btn-new-question" onclick="addNewQuestion()">+ নতুন প্রশ্ন যোগ করুন</button>
+        <button class="btn-new-question" style="background:transparent;color:#fff;border:1px solid #fff;font-size:14px;padding:8px 14px;margin-top:8px" onclick="resetAll()">🗑 সব মুছে নতুন শুরু</button>
+    </div>
+
+    <div class="tools-box">
+        <div class="tool-item">
+            <label>প্রশ্নপত্রের ফন্ট:</label>
+            <select id="fontSelector" class="form-control" onchange="changeFont()">
+                <option value="'Bornopata Regular', 'SolaimanLipi', 'Hind Siliguri', sans-serif">বর্ণ পাতা রেগুলার (ফোনে ইনস্টল থাকলে)</option>
+                <option value="'Kalpurush', 'Hind Siliguri', sans-serif">কালপুরুষ (ফোনে ইনস্টল থাকলে)</option>
+                <option value="'SolaimanLipi', 'Hind Siliguri', sans-serif">সোলাইমানলিপি (ফোনে ইনস্টল থাকলে)</option>
+                <option value="'Hind Siliguri', sans-serif">হিন্দ শিলিগুড়ি</option>
+                <option value="'Noto Sans Bengali', sans-serif">নোটো সানস বাংলা</option>
+                <option value="'Noto Serif Bengali', serif">নোটো সেরিফ বাংলা</option>
+                <option value="'Tiro Bangla', serif">তিরো বাংলা</option>
+                <option value="'Times New Roman', serif">Times New Roman (English)</option>
+                <option value="'Arial', sans-serif">Arial (English)</option>
+            </select>
+            <button class="btn-add-font" onclick="addCustomFont()">+ নতুন ফন্ট</button>
+        </div>
+        <div class="tool-item">
+            <label>প্রিন্ট সাইজ:</label>
+            <select id="layoutSelector" class="form-control" onchange="changeLayout()">
+                <option value="landscape" selected>হাফ পেজ (১৪৮ × ২১০ মিমি) - এক কাগজে দুইটি</option>
+                <option value="portrait">ফুল পেজ (২১০ × ২৯৭ মিমি)</option>
+            </select>
+        </div>
+    </div>
+
+    <div class="form-row">
+        <div class="form-group">
+            <label>মাদ্রাসার নাম ও শাখা</label>
+            <input type="text" id="madrasaName" class="form-control" placeholder="মাদ্রাসার নাম লিখুন...">
+        </div>
+        <div class="form-group" style="flex: 0 0 200px;">
+            <label>লোগো (ওয়াটারমার্ক)</label>
+            <div class="logo-upload-box">
+                <div class="file-upload-wrapper">
+                    <div class="file-upload-btn">ছবি বেছে নিন</div>
+                    <input type="file" id="madrasaLogo" accept="image/*">
+                </div>
+                <div class="slider-row">
+                    <span>সাইজ:</span>
+                    <input type="range" id="logoSizeSlider" min="50" max="400" value="200" oninput="changeLogoSize(this.value)" disabled>
+                </div>
+                <div class="slider-row">
+                    <span>স্বচ্ছতা:</span>
+                    <input type="range" id="logoOpacitySlider" min="1" max="100" value="10" oninput="changeLogoOpacity(this.value)" disabled>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="form-row">
+        <div class="form-group">
+            <label>পরীক্ষার নাম</label>
+            <input type="text" id="examName" class="form-control" placeholder="যেমন: প্রথম সাময়িক পরীক্ষা">
+        </div>
+        <div class="form-group">
+            <label>শ্রেণি / জামাত</label>
+            <input type="text" id="examClass" class="form-control" placeholder="যেমন: নার্সারি, হাফেজী">
+        </div>
+        <div class="form-group">
+            <label>বিষয়</label>
+            <input type="text" id="examSubject" class="form-control" placeholder="যেমন: বাংলা, আরবি">
+        </div>
+    </div>
+
+    <div class="form-row">
+        <div class="form-group">
+            <label>পরীক্ষার সাল</label>
+            <input type="text" id="examYear" class="form-control" placeholder="যেমন: ২০২৬">
+        </div>
+        <div class="form-group">
+            <label>সময় (মিনিট)</label>
+            <input type="text" id="examTime" class="form-control" placeholder="যেমন: ১২০">
+        </div>
+        <div class="form-group">
+            <label>পূর্ণমান</label>
+            <input type="text" id="examMarks" class="form-control" placeholder="যেমন: ১০০">
+        </div>
+    </div>
+
+    <div class="form-row">
+        <div class="form-group">
+            <label>নির্দেশনা (খালি রাখলে প্রিভিউতে দেখাবে না)</label>
+            <input type="text" id="examInstruction" class="form-control" placeholder="যেমন: সবগুলো প্রশ্নের উত্তর দাও">
+        </div>
+    </div>
+
+    <div class="section-header">
+        <h3>প্রশ্ন তালিকা</h3>
+        <button class="btn-add" onclick="addNewQuestion()">+ প্রশ্ন যোগ করুন</button>
+    </div>
+
+    <div id="questionsContainer"></div>
+
+    <button class="btn-save" onclick="generatePreview()">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 16 16">
+            <path d="M16 8s-3-5.5-8-5.5S0 8 0 8s3 5.5 8 5.5S16 8 16 8zM1.173 8a13.133 13.133 0 0 1 1.66-2.043C4.12 4.668 5.88 3.5 8 3.5c2.12 0 3.879 1.168 5.168 2.457A13.133 13.133 0 0 1 14.828 8c-.058.087-.122.183-.195.288-.335.48-.83 1.12-1.465 1.755C11.879 11.332 10.119 12.5 8 12.5c-2.12 0-3.879-1.168-5.168-2.457A13.134 13.134 0 0 1 1.172 8z"/>
+            <path d="M8 5.5a2.5 2.5 0 1 0 0 5 2.5 2.5 0 0 0 0-5zM4.5 8a3.5 3.5 0 1 1 7 0 3.5 3.5 0 0 1-7 0z"/>
+        </svg>
+        প্রিভিউ ও প্রিন্ট
+    </button>
+</div>
+
+<div id="previewWrapper" class="preview-wrapper">
+    <div class="preview-toolbar">
+        <div class="preview-size-control">
+            <span>ছোট</span>
+            <input type="range" id="previewZoomSlider" min="20" max="100" value="65" oninput="changePreviewZoom(this.value)">
+            <span>বড়</span>
+        </div>
+        <button class="btn-download" onclick="downloadPDF()">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8l-6-6zm-1 2.5L18.5 10H13V4.5zM12 18v-4h-2v4H7l5 5 5-5h-3v-4h-2v4z"/></svg>
+            PDF ডাউনলোড
+        </button>
+        <button class="btn-download" onclick="downloadImage()">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5zM12 18v-4h-2v4H7l5 5 5-5h-3v-4h-2v4z"/></svg>
+            ছবি ডাউনলোড
+        </button>
+    </div>
+
+    <div id="fitNote"></div>
+
+    <div class="a4-scroll-container">
+        <div id="a4Paper" class="a4-paper">
+            <img id="pLogoWatermark" class="watermark-logo" src="" alt="Logo">
+            <div class="paper-content" id="paperContentArea"></div>
+        </div>
+    </div>
+</div>
+<script>
+    let questionCount = 0;
+    let pressTimer;
+    let restoring = false;
+    let saveTimer;
+    let customFonts = [];
+    const DRAFT_KEY = 'mm_qp_draft_v2';
+    const LOGO_KEY = 'mm_qp_logo_v2';
+    const BN_DIGITS = '০১২৩৪৫৬৭৮৯';
+    const FIELD_IDS = ['madrasaName','examName','examClass','examSubject','examYear','examTime','examMarks','examInstruction'];
+
+    function bn(n) { return String(n).replace(/\d/g, d => BN_DIGITS[d]); }
+    function esc(s) { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+    function plain(el) { return (el.textContent || '').replace(/\u200b/g, '').trim(); }
+    function previewVisible() { return document.getElementById('previewWrapper').style.display === 'block'; }
+
+    function changeFont() {
+        const selectedFont = document.getElementById('fontSelector').value;
+        document.getElementById('a4Paper').style.fontFamily = selectedFont;
+        document.body.style.fontFamily = selectedFont;
+        if (previewVisible()) fitContent();
+        scheduleSave();
+    }
+
+    function registerFont(fontName) {
+        let link = document.createElement('link');
+        link.href = 'https://fonts.googleapis.com/css2?family=' + encodeURIComponent(fontName).replace(/%20/g, '+') + '&display=swap';
+        link.rel = 'stylesheet';
+        document.head.appendChild(link);
+
+        const select = document.getElementById('fontSelector');
+        const option = document.createElement('option');
+        option.value = `'${fontName}', sans-serif`;
+        option.text = fontName;
+        select.appendChild(option);
+        return option.value;
+    }
+
+    function addCustomFont() {
+        let fontName = prompt("ফন্টের নাম লিখুন (যেমন: Tiro Bangla):");
+        if (fontName) fontName = fontName.trim().replace(/['"<>\\]/g, '');
+        if (fontName) {
+            const value = registerFont(fontName);
+            customFonts.push(fontName);
+            document.getElementById('fontSelector').value = value;
+            changeFont();
+        }
+    }
+
+    function changeLayout() {
+        const layout = document.getElementById('layoutSelector').value;
+        const paper = document.getElementById('a4Paper');
+        if (layout === 'portrait') {
+            paper.classList.add('full-page');
+        } else {
+            paper.classList.remove('full-page');
+        }
+        if (previewVisible()) generatePreview(true);
+        else { syncWatermarks(); scheduleSave(); }
+    }
+
+    function changePreviewZoom(zoomLevel) {
+        const paper = document.getElementById('a4Paper');
+        const isFullPage = paper.classList.contains('full-page');
+        
+        let baseScale = zoomLevel / 100;
+        
+        if(window.innerWidth < 800) {
+            baseScale = baseScale * 0.7; 
+        }
+
+        paper.style.transform = `scale(${baseScale})`;
+        
+        if(!isFullPage) {
+             paper.style.marginBottom = `-${120 * (1 - baseScale)}mm`;
+        } else {
+             paper.style.marginBottom = `-${100 * (1 - baseScale)}mm`;
+        }
+    }
+
+    /* ---------- লোগো / ওয়াটারমার্ক ---------- */
+    function syncWatermarks() {
+        const wm = document.getElementById('pLogoWatermark');
+        const src = wm.getAttribute('src');
+        const has = !!src;
+        const size = document.getElementById('logoSizeSlider').value + 'px';
+        const op = document.getElementById('logoOpacitySlider').value / 100;
+        const land = !document.getElementById('a4Paper').classList.contains('full-page');
+
+        wm.style.width = size;
+        wm.style.height = 'auto';
+        wm.style.opacity = op;
+        wm.style.display = (has && !land) ? 'block' : 'none';
+
+        document.querySelectorAll('.section-wm').forEach(img => {
+            if (has) {
+                img.setAttribute('src', src);
+                img.style.width = size;
+                img.style.height = 'auto';
+                img.style.opacity = op;
+                img.style.display = 'block';
+            } else {
+                img.style.display = 'none';
+            }
+        });
+    }
+
+    function setLogo(src) {
+        document.getElementById('pLogoWatermark').setAttribute('src', src);
+        document.getElementById('logoSizeSlider').disabled = false;
+        document.getElementById('logoOpacitySlider').disabled = false;
+        syncWatermarks();
+    }
+
+    document.getElementById('madrasaLogo').addEventListener('change', function(e) {
+        const file = e.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = function(event) {
+                setLogo(event.target.result);
+                try { localStorage.setItem(LOGO_KEY, event.target.result); } catch (err) {}
+                scheduleSave();
+            };
+            reader.readAsDataURL(file);
+        }
+    });
+
+    function changeLogoSize(size) {
+        syncWatermarks();
+        scheduleSave();
+    }
+
+    function changeLogoOpacity(opacity) {
+        syncWatermarks();
+        scheduleSave();
+    }
+
+    /* ---------- প্রশ্ন কার্ড ---------- */
+    function addNewQuestion() {
+        questionCount++;
+        const container = document.getElementById('questionsContainer');
+        const card = document.createElement('div');
+        card.className = 'question-card';
+        card.id = `q-card-${questionCount}`;
+        
+        const qLabel = bn(document.querySelectorAll('.question-card').length + 1);
+        card.dataset.auto = `${qLabel}নং`;
+
+        card.innerHTML = `
+            <div class="card-header">
+                <span class="q-badge">প্রশ্ন ${qLabel}</span>
+                <button class="btn-delete-icon" onclick="deleteQuestion(${questionCount})" title="ডিলিট করুন">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor" viewBox="0 0 16 16">
+                      <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0z"/>
+                      <path d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4zM2.5 3h11V2h-11z"/>
+                    </svg>
+                </button>
+            </div>
+            
+            <div class="q-body">
+                <div class="q-text-group">
+                    <div class="q-label-row">
+                        <label style="font-weight:bold; font-size:15px; color:var(--primary-color);">দাগ নং:</label>
+                        <input type="text" class="q-label-input" value="${qLabel}নং" placeholder="যেমন: ১নং">
+                    </div>
+                    
+                    <label style="font-weight:bold; font-size:15px; color:var(--primary-color);">প্রশ্ন লিখুন (লেখা সিলেক্ট করে B বা I চাপুন)</label>
+                    <div class="rich-text-tools">
+                        <button type="button" onmousedown="event.preventDefault()" onclick="formatText('bold')"><b>B</b></button>
+                        <button type="button" onmousedown="event.preventDefault()" onclick="formatText('italic')"><i>I</i></button>
+                        <button type="button" onmousedown="event.preventDefault()" onclick="formatText('underline')"><u>U</u></button>
+                    </div>
+                    
+                    <div class="form-control q-text-input" contenteditable="true" style="min-height: 60px; outline: none; background: #fff; padding: 10px; border: 1px solid var(--border-color); border-radius: 8px;"></div>
+                </div>
+                
+                <div id="table-container-${questionCount}" class="table-container-area"></div>
+
+                <div class="q-footer">
+                    <div class="q-marks-group">
+                        <label style="font-weight:bold; font-size:15px; color:var(--primary-color);">নম্বর</label>
+                        <div class="form-control q-marks-input" contenteditable="true" style="background: #fff; padding: 10px; border: 1px solid var(--border-color); border-radius: 8px;"></div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="sub-questions-section">
+                <div class="sub-header">
+                    <span>উপ-প্রশ্ন (ক, খ, গ...)</span>
+                    <div class="btn-group-actions">
+                        <span class="btn-add-table" onclick="promptTable(${questionCount})">+ ছক যোগ করুন</span>
+                        <span class="btn-add-sub" onclick="addSubQuestion(${questionCount})">+ উপ-প্রশ্ন যোগ করুন</span>
+                    </div>
+                </div>
+                <div class="rich-text-tools sub-tools">
+                    <button type="button" onmousedown="event.preventDefault()" onclick="formatText('bold')"><b>B</b></button>
+                    <button type="button" onmousedown="event.preventDefault()" onclick="formatText('italic')"><i>I</i></button>
+                    <button type="button" onmousedown="event.preventDefault()" onclick="formatText('underline')"><u>U</u></button>
+                </div>
+                <div id="sub-container-${questionCount}"></div>
+            </div>
+        `;
+        container.appendChild(card);
+        scheduleSave();
+        return questionCount;
+    }
+
+    function promptTable(qId) {
+        const container = document.getElementById(`table-container-${qId}`);
+        if (container.querySelector('table')) {
+            if (!confirm("এই প্রশ্নে আগে থেকেই ছক আছে। নতুন ছক বানালে আগেরটি ও তার লেখা মুছে যাবে। চালিয়ে যাবেন?")) return;
+        }
+
+        let cols = prompt("কয়টি কলাম (ঘর) চান? (১-৩০ এর মধ্যে লিখুন)", "3");
+        if (cols === null || cols === "") return;
+        
+        let rows = prompt("কয়টি লাইন (রো) চান? (১-১০ এর মধ্যে লিখুন)", "1");
+        if (rows === null || rows === "") return;
+
+        cols = parseInt(cols);
+        rows = parseInt(rows);
+
+        if(isNaN(cols) || isNaN(rows) || cols < 1 || rows < 1) {
+            alert("অনুগ্রহ করে সঠিক সংখ্যা দিন।");
+            return;
+        }
+        if(cols > 30 || rows > 10) {
+            alert("কলাম ১-৩০ এবং লাইন ১-১০ এর মধ্যে দিন।");
+            return;
+        }
+
+        let dir = prompt("লেখা কোন দিক থেকে শুরু হবে?\n১ = বাম থেকে ডান (বাংলা/ইংরেজি)\n২ = ডান থেকে বাম (আরবি)", "1");
+        let direction = (dir === "2") ? "rtl" : "ltr";
+        
+        let tableHTML = `<table class="resizable-table" dir="${direction}" id="tbl-${qId}" style="font-size: 20px; margin-bottom: 10px; ${direction === 'rtl' ? 'direction: rtl; text-align: right;' : 'direction: ltr; text-align: left;'}">`;
+        for(let i=0; i<rows; i++) {
+            tableHTML += `<tr>`;
+            for(let j=0; j<cols; j++) {
+                tableHTML += `<td contenteditable="true" 
+                                  onmousedown="startPressTimer(event, this)" 
+                                  onmouseup="cancelPressTimer()" 
+                                  onmouseleave="cancelPressTimer()"
+                                  ontouchstart="startPressTimer(event, this)" 
+                                  ontouchend="cancelPressTimer()"
+                                  ontouchmove="cancelPressTimer()"
+                                  style="height: 50px; min-width: 50px;"></td>`;
+            }
+            tableHTML += `</tr>`;
+        }
+        tableHTML += `</table>`;
+        
+        tableHTML += `
+            <div class="slider-group">
+                <div class="slider-row-table">
+                    <span style="width: 60px;">লম্বা:</span>
+                    <input type="range" min="30" max="120" value="50" oninput="resizeTableHeight('tbl-${qId}', this.value);">
+                </div>
+                <div class="slider-row-table">
+                    <span style="width: 60px;">চওড়া:</span>
+                    <input type="range" min="30" max="120" value="50" oninput="resizeTableWidth('tbl-${qId}', this.value);">
+                </div>
+            </div>
+        `;
+        
+        container.innerHTML = tableHTML;
+        scheduleSave();
+    }
+
+    function startPressTimer(event, cell) {
+        pressTimer = setTimeout(function() {
+            let confirmDelete = confirm("আপনি কি এই ঘরটি ছক থেকে মুছে ফেলতে চান?");
+            if (confirmDelete) {
+                cell.remove(); 
+                scheduleSave();
+            }
+        }, 800); 
+    }
+
+    function cancelPressTimer() {
+        clearTimeout(pressTimer);
+    }
+
+    function resizeTableHeight(tblId, size) {
+        const table = document.getElementById(tblId);
+        if(!table) return;
+        const cells = table.querySelectorAll('td');
+        cells.forEach(cell => {
+            cell.style.height = size + 'px';
+        });
+    }
+
+    function resizeTableWidth(tblId, size) {
+        const table = document.getElementById(tblId);
+        if(!table) return;
+        const cells = table.querySelectorAll('td');
+        cells.forEach(cell => {
+            cell.style.minWidth = size + 'px';
+            cell.style.width = size + 'px';
+        });
+    }
+
+    function addSubQuestion(qId) {
+        const subContainer = document.getElementById(`sub-container-${qId}`);
+        const subCount = subContainer.children.length;
+        const bnLetters = ['ক', 'খ', 'গ', 'ঘ', 'ঙ', 'চ', 'ছ', 'জ', 'ঝ', 'ঞ'];
+        let defaultLabel = bnLetters[subCount] ? bnLetters[subCount] : bn(subCount + 1);
+
+        const row = document.createElement('div');
+        row.className = 'sub-row';
+        row.innerHTML = `
+            <div class="sub-label">
+                <input type="text" class="form-control sub-label-input" value="${defaultLabel}." placeholder="নাম্বার" style="background:#fff;">
+            </div>
+            <div class="sub-text">
+                <div class="form-control sub-text-input" contenteditable="true" data-ph="উপ-প্রশ্ন লিখুন..." style="background:#fff;"></div>
+            </div>
+            <span class="btn-remove-sub" onclick="this.parentElement.remove(); scheduleSave();">✖</span>
+        `;
+        subContainer.appendChild(row);
+        scheduleSave();
+        return row;
+    }
+
+    function formatText(command) {
+        document.execCommand(command, false, null);
+    }
+
+    function renumberQuestions() {
+        document.querySelectorAll('.question-card').forEach((card, i) => {
+            const lab = bn(i + 1);
+            card.querySelector('.q-badge').textContent = 'প্রশ্ন ' + lab;
+            const inp = card.querySelector('.q-label-input');
+            if (inp.value === card.dataset.auto) inp.value = lab + 'নং';
+            card.dataset.auto = lab + 'নং';
+        });
+    }
+
+    function deleteQuestion(qId) {
+        const card = document.getElementById(`q-card-${qId}`);
+        if (card) card.remove();
+        renumberQuestions();
+        scheduleSave();
+    }
+
+    /* ---------- প্রিভিউ ---------- */
+    function generatePreview(noScroll) {
+        const previewWrapper = document.getElementById('previewWrapper');
+        const paperContentArea = document.getElementById('paperContentArea');
+        
+        const mName = esc(document.getElementById('madrasaName').value || 'মাদ্রাসার নাম');
+        const eName = esc(document.getElementById('examName').value || 'পরীক্ষার নাম');
+        const eClass = esc(document.getElementById('examClass').value || 'শ্রেণি');
+        const eSub = esc(document.getElementById('examSubject').value || 'বিষয়');
+        const eYear = esc(document.getElementById('examYear').value || 'সাল');
+        const eTime = esc(document.getElementById('examTime').value || 'সময়');
+        const eMarks = esc(document.getElementById('examMarks').value || 'পূর্ণমান');
+        const eInst = esc(document.getElementById('examInstruction').value.trim());
+
+        const cards = document.querySelectorAll('.question-card');
+        if(cards.length === 0) {
+            alert("অনুগ্রহ করে অন্তত একটি প্রশ্ন যোগ করুন!");
+            return;
+        }
+
+        let questionsHTML = '';
+        cards.forEach((card, index) => {
+            const qLabelText = esc(card.querySelector('.q-label-input').value);
+            const qTextEl = card.querySelector('.q-text-input');
+            const qText = plain(qTextEl) !== '' ? qTextEl.innerHTML : 'প্রশ্ন লেখা হয়নি';
+            const qMarks = card.querySelector('.q-marks-input').innerHTML;
+            
+            let tableHTML = '';
+            const tableEl = card.querySelector('.resizable-table');
+            if(tableEl) {
+                const clonedTable = tableEl.cloneNode(true);
+                clonedTable.className = 'print-table'; 
+                
+                clonedTable.querySelectorAll('td').forEach(td => {
+                    Array.from(td.attributes).forEach(a => {
+                        if (/^on/i.test(a.name) || a.name === 'contenteditable') td.removeAttribute(a.name);
+                    });
+                });
+                
+                tableHTML = `<div class="print-table-wrapper">${clonedTable.outerHTML}</div>`;
+            }
+
+            const subRows = card.querySelectorAll('.sub-row');
+            let subHTML = '';
+            
+            if (subRows.length > 0) {
+                subHTML = '<div class="preview-sub-questions">';
+                subRows.forEach((row) => {
+                    const label = esc(row.querySelector('.sub-label-input').value);
+                    const textEl = row.querySelector('.sub-text-input');
+                    if(plain(textEl) !== "") {
+                        subHTML += `<div class="preview-sub-item"><span>${label}</span> <span>${textEl.innerHTML}</span></div>`;
+                    }
+                });
+                subHTML += '</div>';
+            }
+
+            questionsHTML += `
+                <div class="preview-question-item">
+                    <div class="q-row">
+                        <div class="q-content"><span style="font-weight:bold; margin-right: 5px;">${qLabelText}</span> ${qText}</div>
+                        <div class="q-marks">${qMarks}</div>
+                    </div>
+                    ${tableHTML}
+                    ${subHTML}
+                </div>
+            `;
+        });
+
+        const layout = document.getElementById('layoutSelector').value;
+        
+        let finalHTML = '';
+
+        if(layout === 'landscape') {
+            const sectionHTML = `
+                <div class="exam-section">
+                    <img class="watermark-logo section-wm" alt="Logo">
+                    <div class="paper-header">
+                        <h1>${mName}</h1>
+                        <p>${eName} - ${eYear}</p>
+                        <p>${eClass}</p>
+                        <p>বিষয়ঃ ${eSub}</p>
+                    </div>
+                    
+                    <div class="paper-info-row">
+                        <span>সময়ঃ- ${eTime}</span>
+                        <span>পূর্ণমানঃ- ${eMarks}</span>
+                    </div>
+
+                    ${eInst !== "" ? `<div class="paper-instruction">${eInst}</div>` : ''}
+                    
+                    <div class="preview-question-list">${questionsHTML}</div>
+                </div>
+            `;
+            finalHTML = sectionHTML + sectionHTML;
+        } else {
+            finalHTML = `
+                <div class="fit-box">
+                    <div class="paper-header">
+                        <h1>${mName}</h1>
+                        <p>${eName} - ${eYear}</p>
+                        <p>${eClass}</p>
+                        <p>বিষয়ঃ ${eSub}</p>
+                    </div>
+                    
+                    <div class="paper-info-row">
+                        <span>সময়ঃ- ${eTime}</span>
+                        <span>পূর্ণমানঃ- ${eMarks}</span>
+                    </div>
+
+                    ${eInst !== "" ? `<div class="paper-instruction">${eInst}</div>` : ''}
+                    
+                    <div class="preview-question-list">${questionsHTML}</div>
+                </div>
+            `;
+        }
+
+        paperContentArea.innerHTML = finalHTML;
+
+        previewWrapper.style.display = 'block';
+        if (!noScroll) previewWrapper.scrollIntoView({ behavior: 'smooth' });
+        
+        syncWatermarks();
+        changeFont();
+        changePreviewZoom(document.getElementById('previewZoomSlider').value);
+        fitContent();
+        if (document.fonts && document.fonts.ready) {
+            document.fonts.ready.then(() => { if (previewVisible()) fitContent(); });
+        }
+    }
+
+    /* কাগজের উচ্চতা অপরিবর্তিত; বেশি লেখা হলে অক্ষর ছোট করে এক পাতায় ধরানো হয় */
+    function fitContent() {
+        const paper = document.getElementById('a4Paper');
+        const note = document.getElementById('fitNote');
+        const full = paper.classList.contains('full-page');
+        const boxes = Array.from(paper.querySelectorAll(full ? '.fit-box' : '.exam-section'));
+        if (!boxes.length) return;
+
+        let fs = 13;
+        paper.style.setProperty('--qfs', fs + 'px');
+
+        const over = () => boxes.some(b => {
+            const list = b.querySelector('.preview-question-list');
+            if (!list) return false;
+            const br = b.getBoundingClientRect();
+            const sc = b.offsetHeight ? br.height / b.offsetHeight : 1;
+            const pb = parseFloat(getComputedStyle(b).paddingBottom) || 0;
+            return list.getBoundingClientRect().bottom > br.bottom - pb * sc + 1;
+        });
+
+        while (over() && fs > 8) {
+            fs -= 0.5;
+            paper.style.setProperty('--qfs', fs + 'px');
+        }
+
+        note.className = '';
+        note.style.display = 'none';
+        if (over()) {
+            note.className = 'warn';
+            note.textContent = '⚠️ প্রশ্ন বেশি হওয়ায় সবচেয়ে ছোট অক্ষরেও এক পাতায় ধরেনি, নিচের কিছু অংশ কাটা পড়বে। প্রশ্ন কমান বা ফুল পেজ বেছে নিন।';
+            note.style.display = 'block';
+        } else if (fs < 13) {
+            note.className = 'info';
+            note.textContent = 'ℹ️ সব প্রশ্ন এক পাতায় ধরাতে প্রশ্নের অক্ষর ' + bn(fs) + ' পিক্সেলে নামানো হয়েছে।';
+            note.style.display = 'block';
+        }
+    }
+
+    function fontsReady() {
+        return (document.fonts && document.fonts.ready) ? document.fonts.ready : Promise.resolve();
+    }
+
+    function downloadPDF() {
+        const element = document.getElementById('a4Paper');
+        const originalTransform = element.style.transform;
+        element.style.transform = 'scale(1)'; 
+        
+        const layout = document.getElementById('layoutSelector').value;
+        const orientation = layout === 'portrait' ? 'portrait' : 'landscape';
+
+        const opt = {
+            margin:       0,
+            filename:     'Question_Paper.pdf',
+            image:        { type: 'jpeg', quality: 0.98 },
+            html2canvas:  { scale: 2, useCORS: true },
+            jsPDF:        { unit: 'mm', format: 'a4', orientation: orientation }
+        };
+        
+        alert("PDF ডাউনলোড হচ্ছে...");
+        fontsReady()
+            .then(() => html2pdf().set(opt).from(element).save())
+            .then(() => { element.style.transform = originalTransform; })
+            .catch(() => { element.style.transform = originalTransform; alert("PDF তৈরি করা যায়নি। ইন্টারনেট সংযোগ দেখে আবার চেষ্টা করুন।"); });
+    }
+
+    function downloadImage() {
+        const element = document.getElementById('a4Paper');
+        const originalTransform = element.style.transform;
+        element.style.transform = 'scale(1)'; 
+        
+        alert("ছবি ডাউনলোড হচ্ছে...");
+        fontsReady()
+            .then(() => html2canvas(element, { scale: 2, useCORS: true }))
+            .then(canvas => {
+                const link = document.createElement('a');
+                link.download = 'Question_Paper.png';
+                link.href = canvas.toDataURL('image/png');
+                link.click();
+                
+                element.style.transform = originalTransform;
+            })
+            .catch(() => { element.style.transform = originalTransform; alert("ছবি তৈরি করা যায়নি। ইন্টারনেট সংযোগ দেখে আবার চেষ্টা করুন।"); });
+    }
+
+    /* ---------- খসড়া সংরক্ষণ (রিফ্রেশ বা অ্যাপ বন্ধ করলেও লেখা থাকে) ---------- */
+    function scheduleSave() {
+        if (restoring) return;
+        clearTimeout(saveTimer);
+        saveTimer = setTimeout(saveDraft, 500);
+    }
+
+    function collectDraft() {
+        const d = {
+            v: 2,
+            fields: {},
+            font: document.getElementById('fontSelector').value,
+            layout: document.getElementById('layoutSelector').value,
+            fonts: customFonts.slice(),
+            logoSize: document.getElementById('logoSizeSlider').value,
+            logoOpacity: document.getElementById('logoOpacitySlider').value,
+            questions: []
+        };
+        FIELD_IDS.forEach(id => { d.fields[id] = document.getElementById(id).value; });
+        document.querySelectorAll('.question-card').forEach(card => {
+            const id = card.id.replace('q-card-', '');
+            const tc = card.querySelector('.table-container-area');
+            const idRe = new RegExp('tbl-' + id + '(?!\\d)', 'g');
+            d.questions.push({
+                label: card.querySelector('.q-label-input').value,
+                auto: card.dataset.auto,
+                html: card.querySelector('.q-text-input').innerHTML,
+                marks: card.querySelector('.q-marks-input').innerHTML,
+                table: tc.querySelector('table') ? tc.innerHTML.replace(idRe, 'tbl-__ID__') : '',
+                subs: Array.from(card.querySelectorAll('.sub-row')).map(r => ({
+                    label: r.querySelector('.sub-label-input').value,
+                    html: r.querySelector('.sub-text-input').innerHTML
+                }))
+            });
+        });
+        return d;
+    }
+
+    function saveDraft() {
+        try { localStorage.setItem(DRAFT_KEY, JSON.stringify(collectDraft())); } catch (e) {}
+    }
+
+    function restoreDraft() {
+        let d = null;
+        try { d = JSON.parse(localStorage.getItem(DRAFT_KEY) || 'null'); } catch (e) { d = null; }
+        if (!d || !d.questions || !d.questions.length) return false;
+
+        restoring = true;
+        try {
+            FIELD_IDS.forEach(id => { if (d.fields && d.fields[id] != null) document.getElementById(id).value = d.fields[id]; });
+            (d.fonts || []).forEach(n => { registerFont(n); customFonts.push(n); });
+
+            const fontSel = document.getElementById('fontSelector');
+            if (d.font && Array.from(fontSel.options).some(o => o.value === d.font)) fontSel.value = d.font;
+
+            const layoutSel = document.getElementById('layoutSelector');
+            if (d.layout) layoutSel.value = d.layout;
+            document.getElementById('a4Paper').classList.toggle('full-page', layoutSel.value === 'portrait');
+
+            if (d.logoSize) document.getElementById('logoSizeSlider').value = d.logoSize;
+            if (d.logoOpacity) document.getElementById('logoOpacitySlider').value = d.logoOpacity;
+
+            document.getElementById('questionsContainer').innerHTML = '';
+            questionCount = 0;
+            d.questions.forEach(q => {
+                const id = addNewQuestion();
+                const card = document.getElementById('q-card-' + id);
+                card.querySelector('.q-label-input').value = q.label;
+                if (q.auto) card.dataset.auto = q.auto;
+                card.querySelector('.q-text-input').innerHTML = q.html || '';
+                card.querySelector('.q-marks-input').innerHTML = q.marks || '';
+                if (q.table) {
+                    const tc = document.getElementById('table-container-' + id);
+                    tc.innerHTML = q.table.split('tbl-__ID__').join('tbl-' + id);
+                    const td = tc.querySelector('td');
+                    const rs = tc.querySelectorAll('input[type=range]');
+                    if (td && rs.length === 2) {
+                        rs[0].value = parseInt(td.style.height) || 50;
+                        rs[1].value = parseInt(td.style.minWidth) || 50;
+                    }
+                }
+                (q.subs || []).forEach(s => {
+                    const row = addSubQuestion(id);
+                    row.querySelector('.sub-label-input').value = s.label;
+                    row.querySelector('.sub-text-input').innerHTML = s.html || '';
+                });
+            });
+
+            let logo = null;
+            try { logo = localStorage.getItem(LOGO_KEY); } catch (e) {}
+            if (logo) setLogo(logo);
+            changeFont();
+        } finally {
+            restoring = false;
+        }
+        return true;
+    }
+
+    function resetAll() {
+        if (!confirm("সব লেখা (প্রশ্ন ও তথ্য) মুছে নতুন করে শুরু করবেন?")) return;
+        try { localStorage.removeItem(DRAFT_KEY); localStorage.removeItem(LOGO_KEY); } catch (e) {}
+        FIELD_IDS.forEach(id => { document.getElementById(id).value = ''; });
+
+        const wm = document.getElementById('pLogoWatermark');
+        wm.removeAttribute('src');
+        document.getElementById('madrasaLogo').value = '';
+        const sz = document.getElementById('logoSizeSlider');
+        const op = document.getElementById('logoOpacitySlider');
+        sz.value = 200; op.value = 10; sz.disabled = true; op.disabled = true;
+
+        document.getElementById('questionsContainer').innerHTML = '';
+        questionCount = 0;
+        addNewQuestion();
+
+        document.getElementById('previewWrapper').style.display = 'none';
+        document.getElementById('paperContentArea').innerHTML = '';
+        syncWatermarks();
+        scheduleSave();
+    }
+
+    ['input', 'change', 'click'].forEach(ev => document.addEventListener(ev, scheduleSave, true));
+    document.addEventListener('visibilitychange', () => { if (document.hidden) saveDraft(); });
+
+    window.onload = function() {
+        if (!restoreDraft()) addNewQuestion();
+    };
+<\/script>
+
+</body>
+</html>
+</script>
+<script>
+/* প্রশ্নপত্র (শুধু অ্যাডমিন): আলাদা ফাইলের টুলটি ভেতরে চলে; অন্য ট্যাবে গিয়ে ফিরলেও লেখা থাকে; লগআউট করলে সব মুছে যায় */
+(function(){
+ var host=null;
+ function src(){var e=document.getElementById('qp-src');return e?e.textContent.replace(/<\\\/script/gi,'</script').trim():''}
+ function mk(){
+  host=document.createElement('div');host.id='qpHost';
+  host.style.cssText='position:fixed;left:50%;transform:translateX(-50%);width:100%;max-width:480px;z-index:4;background:#fff;display:none';
+  var f=document.createElement('iframe');f.title='প্রশ্নপত্র';
+  f.style.cssText='width:100%;height:100%;border:0;display:block;background:#fff';
+  f.srcdoc=src();host.appendChild(f);document.body.appendChild(host)}
+ function destroy(){if(host){host.remove();host=null}}
+ function wipe(){try{localStorage.removeItem('mm_qp_draft_v2');localStorage.removeItem('mm_qp_logo_v2')}catch(e){}}
+ function hookLogin(){var l=window.login;if(typeof l==='function'&&!l.__qp){var w=function(){destroy();wipe();return l.apply(this,arguments)};w.__qp=1;window.login=w}}
+ function place(){
+  if(!host)return;
+  var t=document.querySelector('#app .top'),n=document.querySelector('#app .nav');
+  var tb=t?t.getBoundingClientRect().bottom:0,nt=n?n.getBoundingClientRect().top:window.innerHeight;
+  host.style.top=Math.max(0,tb)+'px';host.style.height=Math.max(0,nt-tb)+'px'}
+ function sync(){
+  hookLogin();
+  var on=(tab==='qpaper'&&role==='admin'&&document.querySelector('#app .nav'));
+  if(on){if(!host)mk();place();host.style.display='block'}
+  else if(host){host.style.display='none';if(document.querySelector('#app .login, .lgp'))destroy()}}
+ var _hl=homeList;
+ window.homeList=function(){var t=_hl.apply(this,arguments);if(role==='admin')t.push(['📄','Question Paper','প্রশ্নপত্র','#b45309','qpaper']);return t};
+ try{NAVG.admin.forEach(function(g){if(g[0].indexOf('একাডেমিক')>-1&&g[1].indexOf('qpaper')<0)g[1].push('qpaper')})}catch(e){}
+ var _d=window.draw;
+ window.draw=function(){
+  if(tab==='qpaper'){
+   if(role==='admin'){shell('প্রশ্নপত্র','<div style="min-height:50vh"></div>','home');sync();return}
+   tab='home'}
+  var r=_d.apply(this,arguments);sync();return r};
+ window.addEventListener('resize',sync);
+ setInterval(sync,400);
 })();
 </script>
 </body>

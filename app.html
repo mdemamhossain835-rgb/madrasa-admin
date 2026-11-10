@@ -2,7 +2,7 @@
 <html lang="bn">
 <head>
 <meta charset="utf-8">
-<meta name="app-build" content="2026-11-10.1">
+<meta name="app-build" content="2026-11-10.3">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>মাদ্রাসা ম্যানেজমেন্ট সিস্টেম</title>
 <script>try{document.documentElement.setAttribute('data-theme',localStorage.getItem('mm_theme')==='dark'?'dark':'light')}catch(e){document.documentElement.setAttribute('data-theme','light')}</script>
@@ -2094,6 +2094,14 @@ window.hwVoiceDel=async function(c,d,sj){await upd({['hwVoice/'+c+'/'+d+'/'+sjk(
    if(role==='admin'){shell('প্রশ্নপত্র','<div style="min-height:50vh"></div>','home');sync();return}
    tab='home'}
   var r=_d.apply(this,arguments);sync();return r};
+ /* অ্যাপের তথ্য প্রশ্নপত্রকে দেওয়া: মাদ্রাসার নাম, লোগো, জামাত ও বিষয় */
+ window.__qpData=function(){
+  var p=(typeof profile!=='undefined'&&profile)||{},lg=p.logo;
+  if(!(typeof lg==='string'&&/^(data:image\/|https:)/.test(lg)))lg='';
+  var cls=(typeof classes!=='undefined'&&Array.isArray(classes))?classes.slice():[],sb={};
+  cls.forEach(function(c){try{sb[c]=(window.subjFor?window.subjFor(c):[]).slice()}catch(e){sb[c]=[]}});
+  var nm=String(p.name||'').trim();if(nm==='Madrasa Management')nm='';
+  return{name:nm,addr:String(p.addr||''),logo:lg,classes:cls,subjects:sb,allSubjects:(typeof subjects!=='undefined'&&Array.isArray(subjects))?subjects.slice():[]}};
  window.addEventListener('resize',sync);
  setInterval(sync,400);
 })();
@@ -3224,6 +3232,7 @@ go()})();
     
     <link href="https://fonts.maateen.me/kalpurush/font.css" rel="stylesheet">
     <link href="https://fonts.maateen.me/solaiman-lipi/font.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Noto+Naskh+Arabic:wght@400;700&family=Scheherazade+New:wght@400;700&family=Noto+Kufi+Arabic:wght@400;700&display=swap" rel="stylesheet">
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"><\/script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"><\/script>
@@ -3500,6 +3509,41 @@ go()})();
         .q-text-input, .sub-text-input, .q-marks-input { font-size: 13px; }
         .a4-paper.no-cut .exam-section:first-of-type { border-right: none; }
 
+        .btn-appdata { margin-left: 8px; padding: 4px 10px; font-size: 12px; font-weight: bold; font-family: inherit; color: var(--primary-color); background: var(--primary-light); border: 1px solid var(--primary-color); border-radius: 999px; cursor: pointer; vertical-align: middle; }
+        .chips { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+        .chips:empty { display: none; }
+        .chip { padding: 6px 12px; font-size: 13px; font-family: inherit; font-weight: bold; color: var(--primary-color); background: #fff; border: 1px solid var(--primary-color); border-radius: 999px; cursor: pointer; }
+        .chip:active { background: var(--primary-light); }
+        .rtl-toggle { display: inline-flex; align-items: center; gap: 6px; margin-left: auto; font-size: 14px; font-weight: bold; color: var(--primary-color); }
+        .rtl-toggle input { width: 18px; height: 18px; accent-color: var(--primary-color); }
+        .rich-text-tools .btn-ar { font-size: 20px; line-height: 1; padding: 6px 14px; font-family: var(--ar-font, 'Amiri', serif); }
+        .ar { font-family: var(--ar-font, 'Amiri', serif); font-size: 1.3em; line-height: 1.9; unicode-bidi: isolate; }
+        .preview-question-item.rtl { text-align: right; }
+        .preview-question-item.rtl .q-content { padding-right: 0; padding-left: 10px; }
+        .preview-question-item.rtl .q-content > span:first-child { margin-right: 0 !important; margin-left: 6px; }
+        .preview-question-item.rtl .q-marks { text-align: left; }
+        .preview-question-item.rtl .preview-sub-questions { padding-left: 0; padding-right: 50px; }
+        .extras-box { background: var(--primary-light); border: 1px solid #bce3d4; border-radius: 8px; padding: 12px 15px; margin-bottom: 20px; }
+        .extras-box summary { cursor: pointer; font-weight: bold; color: var(--primary-color); font-size: 15px; }
+        .extra-row { margin-top: 12px; }
+        .ck { display: inline-flex; align-items: center; gap: 8px; font-size: 15px; font-weight: bold; color: var(--text-color); margin: 0; }
+        .ck input { width: 20px; height: 20px; accent-color: var(--primary-color); }
+        .extra-sub { display: none; margin: 8px 0 0 28px; gap: 16px; flex-wrap: wrap; }
+        .extra-row.on .extra-sub { display: flex; }
+        .extra-sub .form-control { max-width: 280px; }
+        .stu-row { display: flex; gap: 12px; align-items: flex-end; font-weight: bold; font-size: var(--qfs, 13px); margin: 8px 0 10px; }
+        .stu-row .f { display: flex; align-items: flex-end; flex: 1; white-space: nowrap; }
+        .stu-row .f.n { flex: 2.2; }
+        .stu-row .blank { display: block; flex: 1; border-bottom: 1px dotted #000; height: 1.15em; margin-left: 5px; }
+        .flip-note { position: absolute; right: 10mm; bottom: 7mm; font-size: 12px; font-weight: bold; }
+        .exam-section > .flip-note { position: absolute; }
+        .fit-box .flip-note { right: 20mm; bottom: 10mm; }
+        .a4-paper.has-flip .exam-section { padding-bottom: 14mm; }
+        .a4-paper.has-flip .fit-box { padding-bottom: 22mm; }
+        .a4-paper.has-border .exam-section::after { content: ''; position: absolute; top: 4mm; bottom: 4mm; left: 4mm; right: 4mm; border: 1.5px solid #000; pointer-events: none; z-index: 2; }
+        .a4-paper.has-border.border-double .exam-section::after { border: 4px double #000; }
+        .a4-paper.has-border .fit-box::after { content: ''; position: absolute; top: 7mm; bottom: 7mm; left: 9mm; right: 9mm; border: 1.5px solid #000; pointer-events: none; z-index: 2; }
+        .a4-paper.has-border.border-double .fit-box::after { border: 4px double #000; }
     </style>
 </head>
 <body>
@@ -3529,6 +3573,15 @@ go()})();
             <button class="btn-add-font" onclick="addCustomFont()">+ নতুন ফন্ট</button>
         </div>
         <div class="tool-item">
+            <label>আরবি ফন্ট:</label>
+            <select id="arFontSelector" class="form-control" onchange="changeArFont()">
+                <option value="'Amiri', serif">আমিরি (নাসখ)</option>
+                <option value="'Noto Naskh Arabic', serif">নোটো নাসখ</option>
+                <option value="'Scheherazade New', serif">শেহেরজাদ নিউ (হারাকাতসহ)</option>
+                <option value="'Noto Kufi Arabic', sans-serif">নোটো কুফি</option>
+            </select>
+        </div>
+        <div class="tool-item">
             <label>প্রিন্ট সাইজ:</label>
             <select id="layoutSelector" class="form-control" onchange="changeLayout()">
                 <option value="landscape" selected>হাফ পেজ (২৯৭ × ২১০ মিমি) - মাঝখানে কেটে দুইটি</option>
@@ -3541,9 +3594,36 @@ go()})();
         </div>
     </div>
 
+    <details class="extras-box" id="extrasBox">
+        <summary>✨ অতিরিক্ত অপশন (ইচ্ছা হলে চালু করুন)</summary>
+        <div class="extra-row">
+            <label class="ck"><input type="checkbox" id="optStu" onchange="extrasChanged()"> পরীক্ষার্থীর নাম, রোল ও তারিখের ঘর</label>
+            <div class="extra-sub">
+                <label class="ck"><input type="checkbox" id="optStuName" checked onchange="extrasChanged()"> নাম</label>
+                <label class="ck"><input type="checkbox" id="optStuRoll" checked onchange="extrasChanged()"> রোল</label>
+                <label class="ck"><input type="checkbox" id="optStuDate" checked onchange="extrasChanged()"> তারিখ</label>
+            </div>
+        </div>
+        <div class="extra-row">
+            <label class="ck"><input type="checkbox" id="optBorder" onchange="extrasChanged()"> চারপাশে বর্ডার</label>
+            <div class="extra-sub">
+                <select id="borderStyle" class="form-control" onchange="extrasChanged()">
+                    <option value="single">সাধারণ রেখা</option>
+                    <option value="double">ডাবল রেখা</option>
+                </select>
+            </div>
+        </div>
+        <div class="extra-row">
+            <label class="ck"><input type="checkbox" id="optFlip" onchange="extrasChanged()"> নিচে “উল্টাপিঠে দেখুন” লেখা</label>
+            <div class="extra-sub">
+                <input type="text" id="flipText" class="form-control" value="উল্টাপিঠে দেখুন" oninput="extrasChanged()">
+            </div>
+        </div>
+    </details>
+
     <div class="form-row">
         <div class="form-group">
-            <label>মাদ্রাসার নাম ও শাখা</label>
+            <label>মাদ্রাসার নাম ও শাখা <button type="button" class="btn-appdata" onclick="autoFillFromApp(true)">↻ অ্যাপ থেকে নিন</button></label>
             <input type="text" id="madrasaName" class="form-control" placeholder="মাদ্রাসার নাম লিখুন...">
         </div>
         <div class="form-group" style="flex: 0 0 200px;">
@@ -3572,11 +3652,13 @@ go()})();
         </div>
         <div class="form-group">
             <label>শ্রেণি / জামাত</label>
-            <input type="text" id="examClass" class="form-control" placeholder="যেমন: নার্সারি, হাফেজী">
+            <input type="text" id="examClass" class="form-control" placeholder="যেমন: নার্সারি, হাফেজী" oninput="refreshSubjectChips()">
+            <div class="chips" id="classChips"></div>
         </div>
         <div class="form-group">
             <label>বিষয়</label>
             <input type="text" id="examSubject" class="form-control" placeholder="যেমন: বাংলা, আরবি">
+            <div class="chips" id="subjChips"></div>
         </div>
     </div>
 
@@ -3661,9 +3743,19 @@ go()})();
     function plain(el) { return (el.textContent || '').replace(/\u200b/g, '').trim(); }
     function previewVisible() { return document.getElementById('previewWrapper').style.display === 'block'; }
 
+    function paperStack() {
+        const base = document.getElementById('fontSelector').value.replace(/,\s*(sans-serif|serif)\s*$/, '');
+        return base + ', ' + document.getElementById('arFontSelector').value;
+    }
+
+    function changeArFont() { changeFont(); }
+
     function changeFont() {
-        const selectedFont = document.getElementById('fontSelector').value;
+        const selectedFont = paperStack();
+        const arFont = document.getElementById('arFontSelector').value;
         document.getElementById('a4Paper').style.fontFamily = selectedFont;
+        document.getElementById('a4Paper').style.setProperty('--ar-font', arFont);
+        document.documentElement.style.setProperty('--ar-font', arFont);
         document.body.style.fontFamily = selectedFont;
         if (previewVisible()) {
             fitContent();
@@ -3815,13 +3907,14 @@ go()})();
                     <div class="q-label-row">
                         <label style="font-weight:bold; font-size:15px; color:var(--primary-color);">দাগ নং:</label>
                         <input type="text" class="q-label-input" value="${qLabel}নং" placeholder="যেমন: ১নং">
+                        <label class="rtl-toggle"><input type="checkbox" class="q-rtl" onchange="toggleRtl(this)"> ডান থেকে বাম (আরবি)</label>
                     </div>
                     
                     <label style="font-weight:bold; font-size:15px; color:var(--primary-color);">প্রশ্ন লিখুন (লেখা সিলেক্ট করে B বা I চাপুন)</label>
                     <div class="rich-text-tools">
                         <button type="button" onmousedown="event.preventDefault()" onclick="formatText('bold')"><b>B</b></button>
                         <button type="button" onmousedown="event.preventDefault()" onclick="formatText('italic')"><i>I</i></button>
-                        <button type="button" onmousedown="event.preventDefault()" onclick="formatText('underline')"><u>U</u></button>
+                        <button type="button" onmousedown="event.preventDefault()" onclick="formatText('underline')"><u>U</u></button><button type="button" class="btn-ar" onmousedown="event.preventDefault()" onclick="toggleArabic()" title="সিলেক্ট করা লেখা আরবি ফন্টে">ع</button>
                         <span class="fs-box"><button type="button" onmousedown="event.preventDefault()" onclick="stepFont(this,-1)" aria-label="ছোট করুন">−</button><input type="text" class="fs-input" inputmode="numeric" value="১৩" onfocus="this.select()" onchange="setFontFromInput(this)" aria-label="লেখার সাইজ"><button type="button" onmousedown="event.preventDefault()" onclick="stepFont(this,1)" aria-label="বড় করুন">+</button></span>
                     </div>
                     
@@ -3849,7 +3942,7 @@ go()})();
                 <div class="rich-text-tools sub-tools">
                     <button type="button" onmousedown="event.preventDefault()" onclick="formatText('bold')"><b>B</b></button>
                     <button type="button" onmousedown="event.preventDefault()" onclick="formatText('italic')"><i>I</i></button>
-                    <button type="button" onmousedown="event.preventDefault()" onclick="formatText('underline')"><u>U</u></button>
+                    <button type="button" onmousedown="event.preventDefault()" onclick="formatText('underline')"><u>U</u></button><button type="button" class="btn-ar" onmousedown="event.preventDefault()" onclick="toggleArabic()" title="সিলেক্ট করা লেখা আরবি ফন্টে">ع</button>
                         <span class="fs-box"><button type="button" onmousedown="event.preventDefault()" onclick="stepFont(this,-1)" aria-label="ছোট করুন">−</button><input type="text" class="fs-input" inputmode="numeric" value="১৩" onfocus="this.select()" onchange="setFontFromInput(this)" aria-label="লেখার সাইজ"><button type="button" onmousedown="event.preventDefault()" onclick="stepFont(this,1)" aria-label="বড় করুন">+</button></span>
                 </div>
                 <div id="sub-container-${questionCount}"></div>
@@ -3972,6 +4065,8 @@ go()})();
             <span class="btn-remove-sub" onclick="this.parentElement.remove(); scheduleSave();" aria-label="মুছুন"><i class="idel"></i></span>
         `;
         subContainer.appendChild(row);
+        const rcard = document.getElementById(`q-card-${qId}`);
+        if (rcard && rcard.dataset.rtl === '1') applyRtlTo(row.querySelector('.sub-text-input'), true);
         scheduleSave();
         return row;
     }
@@ -4080,6 +4175,176 @@ go()})();
         return html.replace(/font-size:\s*([\d.]+)px/g, (m, v) => `font-size:calc(${v} * var(--qfs, 13px) / 13)`);
     }
 
+    /* ---------- আরবি: ডান-থেকে-বাম ও আরবি লেখার ফন্ট ---------- */
+    function applyRtlTo(el, rtl) {
+        el.setAttribute('dir', rtl ? 'rtl' : 'ltr');
+        el.style.textAlign = rtl ? 'right' : '';
+    }
+
+    function toggleRtl(cb) {
+        const card = cb.closest('.question-card');
+        card.dataset.rtl = cb.checked ? '1' : '';
+        card.querySelectorAll('.q-text-input, .sub-text-input').forEach(e => applyRtlTo(e, cb.checked));
+        scheduleSave();
+    }
+
+    function toggleArabic() {
+        const ed = lastSel.el;
+        if (!ed || !lastSel.range || lastSel.range.collapsed || !ed.contains(lastSel.range.commonAncestorContainer)) {
+            alert('আগে আরবি লেখাটুকু সিলেক্ট করুন, তারপর ع চাপুন।');
+            return;
+        }
+        const sel = window.getSelection();
+        ed.focus();
+        sel.removeAllRanges();
+        sel.addRange(lastSel.range);
+        let node = lastSel.range.commonAncestorContainer;
+        if (node.nodeType === 3) node = node.parentElement;
+        const ar = node.closest('.ar');
+        if (ar && ed.contains(ar)) {
+            while (ar.firstChild) ar.parentNode.insertBefore(ar.firstChild, ar);
+            ar.remove();
+        } else {
+            document.execCommand('styleWithCSS', false, false);
+            document.execCommand('fontName', false, 'qp-arabic-mark');
+            const made = [];
+            ed.querySelectorAll('font[face="qp-arabic-mark"], span[style*="qp-arabic-mark"]').forEach(f => {
+                const s = document.createElement('span');
+                s.className = 'ar';
+                s.setAttribute('lang', 'ar');
+                s.setAttribute('dir', 'rtl');
+                while (f.firstChild) s.appendChild(f.firstChild);
+                f.replaceWith(s);
+                made.push(s);
+            });
+            if (made.length) {
+                const r = document.createRange();
+                if (made.length === 1) r.selectNodeContents(made[0]);
+                else { r.setStartBefore(made[0]); r.setEndAfter(made[made.length - 1]); }
+                sel.removeAllRanges();
+                sel.addRange(r);
+                lastSel = { el: ed, range: r.cloneRange() };
+            }
+        }
+        scheduleSave();
+    }
+
+    /* ---------- অ্যাপের তথ্য: মাদ্রাসার নাম, লোগো, জামাত, বিষয় ---------- */
+    let appData = null;
+
+    function getAppData() {
+        try {
+            const f = (window.parent && window.parent !== window && window.parent.__qpData) || window.__qpData;
+            if (typeof f === 'function') return f();
+        } catch (e) {}
+        return null;
+    }
+
+    function makeChips(boxId, items, onPick) {
+        const box = document.getElementById(boxId);
+        box.innerHTML = '';
+        items.forEach(t => {
+            const b = document.createElement('button');
+            b.type = 'button';
+            b.className = 'chip';
+            b.textContent = t;
+            b.addEventListener('click', () => onPick(t));
+            box.appendChild(b);
+        });
+    }
+
+    function refreshClassChips() {
+        makeChips('classChips', appData ? appData.classes : [], v => {
+            document.getElementById('examClass').value = v;
+            refreshSubjectChips();
+            scheduleSave();
+        });
+    }
+
+    function refreshSubjectChips() {
+        if (!appData) return;
+        const cur = document.getElementById('examClass').value.trim();
+        let list = appData.subjects && appData.subjects[cur];
+        if (!list || !list.length) list = appData.allSubjects || [];
+        makeChips('subjChips', Array.from(new Set(list)), v => {
+            document.getElementById('examSubject').value = v;
+            scheduleSave();
+        });
+    }
+
+    async function urlToDataURL(url) {
+        const blob = await (await fetch(url)).blob();
+        return blobToDataURL(blob);
+    }
+
+    async function autoFillFromApp(force) {
+        appData = getAppData();
+        if (!appData) {
+            if (force) alert('অ্যাপের তথ্য পাওয়া যায়নি। অ্যাপের ভেতর থেকে প্রশ্নপত্র খুলুন।');
+            return;
+        }
+        const nameEl = document.getElementById('madrasaName');
+        if (appData.name && (force || !nameEl.value.trim())) nameEl.value = appData.name;
+        const hasLogo = !!document.getElementById('pLogoWatermark').getAttribute('src');
+        if (appData.logo && (force || !hasLogo)) {
+            let src = appData.logo;
+            if (!/^data:/.test(src)) { try { src = await urlToDataURL(src); } catch (e) { src = ''; } }
+            if (src) setLogo(src);
+        }
+        refreshClassChips();
+        refreshSubjectChips();
+        scheduleSave();
+    }
+
+    /* ---------- অতিরিক্ত অপশন (সবগুলো ঐচ্ছিক) ---------- */
+    function readExtras() {
+        const g = id => document.getElementById(id);
+        return {
+            stu: g('optStu').checked, stuName: g('optStuName').checked, stuRoll: g('optStuRoll').checked, stuDate: g('optStuDate').checked,
+            border: g('optBorder').checked, borderStyle: g('borderStyle').value,
+            flip: g('optFlip').checked, flipText: g('flipText').value
+        };
+    }
+
+    function setExtras(e) {
+        e = e || {};
+        const g = id => document.getElementById(id);
+        g('optStu').checked = !!e.stu;
+        g('optStuName').checked = e.stuName !== false;
+        g('optStuRoll').checked = e.stuRoll !== false;
+        g('optStuDate').checked = e.stuDate !== false;
+        g('optBorder').checked = !!e.border;
+        g('borderStyle').value = e.borderStyle === 'double' ? 'double' : 'single';
+        g('optFlip').checked = !!e.flip;
+        g('flipText').value = e.flipText || 'উল্টাপিঠে দেখুন';
+        syncExtrasUI();
+        applyPaperClasses();
+    }
+
+    function syncExtrasUI() {
+        ['optStu', 'optBorder', 'optFlip'].forEach(id => {
+            const cb = document.getElementById(id);
+            cb.closest('.extra-row').classList.toggle('on', cb.checked);
+        });
+        const ex = readExtras();
+        if (ex.stu || ex.border || ex.flip) document.getElementById('extrasBox').open = true;
+    }
+
+    function applyPaperClasses() {
+        const ex = readExtras();
+        const paper = document.getElementById('a4Paper');
+        paper.classList.toggle('has-border', ex.border);
+        paper.classList.toggle('border-double', ex.border && ex.borderStyle === 'double');
+        paper.classList.toggle('has-flip', ex.flip);
+    }
+
+    function extrasChanged() {
+        syncExtrasUI();
+        applyPaperClasses();
+        if (previewVisible()) generatePreview(true);
+        scheduleSave();
+    }
+
     /* ---------- প্রিভিউ ---------- */
     function generatePreview(noScroll) {
         const previewWrapper = document.getElementById('previewWrapper');
@@ -4137,8 +4402,9 @@ go()})();
                 subHTML += '</div>';
             }
 
+            const isRtl = card.dataset.rtl === '1';
             questionsHTML += `
-                <div class="preview-question-item">
+                <div class="preview-question-item${isRtl ? ' rtl' : ''}"${isRtl ? ' dir="rtl"' : ''}>
                     <div class="q-row">
                         <div class="q-content"><span style="font-weight:bold; margin-right: 5px;">${qLabelText}</span> ${qText}</div>
                         <div class="q-marks">${qMarks}</div>
@@ -4150,7 +4416,19 @@ go()})();
         });
 
         const layout = document.getElementById('layoutSelector').value;
-        
+
+        const ex = readExtras();
+        applyPaperClasses();
+        let stuHTML = '';
+        if (ex.stu) {
+            const parts = [];
+            if (ex.stuName) parts.push('<span class="f n">নাম:<i class="blank"></i></span>');
+            if (ex.stuRoll) parts.push('<span class="f">রোল:<i class="blank"></i></span>');
+            if (ex.stuDate) parts.push('<span class="f">তারিখ:<i class="blank"></i></span>');
+            if (parts.length) stuHTML = '<div class="stu-row">' + parts.join('') + '</div>';
+        }
+        const flipHTML = ex.flip ? '<div class="flip-note">' + esc(ex.flipText || 'উল্টাপিঠে দেখুন') + '</div>' : '';
+
         let finalHTML = '';
 
         if(layout === 'landscape') {
@@ -4168,10 +4446,12 @@ go()})();
                         <span>সময়ঃ- ${eTime}</span>
                         <span>পূর্ণমানঃ- ${eMarks}</span>
                     </div>
+                    ${stuHTML}
 
                     ${eInst !== "" ? `<div class="paper-instruction">${eInst}</div>` : ''}
                     
                     <div class="preview-question-list">${questionsHTML}</div>
+                    ${flipHTML}
                 </div>
             `;
             finalHTML = sectionHTML + sectionHTML;
@@ -4189,10 +4469,12 @@ go()})();
                         <span>সময়ঃ- ${eTime}</span>
                         <span>পূর্ণমানঃ- ${eMarks}</span>
                     </div>
+                    ${stuHTML}
 
                     ${eInst !== "" ? `<div class="paper-instruction">${eInst}</div>` : ''}
                     
                     <div class="preview-question-list">${questionsHTML}</div>
+                    ${flipHTML}
                 </div>
             `;
         }
@@ -4371,7 +4653,8 @@ go()})();
     /* দ্বিতীয় পদ্ধতি: ব্রাউজারের নিজের রেন্ডারিং (SVG) দিয়ে আঁকা, কোনো লাইব্রেরি লাগে না */
     const fontCssCache = {};
     async function embeddedFontCSS() {
-        const fam = document.getElementById('fontSelector').value.split(',')[0].replace(/['"\s]/g, '');
+        const fams = [document.getElementById('fontSelector').value, document.getElementById('arFontSelector').value].map(v => v.split(',')[0].replace(/['"\s]/g, ''));
+        const fam = fams.join('|');
         if (fontCssCache[fam] !== undefined) return fontCssCache[fam];
         let out = '';
         try {
@@ -4381,7 +4664,7 @@ go()})();
                 try { css = await (await fetch(l.href)).text(); } catch (e) { continue; }
                 for (const blk of css.split('@font-face').slice(1)) {
                     const m = blk.match(/font-family:\s*['"]?([^;'"]+)/);
-                    if (!m || m[1].replace(/\s/g, '') !== fam) continue;
+                    if (!m || !fams.includes(m[1].replace(/\s/g, ''))) continue;
                     let b = '@font-face' + blk;
                     const urls = Array.from(new Set(Array.from(b.matchAll(/url\(([^)]+)\)/g)).map(x => x[1].replace(/['"]/g, ''))));
                     for (const u of urls) {
@@ -4426,6 +4709,12 @@ go()})();
         window.scrollTo(0, 0);
         const cp = makeCaptureCopy();
         try {
+            try {
+                await Promise.all([
+                    document.fonts.load('16px ' + paperStack(), 'আب'),
+                    document.fonts.load('16px ' + document.getElementById('arFontSelector').value, 'ب')
+                ]);
+            } catch (e) {}
             await fontsReady();
             let canvas = null;
             if (typeof html2canvas !== 'undefined') {
@@ -4502,6 +4791,8 @@ go()})();
             font: document.getElementById('fontSelector').value,
             layout: document.getElementById('layoutSelector').value,
             cut: document.getElementById('cutLine').checked,
+            arFont: document.getElementById('arFontSelector').value,
+            extras: readExtras(),
             fonts: customFonts.slice(),
             logoSize: document.getElementById('logoSizeSlider').value,
             logoOpacity: document.getElementById('logoOpacitySlider').value,
@@ -4519,6 +4810,7 @@ go()})();
                 marks: card.querySelector('.q-marks-input').innerHTML,
                 fs: card.querySelector('.q-text-input').style.fontSize,
                 marksFs: card.querySelector('.q-marks-input').style.fontSize,
+                rtl: card.dataset.rtl === '1',
                 table: tc.querySelector('table') ? tc.innerHTML.replace(idRe, 'tbl-__ID__') : '',
                 subs: Array.from(card.querySelectorAll('.sub-row')).map(r => ({
                     label: r.querySelector('.sub-label-input').value,
@@ -4544,6 +4836,8 @@ go()})();
             FIELD_IDS.forEach(id => { if (d.fields && d.fields[id] != null) document.getElementById(id).value = d.fields[id]; });
             (d.fonts || []).forEach(n => { registerFont(n); customFonts.push(n); });
 
+            const arSel = document.getElementById('arFontSelector');
+            if (d.arFont && Array.from(arSel.options).some(o => o.value === d.arFont)) arSel.value = d.arFont;
             const fontSel = document.getElementById('fontSelector');
             if (d.font && Array.from(fontSel.options).some(o => o.value === d.font)) fontSel.value = d.font;
 
@@ -4556,6 +4850,7 @@ go()})();
             document.getElementById('a4Paper').classList.toggle('no-cut', !cutEl.checked);
             document.getElementById('a4Paper').classList.toggle('full-page', layoutSel.value === 'portrait');
 
+            setExtras(d.extras);
             if (d.logoSize) document.getElementById('logoSizeSlider').value = d.logoSize;
             if (d.logoOpacity) document.getElementById('logoOpacitySlider').value = d.logoOpacity;
 
@@ -4565,6 +4860,11 @@ go()})();
                 const id = addNewQuestion();
                 const card = document.getElementById('q-card-' + id);
                 card.querySelector('.q-label-input').value = q.label;
+                if (q.rtl) {
+                    card.querySelector('.q-rtl').checked = true;
+                    card.dataset.rtl = '1';
+                    applyRtlTo(card.querySelector('.q-text-input'), true);
+                }
                 if (q.auto) card.dataset.auto = q.auto;
                 card.querySelector('.q-text-input').innerHTML = q.html || '';
                 card.querySelector('.q-marks-input').innerHTML = q.marks || '';
@@ -4602,6 +4902,8 @@ go()})();
         if (!confirm("সব লেখা (প্রশ্ন ও তথ্য) মুছে নতুন করে শুরু করবেন?")) return;
         try { localStorage.removeItem(DRAFT_KEY); localStorage.removeItem(LOGO_KEY); } catch (e) {}
         FIELD_IDS.forEach(id => { document.getElementById(id).value = ''; });
+        setExtras({});
+        document.getElementById('extrasBox').open = false;
 
         const wm = document.getElementById('pLogoWatermark');
         wm.removeAttribute('src');
@@ -4618,6 +4920,7 @@ go()})();
         document.getElementById('paperContentArea').innerHTML = '';
         syncWatermarks();
         scheduleSave();
+        autoFillFromApp(false);
     }
 
     ['input', 'change', 'click'].forEach(ev => document.addEventListener(ev, scheduleSave, true));
@@ -4625,6 +4928,8 @@ go()})();
 
     window.onload = function() {
         if (!restoreDraft()) addNewQuestion();
+        changeFont();
+        autoFillFromApp(false);
     };
 <\/script>
 

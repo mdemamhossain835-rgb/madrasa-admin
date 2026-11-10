@@ -2,7 +2,7 @@
 <html lang="bn">
 <head>
 <meta charset="utf-8">
-<meta name="app-build" content="2026-11-09.9">
+<meta name="app-build" content="2026-11-10.1">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>মাদ্রাসা ম্যানেজমেন্ট সিস্টেম</title>
 <script>try{document.documentElement.setAttribute('data-theme',localStorage.getItem('mm_theme')==='dark'?'dark':'light')}catch(e){document.documentElement.setAttribute('data-theme','light')}</script>
@@ -4317,56 +4317,174 @@ go()})();
         else dlStatus('⚠️ ' + label + ' সেভের চেষ্টা করা হয়েছে, কিন্তু এই অ্যাপ থেকে ফোনে সেভ হয়েছে কি না নিশ্চিত নই। Downloads ফোল্ডারে ফাইল না পেলে অ্যাপে ফাইল সেভের সুবিধা যোগ করতে হবে।' + (window.__dlErr ? ' [কারণ: ' + window.__dlErr + ']' : ''), 'warn');
     }
 
+    function blobToDataURL(blob) {
+        return new Promise((res, rej) => {
+            const r = new FileReader();
+            r.onload = () => res(r.result);
+            r.onerror = () => rej(r.error);
+            r.readAsDataURL(blob);
+        });
+    }
+
+    /* আঁকা ছবি সম্পূর্ণ সাদা কি না (লেখার গাঢ় পিক্সেল গোনা হয়) */
+    function isBlankCanvas(c) {
+        try {
+            const w = 800, h = Math.max(1, Math.round(w * c.height / c.width));
+            const t = document.createElement('canvas');
+            t.width = w; t.height = h;
+            const x = t.getContext('2d');
+            x.fillStyle = '#fff'; x.fillRect(0, 0, w, h);
+            x.drawImage(c, 0, 0, w, h);
+            const d = x.getImageData(0, 0, w, h).data;
+            let dark = 0;
+            for (let i = 0; i < d.length; i += 4) {
+                if (d[i] < 150 && d[i + 1] < 150 && d[i + 2] < 150) dark++;
+            }
+            return dark < 150;
+        } catch (e) { return false; }
+    }
+
+    /* স্ক্রল/ট্রান্সফর্ম/মিডিয়া-কুয়েরি ছাড়া পরিষ্কার একটি কপি, ছবি আঁকার জন্য */
+    function makeCaptureCopy() {
+        const src = document.getElementById('a4Paper');
+        const clone = src.cloneNode(true);
+        clone.querySelectorAll('[id]').forEach(e => e.removeAttribute('id'));
+        clone.removeAttribute('id');
+        clone.style.transform = 'none';
+        clone.style.margin = '0';
+        clone.style.transition = 'none';
+        clone.style.boxShadow = 'none';
+        const wrap = document.createElement('div');
+        wrap.style.cssText = 'position:absolute;left:0;top:0;z-index:-1;pointer-events:none;';
+        wrap.appendChild(clone);
+        document.body.appendChild(wrap);
+        return { clone: clone, wrap: wrap, w: clone.offsetWidth, h: clone.offsetHeight };
+    }
+
+    function renderWithHtml2Canvas(cp, scale) {
+        return html2canvas(cp.clone, {
+            scale: scale, useCORS: true, backgroundColor: '#ffffff', logging: false,
+            windowWidth: cp.w, windowHeight: cp.h, scrollX: 0, scrollY: 0
+        });
+    }
+
+    /* দ্বিতীয় পদ্ধতি: ব্রাউজারের নিজের রেন্ডারিং (SVG) দিয়ে আঁকা, কোনো লাইব্রেরি লাগে না */
+    const fontCssCache = {};
+    async function embeddedFontCSS() {
+        const fam = document.getElementById('fontSelector').value.split(',')[0].replace(/['"\s]/g, '');
+        if (fontCssCache[fam] !== undefined) return fontCssCache[fam];
+        let out = '';
+        try {
+            const links = Array.from(document.querySelectorAll('link[rel="stylesheet"]')).filter(l => /fonts\.(googleapis|maateen)/.test(l.href));
+            for (const l of links) {
+                let css = '';
+                try { css = await (await fetch(l.href)).text(); } catch (e) { continue; }
+                for (const blk of css.split('@font-face').slice(1)) {
+                    const m = blk.match(/font-family:\s*['"]?([^;'"]+)/);
+                    if (!m || m[1].replace(/\s/g, '') !== fam) continue;
+                    let b = '@font-face' + blk;
+                    const urls = Array.from(new Set(Array.from(b.matchAll(/url\(([^)]+)\)/g)).map(x => x[1].replace(/['"]/g, ''))));
+                    for (const u of urls) {
+                        try {
+                            const blob = await (await fetch(new URL(u, l.href).href)).blob();
+                            b = b.split(u).join(await blobToDataURL(blob));
+                        } catch (e) {}
+                    }
+                    out += b + '\n';
+                }
+            }
+        } catch (e) {}
+        fontCssCache[fam] = out;
+        return out;
+    }
+
+    async function renderWithSVG(cp, scale) {
+        const w = cp.w, h = cp.h;
+        let css = Array.from(document.querySelectorAll('style')).map(s => s.textContent).join('\n');
+        css += '\n' + await embeddedFontCSS();
+        const xml = new XMLSerializer().serializeToString(cp.clone.cloneNode(true));
+        const svg = '<svg xmlns="http://www.w3.org/2000/svg" width="' + w + '" height="' + h + '">' +
+            '<foreignObject x="0" y="0" width="' + w + '" height="' + h + '">' +
+            '<div xmlns="http://www.w3.org/1999/xhtml" style="width:' + w + 'px;height:' + h + 'px;background:#fff">' +
+            '<style><![CDATA[' + css + ']]></style>' + xml + '</div></foreignObject></svg>';
+        const img = new Image();
+        const loaded = new Promise((res, rej) => { img.onload = res; img.onerror = () => rej(new Error('svg-load')); });
+        img.src = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(svg);
+        await loaded;
+        if (img.decode) { try { await img.decode(); } catch (e) {} }
+        const c = document.createElement('canvas');
+        c.width = Math.round(w * scale);
+        c.height = Math.round(h * scale);
+        const x = c.getContext('2d');
+        x.fillStyle = '#fff'; x.fillRect(0, 0, c.width, c.height);
+        x.drawImage(img, 0, 0, c.width, c.height);
+        return c;
+    }
+
+    async function renderPaper(scale) {
+        const sx = window.scrollX, sy = window.scrollY;
+        window.scrollTo(0, 0);
+        const cp = makeCaptureCopy();
+        try {
+            await fontsReady();
+            let canvas = null;
+            if (typeof html2canvas !== 'undefined') {
+                try { canvas = await withTimeout(renderWithHtml2Canvas(cp, scale), 45000); } catch (e) { canvas = null; }
+                if (canvas && isBlankCanvas(canvas)) canvas = null;
+            }
+            if (!canvas) {
+                canvas = await withTimeout(renderWithSVG(cp, scale), 45000);
+                if (isBlankCanvas(canvas)) throw new Error('ছবি খালি এসেছে');
+            }
+            return canvas;
+        } finally {
+            cp.wrap.remove();
+            window.scrollTo(sx, sy);
+        }
+    }
+
+    /* PDF-এ ঠিক এক পাতা বসানোর জন্য ছবির উচ্চতা পাতার অনুপাতে মেলানো */
+    function fitCanvasToPage(canvas, portrait) {
+        const w = canvas.width;
+        const h = Math.floor(w * (portrait ? 297 / 210 : 210 / 297));
+        const c = document.createElement('canvas');
+        c.width = w; c.height = h;
+        const x = c.getContext('2d');
+        x.fillStyle = '#fff'; x.fillRect(0, 0, w, h);
+        x.drawImage(canvas, 0, 0);
+        return c;
+    }
+
     async function downloadPDF() {
         if (typeof html2pdf === 'undefined') {
-            dlStatus('⚠️ PDF লাইব্রেরি লোড হয়নি। ইন্টারনেট সংযোগ দেখে আবার চেষ্টা করুন।', 'err');
+            dlStatus('⚠️ PDF লাইব্রেরি লোড হয়নি। ইন্টারনেট সংযোগ দেখে আবার চেষ্টা করুন। (ছবি ডাউনলোড ইন্টারনেট ছাড়াও চলে)', 'err');
             return;
         }
-        const element = document.getElementById('a4Paper');
-        const originalTransform = element.style.transform;
-        const layout = document.getElementById('layoutSelector').value;
-        const orientation = layout === 'portrait' ? 'portrait' : 'landscape';
-
+        const portrait = document.getElementById('layoutSelector').value === 'portrait';
         const opt = {
             margin:       0,
             filename:     'Question_Paper.pdf',
             image:        { type: 'jpeg', quality: 0.98 },
-            html2canvas:  { scale: 2, useCORS: true },
-            jsPDF:        { unit: 'mm', format: 'a4', orientation: orientation }
+            jsPDF:        { unit: 'mm', format: 'a4', orientation: portrait ? 'portrait' : 'landscape' }
         };
-
         dlStatus('⏳ PDF তৈরি হচ্ছে... একটু অপেক্ষা করুন', 'busy');
-        element.style.transform = 'scale(1)';
         try {
-            await fontsReady();
-            const blob = await withTimeout(html2pdf().set(opt).from(element).outputPdf('blob'), 60000);
+            const canvas = fitCanvasToPage(await renderPaper(2), portrait);
+            const blob = await withTimeout(html2pdf().set(opt).from(canvas, 'canvas').outputPdf('blob'), 60000);
             dlDone(await saveBlob(blob, 'Question_Paper.pdf'), 'PDF');
         } catch (e) {
-            dlStatus('⚠️ PDF তৈরি করা যায়নি। আবার চেষ্টা করুন।', 'err');
-        } finally {
-            element.style.transform = originalTransform;
+            dlStatus('⚠️ PDF তৈরি করা যায়নি। আবার চেষ্টা করুন। [' + ((e && e.message) || e) + ']', 'err');
         }
     }
 
     async function downloadImage() {
-        if (typeof html2canvas === 'undefined') {
-            dlStatus('⚠️ ছবি তৈরির লাইব্রেরি লোড হয়নি। ইন্টারনেট সংযোগ দেখে আবার চেষ্টা করুন।', 'err');
-            return;
-        }
-        const element = document.getElementById('a4Paper');
-        const originalTransform = element.style.transform;
-
         dlStatus('⏳ ছবি তৈরি হচ্ছে... একটু অপেক্ষা করুন', 'busy');
-        element.style.transform = 'scale(1)';
         try {
-            await fontsReady();
-            const canvas = await withTimeout(html2canvas(element, { scale: 2, useCORS: true }), 60000);
-            const blob = await new Promise((res, rej) => canvas.toBlob(b => b ? res(b) : rej(new Error('blob')), 'image/png'));
+            const canvas = await renderPaper(2);
+            const blob = await new Promise((res, rej) => canvas.toBlob(b => b ? res(b) : rej(new Error('ছবি সংরক্ষণযোগ্য নয়')), 'image/png'));
             dlDone(await saveBlob(blob, 'Question_Paper.png'), 'ছবি');
         } catch (e) {
-            dlStatus('⚠️ ছবি তৈরি করা যায়নি। আবার চেষ্টা করুন।', 'err');
-        } finally {
-            element.style.transform = originalTransform;
+            dlStatus('⚠️ ছবি তৈরি করা যায়নি। আবার চেষ্টা করুন। [' + ((e && e.message) || e) + ']', 'err');
         }
     }
 

@@ -3544,18 +3544,75 @@ go()})();
         .a4-paper.has-border.border-double .exam-section::after { border: 4px double #000; }
         .a4-paper.has-border .fit-box::after { content: ''; position: absolute; top: 7mm; bottom: 7mm; left: 9mm; right: 9mm; border: 1.5px solid #000; pointer-events: none; z-index: 2; }
         .a4-paper.has-border.border-double .fit-box::after { border: 4px double #000; }
+        .app-header { position: relative; }
+        .app-header h2 { padding-right: 52px; }
+        .dots-btn { position: absolute; top: 14px; right: 14px; width: 42px; height: 42px; border-radius: 50%; border: 0; background: rgba(255,255,255,.2); color: #fff; font-size: 26px; line-height: 1; cursor: pointer; }
+        .more-menu { display: none; position: absolute; top: 62px; left: 10px; right: 10px; z-index: 30; background: #fff; color: var(--text-color); border-radius: 12px; box-shadow: 0 8px 30px rgba(0,0,0,.3); padding: 12px; max-height: 70vh; overflow: auto; }
+        .more-menu.open { display: block; }
+        .more-menu .tools-box { margin-bottom: 12px; }
+        .more-menu .extras-box { margin-bottom: 0; }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <div class="app-header">
-        <h2>📖 প্রশ্ন তৈরি করুন</h2>
-        <p>জামাত → বিষয় → অধ্যায় → প্রশ্ন → PDF</p>
-        <button class="btn-new-question" onclick="addNewQuestion()">+ নতুন প্রশ্ন যোগ করুন</button>
-        <button class="btn-new-question" style="background:transparent;color:#fff;border:1px solid #fff;font-size:14px;padding:8px 14px;margin-top:8px" onclick="resetAll()"><i class="idel"></i> সব মুছে নতুন শুরু</button>
+    <div id="step1">
+        <div class="app-header">
+            <h2>📖 প্রশ্নপত্রের তথ্য</h2>
+            <p>ধাপ ১/২ — প্রথমে পরীক্ষার তথ্য পূরণ করুন</p>
+        </div>
+
+    <div class="form-row">
+        <div class="form-group">
+            <label>মাদ্রাসার নাম ও শাখা <button type="button" class="btn-appdata" onclick="autoFillFromApp(true)">↻ অ্যাপ থেকে নিন</button></label>
+            <input type="text" id="madrasaName" class="form-control" placeholder="মাদ্রাসার নাম লিখুন...">
+        </div>
     </div>
 
+    <div class="form-row">
+        <div class="form-group">
+            <label>পরীক্ষার নাম</label>
+            <input type="text" id="examName" class="form-control" placeholder="যেমন: প্রথম সাময়িক পরীক্ষা">
+        </div>
+        <div class="form-group">
+            <label>শ্রেণি / জামাত</label>
+            <input type="text" id="examClass" class="form-control" placeholder="যেমন: নার্সারি, হাফেজী" oninput="refreshSubjectChips()">
+            <div class="chips" id="classChips"></div>
+        </div>
+        <div class="form-group">
+            <label>বিষয়</label>
+            <input type="text" id="examSubject" class="form-control" placeholder="যেমন: বাংলা, আরবি">
+            <div class="chips" id="subjChips"></div>
+        </div>
+    </div>
+
+    <div class="form-row">
+        <div class="form-group">
+            <label>পরীক্ষার সাল</label>
+            <input type="text" id="examYear" class="form-control" placeholder="যেমন: ২০২৬">
+        </div>
+        <div class="form-group">
+            <label>সময় (মিনিট)</label>
+            <input type="text" id="examTime" class="form-control" placeholder="যেমন: ১২০">
+        </div>
+        <div class="form-group">
+            <label>পূর্ণমান</label>
+            <input type="text" id="examMarks" class="form-control" placeholder="যেমন: ১০০">
+        </div>
+    </div>
+
+        <button class="btn-save" onclick="goStep2()">পরবর্তী ধাপ →</button>
+    </div>
+
+    <div id="step2" style="display:none">
+        <div class="app-header">
+            <button type="button" class="dots-btn" aria-label="আরও অপশন" onclick="toggleMore(event)">⋮</button>
+            <h2>📖 প্রশ্ন তৈরি করুন</h2>
+            <p>ধাপ ২/২ — প্রশ্ন লিখুন ও প্রিন্ট করুন</p>
+            <button class="btn-new-question" onclick="addNewQuestion()">+ নতুন প্রশ্ন যোগ করুন</button>
+            <button class="btn-new-question" style="background:transparent;color:#fff;border:1px solid #fff;font-size:14px;padding:8px 14px;margin-top:8px" onclick="goStep1()">← তথ্য পরিবর্তন করুন</button>
+            <button class="btn-new-question" style="background:transparent;color:#fff;border:1px solid #fff;font-size:14px;padding:8px 14px;margin-top:8px" onclick="resetAll()"><i class="idel"></i> সব মুছে নতুন শুরু</button>
+            <div class="more-menu" id="moreMenu" onclick="event.stopPropagation()">
     <div class="tools-box">
         <div class="tool-item">
             <label>প্রশ্নপত্রের ফন্ট:</label>
@@ -3620,13 +3677,11 @@ go()})();
             </div>
         </div>
     </details>
+            </div>
+        </div>
 
     <div class="form-row">
-        <div class="form-group">
-            <label>মাদ্রাসার নাম ও শাখা <button type="button" class="btn-appdata" onclick="autoFillFromApp(true)">↻ অ্যাপ থেকে নিন</button></label>
-            <input type="text" id="madrasaName" class="form-control" placeholder="মাদ্রাসার নাম লিখুন...">
-        </div>
-        <div class="form-group" style="flex: 0 0 200px;">
+        <div class="form-group" style="flex: 1 1 100%;">
             <label>লোগো (ওয়াটারমার্ক)</label>
             <div class="logo-upload-box">
                 <div class="file-upload-wrapper">
@@ -3642,38 +3697,6 @@ go()})();
                     <input type="range" id="logoOpacitySlider" min="1" max="100" value="10" oninput="changeLogoOpacity(this.value)" disabled>
                 </div>
             </div>
-        </div>
-    </div>
-
-    <div class="form-row">
-        <div class="form-group">
-            <label>পরীক্ষার নাম</label>
-            <input type="text" id="examName" class="form-control" placeholder="যেমন: প্রথম সাময়িক পরীক্ষা">
-        </div>
-        <div class="form-group">
-            <label>শ্রেণি / জামাত</label>
-            <input type="text" id="examClass" class="form-control" placeholder="যেমন: নার্সারি, হাফেজী" oninput="refreshSubjectChips()">
-            <div class="chips" id="classChips"></div>
-        </div>
-        <div class="form-group">
-            <label>বিষয়</label>
-            <input type="text" id="examSubject" class="form-control" placeholder="যেমন: বাংলা, আরবি">
-            <div class="chips" id="subjChips"></div>
-        </div>
-    </div>
-
-    <div class="form-row">
-        <div class="form-group">
-            <label>পরীক্ষার সাল</label>
-            <input type="text" id="examYear" class="form-control" placeholder="যেমন: ২০২৬">
-        </div>
-        <div class="form-group">
-            <label>সময় (মিনিট)</label>
-            <input type="text" id="examTime" class="form-control" placeholder="যেমন: ১২০">
-        </div>
-        <div class="form-group">
-            <label>পূর্ণমান</label>
-            <input type="text" id="examMarks" class="form-control" placeholder="যেমন: ১০০">
         </div>
     </div>
 
@@ -3698,6 +3721,7 @@ go()})();
         </svg>
         প্রিভিউ ও প্রিন্ট
     </button>
+    </div>
 </div>
 
 <div id="previewWrapper" class="preview-wrapper">
@@ -3707,6 +3731,7 @@ go()})();
             <input type="range" id="previewZoomSlider" min="20" max="100" value="65" oninput="changePreviewZoom(this.value)">
             <span>বড়</span>
         </div>
+        <label class="ck" style="background:#fff;padding:10px 15px;border-radius:8px;font-size:14px;color:var(--primary-color);"><input type="checkbox" id="hqPdf" checked> ছাপার জন্য উচ্চ মান (৩০০ DPI)</label>
         <button class="btn-download" onclick="downloadPDF()">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8l-6-6zm-1 2.5L18.5 10H13V4.5zM12 18v-4h-2v4H7l5 5 5-5h-3v-4h-2v4z"/></svg>
             PDF ডাউনলোড
@@ -4535,6 +4560,7 @@ go()})();
         return (document.fonts && document.fonts.ready) ? document.fonts.ready : Promise.resolve();
     }
 
+    const HQ_SCALE = 3.2; /* A4 ≈ ৩০০ DPI */
     let dlTimer;
     function dlStatus(msg, kind) {
         clearTimeout(dlTimer);
@@ -4750,15 +4776,24 @@ go()})();
             return;
         }
         const portrait = document.getElementById('layoutSelector').value === 'portrait';
+        const hq = document.getElementById('hqPdf').checked;
         const opt = {
             margin:       0,
             filename:     'Question_Paper.pdf',
-            image:        { type: 'jpeg', quality: 0.98 },
-            jsPDF:        { unit: 'mm', format: 'a4', orientation: portrait ? 'portrait' : 'landscape' }
+            image:        { type: hq ? 'png' : 'jpeg', quality: 0.98 },
+            jsPDF:        { unit: 'mm', format: 'a4', orientation: portrait ? 'portrait' : 'landscape', compress: true }
         };
         dlStatus('⏳ PDF তৈরি হচ্ছে... একটু অপেক্ষা করুন', 'busy');
         try {
-            const canvas = fitCanvasToPage(await renderPaper(2), portrait);
+            let canvas;
+            try {
+                canvas = fitCanvasToPage(await renderPaper(hq ? HQ_SCALE : 2), portrait);
+            } catch (e) {
+                if (!hq) throw e;
+                dlStatus('⏳ উচ্চ মানে ফোনের মেমরিতে কুলায়নি, সাধারণ মানে তৈরি হচ্ছে...', 'busy');
+                opt.image.type = 'jpeg';
+                canvas = fitCanvasToPage(await renderPaper(2), portrait);
+            }
             const blob = await withTimeout(html2pdf().set(opt).from(canvas, 'canvas').outputPdf('blob'), 60000);
             dlDone(await saveBlob(blob, 'Question_Paper.pdf'), 'PDF');
         } catch (e) {
@@ -4769,7 +4804,12 @@ go()})();
     async function downloadImage() {
         dlStatus('⏳ ছবি তৈরি হচ্ছে... একটু অপেক্ষা করুন', 'busy');
         try {
-            const canvas = await renderPaper(2);
+            let canvas;
+            try {
+                canvas = await renderPaper(document.getElementById('hqPdf').checked ? HQ_SCALE : 2);
+            } catch (e) {
+                canvas = await renderPaper(2);
+            }
             const blob = await new Promise((res, rej) => canvas.toBlob(b => b ? res(b) : rej(new Error('ছবি সংরক্ষণযোগ্য নয়')), 'image/png'));
             dlDone(await saveBlob(blob, 'Question_Paper.png'), 'ছবি');
         } catch (e) {
@@ -4926,9 +4966,34 @@ go()})();
     ['input', 'change', 'click'].forEach(ev => document.addEventListener(ev, scheduleSave, true));
     document.addEventListener('visibilitychange', () => { if (document.hidden) saveDraft(); });
 
+    function toggleMore(e) {
+        if (e) e.stopPropagation();
+        document.getElementById('moreMenu').classList.toggle('open');
+    }
+    document.addEventListener('click', () => { const m = document.getElementById('moreMenu'); if (m) m.classList.remove('open'); });
+
+    function goStep2() {
+        document.getElementById('step1').style.display = 'none';
+        document.getElementById('step2').style.display = 'block';
+        window.scrollTo(0, 0);
+        scheduleSave();
+    }
+
+    function goStep1() {
+        document.getElementById('moreMenu').classList.remove('open');
+        document.getElementById('previewWrapper').style.display = 'none';
+        document.getElementById('step2').style.display = 'none';
+        document.getElementById('step1').style.display = 'block';
+        window.scrollTo(0, 0);
+    }
+
     window.onload = function() {
-        if (!restoreDraft()) addNewQuestion();
+        const restored = restoreDraft();
+        if (!restored) addNewQuestion();
         changeFont();
+        const hasContent = FIELD_IDS.some(id => document.getElementById(id).value.trim() !== '') ||
+            Array.from(document.querySelectorAll('.q-text-input')).some(el => plain(el) !== '');
+        if (restored && hasContent) goStep2();
         autoFillFromApp(false);
     };
 <\/script>

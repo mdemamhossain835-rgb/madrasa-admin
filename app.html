@@ -390,7 +390,7 @@ button.tile:not(.grid .tile),.login button.role{border-radius:14px;min-height:44
 .top .lgo{width:34px;height:34px;border-radius:50%;background:var(--g);color:#fff;display:grid;place-items:center;flex:none}
 .top .lgo svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
 .top button[aria-label="নোটিফিকেশন"]{position:relative}
-.top button[aria-label="নোটিফিকেশন"]>*{position:absolute;top:1px;right:-1px;background:#ef4444;color:#fff;border-radius:99px;min-width:17px;height:17px;padding:0 4px;font-size:10.5px;font-weight:700;line-height:17px;text-align:center;font-style:normal}
+.top button[aria-label="নোটিফিকেশন"]>span{position:absolute;top:1px;right:-1px;background:#ef4444;color:#fff;border-radius:99px;min-width:17px;height:17px;padding:0 4px;font-size:10.5px;font-weight:700;line-height:17px;text-align:center;font-style:normal}
 main h3{display:flex;align-items:center;gap:10px;margin:22px 0 10px;font-size:16px;font-weight:700}
 .shi{width:32px;height:32px;border-radius:10px;display:grid;place-items:center;font-size:17px;flex:none;background:color-mix(in srgb,var(--tc,#059669) 15%,transparent)}
 table{width:100%;border-collapse:separate;border-spacing:0;font-size:13.5px;background:var(--card);border:1px solid var(--line);border-radius:14px;overflow:hidden}
@@ -514,7 +514,7 @@ function sv(){const o={};document.querySelectorAll('#md input,#md select').forEa
 function shell(title,body,back,plus){
  plus=plus||(title==='Student Management'&&hasPerm('stu_add')?'addS()':'');
  const tabs=navTabs();
-  app.innerHTML=`<div class="top">${back?`<button aria-label="ফিরে যান" onclick="tab='${back}';draw()">←</button>`:'<button aria-label="মেনু" onclick="openMenu()">☰</button>'}<h1>${title}</h1>${plus?`<button aria-label="নতুন যোগ করুন" onclick="${plus}">＋</button>`:''}<button aria-label="নোটিফিকেশন" style="position:relative" onclick="tab=(role==='admin'?'notices':'notif');draw()">🔔${typeof unreadBadge==='function'?unreadBadge():''}</button></div><main>${body}</main>
+  app.innerHTML=`<div class="top">${back?`<button aria-label="ফিরে যান" onclick="tab='${back}';draw()">${IC('arrowLeft')}</button>`:'<button aria-label="মেনু" onclick="openMenu()">'+IC('menu')+'</button>'}<h1>${title}</h1>${plus?`<button aria-label="নতুন যোগ করুন" onclick="${plus}">${IC('plus')}</button>`:''}<button aria-label="নোটিফিকেশন" style="position:relative" onclick="tab=(role==='admin'?'notices':'notif');draw()">${IC('bell')}${typeof unreadBadge==='function'?unreadBadge():''}</button><button aria-label="আরও" onclick="hdrMore(event)">${IC('more')}</button></div><main>${body}</main>
  <nav class="nav${tabs.length>4?' cp':''}">${tabs.map(t=>`<button class="${tab===t[0]?'on':''}" onclick="${t[0]==='out'?'login()':`tab='${t[0]}';draw()`}"><b>${t[1]}</b>${t[2]}</button>`).join('')}</nav>`}
 function closeMenu(){const m=document.getElementById('mnu');if(m)m.remove()}
 function mgo(t,c){closeMenu();if(c)cur=c;tab=t;draw()}
@@ -544,7 +544,7 @@ function profV(){const s=students.find(x=>x.id===cur);if(!s){tab='students';retu
  msgBlock(s)+((hasPerm('stu_edit')||hasPerm('stu_del'))?`<div class="act" data-keep="1" style="grid-template-columns:${hasPerm('stu_edit')&&hasPerm('stu_del')?'1fr 1fr':'1fr'}">${hasPerm('stu_edit')?'<button onclick="editS()"><b>✏️</b>সম্পাদনা</button>':''}${hasPerm('stu_del')?'<button onclick="delS()"><b><i class=idel></i></b>মুছে ফেলুন</button>':''}</div>`:''),role==='guardian'?'child':'students')}
 function addS(){if(!hasPerm('stu_add')){deny();return}form('নতুন ছাত্র ভর্তি',SF,{c:stuCls||selClass||'৩ (আম)'},o=>{ensureClass(o.c);students.push({n:o.n,pw:o.pw,id:nidM(students,'S'),r:+o.r||students.length+1,c:o.c,fee:o.fee,photo:o.photo,g:o.g,ph:o.ph,vil:o.vil,po:o.po,upz:o.upz,dist:o.dist,s:'Present'});save('mm_s',students);tab='students';draw()});stuFormMark(true)}
 function editS(){if(!hasPerm('stu_edit')){deny();return}const s=students.find(x=>x.id===cur);form('তথ্য সম্পাদনা',SF,s,o=>{ensureClass(o.c);Object.assign(s,o,{r:+o.r||s.r});save('mm_s',students);draw()});stuFormMark(false)}
-function delS(){if(!hasPerm('stu_del')){deny();return}if(confirm('এই ছাত্রকে মুছে ফেলবেন? এটি ফেরানো যাবে না।')){students=students.filter(x=>x.id!==cur);save('mm_s',students);tab='students';draw()}}
+async function delS(){if(!hasPerm('stu_del')){deny();return}if(await mmConfirm('এই ছাত্রকে মুছে ফেলবেন? এটি ফেরানো যাবে না।')){students=students.filter(x=>x.id!==cur);save('mm_s',students);tab='students';draw()}}
 /* ===== অনুমতি (রোল ও পারমিশন): ক্যাটালগ ===== */
 const PCAT=[
 ['১. শিক্ষার্থী ব্যবস্থাপনা',[['stu_view','শিক্ষার্থী দেখা'],['stu_add','শিক্ষার্থী যোগ করা'],['stu_edit','শিক্ষার্থী Edit করা'],['stu_del','শিক্ষার্থী Delete করা'],['stu_bio','শিক্ষার্থীর তথ্য/বায়োডাটা দেখা']]],
@@ -590,10 +590,10 @@ function teachV(){shell('Teacher Management',`<div class="stats" style="grid-tem
  (teachers.map(t=>`<div class="row"><div class="av">${avHTML(t.photo,t.n[0],'t')}</div><div class="info"><b>${t.n}</b><small>${window.tSummary?window.tSummary(t.id):''}<br>বেতন: ৳ ${bn(t.sal||0)}${(function(){const n=effPerm(t.id).length;return n?'<br>অনুমতি: '+bn(n)+'টি':'<br>অনুমতি: নেই'})()}</small></div>${hasPerm('sal_pay')?`<button aria-label="বেতন দিন" onclick="paySal('${t.id}')">💵</button>`:''}<button aria-label="কল করুন" onclick="callT('${t.id}')">📞</button>${hasPerm('tch_edit')?`<button aria-label="সম্পাদনা" onclick="editT('${t.id}')">✏️</button>`:''}${hasPerm('tch_del')?`<button aria-label="মুছুন" onclick="delT('${t.id}')"><i class=idel></i></button>`:''}</div>`).join('')||'<p class="note">কোনো শিক্ষক নেই।'+(hasPerm('tch_add')?' ＋ চেপে যোগ করুন।':'')+'</p>'),'home',hasPerm('tch_add')?'addT()':'')}
 function addT(){if(!hasPerm('tch_add')){deny();return}const id=nidM(teachers,'T');form('নতুন শিক্ষক',TF,{perm:PBASE.slice()},o=>{const perm=o.perm;delete o.perm;teachers.push(Object.assign({id:id,s:'Present'},o));save('mm_t',teachers);if(hasPerm('adm_perm'))window.savePerm(id,perm||[]);draw()})}
 function editT(id){if(!hasPerm('tch_edit')){deny();return}const t=teachers.find(x=>x.id===id);form('শিক্ষকের তথ্য সম্পাদনা',TF,Object.assign({},t,{perm:effPerm(id)}),o=>{const perm=o.perm;delete o.perm;Object.assign(t,o);save('mm_t',teachers);if(hasPerm('adm_perm')&&perm)window.savePerm(id,perm);draw()})}
-function delT(id){if(!hasPerm('tch_del')){deny();return}if(confirm('এই শিক্ষককে মুছে ফেলবেন?')){teachers=teachers.filter(x=>x.id!==id);save('mm_t',teachers);if(hasPerm('adm_perm'))window.savePerm(id,null);draw()}}
+async function delT(id){if(!hasPerm('tch_del')){deny();return}if(await mmConfirm('এই শিক্ষককে মুছে ফেলবেন?')){teachers=teachers.filter(x=>x.id!==id);save('mm_t',teachers);if(hasPerm('adm_perm'))window.savePerm(id,null);draw()}}
 function noteV(){const A=role==='admin';shell('Notice',(role==='guardian'?gm():'')+notices.map((n,i)=>`<div class="row" style="display:block"><b>${n.t}</b><br><small style="color:var(--mute)">${n.d}</small><p style="margin-top:6px">${n.b||''}</p>${A?`<button onclick="delN(${i})" style="color:var(--not);margin-top:4px"><i class=idel></i> মুছুন</button>`:''}</div>`).join('')||'<p class="note">এখনো কোনো নোটিস নেই।</p>',role==='guardian'?'':'home',A?'addN()':'')}
 function addN(){form('নতুন নোটিস',[['n','শিরোনাম'],['b','বিস্তারিত']],{},o=>{notices.unshift({t:o.n,b:o.b,d:fmtDMY(new Date())});save('mm_n',notices);draw()})}
-function delN(i){if(confirm('নোটিসটি মুছে ফেলবেন?')){notices.splice(i,1);save('mm_n',notices);draw()}}
+async function delN(i){if(await mmConfirm('নোটিসটি মুছে ফেলবেন?')){notices.splice(i,1);save('mm_n',notices);draw()}}
 </script>
 <script>
 let msgs=load('mm_m',[]);
@@ -667,7 +667,7 @@ function rcptV(){const D=dupPays(),dk=new Set();D.forEach(l=>l.slice(1).forEach(
 function incV(){shell('আয়',`<div class="stats" style="grid-template-columns:1fr 1fr"><div class="stat"><b>${tk(sum(fp.filter(p=>p.m===M0)))}</b><small>এ মাসের আয়</small></div><div class="stat"><b>${tk(sum(fp))}</b><small>মোট আয়</small></div></div>`+fp.slice().reverse().map(p=>R_('📈',stu_(p.sid).n,p.t+' • '+dd(p.d),`<b>${tk(p.a)}</b>`)).join(''),'fees')}
 function expV(){shell('ব্যয়',`<div class="stats" style="grid-template-columns:1fr 1fr"><div class="stat"><b>${tk(sum(ex.filter(e=>e.m===M0)))}</b><small>এ মাসের ব্যয়</small></div><div class="stat"><b>${tk(sum(ex))}</b><small>মোট ব্যয়</small></div></div>`+(ex.slice().reverse().map(e=>R_('📉',e.t,e.c+' • '+dd(e.d),`<b>${tk(e.a)}</b>`)).join('')||'<p class="note">কোনো ব্যয় নেই। ＋ চেপে যোগ করুন।</p>'),'fees','addE()')}
 function addE(){form('নতুন ব্যয়',[['n','খাত (যেমন: বিদ্যুৎ বিল)'],['a','পরিমাণ (৳)','type=number']],{},o=>{ex.push({t:o.n,a:+o.a||0,d:T0,m:M0,c:'খরচ'});save('mm_e',ex);draw()})}
-function paySal(id){const t=teachers.find(x=>x.id===id);if(confirm(t.n+' — বেতন '+tk(t.sal)+' পরিশোধ করবেন?')){ex.push({t:'বেতন — '+t.n,a:+t.sal||0,d:T0,m:M0,c:'বেতন'});save('mm_e',ex);alert('বেতন ব্যয়ের খাতায় যোগ হয়েছে')}}
+async function paySal(id){const t=teachers.find(x=>x.id===id);if(await mmConfirm(t.n+' — বেতন '+tk(t.sal)+' পরিশোধ করবেন?')){ex.push({t:'বেতন — '+t.n,a:+t.sal||0,d:T0,m:M0,c:'বেতন'});save('mm_e',ex);alert('বেতন ব্যয়ের খাতায় যোগ হয়েছে')}}
 /* ফলাফল */
 const SJ=['কুরআন মাজীদ','আরবি','বাংলা','ইংরেজি','গণিত','দ্বীনিয়াত'];
 const gp=m=>m>=80?5:m>=70?4:m>=60?3.5:m>=50?3:m>=40?2:m>=33?1:0,gl=g=>g>=5?'A+':g>=4?'A':g>=3.5?'A-':g>=3?'B':g>=2?'C':g>=1?'D':'F';
@@ -706,8 +706,8 @@ function classFeeV(){shell('মাসিক ফি (শ্রেণী অনু
 function setDefaultFee(){form('সাধারণ (ডিফল্ট) মাসিক ফি',[['n','পরিমাণ (৳)','type=number']],{n:MF},o=>{MF=+o.n||MF;save('mm_mf',MF);draw()})}
 function setClassFee(c){form('মাসিক ফি — '+c,[['n','পরিমাণ (৳) — খালি রাখলে সাধারণ ফি প্রযোজ্য হবে','type=number']],{n:classFee[c]!=null?classFee[c]:''},o=>{if(o.n===''){delete classFee[c]}else{classFee[c]=+o.n||0}save('mm_classfee',classFee);draw()})}
 function bk(){const o={};Object.keys(localStorage).filter(k=>k.startsWith('mm_')).forEach(k=>o[k]=localStorage.getItem(k));const j=JSON.stringify(o);try{navigator.clipboard.writeText(j).then(()=>alert('ব্যাকআপ কপি হয়েছে'),()=>prompt('কপি করুন',j))}catch(e){prompt('কপি করুন',j)}}
-function rst(){const j=prompt('ব্যাকআপ পেস্ট করুন');if(!j)return;let o;try{o=JSON.parse(j)}catch(e){alert('ব্যাকআপটি সঠিক নয়');return}if(!confirm('রিস্টোর করলে বর্তমান সব তথ্য মুছে গিয়ে ব্যাকআপের তথ্য বসে যাবে। আপনি কি নিশ্চিত?'))return;Object.keys(o).forEach(k=>{if(k.startsWith('mm_'))localStorage.setItem(k,o[k])});location.reload()}
-function wipe(){if(confirm('সব তথ্য মুছে যাবে। নিশ্চিত?')){Object.keys(localStorage).filter(k=>k.startsWith('mm_')).forEach(k=>localStorage.removeItem(k));location.reload()}}
+async function rst(){const j=prompt('ব্যাকআপ পেস্ট করুন');if(!j)return;let o;try{o=JSON.parse(j)}catch(e){alert('ব্যাকআপটি সঠিক নয়');return}if(!await mmConfirm('রিস্টোর করলে বর্তমান সব তথ্য মুছে গিয়ে ব্যাকআপের তথ্য বসে যাবে। আপনি কি নিশ্চিত?'))return;Object.keys(o).forEach(k=>{if(k.startsWith('mm_'))localStorage.setItem(k,o[k])});location.reload()}
+async function wipe(){if(await mmConfirm('সব তথ্য মুছে যাবে। নিশ্চিত?')){Object.keys(localStorage).filter(k=>k.startsWith('mm_')).forEach(k=>localStorage.removeItem(k));location.reload()}}
 </script>
 <script>
 let PW=load('mm_pw',{admin:'admin123',teacher:'teacher123',guardian:'guardian123'});
@@ -737,7 +737,7 @@ let selClass=load('mm_selc',classes[0]);
 function classesV(){shell('ক্লাস ব্যবস্থাপনা',classes.map((c,i)=>{const n=students.filter(s=>s.c===c).length;return `<div class="row"><div class="av">${bn(i+1)}</div><div class="info"><b>${c}</b><small>ক্রম ${bn(i+1)} • ${bn(n)} জন ছাত্র</small></div>${hasPerm('cls_edit')?`<button aria-label="সম্পাদনা" onclick="clsEdit('${esc(c)}')">✏️</button>`:''}${hasPerm('cls_del')?`<button aria-label="মুছুন" onclick="clsDel('${esc(c)}')"><i class=idel></i></button>`:''}</div>`}).join('')||'<p class="note">কোনো ক্লাস নেই।'+(hasPerm('cls_add')?' ＋ চেপে যোগ করুন।':'')+'</p>',role==='admin'?'home':'students',hasPerm('cls_add')?'clsAdd()':'')}
 function clsAdd(){if(!hasPerm('cls_add')){deny();return}form('নতুন শ্রেণি যোগ',[['n','শ্রেণির নাম (যেমন: ৪র্থ শ্রেণি)'],['o','ক্রমিক নম্বর (সিরিয়াল)','type=text inputmode=numeric']],{o:String(classes.length+1)},o=>{o.n=String(o.n||'').trim();if(!o.n){alert('শ্রেণির নাম লিখুন');return}if(classes.includes(o.n)){alert('এই নামে ক্লাস আগে থেকেই আছে');return}clsPlace(o.n,o.o);save('mm_cls',classes);draw()})}
 function clsEdit(old){if(!hasPerm('cls_edit')){deny();return}form('শ্রেণি সম্পাদনা',[['n','শ্রেণির নাম'],['o','ক্রমিক নম্বর (সিরিয়াল)','type=text inputmode=numeric']],{n:old,o:String(classes.indexOf(old)+1)},o=>{o.n=String(o.n||'').trim();if(!o.n){alert('শ্রেণির নাম লিখুন');return}if(o.n!==old&&classes.includes(o.n)){alert('এই নামে ক্লাস আগে থেকেই আছে');return}classes=classes.map(c=>c===old?o.n:c);clsPlace(o.n,o.o);students.forEach(s=>{if(s.c===old)s.c=o.n});if(selClass===old)selClass=o.n;save('mm_cls',classes);save('mm_s',students);save('mm_selc',selClass);draw()})}
-function clsDel(name){if(!hasPerm('cls_del')){deny();return}if(students.some(s=>s.c===name)){alert('এই ক্লাসে ছাত্র আছে, তাই মুছা যাবে না। আগে ছাত্রদের অন্য ক্লাসে সরান।');return}if(confirm('"'+name+'" শ্রেণিটি মুছে ফেলবেন?')){classes=classes.filter(c=>c!==name);save('mm_cls',classes);draw()}}
+async function clsDel(name){if(!hasPerm('cls_del')){deny();return}if(students.some(s=>s.c===name)){alert('এই ক্লাসে ছাত্র আছে, তাই মুছা যাবে না। আগে ছাত্রদের অন্য ক্লাসে সরান।');return}if(await mmConfirm('"'+name+'" শ্রেণিটি মুছে ফেলবেন?')){classes=classes.filter(c=>c!==name);save('mm_cls',classes);draw()}}
 function pickClass(c){selClass=c;save('mm_selc',c);draw()}
 function cattV(){const list=students.filter(s=>s.c===selClass),n=k=>list.filter(s=>s.s===k).length;
  shell('ক্লাসভিত্তিক হাজিরা',`<p class="note" style="text-align:left;margin:0 0 8px">${dd(T0)}</p>${role==='admin'?`<button class="link" onclick="tab='tatt';draw()"><span>শিক্ষক হাজিরা<small>শিক্ষকদের উপস্থিতি নিন</small></span>›</button>`:''}<div style="display:flex;gap:8px;overflow-x:auto;padding-bottom:4px;margin-bottom:12px">${classes.map(c=>`<button class="chip" style="min-width:auto;white-space:nowrap;${c===selClass?'background:var(--g);color:#fff':'background:var(--card);border:1px solid var(--line);color:var(--ink)'}" onclick="pickClass('${esc(c)}')">${c}</button>`).join('')}</div>`+
@@ -930,7 +930,7 @@ window.hwvStart=async function(){
  hwvRender()};
 window.hwvStop=function(){try{if(hwRec.rec&&hwRec.rec.state!=='inactive')hwRec.rec.stop()}catch(e){}};
 window.hwvDiscard=function(quiet){const r=hwRec.rec;hwRec.rec=null;clearInterval(hwRec.tick);try{if(r&&r.state!=='inactive')r.stop()}catch(e){}try{if(hwRec.stream)hwRec.stream.getTracks().forEach(t=>t.stop())}catch(e){}if(hwRec.url)URL.revokeObjectURL(hwRec.url);hwRec={st:'idle',key:'',blob:null,url:'',secs:0,mime:'',rec:null,stream:null,t0:0,tick:null};if(!quiet)hwvRender()};
-window.hwvDel=async function(){const cls=hwCls,cu=getHW(cls,hwDate,hwSubj);if(!cu||!cu.v)return;if(!confirm('এই ভয়েসটি মুছবেন?'))return;
+window.hwvDel=async function(){const cls=hwCls,cu=getHW(cls,hwDate,hwSubj);if(!cu||!cu.v)return;if(!await mmConfirm('এই ভয়েসটি মুছবেন?'))return;
  try{await window.hwVoiceDel(cls,hwDate,hwSubj)}catch(e){alert('ভয়েস মোছা যায়নি');return}
  const e=Object.assign({},cu);delete e.v;if(e.t===HWV_PH)e.t='ভয়েসটি মুছে ফেলা হয়েছে';setHW(cls,hwDate,hwSubj,e);delete hwVCache[cls+'|'+hwDate+'|'+sjk(hwSubj)];draw()};
 window.hwPlay=async function(c,d,sj,btn){const key=c+'|'+d+'|'+sjk(sj),lab=btn?btn.textContent:'';
@@ -1032,14 +1032,14 @@ window.subjImport=async function(i){const c=selClass||classes[0],s=subjOld(c)[i]
 window.subjEdit=function(i){const c=selClass||classes[0],L=window.subjFor(c),old=L[i];
  form('বিষয় সম্পাদনা — '+c,[['n','বিষয়ের নাম']],{n:old},async o=>{if(o.n===old)return;if(o.n.indexOf(',')>-1){alert('বিষয়ের নামে কমা (,) ব্যবহার করা যাবে না');return}
   if(L.includes(o.n)){alert('এই শ্রেণীতে এই নামে বিষয় আগে থেকেই আছে');return}
-  if(window.subjUsed(c,old)&&!confirm('"'+old+'" এই শ্রেণীর রুটিনে আছে। নাম বদলালে রুটিনেও নতুন নাম বসবে (আগের হোমওয়ার্ক পুরনো নামেই থাকবে)। চালিয়ে যাবেন?'))return;
+  if(window.subjUsed(c,old)&&!await mmConfirm('"'+old+'" এই শ্রেণীর রুটিনে আছে। নাম বদলালে রুটিনেও নতুন নাম বসবে (আগের হোমওয়ার্ক পুরনো নামেই থাকবে)। চালিয়ে যাবেন?'))return;
   L[i]=o.n;if(await window.subjSet(c,L))await window.rtnRename(c,old,o.n)})};
 window.subjDel=async function(i){const c=selClass||classes[0],L=window.subjFor(c),s=L[i];
  if(window.subjUsed(c,s)){alert('"'+s+'" এই শ্রেণীর রুটিনে ব্যবহৃত হচ্ছে। আগে রুটিন থেকে সংশ্লিষ্ট পিরিয়ড সরান।');return}
- if(confirm('"'+s+'" বিষয়টি '+c+' থেকে মুছে ফেলবেন?')){L.splice(i,1);await window.subjSet(c,L)}};
+ if(await mmConfirm('"'+s+'" বিষয়টি '+c+' থেকে মুছে ফেলবেন?')){L.splice(i,1);await window.subjSet(c,L)}};
 /* ব্যয় তালিকা: বেতন রেকর্ডে Delete (শুধু Admin) */
 window.expV=function(){const A=role==='admin';shell('ব্যয়',`<div class="stats" style="grid-template-columns:1fr 1fr"><div class="stat"><b>${tk(sum(ex.filter(e=>e.m===M0)))}</b><small>এ মাসের ব্যয়</small></div><div class="stat"><b>${tk(sum(ex))}</b><small>মোট ব্যয়</small></div></div>`+(ex.slice().reverse().map(e=>R_('📉',e.t,e.c+' • '+dd(e.d),`<b>${tk(e.a)}</b>`+(A&&e.c==='বেতন'&&e.id?` <button class="chip Absent" style="min-width:0" aria-label="Delete" onclick="delSal('${e.id}')"><i class=idel></i></button>`:''))).join('')||'<p class="note">কোনো ব্যয় নেই। ＋ চেপে যোগ করুন।</p>'),'fees','addE()')};
-window.delSal=function(id){if(!hasPerm('sal_del'))return deny();if(!confirm('আপনি কি এই Salary Record-টি Delete করতে চান?'))return;exDel.add(id);ex=ex.filter(e=>e.id!==id);save('mm_e',ex);draw()};
+window.delSal=async function(id){if(!hasPerm('sal_del'))return deny();if(!await mmConfirm('আপনি কি এই Salary Record-টি Delete করতে চান?'))return;exDel.add(id);ex=ex.filter(e=>e.id!==id);save('mm_e',ex);draw()};
 /* ফি রিপোর্ট: আদায় / বকেয়ার বিস্তারিত তালিকা (বর্তমান ডাটা থেকে) */
 const _fv=finV;window.finV=function(){_fv();document.querySelectorAll('#app main .link').forEach(el=>{const x=el.textContent.trim(),m=x.indexOf('ফি আদায়')===0?'paid':x.indexOf('বকেয়া (')===0?'due':'';if(m){el.style.cursor='pointer';el.onclick=()=>{frMode=m;frCls='';frQ='';tab='frep';draw()}}})};
 function frRows(){const q=frQ.toLowerCase();let l=frMode==='paid'?fp.filter(p=>p.m===M0).map(p=>{const s=students.find(x=>x.id===p.sid)||{};return{n:p.sn||s.n||'—',id:p.sid,r:s.r,c:p.c||s.c||'',a:+p.a||0,d:p.d}}):students.filter(s=>dueOf(s.id)>0).map(s=>({n:s.n,id:s.id,r:s.r,c:s.c||'',f:feeOf(s.id),due:dueOf(s.id),a:feeOf(s.id)-dueOf(s.id)}));
@@ -1057,8 +1057,8 @@ const _d2=draw;window.draw=function(){if(tab==='tself'&&role==='teacher')return 
 /* ===== ভুল ফি/বেতন আদায়ের রসিদ Delete (শুধু Admin) ===== */
 window.fpDel=[];
 const _rv=rcptV;window.rcptV=function(){_rv();if(role!=='admin')return;document.querySelectorAll('#app button[aria-label="রসিদ দেখুন"]').forEach(b=>{const m=/rc\('([^']+)'\)/.exec(b.getAttribute('onclick')||'');if(m)b.insertAdjacentHTML('afterend',' <button class="chip Absent" style="min-width:0" aria-label="Delete" onclick="delRcpt(\''+m[1]+'\')"><i class=idel></i></button>')})};
-window.delRcpt=function(id){if(!hasPerm('fee_del'))return deny();const p=fp.find(x=>x.id===id);if(!p)return;
- if(!confirm('আপনি কি এই রসিদ ('+id+' — '+tk(p.a)+') Delete করতে চান? এই মাসের বেতন আবার আদায় করা যাবে।'))return;
+window.delRcpt=async function(id){if(!hasPerm('fee_del'))return deny();const p=fp.find(x=>x.id===id);if(!p)return;
+ if(!await mmConfirm('আপনি কি এই রসিদ ('+id+' — '+tk(p.a)+') Delete করতে চান? এই মাসের বেতন আবার আদায় করা যাবে।'))return;
  fp=fp.filter(x=>x.id!==id);fpDel.push({id:p.id,sid:p.sid,m:p.m,lk:p.t==='মাসিক ফি'&&!fp.some(x=>x.sid===p.sid&&x.m===p.m&&x.t==='মাসিক ফি')});save('mm_f',fp);draw()};
 </script>
 
@@ -1150,6 +1150,191 @@ function dbCopy(){const d=dbCur(),st=dbStu(d),T=st.total;
  if(st.lists.A.length)t+='\n\nঅনুপস্থিত: '+st.lists.A.map(s=>s.n).join(', ');
  const ok=()=>alert('রিপোর্ট কপি হয়েছে। WhatsApp বা নোটে পেস্ট করুন।');
  try{navigator.clipboard.writeText(t).then(ok,()=>prompt('কপি করুন',t))}catch(e){prompt('কপি করুন',t)}}
+</script>
+<script>
+/* ===== UI কিট: একই স্টাইলের আইকন, সুন্দর বার্তা/নিশ্চিতকরণ বক্স, হেডারের ⋮ মেনু ===== */
+(function(){
+var P={
+home:'<path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><path d="M9 22V12h6v10"/>',
+cap:'<path d="M22 10 12 5 2 10l10 5 10-5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/>',
+board:'<path d="M2 3h20"/><path d="M21 3v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V3"/><path d="m7 21 5-5 5 5"/>',
+user:'<path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>',
+checkc:'<circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/>',
+clip:'<path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1"/><path d="m9 14 2 2 4-4"/>',
+book:'<path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/>',
+library:'<path d="m16 6 4 14"/><path d="M12 6v14"/><path d="M8 8v12"/><path d="M4 4v16"/>',
+clock:'<circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/>',
+mosque:'<path d="M5 21v-7a7 7 0 0 1 14 0v7"/><path d="M12 7V3"/><path d="M3 21h18"/><path d="M9 21v-4a3 3 0 0 1 6 0v4"/>',
+file:'<path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7z"/><path d="M14 2v4a2 2 0 0 0 2 2h4"/><path d="M10 9H8"/><path d="M16 13H8"/><path d="M16 17H8"/>',
+msg:'<path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>',
+phone:'<path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/>',
+pencil:'<path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"/>',
+trash:'<path d="M3 6h18"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><path d="M10 11v6"/><path d="M14 11v6"/>',
+card:'<rect x="1" y="4" width="22" height="16" rx="2"/><path d="M1 10h22"/>',
+cash:'<rect x="2" y="6" width="20" height="12" rx="2"/><circle cx="12" cy="12" r="2"/><path d="M6 12h.01M18 12h.01"/>',
+receipt:'<path d="M4 2v20l2-1 2 1 2-1 2 1 2-1 2 1 2-1 2 1V2l-2 1-2-1-2 1-2-1-2 1-2-1-2 1z"/><path d="M16 8h-6a2 2 0 1 0 0 4h4a2 2 0 1 1 0 4H8"/><path d="M12 17.5v-11"/>',
+up:'<path d="M22 7 13.5 15.5 8.5 10.5 2 17"/><path d="M16 7h6v6"/>',
+down:'<path d="M22 17 13.5 8.5 8.5 13.5 2 7"/><path d="M16 17h6v-6"/>',
+plus:'<path d="M12 5v14M5 12h14"/>',
+eye:'<path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7z"/><circle cx="12" cy="12" r="3"/>',
+repeat:'<path d="m17 2 4 4-4 4"/><path d="M3 11v-1a4 4 0 0 1 4-4h14"/><path d="m7 22-4-4 4-4"/><path d="M21 13v1a4 4 0 0 1-4 4H3"/>',
+refresh:'<path d="M21 12a9 9 0 1 1-3-6.7L21 8"/><path d="M21 3v5h-5"/>',
+save:'<path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><path d="M17 21v-8H7v8"/><path d="M7 3v5h8"/>',
+mobile:'<rect x="5" y="2" width="14" height="20" rx="2"/><path d="M12 18h.01"/>',
+battery:'<rect x="2" y="7" width="16" height="10" rx="2"/><path d="M22 11v2"/>',
+pin:'<path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0z"/><circle cx="12" cy="10" r="3"/>',
+lock:'<rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/>',
+mic:'<rect x="9" y="2" width="6" height="12" rx="3"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><path d="M12 19v3"/>',
+stop:'<rect x="6" y="6" width="12" height="12" rx="1"/>',
+pause:'<path d="M9 5v14M15 5v14"/>',
+vol:'<path d="M11 5 6 9H2v6h4l5 4V5z"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/>',
+warn:'<path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3z"/><path d="M12 9v4"/><path d="M12 17h.01"/>',
+logout:'<path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="m16 17 5-5-5-5"/><path d="M21 12H9"/>',
+grid:'<rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/>',
+mega:'<path d="m3 11 18-5v12L3 14v-3z"/><path d="M11.6 16.8a3 3 0 1 1-5.8-1.6"/>',
+chart:'<path d="M12 20V10"/><path d="M18 20V4"/><path d="M6 20v-4"/>',
+sliders:'<path d="M21 4h-7M10 4H3M21 12h-9M8 12H3M21 20h-5M12 20H3M14 2v4M8 10v4M16 18v4"/>',
+cal:'<rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/>',
+bell:'<path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/>',
+send:'<path d="m22 2-7 20-4-9-9-4z"/><path d="M22 2 11 13"/>',
+folder:'<path d="M20 20a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.9a2 2 0 0 1-1.69-.9L9.6 3.9A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2z"/>',
+moon:'<path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/>',
+sun:'<circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/>',
+globe:'<circle cx="12" cy="12" r="10"/><path d="M2 12h20"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>',
+building:'<path d="M4 21V8l8-5 8 5v13"/><path d="M9 21v-6h6v6"/>',
+code:'<path d="m16 18 6-6-6-6"/><path d="m8 6-6 6 6 6"/>',
+mail:'<rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-10 5L2 7"/>',
+menu:'<path d="M4 6h16M4 12h16M4 18h16"/>',
+arrowLeft:'<path d="M19 12H5"/><path d="m12 19-7-7 7-7"/>',
+more:'<circle cx="12" cy="5" r="1.4"/><circle cx="12" cy="12" r="1.4"/><circle cx="12" cy="19" r="1.4"/>',
+check:'<path d="m5 12.5 4.5 4.5L19 7"/>',
+x:'<path d="M6 6l12 12M18 6 6 18"/>',
+info:'<circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/>',
+dot:'<circle cx="12" cy="12" r="4"/>'};
+window.IC=function(n,c){return '<svg class="'+(c||'hic')+'" viewBox="0 0 24 24" aria-hidden="true">'+(P[n]||P.dot)+'</svg>'};
+
+/* ইমোজি → আইকন (শুধু আইকনের জায়গায়, বার্তার লেখায় নয়) */
+var M0={'🏠':'home','🎓':'cap','👨‍🏫':'board','👤':'user','👦':'user','✅':'checkc','📋':'clip','📝':'file','📄':'file','📚':'library','📖':'book','📘':'book','📢':'mega','📣':'send','📊':'chart','⚙️':'sliders','🗓️':'cal','📅':'cal','🔔':'bell','🗂️':'folder','⏰':'clock','🕘':'clock','⏳':'clock','🕌':'mosque','💬':'msg','📞':'phone','☎️':'phone','✏️':'pencil','✍️':'pencil','🗑':'trash','💳':'card','💵':'cash','💰':'cash','৳':'cash','🧾':'receipt','📈':'up','📉':'down','➕':'plus','👁️':'eye','🔁':'repeat','♻':'refresh','♻️':'refresh','💾':'save','📱':'mobile','🔋':'battery','📍':'pin','🔒':'lock','🎤':'mic','⏹':'stop','⏸':'pause','🔊':'vol','⚠️':'warn','⚠':'warn','⎋':'logout','🧩':'grid','🌙':'moon','🌐':'globe','🏫':'building','👨‍💻':'code','✉️':'mail'};
+var M={};Object.keys(M0).forEach(function(k){M[k.replace(/\uFE0F/g,'')]=M0[k]});
+var KEYS=Object.keys(M).sort(function(a,b){return b.length-a.length});
+var SLOTS='.nav b,.fc .fi,.tile>b,.act button>b,.shi,.sec,#mnu .link>span,.row>button,.row>.av,.row .chip,.link>button,button.tile,button.strip,.ndbh b,.wgi,.dtc1,.dtc2 span,.dtce,#md h3,.hjb h3,main h3,#hwvbox b,.dblink';
+function lead(el){
+ var n=el.firstChild;while(n&&n.nodeType===3&&!n.nodeValue.trim())n=n.nextSibling;
+ if(!n||n.nodeType!==3)return;
+ var t=n.nodeValue,s0=t.length-t.replace(/^\s+/,'').length,rest=t.slice(s0);
+ for(var i=0;i<KEYS.length;i++){var k=KEYS[i],len=0;
+  if(rest.indexOf(k+'\uFE0F')===0)len=k.length+1;else if(rest.indexOf(k)===0)len=k.length;
+  if(!len)continue;
+  var after=rest.slice(len);
+  if(k==='৳'&&after.trim()!=='')continue;
+  var sp=document.createElement('span');sp.className='ic2';sp.innerHTML=IC(M[k],'');
+  n.nodeValue=after.trim()===''?'':' '+after.replace(/^\s+/,'');
+  el.insertBefore(sp,n);return}}
+var q=[],sc=0;
+function run(){sc=0;var l=q;q=[];l.forEach(function(r){if(!r.isConnected||r.nodeType!==1)return;if(r.matches&&r.matches(SLOTS))lead(r);var a=r.querySelectorAll(SLOTS);for(var i=0;i<a.length;i++)lead(a[i])})}
+new MutationObserver(function(ms){ms.forEach(function(m){
+ if(m.type==='characterData'){var p=m.target.parentElement;if(p)q.push(p)}
+ else m.addedNodes.forEach(function(n){if(n.nodeType===1)q.push(n);else if(n.nodeType===3&&n.parentElement)q.push(n.parentElement)})});
+ if(!sc){sc=1;requestAnimationFrame(run)}}).observe(document.documentElement,{childList:true,subtree:true,characterData:true});
+q.push(document.body);sc=1;requestAnimationFrame(run);
+
+/* ===== সুন্দর বার্তা (টোস্ট) ও নিশ্চিতকরণ বক্স: alert/confirm-এর বদলে ===== */
+var TY={ok:['#059669','check','সফল'],err:['#dc2626','x','ত্রুটি'],warn:['#d97706','warn','মনোযোগ দিন'],info:['#2563eb','info','বার্তা'],ask:['#d97706','warn','নিশ্চিত করুন'],del:['#dc2626','trash','নিশ্চিত করুন']};
+function kind(m){
+ if(/হয়নি|ব্যর্থ|ত্রুটি|সমস্যা|ভুল|যায়নি|যাবে না|অনুমতি|failed|error/i.test(m))return 'err';
+ if(/হয়েছে|সফল|সংরক্ষিত|✅/.test(m))return 'ok';
+ if(/লিখুন|দিন|বাছুন|নির্বাচন|পূরণ|অবশ্যই|আগে/.test(m))return 'warn';
+ return 'info'}
+function toast(m,t){
+ var box=document.getElementById('mmtoasts');
+ if(!box){box=document.createElement('div');box.id='mmtoasts';document.body.appendChild(box)}
+ while(box.children.length>=3)box.firstChild.remove();
+ var el=document.createElement('div');el.className='mmt';el.style.setProperty('--tc',TY[t][0]);
+ el.innerHTML='<i>'+IC(TY[t][1])+'</i><span></span>';
+ el.lastChild.textContent=m.replace(/^[\u2705\u274C\u26A0\uFE0F\s]+/,'');
+ box.appendChild(el);
+ setTimeout(function(){el.classList.add('out');setTimeout(function(){el.remove()},250)},2600+m.length*45)}
+var dq=[],cur=null;
+function dlg(o){dq.push(o);if(!cur)next()}
+function next(){
+ cur=dq.shift();if(!cur)return;
+ var d=document.createElement('div');d.id='mmdlg';
+ var ty=TY[cur.type];
+ d.innerHTML='<div class="mmc" role="alertdialog" aria-modal="true"><div class="mmi" style="--tc:'+ty[0]+'">'+IC(ty[1])+'</div><div class="mmh"></div><div class="mmm"></div><div class="mmb"></div></div>';
+ d.querySelector('.mmh').textContent=ty[2];d.querySelector('.mmm').textContent=cur.msg;
+ var b=d.querySelector('.mmb');
+ (cur.confirm?[['বাতিল',false,'no'],[cur.danger?'হ্যাঁ, মুছুন':'হ্যাঁ, নিশ্চিত',true,cur.danger?'yes danger':'yes']]:[['ঠিক আছে',true,'yes']]).forEach(function(x){
+  var bt=document.createElement('button');bt.type='button';bt.className=x[2];bt.textContent=x[0];bt.onclick=function(){fin(x[1])};b.appendChild(bt)});
+ d.addEventListener('click',function(e){if(e.target===d)fin(false)});
+ document.body.appendChild(d);
+ var f=b.querySelector('.yes');if(f)try{f.focus()}catch(e){}}
+function fin(v){
+ var d=document.getElementById('mmdlg');if(d)d.remove();
+ var c=cur;cur=null;if(c&&c.res)c.res(v);next()}
+window.mmDlgBack=function(){fin(false)};
+window.mmAlert=function(m){
+ m=String(m==null?'':m);if(window.TR)m=window.TR(m);
+ var t=kind(m);
+ if(m.length<=80&&m.indexOf('\n')<0)toast(m,t);else dlg({type:t,msg:m})};
+window.mmConfirm=function(m){
+ m=String(m==null?'':m);if(window.TR)m=window.TR(m);
+ var danger=/মুছ|Delete|ডিলিট|delete/i.test(m);
+ return new Promise(function(res){dlg({type:danger?'del':'ask',msg:m,confirm:1,danger:danger,res:res})})};
+window.alert=function(m){window.mmAlert(m)};
+
+/* ===== হেডারের ⋮ মেনু: ভাষা ও থিম এখানে ===== */
+window.hdrMore=function(e){
+ if(e)e.stopPropagation();
+ var old=document.getElementById('hmenu');if(old){old.remove();return}
+ var dark=document.documentElement.getAttribute('data-theme')==='dark',en=window.mmLangGet&&window.mmLangGet()==='en';
+ var d=document.createElement('div');d.id='hmenu';
+ d.innerHTML='<button type="button" onclick="hdrLang()"><span class="hi">'+IC('globe')+'</span><span class="ht">ভাষা</span><em>'+(en?'English':'বাংলা')+'</em></button><button type="button" onclick="hdrTheme()"><span class="hi">'+IC(dark?'sun':'moon')+'</span><span class="ht">'+(dark?'লাইট মোড':'ডার্ক মোড')+'</span></button>';
+ d.addEventListener('click',function(ev){ev.stopPropagation()});
+ document.body.appendChild(d)};
+window.hdrLang=function(){var m=document.getElementById('hmenu');if(m)m.remove();if(window.mmLangOpen)window.mmLangOpen()};
+window.hdrTheme=function(){var m=document.getElementById('hmenu');if(m)m.remove();if(window.mmTheme)window.mmTheme()};
+document.addEventListener('click',function(){var m=document.getElementById('hmenu');if(m)m.remove()});
+
+var st=document.createElement('style');
+st.textContent='\
+.ic2{display:inline-flex;align-items:center;justify-content:center;width:1.15em;height:1.15em;vertical-align:-.2em;flex:none}\
+.ic2 svg,svg.hic{width:100%;height:100%;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}\
+.nav b .ic2{width:22px;height:22px}.nav.cp b .ic2{width:21px;height:21px}\
+.fc .fi .ic2{width:30px;height:30px}\
+.tile>b .ic2{width:28px;height:28px}\
+.act button>b .ic2{width:22px;height:22px}\
+.shi .ic2{width:18px;height:18px}\
+.sec .ic2,#mnu .link>span .ic2{width:17px;height:17px;margin-right:7px;vertical-align:-3px;color:var(--g)}\
+.row>.av .ic2{width:55%;height:55%}\
+.row>button .ic2,.row .chip .ic2,.link>button .ic2{width:20px;height:20px}\
+button.tile .ic2{width:18px;height:18px;margin-right:2px}\
+.top button svg.hic{width:22px;height:22px}\
+#mmtoasts{position:fixed;left:0;right:0;bottom:calc(env(safe-area-inset-bottom,0px) + 78px);display:flex;flex-direction:column;align-items:center;gap:8px;z-index:90;pointer-events:none;padding:0 14px}\
+.mmt{display:flex;align-items:center;gap:10px;max-width:440px;background:#111827;color:#fff;padding:10px 14px 10px 10px;border-radius:14px;font-size:14px;line-height:1.4;box-shadow:0 8px 24px rgba(0,0,0,.28);animation:mmin .22s ease;transition:opacity .25s,transform .25s}\
+.mmt.out{opacity:0;transform:translateY(8px)}\
+.mmt i{flex:none;width:26px;height:26px;border-radius:50%;background:var(--tc);display:grid;place-items:center}\
+.mmt i svg{width:15px;height:15px;fill:none;stroke:#fff;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}\
+@keyframes mmin{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}\
+#mmdlg{position:fixed;inset:0;z-index:95;background:rgba(15,23,42,.55);display:flex;align-items:center;justify-content:center;padding:22px;animation:mmfade .18s ease}\
+@keyframes mmfade{from{opacity:0}to{opacity:1}}\
+.mmc{width:100%;max-width:340px;background:var(--card);color:var(--ink);border-radius:22px;padding:22px 18px 16px;text-align:center;box-shadow:0 20px 50px rgba(0,0,0,.35);max-height:85vh;overflow:auto}\
+.mmi{width:54px;height:54px;border-radius:50%;margin:0 auto 10px;display:grid;place-items:center;background:color-mix(in srgb,var(--tc) 15%,transparent);color:var(--tc)}\
+.mmi svg{width:28px;height:28px;fill:none;stroke:currentColor;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}\
+.mmh{font-weight:700;font-size:17px;margin-bottom:6px}\
+.mmm{font-size:14.5px;line-height:1.6;color:var(--mute);white-space:pre-line;word-break:break-word}\
+.mmb{display:flex;gap:10px;margin-top:18px}\
+.mmb button{flex:1;padding:12px 8px;border-radius:14px;font:inherit;font-weight:700;font-size:15px;border:1px solid var(--line);background:var(--card);color:var(--ink)}\
+.mmb button.yes{background:var(--g);border-color:var(--g);color:#fff}\
+.mmb button.yes.danger{background:#dc2626;border-color:#dc2626}\
+.mmb button:active{transform:scale(.97)}\
+#hmenu{position:fixed;top:calc(env(safe-area-inset-top,0px) + 54px);right:10px;z-index:40;min-width:210px;background:var(--card);color:var(--ink);border:1px solid var(--line);border-radius:16px;box-shadow:0 12px 32px rgba(0,0,0,.2);padding:6px;animation:mmfade .15s ease}\
+#hmenu button{display:flex;align-items:center;gap:10px;width:100%;padding:12px;border-radius:12px;font:inherit;font-size:14.5px;text-align:left;color:var(--ink)}\
+#hmenu button:active{background:var(--soft,var(--line))}\
+#hmenu .hi{width:30px;height:30px;border-radius:10px;display:grid;place-items:center;background:color-mix(in srgb,var(--g) 14%,transparent);color:var(--g);flex:none}\
+#hmenu .hi svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}\
+#hmenu .ht{flex:1}#hmenu em{font-style:normal;font-size:12.5px;color:var(--mute)}';
+document.head.appendChild(st);
+})();
 </script>
 <script type="module">
 import {initializeApp} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
@@ -1487,7 +1672,7 @@ async function deliver(kind,tgt,rec,vars,nid,x){
 const tally=(r,c)=>{c[r]=(c[r]||0)+1};
 const sum2=c=>'পাঠানো: '+bn(c.sent||0)+' • আগেই পাঠানো: '+bn(c.dup||0)+' • ব্যর্থ: '+bn(c.failed||0)+(c.skip?' • অনুপস্থিত (নোটিফিকেশন নেই): '+bn(c.skip):'');
 window.finalizeClass=async function(){const list=students.filter(x=>x.c===selClass);if(!list.length){alert('এই ক্লাসে ছাত্র নেই');return}
- if(!confirm('"'+selClass+'" ক্লাসের হাজিরা চূড়ান্ত করে উপস্থিত ছাত্রদের অভিভাবককে জানাবেন?'))return;
+ if(!await mmConfirm('"'+selClass+'" ক্লাসের হাজিরা চূড়ান্ত করে উপস্থিত ছাত্রদের অভিভাবককে জানাবেন?'))return;
  const U={};list.forEach(s=>{if(!(at[T0]&&at[T0][s.id])){U['attendance/students/'+T0+'/'+s.id]='P';U['attendance/byStudent/'+s.id+'/'+T0]='P'}});
  if(Object.keys(U).length){try{await upd(U)}catch(e){alert('হাজিরা সংরক্ষণ হয়নি: '+denied(e));return}}
  const c={};for(const s of list){const st=U['attendance/students/'+T0+'/'+s.id]?'Present':(at[T0]&&at[T0][s.id]);if(st==='Absent'){tally('skip',c);continue}
@@ -1497,7 +1682,7 @@ window.simAsk=function(list){const rows=list.map(s=>({s:s,st:at[T0]&&at[T0][s.id
  const old=document.getElementById('md');if(old)old.remove();const d=document.createElement('div');d.id='md';d.style.cssText='position:fixed;inset:0;background:#0009;z-index:60;display:flex;align-items:flex-end;justify-content:center';
  d.innerHTML='<div style="background:var(--card);color:var(--ink);width:100%;max-width:480px;max-height:80%;overflow:auto;border-radius:18px 18px 0 0;padding:16px"><h3>📱 SIM দিয়ে SMS পাঠান</h3><p class="note" style="text-align:left">বাটন চাপলে ফোনের মেসেজ অ্যাপ খুলবে; সেখানে Send চাপলে আপনার SIM থেকে যাবে।</p>'+rows.map(x=>{const m=x.st==='Late'?'আপনার সন্তান '+x.s.n+' আজ মাদ্রাসায় দেরিতে এসেছে।':'আপনার সন্তান '+x.s.n+' আজ মাদ্রাসায় অনুপস্থিত।';return '<div class="row"><div class="info"><b>'+xe0(x.s.n)+'</b><small>'+(x.st==='Late'?'দেরি':'অনুপস্থিত')+' • '+xe0(x.s.ph||'নম্বর নেই')+'</small></div>'+(x.s.ph?'<a class="chip Late" style="text-decoration:none" href="sms:'+encodeURIComponent(x.s.ph)+'?body='+encodeURIComponent(m)+'">💬 SMS</a>':'')+'</div>'}).join('')+'<button class="tile" style="background:#5b6b7d;width:100%;margin-top:10px;padding:12px" onclick="document.getElementById(\'md\').remove()">বন্ধ করুন</button></div>';
  d.addEventListener('click',function(e){if(e.target===d)d.remove()});document.body.appendChild(d)};
-window.finalizeTeachers=async function(){if(!teachers.length)return;if(!confirm('শিক্ষকদের আজকের হাজিরা চূড়ান্ত করে উপস্থিতদের জানাবেন?'))return;
+window.finalizeTeachers=async function(){if(!teachers.length)return;if(!await mmConfirm('শিক্ষকদের আজকের হাজিরা চূড়ান্ত করে উপস্থিতদের জানাবেন?'))return;
  const U={};teachers.forEach(t=>{if(!(tat[T0]&&tat[T0][t.id]))U['attendance/teachers/'+T0+'/'+t.id]='P'});
  if(Object.keys(U).length){try{await upd(U)}catch(e){alert('হাজিরা সংরক্ষণ হয়নি: '+denied(e));return}}
  const c={};for(const t of teachers){const st=U['attendance/teachers/'+T0+'/'+t.id]?'Present':(tat[T0]&&tat[T0][t.id]);if(st==='Absent'){tally('skip',c);continue}
@@ -1558,7 +1743,7 @@ window.bellEdit=i=>{const L=ncfg.bell.list,e=i>=0?L[i]:{t:'',k:'p'};
   const k=(window.bellKinds.find(x=>x[1]===o.n)||window.bellKinds[1])[0];
   if(L.some((x,j)=>j!==i&&x.t===o.tm)){alert('এই সময়ে আগেই একটি ঘণ্টা আছে');return}
   const nl=L.slice();if(i>=0)nl[i]={t:o.tm,k:k};else nl.push({t:o.tm,k:k});nl.sort((x,y)=>x.t<y.t?-1:x.t>y.t?1:0);ncfg.bell.list=nl;saveCfg()})};
-window.bellDel=i=>{if(!confirm('এই ঘণ্টাটি মুছবেন?'))return;ncfg.bell.list.splice(i,1);saveCfg()};
+window.bellDel=async i=>{if(!await mmConfirm('এই ঘণ্টাটি মুছবেন?'))return;ncfg.bell.list.splice(i,1);saveCfg()};
 
 const bellCounts=L=>{const N=Math.max(1,L.filter(x=>x.k!=='s').length);let i=0;return L.map(x=>x.k==='s'?Math.min(N,16):x.k==='e'?0:Math.min(++i,16))};
 const bellP=()=>{try{return window.__mmP?window.__mmP():null}catch(e){return null}};
@@ -1603,21 +1788,21 @@ window.purgeGroup=async function(gid,silent){if(!gid||purging.has(gid)||(role!==
   U['notifGroups/'+gid]=null;await upd(U)}
  catch(e){if(!silent)alert('মুছতে সমস্যা: '+denied(e))}finally{purging.delete(gid)}};
 window.delNotif=async function(id){const n=nlist.find(x=>x.id===id);if(!n)return;
- if(!confirm(role==='guardian'?'এই নোটিফিকেশন শুধু আপনার অ্যাপ থেকে মুছে যাবে। মুছবেন?':'এই নোটিফিকেশন মুছলে এটি সবার (প্রাপক অভিভাবক/শিক্ষক ও ইতিহাস) অ্যাপ থেকে মুছে যাবে। মুছবেন?'))return;
+ if(!await mmConfirm(role==='guardian'?'এই নোটিফিকেশন শুধু আপনার অ্যাপ থেকে মুছে যাবে। মুছবেন?':'এই নোটিফিকেশন মুছলে এটি সবার (প্রাপক অভিভাবক/শিক্ষক ও ইতিহাস) অ্যাপ থেকে মুছে যাবে। মুছবেন?'))return;
  const mine=role==='guardian'?'notifications/guardian/'+myChild:'notifications/teacher/'+myTeacher;
  try{if(role==='guardian')await set(R(mine+'/'+id),null);
   else{if(n.gid)await window.purgeGroup(n.gid);else await set(R(mine+'/'+id),null)}}
  catch(e){alert('মুছতে সমস্যা: '+denied(e))}};
 window.delAllBtn=k=>`<button class="chip Absent" style="width:100%;margin:0 0 10px;padding:10px" onclick="delAllN('${k}')"><i class=idel></i> সব নোটিফিকেশন মুছুন</button>`;
 window.delAllN=async function(k){
- if(k==='n'){if(!nlist.length||!confirm(role==='guardian'?'আপনার অ্যাপ থেকে সব নোটিফিকেশন মুছে যাবে। মুছবেন?':'আপনার অ্যাপের সব নোটিফিকেশন মুছে যাবে। মুছবেন?'))return;
+ if(k==='n'){if(!nlist.length||!await mmConfirm(role==='guardian'?'আপনার অ্যাপ থেকে সব নোটিফিকেশন মুছে যাবে। মুছবেন?':'আপনার অ্যাপের সব নোটিফিকেশন মুছে যাবে। মুছবেন?'))return;
   const base=role==='guardian'?'notifications/guardian/'+myChild:'notifications/teacher/'+myTeacher,U={};nlist.forEach(n=>{U[base+'/'+n.id]=null});
   try{await upd(U)}catch(e){alert('মুছতে সমস্যা: '+denied(e))}return}
  const ids=Object.keys(ngrp).filter(g=>ngrp[g].meta&&ngrp[g].meta.ts>=nCut());
- if(!ids.length||!confirm('সব নোটিফিকেশন মুছলে সব প্রাপকের অ্যাপ থেকেও মুছে যাবে। মুছবেন?'))return;
+ if(!ids.length||!await mmConfirm('সব নোটিফিকেশন মুছলে সব প্রাপকের অ্যাপ থেকেও মুছে যাবে। মুছবেন?'))return;
  let bad=0;for(const g of ids){try{await window.purgeGroup(g)}catch(e){bad++}}
  if(bad)alert(bad+'টি মোছা যায়নি')};
-window.delGroup=async function(gid){if(!confirm('এই নোটিফিকেশন মুছলে সব প্রাপকের অ্যাপ থেকেও মুছে যাবে। মুছবেন?'))return;await window.purgeGroup(gid)};
+window.delGroup=async function(gid){if(!await mmConfirm('এই নোটিফিকেশন মুছলে সব প্রাপকের অ্যাপ থেকেও মুছে যাবে। মুছবেন?'))return;await window.purgeGroup(gid)};
 window.nlogV=function(){const G=Object.keys(ngrp).map(k=>Object.assign({gid:k},ngrp[k])).filter(g=>g.meta&&g.meta.ts>=nCut()).sort((a,b)=>b.meta.ts-a.meta.ts),old=nlogL.filter(n=>!n.gid&&n.ts>=nCut());
  shell('Notification History',(G.length?delAllBtn('g'):'')+G.map(g=>{const m=g.meta,c=Object.keys(g.rcp||{}).length;return `<div class="row" style="display:block"><b>${xe(m.title||TL[m.kind]||m.kind)}</b><button class="chip Absent" style="min-width:0;float:right;padding:2px 8px" aria-label="মুছুন" onclick="delGroup('${esc(g.gid)}')"><i class=idel></i></button><br><small>প্রেরক: ${xe(m.byName||'')} (${xe(m.byRole||'')}) • ${m.tgt==='guardian'?'অভিভাবক':'শিক্ষক'}: ${bn(c)} জন</small><br><small style="color:var(--mute)">${dd(m.date)} • ${xe(m.time)}</small><p style="margin-top:4px">${xe(m.msg)}</p></div>`}).join('')+
  (old.length?'<h3>পুরনো ইতিহাস</h3>'+old.map(n=>`<div class="row" style="display:block"><b>${xe(TL[n.t]||n.t)}</b> • ${n.tgt==='guardian'?'Guardian':'Teacher'}: ${xe(n.to)}${n.sn?'<br>ছাত্র: '+xe(n.sn):''}<br><small style="color:var(--mute)">${dd(n.date)} • ${xe(n.time)}</small></div>`).join(''):'')||'<p class="note">এখনো কোনো নোটিফিকেশন পাঠানো হয়নি।</p>',role==='teacher'?'home':'nhub')};
@@ -1629,7 +1814,7 @@ window.annForm=function(){const T=role==='teacher',mc=T?window.tClasses(myTeache
  if(o.a==='সকল অভিভাবক'||o.a==='আমার ক্লাসগুলোর সকল অভিভাবক')rcp=pool;else if(o.a==='নির্দিষ্ট ক্লাসের অভিভাবক')rcp=pool.filter(x=>x.c===o.cls);else if(o.a==='নির্দিষ্ট ছাত্রের অভিভাবক')rcp=pool.filter(x=>x.id.toLowerCase()===lc);
  else{tg='teacher';rcp=o.a==='সকল শিক্ষক'?teachers:teachers.filter(x=>x.id===o.tid)}
  if(!rcp.length){alert(T?'কোনো প্রাপক পাওয়া যায়নি (শুধু আপনার রুটিনের ক্লাস)':'কোনো প্রাপক পাওয়া যায়নি');return}if(!o.b){alert('বার্তা লিখুন');return}
- if(!confirm(bn(rcp.length)+' জনকে নোটিফিকেশন পাঠাবেন?'))return;const base='ann-'+Date.now().toString(36),c={};
+ if(!await mmConfirm(bn(rcp.length)+' জনকে নোটিফিকেশন পাঠাবেন?'))return;const base='ann-'+Date.now().toString(36),c={};
  for(const r of rcp)tally(await deliver('announce',tg,r,{},base+'-'+r.id,{title:o.n,msg:o.b,gid:base}),c);
  alert('নোটিফিকেশন পাঠানো শেষ।\n'+sum2(c))});
  const md=document.getElementById('md');if(!md)return;const sa=md.querySelector('[name=a]'),ls=md.querySelector('[name=sid]').closest('label'),lcl=md.querySelector('[name=cls]').closest('label');
@@ -1736,7 +1921,7 @@ window.rtnEdit=function(i){const cls=selClass||classes[0],cur=rtnList(cls,rtnDay
   const it={p:p,tm:o.tm,n:o.n,tid:t.id,t:t.n},nl=cur.slice();if(i>=0)nl[i]=it;else nl.push(it);nl.sort((a,b)=>(+a.p||99)-(+b.p||99));
   const bad=rtnClash(cls,rtnDayK,[it]);if(bad.length){alert('শিক্ষকের সময়ে সংঘর্ষ:\n'+bad.join('\n'));return}
   await saveRtn(cls,{[rtnDayK]:nl})})};
-window.rtnDel=async function(i){if(!confirm('এই পিরিয়ডটি মুছবেন?'))return;const cls=selClass||classes[0],cur=rtnList(cls,rtnDayK).slice();cur.splice(i,1);await saveRtn(cls,{[rtnDayK]:cur})};
+window.rtnDel=async function(i){if(!await mmConfirm('এই পিরিয়ডটি মুছবেন?'))return;const cls=selClass||classes[0],cur=rtnList(cls,rtnDayK).slice();cur.splice(i,1);await saveRtn(cls,{[rtnDayK]:cur})};
 /* এক দিনের রুটিন একাধিক দিনে প্রয়োগ (নির্বাচিত দিনের আগের রুটিন বদলে যায়, তাই ডুপ্লিকেট হয় না) */
 window.rtnApply=function(){const cls=selClass||classes[0];if(!rtnList(cls,rtnDayK).length){alert('এই দিনের কোনো রুটিন নেই');return}
  cl();const d=document.createElement('div');d.id='md';d.style.cssText='position:fixed;inset:0;background:#0009;z-index:20;display:flex;align-items:flex-end;justify-content:center';
@@ -1840,7 +2025,7 @@ TQ.settings=async function(){
   TQ.draw();if(TQ.cfg)TQ.ensureMap()}};
 TQ.create=async function(){try{const tok=tqTok();await update(R('attQr'),{cfg:{active:true,qid:tqTok(),rad:100,start:480,grace:10,tz:360,created:serverTimestamp()},sec:{tok:tok},dayMap:tqMap()});TQ.tok=tok;TQ.cfg=(await get(R('attQr/cfg'))).val();TQ.draw()}catch(e){alert('QR তৈরি হয়নি: '+(e.code||e.message))}};
 TQ.toggle=async function(){const on=!(TQ.cfg&&TQ.cfg.active);try{await update(R('attQr/cfg'),{active:on});TQ.cfg.active=on;TQ.draw()}catch(e){alert('হয়নি: '+(e.code||e.message))}};
-TQ.regen=async function(){if(!confirm('নতুন QR তৈরি করলে আগের প্রিন্ট করা সব QR বাতিল হবে। নিশ্চিত?'))return;try{const q=tqTok(),k=tqTok();await update(R('attQr'),{'cfg/qid':q,'sec/tok':k});TQ.cfg.qid=q;TQ.tok=k;TQ.draw()}catch(e){alert('হয়নি: '+(e.code||e.message))}};
+TQ.regen=async function(){if(!await mmConfirm('নতুন QR তৈরি করলে আগের প্রিন্ট করা সব QR বাতিল হবে। নিশ্চিত?'))return;try{const q=tqTok(),k=tqTok();await update(R('attQr'),{'cfg/qid':q,'sec/tok':k});TQ.cfg.qid=q;TQ.tok=k;TQ.draw()}catch(e){alert('হয়নি: '+(e.code||e.message))}};
 TQ.print=function(){if(!TQ.tok)return;cl();const d=document.createElement('div');d.id='qprint';d.style.cssText='position:fixed;inset:0;background:#fff;color:#000;z-index:70;overflow:auto;text-align:center;padding:16px;box-sizing:border-box';
  d.innerHTML='<style>@media print{body>*:not(#qprint){display:none!important}#qprint{position:static!important}.noprint{display:none!important}}</style><h1 style="margin:10px 0 4px;font-size:26px">'+xe(profile.name||'')+'</h1><h2 style="margin:0 0 12px;font-size:20px">শিক্ষক হাজিরা QR</h2><div style="display:inline-block;width:min(80vw,420px)">'+mmQR.svg(tqQRtext(),420).replace('width="420" height="420"','style="width:100%;height:auto"')+'</div><p style="font-size:18px;margin:10px 0">অ্যাপ থেকে "শিক্ষক হাজিরা" খুলে এই QR স্ক্যান করুন।<br>প্রথম স্ক্যান = আগমন, দ্বিতীয় স্ক্যান = প্রস্থান।</p><div class="noprint" style="display:flex;gap:10px;justify-content:center;margin-top:14px"><button class="tile" style="background:var(--g);padding:12px 26px;width:auto" onclick="window.print()">প্রিন্ট</button><button class="tile" style="background:#5b6b7d;padding:12px 26px;width:auto" onclick="document.getElementById(\'qprint\').remove()">বন্ধ করুন</button></div>';
  document.body.appendChild(d)};
@@ -2029,6 +2214,8 @@ window.hwVoiceDel=async function(c,d,sj){await upd({['hwVoice/'+c+'/'+d+'/'+sjk(
 
   /* Back-এর মূল সিদ্ধান্ত: উপরের স্তর আগে বন্ধ হয় */
   function onBack(){
+    if($('mmdlg')){mmDlgBack();return}
+    if($('hmenu')){$('hmenu').remove();return}
     if($('exitdlg')){exitClose();return}
     if($('langdlg')){$('langdlg').remove();return}
     if($('mnu')){closeMenu();return}                       /* সাইড মেনু */
@@ -2112,6 +2299,7 @@ window.hwVoiceDel=async function(c,d,sj){await upd({['hwVoice/'+c+'/'+d+'/'+sjk(
 (function(){
 var D={
 'অ্যাপ বন্ধ করতে আবার Back চাপুন':'Press Back again to exit',
+'থিম':'Theme','হ্যাঁ, নিশ্চিত':'Yes, confirm','হ্যাঁ, মুছুন':'Yes, delete','নিশ্চিত করুন':'Confirm','সফল':'Success','ত্রুটি':'Error','মনোযোগ দিন':'Attention',
 'আপনি কি অ্যাপ থেকে বের হতে চান?':'Do you want to exit the app?','হ্যাঁ':'Yes','না':'No',
 'স্বাগতম':'Welcome','আপনার অ্যাকাউন্ট দিয়ে লগইন করুন':'Log in with your account','প্রশাসন':'Administration','শিক্ষক':'Teacher','অভিভাবক':'Guardian',
 'শিক্ষা • শৃঙ্খলা • নৈতিকতা':'Education • Discipline • Ethics','মোবাইল নম্বর বা জিমেইল':'Mobile number or Gmail','পাসওয়ার্ড':'Password','লগইন':'Login',
@@ -2882,6 +3070,7 @@ function dAttr(e){AT.forEach(function(a){if(!e.hasAttribute||!e.hasAttribute(a))
 function walk(root){if(root.nodeType===3){dText(root);return}if(root.nodeType!==1)return;dAttr(root);var w=document.createTreeWalker(root,5),n;while(n=w.nextNode()){n.nodeType===3?dText(n):dAttr(n)}}
 function retr(){var w=document.createTreeWalker(document.body,5),n;while(n=w.nextNode()){if(n.nodeType===3){var r=TN.get(n);if(r&&n.nodeValue===r.t){r.t=tr(r.o);n.nodeValue=r.t}}else{var m=AN.get(n);if(m)AT.forEach(function(a){var r=m[a];if(r&&n.getAttribute(a)===r.t){r.t=tr(r.o);n.setAttribute(a,r.t)}})}}document.documentElement.lang=lang==='en'?'en':'bn';document.title=tr('মাদ্রাসা ম্যানেজমেন্ট সিস্টেম')}
 /* ভাষা বাটন (উপরের ডান পাশে) */
+window.mmLangOpen=function(){open()};window.mmLangGet=function(){return lang};
 function pick(l){lang=l;try{localStorage.setItem('mm_lang',l)}catch(e){}var d=document.getElementById('langdlg');if(d)d.remove();retr();btns()}
 function open(){if(document.getElementById('langdlg'))return;var d=document.createElement('div');d.id='langdlg';d.style.cssText='position:fixed;inset:0;background:#0009;z-index:60;display:flex;align-items:center;justify-content:center;padding:16px';
  var b=function(l,t){return '<button data-l="'+l+'" class="tile" style="background:'+(lang===l?'var(--g)':'#5b6b7d')+';flex:1;padding:12px">'+(lang===l?'✓ ':'')+t+'</button>'};
@@ -2891,7 +3080,7 @@ function mkB(fixed){var b=document.createElement('button');b.className='lgb';b.s
  b.style.cssText=(fixed?'position:fixed;top:calc(env(safe-area-inset-top,0px) + 10px);right:12px;z-index:25;background:#0006;color:#fff;border-radius:99px;padding:6px 12px;font-size:13px;':'width:auto;height:34px;font-size:13px;padding:0 8px;border-radius:99px;background:#fff3;white-space:nowrap;');
  b.onclick=open;return b}
 function btns(){var top=document.querySelector('#app .top'),fx=document.getElementById('lgfix');
- if(top){if(fx)fx.remove();var o=top.querySelector('.lgb');if(!o)top.appendChild(mkB(false));else{var L1=(lang==='en'?'EN':'বাং');if(o.textContent!==L1)o.textContent=L1}}
+ if(top){if(fx)fx.remove();var o=top.querySelector('.lgb');if(o)o.remove();}
  else{var x=document.querySelector('#app .login');if(x&&!fx){fx=mkB(true);fx.id='lgfix';document.body.appendChild(fx)}else if(fx){var L2=(lang==='en'?'EN':'বাং');if(fx.textContent!==L2)fx.textContent=L2}}}
 new MutationObserver(function(ms){ms.forEach(function(m){if(m.type==='childList')m.addedNodes.forEach(walk);else if(m.type==='characterData')dText(m.target);else dAttr(m.target)});btns()})
  .observe(document.body,{childList:true,subtree:true,characterData:true,attributes:true,attributeFilter:AT});
@@ -3068,7 +3257,7 @@ window.mmLgoSync=function(){var t=document.querySelector('#app .top .lgo');if(t)
 (function(){var c=document.createElement('style');c.id='mmLgoCss';c.textContent='.top .lgo{width:34px;height:34px;border-radius:50%;background:#fff;border:1px solid var(--line);overflow:hidden;padding:2px;box-sizing:border-box;display:grid;place-items:center;flex:none}.top .lgo img{width:100%;height:100%;object-fit:contain;border-radius:50%;display:block}.top .lgo.ini{background:var(--g);color:#fff;border:0;padding:0;font-weight:700;font-size:16px;line-height:1}';document.head.appendChild(c)})();
 function fix(){
  var top=document.querySelector('#app .top');
- if(top&&!document.getElementById('thm')){var b=document.createElement('button');b.id='thm';b.setAttribute('aria-label','থিম পরিবর্তন');b.onclick=window.mmTheme;icon(b);top.appendChild(b)}
+ if(top){var tb=document.getElementById('thm');if(tb)tb.remove()}
 
  if(top&&!top.querySelector('.lgo')&&top.querySelector('button[aria-label="মেনু"]')){var h=top.querySelector('h1');if(h){var l=document.createElement('span');l.className='lgo';mmLgoFill(l);top.insertBefore(l,h)}}
  if(top){var ex=top.querySelector('.lgo');if(ex)mmLgoFill(ex)}
@@ -3590,6 +3779,13 @@ go()})();
         .section-header { margin-top: 14px; padding-top: 14px; margin-bottom: 12px; }
         .section-header h3 { font-size: 17px; }
         .btn-add { padding: 8px 16px; font-size: 14px; border-radius: 999px; }
+        .card-actions { display: flex; align-items: center; gap: 6px; }
+        .btn-move { width: 32px; height: 32px; border-radius: 50%; border: 1px solid var(--border-color); background: #fff; color: var(--primary-color); font-size: 16px; font-weight: bold; line-height: 1; cursor: pointer; padding: 0; }
+        .btn-move:active { background: var(--primary-light); }
+        .passage-card { border-left-color: #b7791f; }
+        .passage-card .q-badge { background: #fdf3df; color: #92610f; }
+        .preview-passage { font-size: var(--qfs, 13px); line-height: 1.45; margin-bottom: 8px; }
+        .preview-passage.rtl { text-align: right; }
     </style>
 </head>
 <body>
@@ -3754,7 +3950,7 @@ go()})();
 
     <div class="section-header">
         <h3>প্রশ্ন তালিকা</h3>
-        <button class="btn-add" onclick="addNewQuestion()">+ প্রশ্ন যোগ করুন</button>
+        <div style="display:flex;gap:8px"><button class="btn-add" style="background:#b7791f" onclick="addPassage()">+ অনুচ্ছেদ</button><button class="btn-add" onclick="addNewQuestion()">+ প্রশ্ন যোগ করুন</button></div>
     </div>
 
     <div id="questionsContainer"></div>
@@ -3798,6 +3994,16 @@ go()})();
     </div>
 </div>
 <script>
+    (function () {
+        try {
+            const P = window.parent;
+            if (P && P !== window && P.mmAlert) {
+                window.alert = function (m) { P.mmAlert(m); };
+                window.mmAsk = function (m) { return P.mmConfirm(m); };
+            }
+        } catch (e) {}
+        if (!window.mmAsk) window.mmAsk = function (m) { return Promise.resolve(confirm(m)); };
+    })();
     let questionCount = 0;
     let pressTimer;
     let restoring = false;
@@ -3963,13 +4169,17 @@ go()})();
         card.className = 'question-card';
         card.id = `q-card-${questionCount}`;
         
-        const qLabel = bn(document.querySelectorAll('.question-card').length + 1);
+        const qLabel = bn(document.querySelectorAll('.question-card:not(.passage-card)').length + 1);
         card.dataset.auto = `${qLabel}${numSuffix()}`;
 
         card.innerHTML = `
             <div class="card-header">
                 <span class="q-badge">প্রশ্ন ${qLabel}</span>
-                <button class="btn-delete-icon" onclick="deleteQuestion(${questionCount})" title="ডিলিট করুন"><i class="idel"></i></button>
+                <div class="card-actions">
+                    <button type="button" class="btn-move" onclick="moveCard(${questionCount},-1)" aria-label="উপরে নিন">↑</button>
+                    <button type="button" class="btn-move" onclick="moveCard(${questionCount},1)" aria-label="নিচে নিন">↓</button>
+                    <button class="btn-delete-icon" onclick="deleteQuestion(${questionCount})" title="ডিলিট করুন"><i class="idel"></i></button>
+                </div>
             </div>
             
             <div class="q-body">
@@ -4023,10 +4233,57 @@ go()})();
         return questionCount;
     }
 
-    function promptTable(qId) {
+    function moveCard(id, dir) {
+        const card = document.getElementById('q-card-' + id);
+        if (!card) return;
+        const sib = dir < 0 ? card.previousElementSibling : card.nextElementSibling;
+        if (!sib) return;
+        if (dir < 0) card.parentNode.insertBefore(card, sib);
+        else card.parentNode.insertBefore(sib, card);
+        renumberQuestions();
+        scheduleSave();
+    }
+
+    /* অনুচ্ছেদ / প্যাসেজ: দাগ নম্বর ও নম্বর ছাড়া শুধু লেখা, প্রশ্নের আগে বসে */
+    function addPassage() {
+        questionCount++;
+        const id = questionCount;
+        const card = document.createElement('div');
+        card.className = 'question-card passage-card';
+        card.id = 'q-card-' + id;
+        card.dataset.type = 'passage';
+        card.innerHTML = `
+            <div class="card-header">
+                <span class="q-badge">অনুচ্ছেদ</span>
+                <div class="card-actions">
+                    <button type="button" class="btn-move" onclick="moveCard(${id},-1)" aria-label="উপরে নিন">↑</button>
+                    <button type="button" class="btn-move" onclick="moveCard(${id},1)" aria-label="নিচে নিন">↓</button>
+                    <button class="btn-delete-icon" onclick="deleteQuestion(${id})" title="ডিলিট করুন"><i class="idel"></i></button>
+                </div>
+            </div>
+            <div class="q-label-row">
+                <label class="rtl-toggle" style="margin-left:0"><input type="checkbox" class="q-rtl" onchange="toggleRtl(this)"> ডান থেকে বাম (আরবি)</label>
+            </div>
+            <div class="q-text-group">
+                <label style="font-weight:bold; font-size:13px; color:var(--primary-color);">অনুচ্ছেদ লিখুন (প্রশ্ন নম্বরের আগে বসবে)</label>
+                <div class="rich-text-tools">
+                    <button type="button" onmousedown="event.preventDefault()" onclick="formatText('bold')"><b>B</b></button>
+                    <button type="button" onmousedown="event.preventDefault()" onclick="formatText('italic')"><i>I</i></button>
+                    <button type="button" onmousedown="event.preventDefault()" onclick="formatText('underline')"><u>U</u></button><button type="button" class="btn-ar" onmousedown="event.preventDefault()" onclick="toggleArabic()" title="সিলেক্ট করা লেখা আরবি ফন্টে">ع</button>
+                    <span class="fs-box"><button type="button" onmousedown="event.preventDefault()" onclick="stepFont(this,-1)" aria-label="ছোট করুন">−</button><input type="text" class="fs-input" inputmode="numeric" value="১৩" onfocus="this.select()" onchange="setFontFromInput(this)" aria-label="লেখার সাইজ"><button type="button" onmousedown="event.preventDefault()" onclick="stepFont(this,1)" aria-label="বড় করুন">+</button></span>
+                </div>
+                <div class="form-control q-text-input" contenteditable="true" data-ph="যেমন: [Read the text and answer the questions no 1, 2, 3 and 4:] I am Sabiha..." style="min-height: 90px; outline: none; background: #fff; padding: 10px; border: 1px solid var(--border-color); border-radius: 8px;"></div>
+            </div>`;
+        document.getElementById('questionsContainer').appendChild(card);
+        if (!restoring) card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        scheduleSave();
+        return id;
+    }
+
+    async function promptTable(qId) {
         const container = document.getElementById(`table-container-${qId}`);
         if (container.querySelector('table')) {
-            if (!confirm("এই প্রশ্নে আগে থেকেই ছক আছে। নতুন ছক বানালে আগেরটি ও তার লেখা মুছে যাবে। চালিয়ে যাবেন?")) return;
+            if (!await mmAsk("এই প্রশ্নে আগে থেকেই ছক আছে। নতুন ছক বানালে আগেরটি ও তার লেখা মুছে যাবে। চালিয়ে যাবেন?")) return;
         }
 
         let cols = prompt("কয়টি কলাম (ঘর) চান? (১-৩০ এর মধ্যে লিখুন)", "3");
@@ -4085,8 +4342,8 @@ go()})();
     }
 
     function startPressTimer(event, cell) {
-        pressTimer = setTimeout(function() {
-            let confirmDelete = confirm("আপনি কি এই ঘরটি ছক থেকে মুছে ফেলতে চান?");
+        pressTimer = setTimeout(async function() {
+            let confirmDelete = await mmAsk("আপনি কি এই ঘরটি ছক থেকে মুছে ফেলতে চান?");
             if (confirmDelete) {
                 cell.remove(); 
                 scheduleSave();
@@ -4152,7 +4409,7 @@ go()})();
 
     function changeNumStyle() {
         const suf = numSuffix();
-        document.querySelectorAll('.question-card').forEach((card, i) => {
+        document.querySelectorAll('.question-card:not(.passage-card)').forEach((card, i) => {
             const lab = bn(i + 1) + suf, inp = card.querySelector('.q-label-input');
             if (inp.value === card.dataset.auto) inp.value = lab;
             card.dataset.auto = lab;
@@ -4162,7 +4419,7 @@ go()})();
     }
 
     function renumberQuestions() {
-        document.querySelectorAll('.question-card').forEach((card, i) => {
+        document.querySelectorAll('.question-card:not(.passage-card)').forEach((card, i) => {
             const lab = bn(i + 1);
             card.querySelector('.q-badge').textContent = 'প্রশ্ন ' + lab;
             const inp = card.querySelector('.q-label-input');
@@ -4453,6 +4710,14 @@ go()})();
 
         let questionsHTML = '';
         cards.forEach((card, index) => {
+            if (card.dataset.type === 'passage') {
+                const pe = card.querySelector('.q-text-input');
+                if (plain(pe) !== '') {
+                    const pr = card.dataset.rtl === '1';
+                    questionsHTML += `<div class="preview-passage${pr ? ' rtl' : ''}"${pr ? ' dir="rtl"' : ''}>${sizedHTML(pe)}</div>`;
+                }
+                return;
+            }
             const qLabelText = esc(card.querySelector('.q-label-input').value);
             const qTextEl = card.querySelector('.q-text-input');
             const qText = plain(qTextEl) !== '' ? sizedHTML(qTextEl) : 'প্রশ্ন লেখা হয়নি';
@@ -4903,6 +5168,10 @@ go()})();
         FIELD_IDS.forEach(id => { d.fields[id] = document.getElementById(id).value; });
         document.querySelectorAll('.question-card').forEach(card => {
             const id = card.id.replace('q-card-', '');
+            if (card.dataset.type === 'passage') {
+                d.questions.push({ type: 'passage', html: card.querySelector('.q-text-input').innerHTML, fs: card.querySelector('.q-text-input').style.fontSize, rtl: card.dataset.rtl === '1' });
+                return;
+            }
             const tc = card.querySelector('.table-container-area');
             const idRe = new RegExp('tbl-' + id + '(?!\\d)', 'g');
             d.questions.push({
@@ -4961,6 +5230,15 @@ go()})();
             document.getElementById('questionsContainer').innerHTML = '';
             questionCount = 0;
             d.questions.forEach(q => {
+                if (q.type === 'passage') {
+                    const pid = addPassage();
+                    const pc = document.getElementById('q-card-' + pid);
+                    const pe = pc.querySelector('.q-text-input');
+                    pe.innerHTML = q.html || '';
+                    pe.style.fontSize = q.fs || '';
+                    if (q.rtl) { pc.querySelector('.q-rtl').checked = true; pc.dataset.rtl = '1'; applyRtlTo(pe, true); }
+                    return;
+                }
                 const id = addNewQuestion();
                 const card = document.getElementById('q-card-' + id);
                 if (q.label !== q.auto) card.querySelector('.q-label-input').value = q.label;
@@ -5002,8 +5280,8 @@ go()})();
         return true;
     }
 
-    function resetAll() {
-        if (!confirm("সব লেখা (প্রশ্ন ও তথ্য) মুছে নতুন করে শুরু করবেন?")) return;
+    async function resetAll() {
+        if (!await mmAsk("সব লেখা (প্রশ্ন ও তথ্য) মুছে নতুন করে শুরু করবেন?")) return;
         try { localStorage.removeItem(DRAFT_KEY); localStorage.removeItem(LOGO_KEY); } catch (e) {}
         FIELD_IDS.forEach(id => { document.getElementById(id).value = ''; });
         setExtras({});

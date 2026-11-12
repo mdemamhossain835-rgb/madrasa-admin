@@ -1210,6 +1210,9 @@ more:'<circle cx="12" cy="5" r="1.4"/><circle cx="12" cy="12" r="1.4"/><circle c
 check:'<path d="m5 12.5 4.5 4.5L19 7"/>',
 x:'<path d="M6 6l12 12M18 6 6 18"/>',
 info:'<circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/>',
+horn:'<path d="M3 9.5A1.5 1.5 0 0 1 4.5 8H8v8H4.5A1.5 1.5 0 0 1 3 14.5z"/><path d="M8 8l8.5-4.5v17L8 16"/><path d="M9.2 16.5l1.2 4h2.4l-1.2-4.7"/><path d="M19.8 9.5a3.6 3.6 0 0 1 0 5"/>',
+wallet:'<path d="M19 7V4a1 1 0 0 0-1-1H5a2 2 0 0 0 0 4h15a1 1 0 0 1 1 1v4h-3a2 2 0 0 0 0 4h3a1 1 0 0 0 1-1v-2a1 1 0 0 0-1-1"/><path d="M3 5v14a2 2 0 0 0 2 2h15a1 1 0 0 0 1-1v-4"/>',
+filechart:'<path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7z"/><path d="M14 2v4a2 2 0 0 0 2 2h4"/><path d="M8 18v-2"/><path d="M12 18v-4"/><path d="M16 18v-6"/>',
 users:'<path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/>',
 gear:'<path d="M10.08 4.85L10.45 2.22L13.55 2.22L13.92 4.85A7.4 7.4 0 0 1 15.70 5.59L17.82 3.99L20.01 6.18L18.41 8.30A7.4 7.4 0 0 1 19.15 10.08L21.78 10.45L21.78 13.55L19.15 13.92A7.4 7.4 0 0 1 18.41 15.70L20.01 17.82L17.82 20.01L15.70 18.41A7.4 7.4 0 0 1 13.92 19.15L13.55 21.78L10.45 21.78L10.08 19.15A7.4 7.4 0 0 1 8.30 18.41L6.18 20.01L3.99 17.82L5.59 15.70A7.4 7.4 0 0 1 4.85 13.92L2.22 13.55L2.22 10.45L4.85 10.08A7.4 7.4 0 0 1 5.59 8.30L3.99 6.18L6.18 3.99L8.30 5.59A7.4 7.4 0 0 1 10.08 4.85z"/><circle cx="12" cy="12" r="3.2"/>',
 newspaper:'<path d="M4 22h16a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2H8a2 2 0 0 0-2 2v16a2 2 0 0 1-2 2Zm0 0a2 2 0 0 1-2-2v-9c0-1.1.9-2 2-2h2"/><path d="M18 14h-8"/><path d="M15 18h-5"/><path d="M10 6h8v4h-8V6Z"/>',
@@ -1219,7 +1222,7 @@ dot:'<circle cx="12" cy="12" r="4"/>'};
 window.IC=function(n,c){return '<svg class="'+(c||'hic')+'" viewBox="0 0 24 24" aria-hidden="true">'+(P[n]||P.dot)+'</svg>'};
 
 /* ইমোজি → আইকন (শুধু আইকনের জায়গায়, বার্তার লেখায় নয়) */
-var M0={'🏠':'home','🎓':'cap','👨‍🏫':'users','👥':'users','📰':'newspaper','🥧':'pie','🏅':'award','👤':'user','👦':'user','✅':'checkc','📋':'clip','📄':'file','📚':'library','📖':'book','📘':'book','📢':'mega','📣':'send','📊':'chart','⚙️':'gear','🗓️':'cal','📅':'cal','🔔':'bell','🗂️':'folder','⏰':'clock','🕘':'clock','⏳':'clock','🕌':'mosque','💬':'msg','📞':'phone','☎️':'phone','✏️':'pencil','✍️':'pencil','🗑':'trash','💳':'card','💵':'cash','💰':'cash','৳':'cash','🧾':'receipt','📈':'up','📉':'down','➕':'plus','👁️':'eye','🔁':'repeat','♻':'refresh','♻️':'refresh','💾':'save','📱':'mobile','🔋':'battery','📍':'pin','🔒':'lock','🎤':'mic','⏹':'stop','⏸':'pause','🔊':'vol','⚠️':'warn','⚠':'warn','⎋':'logout','🧩':'grid','🌙':'moon','🌐':'globe','🏫':'building','👨‍💻':'code','✉️':'mail'};
+var M0={'🏠':'home','🎓':'cap','👨‍🏫':'users','👥':'users','📰':'horn','🥧':'filechart','🏅':'award','👤':'user','👦':'user','✅':'checkc','📋':'clip','📄':'file','📚':'library','📖':'book','📘':'book','📢':'horn','📣':'send','📊':'chart','⚙️':'gear','🗓️':'cal','📅':'cal','🔔':'bell','🗂️':'folder','⏰':'clock','🕘':'clock','⏳':'clock','🕌':'mosque','💬':'msg','📞':'phone','☎️':'phone','✏️':'pencil','✍️':'pencil','🗑':'trash','💳':'card','💵':'cash','💰':'wallet','৳':'wallet','🧾':'receipt','📈':'up','📉':'down','➕':'plus','👁️':'eye','🔁':'repeat','♻':'refresh','♻️':'refresh','💾':'save','📱':'mobile','🔋':'battery','📍':'pin','🔒':'lock','🎤':'mic','⏹':'stop','⏸':'pause','🔊':'vol','⚠️':'warn','⚠':'warn','⎋':'logout','🧩':'grid','🌙':'moon','🌐':'globe','🏫':'building','👨‍💻':'code','✉️':'mail'};
 var M={};Object.keys(M0).forEach(function(k){M[k.replace(/\uFE0F/g,'')]=M0[k]});
 var KEYS=Object.keys(M).sort(function(a,b){return b.length-a.length});
 var SLOTS='.nav b,.fc .fi,.tile>b,.act button>b,.shi,.sec,#mnu .link>span,.row>button,.row>.av,.row .chip,.link>button,button.tile,button.strip,.ndbh b,.wgi,.dtc1,.dtc2 span,.dtce,#md h3,.hjb h3,main h3,#hwvbox b,.dblink';
@@ -3788,6 +3791,8 @@ go()})();
         .btn-move { width: 32px; height: 32px; border-radius: 50%; border: 1px solid var(--border-color); background: #fff; color: var(--primary-color); font-size: 16px; font-weight: bold; line-height: 1; cursor: pointer; padding: 0; }
         .btn-move:active { background: var(--primary-light); }
         .passage-card { border-left-color: #b7791f; }
+        .btn-pass { width: 100%; margin: 0 0 10px; padding: 7px 10px; font: inherit; font-size: 13px; font-weight: bold; color: #92610f; background: #fdf3df; border: 1px dashed #d9a72e; border-radius: 10px; cursor: pointer; }
+        .btn-pass:active { background: #f8e6bd; }
         .passage-card .q-badge { background: #fdf3df; color: #92610f; }
         .preview-passage { font-size: var(--qfs, 13px); line-height: 1.45; margin-bottom: 8px; }
         .preview-passage.rtl { text-align: right; }
@@ -3955,7 +3960,7 @@ go()})();
 
     <div class="section-header">
         <h3>প্রশ্ন তালিকা</h3>
-        <div style="display:flex;gap:8px"><button class="btn-add" style="background:#b7791f" onclick="addPassage()">+ অনুচ্ছেদ</button><button class="btn-add" onclick="addNewQuestion()">+ প্রশ্ন যোগ করুন</button></div>
+        <div style="display:flex;gap:8px"><button class="btn-add" style="background:#b7791f" onclick="addPassageTop()">+ অনুচ্ছেদ (ওপরে)</button><button class="btn-add" onclick="addNewQuestion()">+ প্রশ্ন যোগ করুন</button></div>
     </div>
 
     <div id="questionsContainer"></div>
@@ -4187,6 +4192,7 @@ go()})();
                 </div>
             </div>
             
+            <button type="button" class="btn-pass" onclick="addPassageAbove(${questionCount})">＋ এই প্রশ্নের ওপরে অনুচ্ছেদ যোগ করুন</button>
             <div class="q-body">
                 <div class="q-text-group">
                     <div class="q-label-row">
@@ -4238,6 +4244,14 @@ go()})();
         return questionCount;
     }
 
+    function addPassageTop() {
+        addPassage(document.querySelector('#questionsContainer > .question-card'));
+    }
+
+    function addPassageAbove(id) {
+        addPassage(document.getElementById('q-card-' + id));
+    }
+
     function moveCard(id, dir) {
         const card = document.getElementById('q-card-' + id);
         if (!card) return;
@@ -4250,7 +4264,7 @@ go()})();
     }
 
     /* অনুচ্ছেদ / প্যাসেজ: দাগ নম্বর ও নম্বর ছাড়া শুধু লেখা, প্রশ্নের আগে বসে */
-    function addPassage() {
+    function addPassage(beforeCard) {
         questionCount++;
         const id = questionCount;
         const card = document.createElement('div');
@@ -4279,8 +4293,14 @@ go()})();
                 </div>
                 <div class="form-control q-text-input" contenteditable="true" data-ph="যেমন: [Read the text and answer the questions no 1, 2, 3 and 4:] I am Sabiha..." style="min-height: 90px; outline: none; background: #fff; padding: 10px; border: 1px solid var(--border-color); border-radius: 8px;"></div>
             </div>`;
-        document.getElementById('questionsContainer').appendChild(card);
-        if (!restoring) card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        const cont = document.getElementById('questionsContainer');
+        if (beforeCard && beforeCard.parentNode === cont) cont.insertBefore(card, beforeCard);
+        else cont.appendChild(card);
+        if (!restoring) {
+            card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            const ed = card.querySelector('.q-text-input');
+            setTimeout(() => { try { ed.focus(); } catch (e) {} }, 350);
+        }
         scheduleSave();
         return id;
     }

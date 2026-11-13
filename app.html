@@ -3792,6 +3792,24 @@ go()})();
         .btn-move:active { background: var(--primary-light); }
         .passage-card { border-left-color: #b7791f; }
         .break-card { border-left-color: #2563eb; background: #f5f9ff; }
+        input[type="range"] { touch-action: pan-y; }
+        .slider-group .fs-box button { border: 0; background: #f9f9f9; min-width: 34px; height: 34px; padding: 0; font-size: 18px; font-weight: bold; cursor: pointer; color: var(--text-color); }
+        .btn-saved-open { width: 100%; margin: 0 0 14px; padding: 12px; font: inherit; font-size: 15px; font-weight: bold; color: var(--primary-color); background: var(--primary-light); border: 1px dashed var(--primary-color); border-radius: 12px; cursor: pointer; }
+        .qm-ov { position: fixed; inset: 0; z-index: 100; background: rgba(15,23,42,.55); display: flex; align-items: center; justify-content: center; padding: 14px; }
+        .qm-card { width: 100%; max-width: 440px; max-height: 86vh; overflow: auto; background: #fff; border-radius: 18px; padding: 16px; box-shadow: 0 20px 50px rgba(0,0,0,.3); }
+        .qm-t { font-size: 17px; margin: 0 0 10px; color: var(--primary-color); }
+        .qm-l { font-size: 13px; font-weight: bold; color: var(--primary-color); display: block; margin-bottom: 4px; }
+        .qm-b { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 12px; }
+        .qm-btn { flex: 1 1 auto; padding: 10px 12px; border-radius: 12px; border: 1px solid var(--border-color); background: #fff; color: var(--text-color); font: inherit; font-size: 14px; font-weight: bold; cursor: pointer; }
+        .qm-btn.p { background: var(--primary-color); border-color: var(--primary-color); color: #fff; }
+        .qm-btn.d { color: #b42323; border-color: #f0b4b4; background: #fdeeee; }
+        .qm-row { border: 1px solid #e3e9e6; border-radius: 14px; padding: 10px; margin-bottom: 8px; }
+        .qm-row.cur { border-color: var(--primary-color); background: var(--primary-light); }
+        .qm-i b { display: block; font-size: 15px; word-break: break-word; }
+        .qm-i small { display: block; color: #64748b; margin-top: 2px; font-size: 12px; }
+        .qm-a { display: flex; gap: 6px; margin-top: 8px; }
+        .qm-a .qm-btn { padding: 7px 8px; font-size: 13px; }
+        .qm-e { color: #64748b; text-align: center; line-height: 1.7; margin: 16px 0; }
         .break-card .q-badge { background: #e3eeff; color: #1e40af; }
         .break-note { font-size: 13px; color: #475569; line-height: 1.6; margin: 0; }
         .chip.on { background: var(--primary-color); color: #fff; }
@@ -3815,6 +3833,7 @@ go()})();
             <h2>📖 প্রশ্নপত্রের তথ্য</h2>
             <p>ধাপ ১/২ — প্রথমে পরীক্ষার তথ্য পূরণ করুন</p>
         </div>
+        <button type="button" class="btn-saved-open" onclick="openSaved()">📂 সংরক্ষিত প্রশ্নপত্র খুলুন (<span class="saved-count">০</span>)</button>
 
     <div class="form-row">
         <div class="form-group">
@@ -3865,6 +3884,10 @@ go()})();
             <p>ধাপ ২/২ — প্রশ্ন লিখুন ও প্রিন্ট করুন</p>
             <button class="btn-new-question" onclick="addNewQuestion()">+ নতুন প্রশ্ন যোগ করুন</button>
             <button class="btn-new-question" style="background:transparent;color:#fff;border:1px solid #fff;font-size:14px;padding:8px 14px;margin-top:8px" onclick="goStep1()">← তথ্য পরিবর্তন করুন</button>
+            <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:8px">
+                <button class="btn-new-question" style="background:#fff;color:var(--primary-color);font-size:14px;padding:8px 14px;margin-top:0" onclick="saveCurrent()">💾 সংরক্ষণ</button>
+                <button class="btn-new-question" style="background:transparent;color:#fff;border:1px solid #fff;font-size:14px;padding:8px 14px;margin-top:0" onclick="openSaved()">📂 সংরক্ষিত (<span class="saved-count">০</span>)</button>
+            </div>
             <button class="btn-new-question" style="background:transparent;color:#fff;border:1px solid #fff;font-size:14px;padding:8px 14px;margin-top:8px" onclick="resetAll()"><i class="idel"></i> সব মুছে নতুন শুরু</button>
             <div class="more-menu" id="moreMenu" onclick="event.stopPropagation()">
     <div class="tools-box">
@@ -4381,18 +4404,7 @@ go()})();
         }
         tableHTML += `</table>`;
         
-        tableHTML += `
-            <div class="slider-group">
-                <div class="slider-row-table">
-                    <span style="width: 60px;">লম্বা:</span>
-                    <input type="range" min="30" max="120" value="50" oninput="resizeTableHeight('tbl-${qId}', this.value);">
-                </div>
-                <div class="slider-row-table">
-                    <span style="width: 60px;">চওড়া:</span>
-                    <input type="range" min="30" max="120" value="50" oninput="resizeTableWidth('tbl-${qId}', this.value);">
-                </div>
-            </div>
-        `;
+        tableHTML += tableControls(qId, 50, 50);
         
         container.innerHTML = tableHTML;
         scheduleSave();
@@ -4411,6 +4423,29 @@ go()})();
     function cancelPressTimer() {
         clearTimeout(pressTimer);
     }
+
+    /* ছক ছোট-বড়: স্লাইডারের বদলে − / + বাটন (স্ক্রল করার সময় ভুলে বদলে যেত) */
+    function tableControls(id, h, w) {
+        const row = (lab, k, v) => `<div class="slider-row-table"><span style="width:60px;">${lab}</span><span class="fs-box"><button type="button" onclick="stepTable(${id},'${k}',-5)" aria-label="কমান">−</button><input type="text" class="fs-input tb-${k}" inputmode="numeric" value="${bn(v)}" onfocus="this.select()" onchange="setTableDim(${id},'${k}',this.value)" aria-label="${lab}"><button type="button" onclick="stepTable(${id},'${k}',5)" aria-label="বাড়ান">+</button></span></div>`;
+        return `<div class="slider-group">${row('লম্বা:', 'h', h)}${row('চওড়া:', 'w', w)}</div>`;
+    }
+
+    function tableDim(id, k) {
+        const td = document.querySelector('#tbl-' + id + ' td');
+        if (!td) return 50;
+        return parseInt(k === 'h' ? td.style.height : td.style.minWidth) || 50;
+    }
+
+    function setTableDim(id, k, val) {
+        const raw = parseFloat(String(val).replace(/[০-৯]/g, d => BN_DIGITS.indexOf(d)));
+        const n = Math.max(20, Math.min(200, Math.round(isNaN(raw) ? 50 : raw)));
+        if (k === 'h') resizeTableHeight('tbl-' + id, n); else resizeTableWidth('tbl-' + id, n);
+        const inp = document.querySelector('#table-container-' + id + ' .tb-' + k);
+        if (inp) inp.value = bn(n);
+        scheduleSave();
+    }
+
+    function stepTable(id, k, d) { setTableDim(id, k, tableDim(id, k) + d); }
 
     function resizeTableHeight(tblId, size) {
         const table = document.getElementById(tblId);
@@ -5045,6 +5080,103 @@ go()})();
     }
 
 
+    function fontsReady() {
+        return (document.fonts && document.fonts.ready) ? document.fonts.ready : Promise.resolve();
+    }
+
+    const HQ_SCALE = 3.2; /* A4 ≈ ৩০০ DPI */
+    let dlTimer;
+    function dlStatus(msg, kind) {
+        clearTimeout(dlTimer);
+        const n = document.getElementById('dlNote');
+        n.className = kind || '';
+        n.textContent = msg;
+        n.style.display = msg ? 'block' : 'none';
+        if (msg && kind !== 'busy') dlTimer = setTimeout(() => dlStatus(''), kind === 'ok' ? 8000 : 15000);
+    }
+
+    function withTimeout(p, ms) {
+        return Promise.race([p, new Promise((_, rej) => setTimeout(() => rej(new Error('timeout')), ms))]);
+    }
+
+    function blobToBase64(blob) {
+        return new Promise((res, rej) => {
+            const r = new FileReader();
+            r.onload = () => res(String(r.result).split(',')[1]);
+            r.onerror = () => rej(r.error);
+            r.readAsDataURL(blob);
+        });
+    }
+
+    /* ফাইল সংরক্ষণ: ১) অ্যাপের Filesystem+Share প্লাগইন ২) ফোনের শেয়ার ৩) সাধারণ ডাউনলোড */
+    async function saveBlob(blob, name) {
+        try {
+            const C = (window.parent && window.parent.Capacitor) || window.Capacitor;
+            if (C && C.isPluginAvailable && C.isPluginAvailable('Filesystem') && C.isPluginAvailable('Share')) {
+                const FS = (C.Plugins && C.Plugins.Filesystem) || C.registerPlugin('Filesystem');
+                const SH = (C.Plugins && C.Plugins.Share) || C.registerPlugin('Share');
+                const data = await blobToBase64(blob);
+                const w = await FS.writeFile({ path: name, data: data, directory: 'CACHE' });
+                await SH.share({ title: name, url: w.uri, dialogTitle: 'প্রশ্নপত্র সংরক্ষণ করুন' });
+                return 'share';
+            }
+        } catch (e) {
+            const msg = String((e && (e.message || e.name)) || e);
+            if (/cancel|abort|dismiss/i.test(msg)) return 'cancel';
+            window.__dlErr = msg;
+        }
+        try {
+            const file = new File([blob], name, { type: blob.type });
+            if (navigator.canShare && navigator.canShare({ files: [file] })) {
+                await navigator.share({ files: [file], title: name });
+                return 'share';
+            }
+        } catch (e) {
+            if (e && e.name === 'AbortError') return 'cancel';
+        }
+        const a = document.createElement('a');
+        a.href = URL.createObjectURL(blob);
+        a.download = name;
+        document.body.appendChild(a);
+        a.click();
+        setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 4000);
+        return 'download';
+    }
+
+    function dlDone(method, label) {
+        if (method === 'cancel') { dlStatus(''); return; }
+        if (method === 'share') dlStatus('✅ ' + label + ' তৈরি হয়েছে। খোলা উইন্ডো থেকে Files, Drive বা WhatsApp বেছে সেভ করুন।', 'ok');
+        else dlStatus('⚠️ ' + label + ' সেভের চেষ্টা করা হয়েছে, কিন্তু এই অ্যাপ থেকে ফোনে সেভ হয়েছে কি না নিশ্চিত নই। Downloads ফোল্ডারে ফাইল না পেলে অ্যাপে ফাইল সেভের সুবিধা যোগ করতে হবে।' + (window.__dlErr ? ' [কারণ: ' + window.__dlErr + ']' : ''), 'warn');
+    }
+
+    function blobToDataURL(blob) {
+        return new Promise((res, rej) => {
+            const r = new FileReader();
+            r.onload = () => res(r.result);
+            r.onerror = () => rej(r.error);
+            r.readAsDataURL(blob);
+        });
+    }
+
+    /* আঁকা ছবি সম্পূর্ণ সাদা কি না (লেখার গাঢ় পিক্সেল গোনা হয়) */
+    function isBlankCanvas(c) {
+        try {
+            const w = 800, h = Math.max(1, Math.round(w * c.height / c.width));
+            const t = document.createElement('canvas');
+            t.width = w; t.height = h;
+            const x = t.getContext('2d');
+            x.fillStyle = '#fff'; x.fillRect(0, 0, w, h);
+            x.drawImage(c, 0, 0, w, h);
+            const d = x.getImageData(0, 0, w, h).data;
+            let dark = 0;
+            for (let i = 0; i < d.length; i += 4) {
+                if (d[i] < 150 && d[i + 1] < 150 && d[i + 2] < 150) dark++;
+            }
+            return dark < 150;
+        } catch (e) { return false; }
+    }
+
+    /* স্ক্রল/ট্রান্সফর্ম/মিডিয়া-কুয়েরি ছাড়া পরিষ্কার একটি কপি, ছবি আঁকার জন্য */
     function makeCaptureCopy(src) {
         const clone = src.cloneNode(true);
         clone.querySelectorAll('[id]').forEach(e => e.removeAttribute('id'));
@@ -5244,6 +5376,7 @@ go()})();
             arFont: document.getElementById('arFontSelector').value,
             numStyle: document.getElementById('numStyle').value,
             hdrLang: document.getElementById('hdrLang').value,
+            savedId: currentSavedId,
             extras: readExtras(),
             fonts: customFonts.slice(),
             logoSize: document.getElementById('logoSizeSlider').value,
@@ -5268,7 +5401,7 @@ go()})();
                 fs: card.querySelector('.q-text-input').style.fontSize,
                 marksFs: card.querySelector('.q-marks-input').style.fontSize,
                 rtl: card.dataset.rtl === '1',
-                table: tc.querySelector('table') ? tc.innerHTML.replace(idRe, 'tbl-__ID__') : '',
+                table: tc.querySelector('table') ? tc.querySelector('table').outerHTML.replace(idRe, 'tbl-__ID__') : '',
                 subs: Array.from(card.querySelectorAll('.sub-row')).map(r => ({
                     label: r.querySelector('.sub-label-input').value,
                     html: r.querySelector('.sub-text-input').innerHTML,
@@ -5283,9 +5416,9 @@ go()})();
         try { localStorage.setItem(DRAFT_KEY, JSON.stringify(collectDraft())); } catch (e) {}
     }
 
-    function restoreDraft() {
-        let d = null;
-        try { d = JSON.parse(localStorage.getItem(DRAFT_KEY) || 'null'); } catch (e) { d = null; }
+    function restoreDraft(dObj) {
+        let d = dObj || null;
+        if (!d) { try { d = JSON.parse(localStorage.getItem(DRAFT_KEY) || 'null'); } catch (e) { d = null; } }
         if (!d || !d.questions || !d.questions.length) return false;
 
         restoring = true;
@@ -5293,6 +5426,7 @@ go()})();
             FIELD_IDS.forEach(id => { if (d.fields && d.fields[id] != null) document.getElementById(id).value = d.fields[id]; });
             (d.fonts || []).forEach(n => { registerFont(n); customFonts.push(n); });
 
+            currentSavedId = d.savedId || '';
             if (d.hdrLang === 'en' || d.hdrLang === 'bn') { document.getElementById('hdrLang').value = d.hdrLang; syncHdrLangUI(); }
             const ns = document.getElementById('numStyle');
             if (d.numStyle === '.' || d.numStyle === '।') ns.value = d.numStyle;
@@ -5343,12 +5477,10 @@ go()})();
                 if (q.table) {
                     const tc = document.getElementById('table-container-' + id);
                     tc.innerHTML = q.table.split('tbl-__ID__').join('tbl-' + id);
+                    const oldCtl = tc.querySelector('.slider-group');
+                    if (oldCtl) oldCtl.remove();
                     const td = tc.querySelector('td');
-                    const rs = tc.querySelectorAll('input[type=range]');
-                    if (td && rs.length === 2) {
-                        rs[0].value = parseInt(td.style.height) || 50;
-                        rs[1].value = parseInt(td.style.minWidth) || 50;
-                    }
+                    tc.insertAdjacentHTML('beforeend', tableControls(id, td ? (parseInt(td.style.height) || 50) : 50, td ? (parseInt(td.style.minWidth) || 50) : 50));
                 }
                 (q.subs || []).forEach(s => {
                     const row = addSubQuestion(id);
@@ -5368,8 +5500,105 @@ go()})();
         return true;
     }
 
+    /* ---------- সংরক্ষিত প্রশ্নপত্র (নাম দিয়ে রাখা, পরে খুলে এডিট করা) ---------- */
+    const SAVED_KEY = 'mm_qp_saved_v1';
+    let currentSavedId = '';
+
+    function loadLib() { try { const a = JSON.parse(localStorage.getItem(SAVED_KEY) || '[]'); return Array.isArray(a) ? a : []; } catch (e) { return []; } }
+    function storeLib(a) {
+        try { localStorage.setItem(SAVED_KEY, JSON.stringify(a)); return true; }
+        catch (e) { alert('সংরক্ষণ হয়নি: ফোনের স্টোরেজ ভরে গেছে। পুরনো কিছু প্রশ্নপত্র মুছে আবার চেষ্টা করুন।'); return false; }
+    }
+    function updateSavedCount() { const n = bn(loadLib().length); document.querySelectorAll('.saved-count').forEach(e => { e.textContent = n; }); }
+    function defaultName() {
+        const v = id => document.getElementById(id).value.trim();
+        return [v('examName'), v('examClass'), v('examSubject')].filter(Boolean).join(' - ') || 'প্রশ্নপত্র';
+    }
+    function fmtDate(ts) { const d = new Date(ts); return bn(String(d.getDate()).padStart(2, '0') + '/' + String(d.getMonth() + 1).padStart(2, '0') + '/' + d.getFullYear()); }
+    function closeModal() { const m = document.getElementById('qpModal'); if (m) m.remove(); }
+    function openModal(html) {
+        closeModal();
+        const o = document.createElement('div');
+        o.id = 'qpModal'; o.className = 'qm-ov';
+        o.innerHTML = '<div class="qm-card">' + html + '</div>';
+        o.addEventListener('click', e => { if (e.target === o) closeModal(); });
+        document.body.appendChild(o);
+    }
+
+    function saveCurrent() {
+        const cur = currentSavedId ? loadLib().find(x => x.id === currentSavedId) : null;
+        const nm = cur ? cur.name : defaultName();
+        openModal('<h3 class="qm-t">প্রশ্নপত্র সংরক্ষণ</h3><label class="qm-l">নাম</label><input id="qmName" class="form-control" maxlength="80" value="' + esc(nm) + '"><div class="qm-b">' +
+            (cur ? '<button class="qm-btn p" onclick="doSave(false)">আপডেট করুন</button><button class="qm-btn" onclick="doSave(true)">নতুন হিসেবে রাখুন</button>' : '<button class="qm-btn p" onclick="doSave(true)">সংরক্ষণ করুন</button>') +
+            '<button class="qm-btn" onclick="closeModal()">বাতিল</button></div>');
+        setTimeout(() => { const i = document.getElementById('qmName'); if (i) { i.focus(); i.select(); } }, 60);
+    }
+
+    function doSave(asNew) {
+        const name = (document.getElementById('qmName').value || '').trim() || defaultName();
+        const lib = loadLib();
+        let item = (!asNew && currentSavedId) ? lib.find(x => x.id === currentSavedId) : null;
+        if (!item) { item = { id: 'qp' + Date.now().toString(36) + Math.random().toString(36).slice(2, 5) }; lib.push(item); }
+        const prev = currentSavedId;
+        currentSavedId = item.id;
+        item.name = name; item.ts = Date.now(); item.data = collectDraft();
+        if (!storeLib(lib)) { currentSavedId = prev; return; }
+        saveDraft(); closeModal(); updateSavedCount();
+        alert('"' + name + '" সংরক্ষণ হয়েছে।');
+    }
+
+    function openSaved() {
+        const lib = loadLib().sort((a, b) => b.ts - a.ts);
+        const rows = lib.map(x => {
+            const f = (x.data && x.data.fields) || {};
+            const nq = ((x.data && x.data.questions) || []).filter(q => !q.type).length;
+            const meta = [f.examClass, f.examSubject].filter(Boolean).map(esc).concat([fmtDate(x.ts), bn(nq) + 'টি প্রশ্ন']).join(' • ');
+            return '<div class="qm-row' + (x.id === currentSavedId ? ' cur' : '') + '"><div class="qm-i"><b>' + esc(x.name) + '</b><small>' + meta + '</small></div>' +
+                '<div class="qm-a"><button class="qm-btn p" onclick="loadSaved(\'' + x.id + '\')">খুলুন</button><button class="qm-btn" onclick="copySaved(\'' + x.id + '\')">কপি</button><button class="qm-btn d" onclick="delSaved(\'' + x.id + '\')">মুছুন</button></div></div>';
+        }).join('');
+        openModal('<h3 class="qm-t">সংরক্ষিত প্রশ্নপত্র</h3>' + (rows || '<p class="qm-e">এখনো কোনো প্রশ্নপত্র সংরক্ষণ করা হয়নি।<br>প্রশ্ন লিখে "💾 সংরক্ষণ" চাপুন।</p>') + '<div class="qm-b"><button class="qm-btn" onclick="closeModal()">বন্ধ করুন</button></div>');
+    }
+
+    async function loadSaved(id) {
+        const x = loadLib().find(i => i.id === id);
+        if (!x) return;
+        const hasContent = FIELD_IDS.some(k => document.getElementById(k).value.trim() !== '') ||
+            Array.from(document.querySelectorAll('.q-text-input')).some(el => plain(el) !== '');
+        if (hasContent && id !== currentSavedId && !await mmAsk('বর্তমান লেখা বদলে "' + x.name + '" খুলবেন? বর্তমানটি সংরক্ষণ না করা থাকলে হারিয়ে যাবে।')) return;
+        closeModal();
+        if (!restoreDraft(x.data)) { alert('এই প্রশ্নপত্র খোলা যায়নি'); return; }
+        currentSavedId = id;
+        document.getElementById('previewWrapper').style.display = 'none';
+        goStep2();
+        saveDraft();
+        updateSavedCount();
+        alert('"' + x.name + '" খোলা হয়েছে। এডিট করে "💾 সংরক্ষণ" চাপলে আপডেট হবে।');
+    }
+
+    function copySaved(id) {
+        const lib = loadLib(), x = lib.find(i => i.id === id);
+        if (!x) return;
+        const nid = 'qp' + Date.now().toString(36) + Math.random().toString(36).slice(2, 5);
+        const c = { id: nid, name: x.name + ' (কপি)', ts: Date.now(), data: JSON.parse(JSON.stringify(x.data)) };
+        c.data.savedId = nid;
+        lib.push(c);
+        if (!storeLib(lib)) return;
+        updateSavedCount(); openSaved();
+        alert('কপি তৈরি হয়েছে।');
+    }
+
+    async function delSaved(id) {
+        const lib = loadLib(), x = lib.find(i => i.id === id);
+        if (!x) return;
+        if (!await mmAsk('"' + x.name + '" মুছে ফেলবেন? এটি ফেরানো যাবে না।')) return;
+        if (!storeLib(lib.filter(i => i.id !== id))) return;
+        if (currentSavedId === id) currentSavedId = '';
+        updateSavedCount(); openSaved();
+    }
+
     async function resetAll() {
-        if (!await mmAsk("সব লেখা (প্রশ্ন ও তথ্য) মুছে নতুন করে শুরু করবেন?")) return;
+        if (!await mmAsk("সব লেখা (প্রশ্ন ও তথ্য) মুছে নতুন করে শুরু করবেন? (সংরক্ষিত প্রশ্নপত্র মুছবে না)")) return;
+        currentSavedId = '';
         try { localStorage.removeItem(DRAFT_KEY); localStorage.removeItem(LOGO_KEY); } catch (e) {}
         FIELD_IDS.forEach(id => { document.getElementById(id).value = ''; });
         setExtras({});
@@ -5418,6 +5647,7 @@ go()})();
     }
 
     window.onload = function() {
+        updateSavedCount();
         const restored = restoreDraft();
         if (!restored) addNewQuestion();
         changeFont();

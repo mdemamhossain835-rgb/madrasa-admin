@@ -3538,7 +3538,7 @@ go()})();
 
         .table-container-area { margin-top: 15px; width: 100%; position: relative; }
         
-        .resizable-table { border-collapse: collapse; font-size: 20px; transition: 0.2s; margin: 0 auto; position: relative; }
+        .resizable-table { border-collapse: collapse; font-size: 13px; transition: 0.2s; margin: 0 auto; position: relative; }
         .resizable-table td { 
             border: 1px solid #000; 
             padding: 5px; 
@@ -3768,11 +3768,11 @@ go()})();
         .fs-box { border-radius: 8px; height: 34px; }
         .rich-text-tools .fs-box button { min-width: 30px; height: 34px; padding: 0; font-size: 17px; }
         .fs-input { width: 40px; height: 34px; font-size: 14px; }
-        .q-text-input { min-height: 46px !important; padding: 8px 10px !important; border-radius: 8px !important; font-size: 14px; }
+        .q-text-input { min-height: 46px !important; padding: 8px 10px !important; border-radius: 8px !important; font-size: 13px; }
         .q-footer { margin-top: 8px; }
         .q-marks-group { width: auto; display: flex; align-items: center; gap: 8px; }
         .q-marks-group label { font-size: 13px !important; margin: 0; }
-        .q-marks-input { width: 84px; min-height: 34px; padding: 6px 10px !important; border-radius: 8px !important; font-size: 14px; }
+        .q-marks-input { width: 84px; min-height: 34px; padding: 6px 10px !important; border-radius: 8px !important; font-size: 13px; }
         .table-container-area { margin-top: 0; }
         .table-container-area:empty { display: none; }
         .sub-questions-section { margin-top: 12px; padding: 10px; border-radius: 10px; }
@@ -3782,7 +3782,7 @@ go()})();
         .sub-row { gap: 6px; margin-bottom: 8px; }
         .sub-label { width: 52px; flex: none; }
         .sub-label .form-control { padding: 6px; font-size: 14px; min-height: 36px; text-align: center; }
-        .sub-text-input { min-height: 38px; padding: 8px 10px; font-size: 14px; }
+        .sub-text-input { min-height: 38px; padding: 8px 10px; font-size: 13px; }
         .btn-remove-sub { width: 34px; height: 32px; }
         .section-header { margin-top: 14px; padding-top: 14px; margin-bottom: 12px; }
         .section-header h3 { font-size: 17px; }
@@ -3793,6 +3793,8 @@ go()})();
         .passage-card { border-left-color: #b7791f; }
         .break-card { border-left-color: #2563eb; background: #f5f9ff; }
         input[type="range"] { touch-action: pan-y; }
+        .tbl-scroll { overflow-x: auto; -webkit-overflow-scrolling: touch; max-width: 100%; padding-bottom: 4px; }
+        .tbl-scroll .resizable-table { margin: 0 0 6px 0; }
         .slider-group .fs-box button { border: 0; background: #f9f9f9; min-width: 34px; height: 34px; padding: 0; font-size: 18px; font-weight: bold; cursor: pointer; color: var(--text-color); }
         .btn-saved-open { width: 100%; margin: 0 0 14px; padding: 12px; font: inherit; font-size: 15px; font-weight: bold; color: var(--primary-color); background: var(--primary-light); border: 1px dashed var(--primary-color); border-radius: 12px; cursor: pointer; }
         .qm-ov { position: fixed; inset: 0; z-index: 100; background: rgba(15,23,42,.55); display: flex; align-items: center; justify-content: center; padding: 14px; }
@@ -4001,7 +4003,6 @@ go()})();
 
     <div class="section-header">
         <h3>প্রশ্ন তালিকা</h3>
-        <div style="display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end"><button class="btn-add" style="background:#b7791f" onclick="addPassageTop()">+ অনুচ্ছেদ (ওপরে)</button><button class="btn-add" onclick="addNewQuestion()">+ প্রশ্ন যোগ করুন</button></div>
     </div>
 
     <div id="questionsContainer"></div>
@@ -4387,7 +4388,7 @@ go()})();
         let dir = prompt("লেখা কোন দিক থেকে শুরু হবে?\n১ = বাম থেকে ডান (বাংলা/ইংরেজি)\n২ = ডান থেকে বাম (আরবি)", "1");
         let direction = (dir === "2") ? "rtl" : "ltr";
         
-        let tableHTML = `<table class="resizable-table" dir="${direction}" id="tbl-${qId}" style="font-size: 20px; margin-bottom: 10px; ${direction === 'rtl' ? 'direction: rtl; text-align: right;' : 'direction: ltr; text-align: left;'}">`;
+        let tableHTML = `<div class="tbl-scroll"><table class="resizable-table" dir="${direction}" id="tbl-${qId}" style="font-size: 13px; margin-bottom: 10px; ${direction === 'rtl' ? 'direction: rtl; text-align: right;' : 'direction: ltr; text-align: left;'}">`;
         for(let i=0; i<rows; i++) {
             tableHTML += `<tr>`;
             for(let j=0; j<cols; j++) {
@@ -4402,9 +4403,9 @@ go()})();
             }
             tableHTML += `</tr>`;
         }
-        tableHTML += `</table>`;
+        tableHTML += `</table></div>`;
         
-        tableHTML += tableControls(qId, 50, 50);
+        tableHTML += tableControls(qId, 50, 50, 13);
         
         container.innerHTML = tableHTML;
         scheduleSave();
@@ -4425,27 +4426,31 @@ go()})();
     }
 
     /* ছক ছোট-বড়: স্লাইডারের বদলে − / + বাটন (স্ক্রল করার সময় ভুলে বদলে যেত) */
-    function tableControls(id, h, w) {
+    function tableControls(id, h, w, f) {
         const row = (lab, k, v) => `<div class="slider-row-table"><span style="width:60px;">${lab}</span><span class="fs-box"><button type="button" onclick="stepTable(${id},'${k}',-5)" aria-label="কমান">−</button><input type="text" class="fs-input tb-${k}" inputmode="numeric" value="${bn(v)}" onfocus="this.select()" onchange="setTableDim(${id},'${k}',this.value)" aria-label="${lab}"><button type="button" onclick="stepTable(${id},'${k}',5)" aria-label="বাড়ান">+</button></span></div>`;
-        return `<div class="slider-group">${row('লম্বা:', 'h', h)}${row('চওড়া:', 'w', w)}</div>`;
+        return `<div class="slider-group">${row('লম্বা:', 'h', h)}${row('চওড়া:', 'w', w)}${row('লেখা:', 'f', f)}</div>`;
     }
 
     function tableDim(id, k) {
         const td = document.querySelector('#tbl-' + id + ' td');
         if (!td) return 50;
+        if (k === 'f') { const t = document.getElementById('tbl-' + id); return Math.round(parseFloat(t && t.style.fontSize) || 13); }
         return parseInt(k === 'h' ? td.style.height : td.style.minWidth) || 50;
     }
 
     function setTableDim(id, k, val) {
         const raw = parseFloat(String(val).replace(/[০-৯]/g, d => BN_DIGITS.indexOf(d)));
-        const n = Math.max(20, Math.min(200, Math.round(isNaN(raw) ? 50 : raw)));
-        if (k === 'h') resizeTableHeight('tbl-' + id, n); else resizeTableWidth('tbl-' + id, n);
+        const lo = k === 'f' ? 6 : 20, hi = k === 'f' ? 60 : 200;
+        const n = Math.max(lo, Math.min(hi, Math.round(isNaN(raw) ? (k === 'f' ? 13 : 50) : raw)));
+        if (k === 'h') resizeTableHeight('tbl-' + id, n);
+        else if (k === 'w') resizeTableWidth('tbl-' + id, n);
+        else { const t = document.getElementById('tbl-' + id); if (t) t.style.fontSize = n + 'px'; }
         const inp = document.querySelector('#table-container-' + id + ' .tb-' + k);
         if (inp) inp.value = bn(n);
         scheduleSave();
     }
 
-    function stepTable(id, k, d) { setTableDim(id, k, tableDim(id, k) + d); }
+    function stepTable(id, k, d) { setTableDim(id, k, tableDim(id, k) + (k === 'f' ? Math.sign(d) : d)); }
 
     function resizeTableHeight(tblId, size) {
         const table = document.getElementById(tblId);
@@ -4901,6 +4906,7 @@ go()})();
             if(tableEl) {
                 const clonedTable = tableEl.cloneNode(true);
                 clonedTable.className = 'print-table'; 
+                clonedTable.style.fontSize = 'calc(' + (parseFloat(tableEl.style.fontSize) || 13) + 'px * var(--qfs, 13px) / 13)';
                 
                 clonedTable.querySelectorAll('td').forEach(td => {
                     Array.from(td.attributes).forEach(a => {
@@ -5476,11 +5482,12 @@ go()})();
                 card.querySelector('.q-marks-input').style.fontSize = q.marksFs || '';
                 if (q.table) {
                     const tc = document.getElementById('table-container-' + id);
-                    tc.innerHTML = q.table.split('tbl-__ID__').join('tbl-' + id);
+                    tc.innerHTML = '<div class="tbl-scroll">' + q.table.split('tbl-__ID__').join('tbl-' + id) + '</div>';
                     const oldCtl = tc.querySelector('.slider-group');
                     if (oldCtl) oldCtl.remove();
                     const td = tc.querySelector('td');
-                    tc.insertAdjacentHTML('beforeend', tableControls(id, td ? (parseInt(td.style.height) || 50) : 50, td ? (parseInt(td.style.minWidth) || 50) : 50));
+                    const tb = tc.querySelector('table');
+                    tc.insertAdjacentHTML('beforeend', tableControls(id, td ? (parseInt(td.style.height) || 50) : 50, td ? (parseInt(td.style.minWidth) || 50) : 50, Math.round(parseFloat(tb && tb.style.fontSize) || 13)));
                 }
                 (q.subs || []).forEach(s => {
                     const row = addSubQuestion(id);

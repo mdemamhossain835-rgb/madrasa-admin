@@ -508,7 +508,7 @@ const nid=(a,p)=>p+String(Math.max(0,...a.map(x=>+x.id.slice(3)))+1).padStart(a=
 function mcode(){var m=(window.getMid&&window.getMid())||'',h=5381,i;for(i=0;i<m.length;i++)h=((h*33)^m.charCodeAt(i))>>>0;var c=h.toString(36).toUpperCase();while(c.length<4)c='0'+c;return c.slice(-4)}
 function nidM(a,k){var c=mcode(),pre=c+(k==='T'?'-T':'-'),mx=0;a.forEach(function(x){var i=String(x.id||'');if(i.indexOf(pre)===0){var n=parseInt(i.slice(pre.length),10);if(n>mx)mx=n}});return pre+String(mx+1).padStart(k==='T'?3:4,'0')}
 function form(title,f,v,h){fh=h;const d=document.createElement('div');d.id='md';d.style.cssText='position:fixed;inset:0;background:#0009;z-index:20;display:flex;align-items:flex-end;justify-content:center';
-d.innerHTML=`<div style="background:var(--card);width:100%;max-width:480px;border-radius:20px 20px 0 0;padding:18px;max-height:90vh;overflow:auto"><h3 style="margin:0 0 6px">${title}</h3>${f.map(x=>x[2]==='perms'?permHTML(v):x[2]==='month'?`<label style="display:block;font-size:13px;color:var(--mute);margin-top:8px">${x[1]}<select class="search" style="margin:4px 0 0" name="${x[0]}">${monthOptions().map(k=>`<option value="${k}" ${k===v[x[0]]?'selected':''}>${monLabel(k)}</option>`).join('')}</select></label>`:x[2]==='photo'?`<div style="text-align:center;margin-top:8px"><div id="pv_${x[0]}" class="av" data-k="${(title&&String(title).indexOf('শিক্ষক')>-1?'t':title&&String(title).indexOf('অ্যাডমিন')>-1?'a':'s')}" style="width:80px;height:80px;margin:0 auto;font-size:28px">${v[x[0]]?`<img src="${v[x[0]]}" style="width:100%;height:100%;object-fit:cover;border-radius:50%">`:avLogo((title&&String(title).indexOf('শিক্ষক')>-1?'t':title&&String(title).indexOf('অ্যাডমিন')>-1?'a':'s'))}</div><label style="display:block;font-size:13px;color:var(--mute);margin-top:6px">${x[1]}<input type="file" accept="image/*" style="display:block;margin:6px auto" onchange="phSel(this,'h_${x[0]}','pv_${x[0]}')"></label><button type="button" onclick="phClr('h_${x[0]}','pv_${x[0]}')" style="display:block;margin:2px auto 0;padding:7px 16px;border-radius:10px;border:1px solid var(--line);background:var(--card);color:#d64545;font:inherit;font-size:13px;cursor:pointer"><i class=idel></i> ছবি মুছুন</button><input type="hidden" name="${x[0]}" id="h_${x[0]}" value="${esc(v[x[0]])}"></div>`:(x[0]==='c'||x[0]==='cls')?`<label style="display:block;font-size:13px;color:var(--mute);margin-top:8px">${x[1]}<select class="search" style="margin:4px 0 0" name="${x[0]}">${classes.map(c=>`<option value="${esc(c)}" ${c===v[x[0]]?'selected':''}>${c}</option>`).join('')}</select></label>`:(x[2]&&x[2].indexOf('select:')===0?`<label style="display:block;font-size:13px;color:var(--mute);margin-top:8px">${x[1]}<select class="search" style="margin:4px 0 0" name="${x[0]}">${x[2].slice(7).split(',').map(o=>`<option value="${esc(o)}" ${o===v[x[0]]?'selected':''}>${o}</option>`).join('')}</select></label>`:`<label style="display:block;font-size:13px;color:var(--mute);margin-top:8px">${x[1]}<input class="search" style="margin:4px 0 0" name="${x[0]}" value="${esc(v[x[0]])}" ${x[2]||''}></label>`)).join('')}<datalist id="subdl">${(typeof subjList==='function'?subjList():[]).map(sb=>`<option value="${esc(sb)}">`).join('')}</datalist><div style="display:flex;gap:10px;margin-top:14px"><button class="tile" style="background:var(--g);flex:1;padding:12px" onclick="sv()">সংরক্ষণ করুন</button><button class="tile" style="background:#5b6b7d;flex:1;padding:12px" onclick="cl()">বাতিল</button></div></div>`;document.body.appendChild(d)}
+d.innerHTML=`<div style="background:var(--card);width:100%;max-width:480px;border-radius:20px 20px 0 0;padding:18px;max-height:90vh;overflow:auto"><h3 style="margin:0 0 6px">${title}</h3>${f.map(x=>x[2]==='perms'?permHTML(v):x[2]==='monthopt'?`<label style="display:block;font-size:13px;color:var(--mute);margin-top:8px">${x[1]}<select class="search" style="margin:4px 0 0" name="${x[0]}"><option value="">— নির্ধারিত নয় —</option>${monthOptions().map(k=>`<option value="${k}" ${k===v[x[0]]?'selected':''}>${monLabel(k)}</option>`).join('')}</select></label>`:x[2]==='month'?`<label style="display:block;font-size:13px;color:var(--mute);margin-top:8px">${x[1]}<select class="search" style="margin:4px 0 0" name="${x[0]}">${monthOptions().map(k=>`<option value="${k}" ${k===v[x[0]]?'selected':''}>${monLabel(k)}</option>`).join('')}</select></label>`:x[2]==='photo'?`<div style="text-align:center;margin-top:8px"><div id="pv_${x[0]}" class="av" data-k="${(title&&String(title).indexOf('শিক্ষক')>-1?'t':title&&String(title).indexOf('অ্যাডমিন')>-1?'a':'s')}" style="width:80px;height:80px;margin:0 auto;font-size:28px">${v[x[0]]?`<img src="${v[x[0]]}" style="width:100%;height:100%;object-fit:cover;border-radius:50%">`:avLogo((title&&String(title).indexOf('শিক্ষক')>-1?'t':title&&String(title).indexOf('অ্যাডমিন')>-1?'a':'s'))}</div><label style="display:block;font-size:13px;color:var(--mute);margin-top:6px">${x[1]}<input type="file" accept="image/*" style="display:block;margin:6px auto" onchange="phSel(this,'h_${x[0]}','pv_${x[0]}')"></label><button type="button" onclick="phClr('h_${x[0]}','pv_${x[0]}')" style="display:block;margin:2px auto 0;padding:7px 16px;border-radius:10px;border:1px solid var(--line);background:var(--card);color:#d64545;font:inherit;font-size:13px;cursor:pointer"><i class=idel></i> ছবি মুছুন</button><input type="hidden" name="${x[0]}" id="h_${x[0]}" value="${esc(v[x[0]])}"></div>`:(x[0]==='c'||x[0]==='cls')?`<label style="display:block;font-size:13px;color:var(--mute);margin-top:8px">${x[1]}<select class="search" style="margin:4px 0 0" name="${x[0]}">${classes.map(c=>`<option value="${esc(c)}" ${c===v[x[0]]?'selected':''}>${c}</option>`).join('')}</select></label>`:(x[2]&&x[2].indexOf('select:')===0?`<label style="display:block;font-size:13px;color:var(--mute);margin-top:8px">${x[1]}<select class="search" style="margin:4px 0 0" name="${x[0]}">${x[2].slice(7).split(',').map(o=>`<option value="${esc(o)}" ${o===v[x[0]]?'selected':''}>${o}</option>`).join('')}</select></label>`:`<label style="display:block;font-size:13px;color:var(--mute);margin-top:8px">${x[1]}<input class="search" style="margin:4px 0 0" name="${x[0]}" value="${esc(v[x[0]])}" ${x[2]||''}></label>`)).join('')}<datalist id="subdl">${(typeof subjList==='function'?subjList():[]).map(sb=>`<option value="${esc(sb)}">`).join('')}</datalist><div style="display:flex;gap:10px;margin-top:14px"><button class="tile" style="background:var(--g);flex:1;padding:12px" onclick="sv()">সংরক্ষণ করুন</button><button class="tile" style="background:#5b6b7d;flex:1;padding:12px" onclick="cl()">বাতিল</button></div></div>`;document.body.appendChild(d)}
 function cl(){window.__formReq=null;const m=document.getElementById('md');if(m)m.remove()}
 function sv(){const o={};document.querySelectorAll('#md input,#md select').forEach(i=>{o[i.name]=i.type==='checkbox'?i.checked:i.value.trim()});if(!o.n){alert('নাম লিখুন');return}const rq=window.__formReq;if(rq){for(const r of rq){const v=o[r[0]]||'';if(!v&&r[1]){alert(r[1]+' অবশ্যই লিখতে হবে');return}if(v&&r[2]&&!r[2](v)){alert(r[3]);return}}}const perm=[];Object.keys(o).forEach(k=>{if(k.indexOf('perm_')===0){if(o[k])perm.push(k.slice(5));delete o[k]}});if(perm.length||document.getElementById('md').querySelector('[name^="perm_"]'))o.perm=perm;cl();fh(o)}
 function shell(title,body,back,plus){
@@ -534,7 +534,7 @@ function openMenu(){closeMenu();
  document.body.appendChild(d)}
 const xe0=t=>String(t==null?'':t).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 function draw(){({home:home,students:stu,teachers:teachV,fees:fees,notices:noteV,prof:profV,child:child}[tab]||home)()}
-const SF=[['n','ছাত্রের নাম'],['photo','ছবি','photo'],['r','রোল','type=number'],['c','ক্লাস'],['pw','অভিভাবকের পাসওয়ার্ড (লগইনের জন্য)','type=text placeholder=খালি রাখলে ডিফল্ট পাসওয়ার্ড চলবে'],['fee','ধার্যকৃত মাসিক বেতন (৳)','type=number placeholder=খালি রাখলে সাধারণ বেতন প্রযোজ্য হবে'],['g','অভিভাবকের নাম'],['ph','অভিভাবকের মোবাইল নম্বর','type=tel'],['ph2','বিকল্প মোবাইল নম্বর','type=tel'],['vil','গ্রাম/মহল্লা'],['po','ডাকঘর'],['upz','উপজেলা/থানা'],['dist','জেলা']];
+const SF=[['n','ছাত্রের নাম'],['photo','ছবি','photo'],['r','রোল','type=number'],['c','ক্লাস'],['pw','অভিভাবকের পাসওয়ার্ড (লগইনের জন্য)','type=text placeholder=খালি রাখলে ডিফল্ট পাসওয়ার্ড চলবে'],['fee','ধার্যকৃত মাসিক বেতন (৳)','type=number placeholder=খালি রাখলে সাধারণ বেতন প্রযোজ্য হবে'],['g','অভিভাবকের নাম'],['ph','অভিভাবকের মোবাইল নম্বর','type=tel'],['ph2','বিকল্প মোবাইল নম্বর','type=tel'],['vil','গ্রাম/মহল্লা'],['po','ডাকঘর'],['upz','উপজেলা/থানা'],['dist','জেলা'],['adm','ভর্তির মাস (আগের মাসের বকেয়া গণনার শুরু)','monthopt']];
 function rows(l){return l.map(s=>`<div class="row"><div class="av">${avHTML(s.photo,s.n[0],'s')}</div><div class="info" style="cursor:pointer" onclick="stuInfo('${s.id}')"><b>${s.n}</b><small>ID: ${s.id} | রোল: ${bn(s.r)} | ${s.c||'৩ (আম)'}</small></div><button class="kb" aria-label="আরও অপশন" onclick="stuMenu('${s.id}')">⋮</button></div>`).join('')||'<p class="note">কোনো ছাত্র পাওয়া যায়নি। অন্য নাম বা রোল লিখে খুঁজুন।</p>'}
 function cyc(id){const s=students.find(x=>x.id===id),o=['Present','Absent','Late'];s.s=o[(o.indexOf(s.s)+1)%3];save('mm_s',students);draw()}
 function prof(id){cur=id;tab='prof';draw()}
@@ -542,8 +542,8 @@ function profV(){const s=students.find(x=>x.id===cur);if(!s){tab='students';retu
  shell('ছাত্র প্রোফাইল',`<div class="hello"><div class="av">${avHTML(s.photo,s.n[0],'s')}</div><div><b>${s.n}</b><br><small style="color:var(--mute)">ID: ${s.id} | রোল: ${bn(s.r)}</small></div></div><h3>বিস্তারিত</h3>`+
  [['ক্লাস',s.c||'৩ (আম)'],['ধার্যকৃত মাসিক বেতন',tk(feeOf(s.id))+((s.fee!=null&&s.fee!=='')?' (নিজস্ব)':(classFee[s.c]!=null&&classFee[s.c]!==''?' (শ্রেণী অনুযায়ী)':' (সাধারণ)'))],['অভিভাবক',s.g||'—'],['ফোন',s.ph||'—'],['ঠিকানা',[s.vil,s.po,s.upz,s.dist].filter(Boolean).join(', ')||'—']].map(x=>`<div class="link"><span><small>${x[0]}</small>${x[1]}</span></div>`).join('')+
  msgBlock(s)+((hasPerm('stu_edit')||hasPerm('stu_del'))?`<div class="act" data-keep="1" style="grid-template-columns:${hasPerm('stu_edit')&&hasPerm('stu_del')?'1fr 1fr':'1fr'}">${hasPerm('stu_edit')?'<button onclick="editS()"><b>✏️</b>সম্পাদনা</button>':''}${hasPerm('stu_del')?'<button onclick="delS()"><b><i class=idel></i></b>মুছে ফেলুন</button>':''}</div>`:''),role==='guardian'?'child':'students')}
-function addS(){if(!hasPerm('stu_add')){deny();return}form('নতুন ছাত্র ভর্তি',SF,{c:stuCls||selClass||'৩ (আম)'},o=>{ensureClass(o.c);students.push({n:o.n,pw:o.pw,id:nidM(students,'S'),r:+o.r||students.length+1,c:o.c,fee:o.fee,photo:o.photo,g:o.g,ph:o.ph,vil:o.vil,po:o.po,upz:o.upz,dist:o.dist,s:'Present'});save('mm_s',students);tab='students';draw()});stuFormMark(true)}
-function editS(){if(!hasPerm('stu_edit')){deny();return}const s=students.find(x=>x.id===cur);form('তথ্য সম্পাদনা',SF,s,o=>{ensureClass(o.c);Object.assign(s,o,{r:+o.r||s.r});save('mm_s',students);draw()});stuFormMark(false)}
+function addS(){if(!hasPerm('stu_add')){deny();return}form('নতুন ছাত্র ভর্তি',SF,{c:stuCls||selClass||'৩ (আম)',adm:M0},o=>{ensureClass(o.c);students.push({n:o.n,pw:o.pw,id:nidM(students,'S'),r:+o.r||students.length+1,c:o.c,fee:o.fee,photo:o.photo,g:o.g,ph:o.ph,ph2:o.ph2,adm:o.adm,vil:o.vil,po:o.po,upz:o.upz,dist:o.dist,s:'Present'});save('mm_s',students);tab='students';draw()});stuFormMark(true)}
+function editS(){if(!hasPerm('stu_edit')){deny();return}const s=students.find(x=>x.id===cur);form('তথ্য সম্পাদনা',SF.concat([['feeFrom','ছাত্রের ফি বদলালে কোন মাস থেকে কার্যকর (আগের মাসের হিসাব বদলাবে না)','month']]),Object.assign({},s,{feeFrom:M0}),o=>{ensureClass(o.c);const ff=o.feeFrom||M0;delete o.feeFrom;const oo=_num(s.fee),nn=_num(o.fee);if(oo!==nn)o.fh=(s.fh?s.fh+';':'')+ff+'|'+(oo==null?'':oo)+'|'+(nn==null?'':nn);Object.assign(s,o,{r:+o.r||s.r});save('mm_s',students);draw()});stuFormMark(false)}
 async function delS(){if(!hasPerm('stu_del')){deny();return}if(await mmConfirm('এই ছাত্রকে মুছে ফেলবেন? এটি ফেরানো যাবে না।')){students=students.filter(x=>x.id!==cur);save('mm_s',students);tab='students';draw()}}
 /* ===== অনুমতি (রোল ও পারমিশন): ক্যাটালগ ===== */
 const PCAT=[
@@ -618,6 +618,7 @@ const localDay=()=>new Date(Date.now()-new Date().getTimezoneOffset()*6e4).toISO
 const T0=localDay(),M0=T0.slice(0,7);
 const tk=n=>'৳ '+bn((+n||0).toLocaleString('en-US')),dd=d=>fmtDMY(d),sum=l=>l.reduce((a,x)=>a+(+x.a||0),0);
 let MF=load('mm_mf',1000),classFee=load('mm_classfee',{});
+let feeCarry=0;
 let fp=load('mm_f',[1,2,3,4].map(i=>({id:'RCP-000'+i,sid:'STU00'+i,a:1000,t:'মাসিক ফি',d:T0,m:M0})));
 let ex=load('mm_e',[{t:'বিদ্যুৎ বিল',a:2500,d:T0,m:M0,c:'খরচ'}]);
 let rs=load('mm_r',{}),hw=load('mm_hw',{}),at=load('mm_a',{});
@@ -627,8 +628,24 @@ at[T0]=at[T0]||{};students.forEach(s=>{if(!at[T0][s.id])at[T0][s.id]=s.s});save(
 let tat=load('mm_tat',{});tat[T0]=tat[T0]||{};teachers.forEach(t=>{if(!tat[T0][t.id])tat[T0][t.id]=t.s});save('mm_tat',tat);
 const LK={Fees:"tab='fees'",Result:"tab='res'",Notice:"tab='notices'",Attendance:"tab='att'",Profile:"cur=myChild;tab='prof'",HW:"cur=myChild;tab='homev'",Contact:"tab='contact'",Notif:"tab='notif'",Routine:"tab='rtnv'"};
 const stu_=id=>students.find(s=>s.id===id)||{n:'(মুছে ফেলা ছাত্র)',r:'-'};
-const feeOf=id=>{const st=students.find(x=>x.id===id);if(st&&st.fee!=null&&st.fee!=='')return +st.fee;if(st&&classFee[st.c]!=null&&classFee[st.c]!=='')return +classFee[st.c];return MF};
-const dueOf=id=>Math.max(0,feeOf(id)-fp.filter(p=>p.sid===id&&p.m===M0&&p.t==='মাসিক ফি').reduce((a,p)=>a+ +p.a,0));
+let feeLog={d:[],c:{}};
+const _num=v=>(v==null||v==='')?null:+v;
+function decFH(x){return String(x||'').split(';').filter(Boolean).map(function(e){var p=e.split('|');return{f:p[0],o:_num(p[1]),v:_num(p[2])}}).sort(function(a,b){return a.f<b.f?-1:a.f>b.f?1:0})}
+function decCH(x){return String(x||'').split(';').filter(Boolean).map(function(e){var p=e.split('|'),c='';try{c=decodeURIComponent(p[1]||'')}catch(er){c=p[1]||''}return{m:p[0],o:c}}).sort(function(a,b){return a.m<b.m?-1:a.m>b.m?1:0})}
+function classAt(st,mo){var h=decCH(st&&st.ch);for(var i=0;i<h.length;i++)if(mo<h[i].m)return h[i].o;return st?st.c:''}
+function scopeVal(h,mo,cur){if(!h||!h.length)return cur;if(mo<h[0].f)return h[0].o;var i=-1;h.forEach(function(e,j){if(e.f<=mo)i=j});return i===h.length-1?cur:h[i].v}
+function feeAtS(st,mo){var sv=_num(scopeVal(decFH(st&&st.fh),mo,st?st.fee:null));if(sv!=null)return sv;var c=classAt(st,mo),cv=_num(scopeVal(feeLog.c[c],mo,classFee[c]));if(cv!=null)return cv;var dv=_num(scopeVal(feeLog.d,mo,MF));return dv==null?0:dv}
+const feeOf=id=>feeAtS(students.find(x=>x.id===id),M0);
+const MFT='মাসিক ফি',MFP='মাসিক ফি (বাকি অংশ)',isMF=t=>t===MFT||t===MFP,carryOn=()=>!!feeCarry;
+let _mfF=null,_mfN=-1,_mfM={},_mfE={};
+function mfMap(){if(_mfF!==fp||_mfN!==fp.length){_mfF=fp;_mfN=fp.length;_mfM={};_mfE={};fp.forEach(p=>{if(!isMF(p.t))return;const k=p.sid+'|'+p.m;_mfM[k]=(_mfM[k]||0)+(+p.a||0);if(p.m&&(!_mfE[p.sid]||p.m<_mfE[p.sid]))_mfE[p.sid]=p.m})}return _mfM}
+const mfPaid=(id,mo)=>mfMap()[id+'|'+mo]||0;
+const dueOf=id=>Math.max(0,feeOf(id)-mfPaid(id,M0));
+function dueStart(s){if(/^\d{4}-\d{2}$/.test(s.adm||''))return clampM(s.adm);mfMap();return _mfE[s.id]?clampM(_mfE[s.id]):M0}
+function dueMonthsOf(id){const s=students.find(x=>x.id===id);if(!s)return [];const out=[];for(let mo=carryOn()?dueStart(s):M0;mo<=M0;mo=mAdd(mo,1)){const d=Math.max(0,feeAtS(s,mo)-mfPaid(id,mo));if(d>0)out.push({m:mo,d:d})}return out}
+const totDue=id=>dueMonthsOf(id).reduce((a,x)=>a+x.d,0);
+function feeBtn(id){const d=dueMonthsOf(id)[0];return d?'m:"'+d.m+'",a:'+d.d:'a:'+feeOf(id)}
+function rcSt(p){if(!isMF(p.t))return 'পরিশোধিত';const st=students.find(x=>x.id===p.sid);if(!st)return 'পরিশোধিত';const f=feeInfo(st,p.m);return f.due>0?'আংশিক (মাসের বাকি '+tk(f.due)+')':'পরিশোধিত'}
 const R_=(av,t,sub,r)=>`<div class="row"><div class="av">${av}</div><div class="info"><b>${t}</b><small>${sub}</small></div>${r||''}</div>`;
 const K=(a,b)=>`<div class="link"><span>${a}</span><b>${b}</b></div>`;
 const _mb=msgBlock;msgBlock=function(s){return role==='guardian'?'':_mb(s)};
@@ -641,7 +658,7 @@ function cyc(id){const s=students.find(x=>x.id===id),o=['Present','Absent','Late
 /* ফি ও হিসাব */
 function fees(){const G=role==='guardian',ids=G?[myChild]:students.map(s=>s.id),P=fp.filter(p=>ids.includes(p.sid));
  const fm=G?feeMonths(myChild):{},pm=Object.keys(fm).sort().reverse();
- shell('Fees & Accounts',`<div class="money"><div style="background:var(--no);color:var(--not)">এ মাসের বকেয়া<b>${tk(ids.reduce((a,i)=>a+dueOf(i),0))}</b></div><div style="background:var(--ok);color:var(--okt)">এ মাসে আদায়<b>${tk(sum(P.filter(p=>p.m===M0)))}</b></div>${G?'':`<div style="background:var(--card);border:1px solid var(--line)">মোট আদায়<b>${tk(sum(P))}</b></div>`}</div>`+
+ shell('Fees & Accounts',`<div class="money"><div style="background:var(--no);color:var(--not)">${carryOn()?'মোট বকেয়া':'এ মাসের বকেয়া'}<b>${tk(ids.reduce((a,i)=>a+totDue(i),0))}</b></div><div style="background:var(--ok);color:var(--okt)">এ মাসে আদায়<b>${tk(sum(P.filter(p=>p.m===M0)))}</b></div>${G?'':`<div style="background:var(--card);border:1px solid var(--line)">মোট আদায়<b>${tk(sum(P))}</b></div>`}</div>`+
  (G?'':`<div class="act">${[['➕','ফি আদায়',"tab='feePick';draw()"],['📄','বকেয়া তালিকা',"tab='dues';draw()"],['🧾','রসিদ',"tab='rcpt';draw()"],['📈','আয়',"tab='inc';draw()"],['📉','ব্যয়',"tab='exp';draw()"]].map(a=>`<button onclick="${a[2]}"><b>${a[0]}</b>${a[1]}</button>`).join('')}</div>`)+
  (G?`<h3>পরিশোধিত মাসসমূহ (${bn(pm.length)} মাস)</h3>`+(pm.map(m=>K(monLabel(m),tk(fm[m]))).join('')||'<p class="note">এখনো কোনো মাসিক ফি পরিশোধ হয়নি।</p>'):'')+
  '<h3>সাম্প্রতিক পেমেন্ট</h3>'+(P.slice(-5).reverse().map(p=>R_(avHTML(stu_(p.sid).photo,'','s'),stu_(p.sid).n,tk(p.a)+' • '+p.t+' • '+dd(p.d),'<span class="chip Paid">পরিশোধিত</span>')).join('')||'<p class="note">এখনো কোনো পেমেন্ট নেই।</p>'),G?'':'home')}
@@ -657,10 +674,10 @@ function payF(def){def=def||{};const S0=students.find(x=>x.id===def.sid);if(!S0)
  if(!o.t){alert('ফি ধরন উল্লেখ করুন');return}const s=S0;if(!+o.a){alert('সঠিক পরিমাণ দিন');return}
  const m=o.m||M0;if(o.t!=='মাসিক ফি'){mkPay(s,o,m);return}
  const k=lockKey(s.id,m),msg='এই ছাত্রের '+monLabel(m)+' মাসের বেতন ইতিমধ্যে পরিশোধ করা হয়েছে।';
- if(payBusy.has(k))return;if(monthPaid(s.id,m)){alert(msg);return}
+ if(payBusy.has(k))return;const f0=feeInfo(s,m),amt0=+o.a;if(f0.paid>0){if(f0.due<=0){alert(msg);return}if(amt0>f0.due){alert('এই মাসে বাকি আছে '+tk(f0.due)+'। এর বেশি নেওয়া যাবে না।');return}mkPay(s,Object.assign({},o,{t:MFP}),m);return}if(f0.total>0&&amt0>f0.total){alert('এই মাসের ফি '+tk(f0.total)+'। এর বেশি নেওয়া যাবে না।');return}
  payBusy.add(k);try{if(window.fbHasLock&&await window.fbHasLock(k)){alert(msg);return}mkPay(s,o,m)}finally{payBusy.delete(k)}})}
-function rc(id){const p=fp.find(x=>x.id===id);if(!p)return;const s=stu_(p.sid);box('<h3 style="text-align:center;margin:0 0 8px">টাকা প্রাপ্তির রসিদ</h3>'+[['রসিদ নং',p.id],['তারিখ',dd(p.d)],['ছাত্র',(p.sn||s.n)+' (রোল '+bn(s.r)+')'],['ছাত্র আইডি',p.sid],['ক্লাস',p.c||s.c||'—'],['ধরন',p.t],['মাস',monLabel(p.m)],['পরিমাণ',tk(p.a)],['স্ট্যাটাস','পরিশোধিত'],['আদায়কারী',p.by||'—']].map(x=>`<div class="link"><span><small>${x[0]}</small>${x[1]}</span></div>`).join(''))}
-function duesV(){const l=students.filter(s=>dueOf(s.id)>0);shell('বকেয়া তালিকা',l.map(s=>R_(avHTML(s.photo,'','s'),s.n,'রোল '+bn(s.r)+' • '+(s.ph||'ফোন নেই'),`<b style="color:var(--not)">${tk(dueOf(s.id))}</b><button aria-label="ফি নিন" onclick='payF({sid:"${s.id}",a:${dueOf(s.id)},t:"মাসিক ফি"})'>💳</button><button aria-label="কল করুন" onclick="dial('${s.ph||''}')">📞</button>`)).join('')||'<p class="note">এ মাসে কোনো বকেয়া নেই। আলহামদুলিল্লাহ!</p>','fees')}
+function rc(id){const p=fp.find(x=>x.id===id);if(!p)return;const s=stu_(p.sid);box('<h3 style="text-align:center;margin:0 0 8px">টাকা প্রাপ্তির রসিদ</h3>'+[['রসিদ নং',p.id],['তারিখ',dd(p.d)],['ছাত্র',(p.sn||s.n)+' (রোল '+bn(s.r)+')'],['ছাত্র আইডি',p.sid],['ক্লাস',p.c||s.c||'—'],['ধরন',p.t],['মাস',monLabel(p.m)],['পরিমাণ',tk(p.a)],['স্ট্যাটাস',rcSt(p)],['আদায়কারী',p.by||'—']].map(x=>`<div class="link"><span><small>${x[0]}</small>${x[1]}</span></div>`).join(''))}
+function duesV(){const l=students.filter(s=>totDue(s.id)>0);shell('বকেয়া তালিকা',l.map(s=>R_(avHTML(s.photo,'','s'),s.n,'রোল '+bn(s.r)+' • '+(s.ph||'ফোন নেই')+(totDue(s.id)>dueOf(s.id)?' • আগের মাসের বকেয়া '+tk(totDue(s.id)-dueOf(s.id)):''),`<b style="color:var(--not)">${tk(totDue(s.id))}</b><button aria-label="ফি নিন" onclick='payF({sid:"${s.id}",${feeBtn(s.id)},t:"মাসিক ফি"})'>💳</button><button aria-label="কল করুন" onclick="dial('${s.ph||''}')">📞</button>`)).join('')||'<p class="note">এ মাসে কোনো বকেয়া নেই। আলহামদুলিল্লাহ!</p>','fees')}
 function dupPays(){const g={};fp.filter(p=>p.t==='মাসিক ফি').forEach(p=>{const k=lockKey(p.sid,p.m);(g[k]=g[k]||[]).push(p)});return Object.keys(g).filter(k=>g[k].length>1).map(k=>g[k])}
 function rcptV(){const D=dupPays(),dk=new Set();D.forEach(l=>l.slice(1).forEach(p=>dk.add(p.id)));
  shell('রসিদ',(D.length?`<p class="note" style="color:var(--not);text-align:left">⚠️ ${bn(D.length)}টি ছাত্র-মাসে একাধিক মাসিক ফি পাওয়া গেছে (⚠️ চিহ্নিত)। নতুন ডুপ্লিকেট আর তৈরি হবে না।</p>`:'')+(role==='admin'?`<button class="tile" style="background:#5b6b7d;width:100%;margin-bottom:10px;padding:10px" onclick="lockOld()">🔒 পুরোনো পেমেন্ট লক করুন (একবারের মাইগ্রেশন)</button>`:'')+fp.slice().reverse().map(p=>{const st=stu_(p.sid);return R_(dk.has(p.id)?'⚠️':'🧾',p.sn||st.n,p.id+' • ID: '+p.sid+' • '+(p.c||st.c||'—')+' • '+(p.m?monLabel(p.m):'')+' • '+dd(p.d)+(p.by?' • আদায়: '+p.by:''),`<b>${tk(p.a)}</b><button aria-label="রসিদ দেখুন" onclick="rc('${p.id}')">👁️</button>`)}).join('')||'<p class="note">কোনো রসিদ নেই।</p>','fees')}
@@ -693,18 +710,19 @@ function hwPray(id,i){const e=hwEnsure(id);e.p[i]=e.p[i]?0:1;save('mm_hw',hw);dr
 function hwToggle(id){const e=hwEnsure(id);e.hw=e.hw?0:1;save('mm_hw',hw);draw()}
 /* রিপোর্ট */
 function repV(){shell('রিপোর্ট',`<div class="grid"><button class="tile" style="background:#0b6b4a" onclick="tab='srep';draw()"><b>🎓</b>ছাত্র রিপোর্ট</button><button class="tile" style="background:#1f6fe0" onclick="tab='trep';draw()"><b>👨‍🏫</b>শিক্ষক রিপোর্ট</button></div><button class="link" style="margin-top:12px" onclick="tab='fin';draw()"><span>আর্থিক ও ফলাফল সারাংশ<small>ফি, ব্যয়, ফলাফল — সবকিছু একসাথে</small></span>›</button>`,'home')}
-function finV(){const ms=x=>x.filter(e=>e.m===M0),days=Object.keys(at).filter(d=>d.startsWith(M0)),inc=sum(ms(fp)),exp=sum(ms(ex)),dl=students.filter(s=>dueOf(s.id)>0),
+function finV(){const ms=x=>x.filter(e=>e.m===M0),days=Object.keys(at).filter(d=>d.startsWith(M0)),inc=sum(ms(fp)),exp=sum(ms(ex)),dl=students.filter(s=>totDue(s.id)>0),
  rl=students.map(s=>(rs[s.id]||[]).length?calc(rs[s.id][rs[s.id].length-1]):null).filter(Boolean),n=k=>students.filter(s=>s.s===k).length,cn=(id,k)=>bn(days.filter(d=>at[d][id]===k).length);
  shell('আর্থিক ও ফলাফল সারাংশ','<h3>ছাত্র পরিসংখ্যান</h3>'+K('মোট ছাত্র',bn(students.length))+K('আজ উপস্থিত',bn(n('Present')))+K('আজ অনুপস্থিত',bn(n('Absent')))+K('আজ দেরি',bn(n('Late')))+
-  '<h3>ফি ও হিসাব (এ মাস)</h3>'+K('ফি আদায়',tk(inc))+K('বকেয়া ('+bn(dl.length)+' জন)',tk(dl.reduce((a,s)=>a+dueOf(s.id),0)))+K('মোট ব্যয়',tk(exp))+K('শিক্ষক বেতন',tk(sum(ms(ex).filter(e=>e.c==='বেতন'))))+K('উদ্বৃত্ত',tk(inc-exp))+
+  '<h3>ফি ও হিসাব (এ মাস)</h3>'+K('ফি আদায়',tk(inc))+K('বকেয়া ('+bn(dl.length)+' জন)',tk(dl.reduce((a,s)=>a+totDue(s.id),0)))+K('মোট ব্যয়',tk(exp))+K('শিক্ষক বেতন',tk(sum(ms(ex).filter(e=>e.c==='বেতন'))))+K('উদ্বৃত্ত',tk(inc-exp))+
  '<h3>ফলাফল</h3>'+K('ফলাফল আছে',bn(rl.length)+' জন')+K('পাসের হার',rl.length?bn(Math.round(rl.filter(c=>!c.f).length/rl.length*100))+'%':'—')+
  '<h3>শিক্ষক</h3>'+K('মোট মাসিক বেতন',tk(sum(teachers.map(t=>({a:t.sal}))))),'rep')}
 /* সেটিংস, ব্যাকআপ */
 function setV(){shell('Settings',`${role==='admin'?'<button class="link" onclick="planV()"><span><small>প্ল্যান</small>ট্রায়াল ও মাসিক সাবস্ক্রিপশন (৳৩০০)</span>›</button>':''}<button class="link" onclick="profEdit()"><span><small>মাদ্রাসার তথ্য</small>নাম, লোগো, ঠিকানা ও প্রতিষ্ঠার তারিখ</span>›</button><button class="link" onclick="adminEdit()"><span><small>অ্যাডমিনের তথ্য</small>নাম, ছবি, ফোন ও ইমেইল</span>›</button><button class="link" onclick="adminPhoneDiag()"><span><small>সমস্যা সমাধান</small>লগইন নম্বর যাচাই ও ঠিক করুন</span>›</button><button class="link wgrow" style="display:none" onclick="wgPin()"><span><small>হোম স্ক্রিন উইজেট</small>উইজেট হোম স্ক্রিনে যোগ করুন</span>›</button>${role==='admin'||role==='teacher'?'<button class="link" onclick="window.__bellFrom=\'set\';tab=\'bell\';draw()"><span><small>ঘণ্টা</small>পিরিয়ডের ঘণ্টার সময়সূচি</span>›</button>':''}<button class="link" onclick="tab='nhub';draw()"><span><small>Notification</small>চালু/বন্ধ, টেমপ্লেট, পাঠানো ও ইতিহাস</span>›</button><button class="link" onclick="tab='classFee';draw()"><span><small>মাসিক ফি</small>ফি নির্ধারণ</span>›</button><button class="link" onclick="purgeRollKeys()"><span><small>একবারের কাজ</small>রোল নম্বর দিয়ে অভিভাবক লগইন বন্ধ করুন</span>›</button>${role==='admin'?'<button class="link" onclick="fbBackup()"><span><small>সম্পূর্ণ ব্যাকআপ</small>Firebase-এর সব ডেটা ফাইলে সেভ করুন</span>›</button>':''}<div class="act"><button onclick="bk()"><b>💾</b>ব্যাকআপ কপি</button><button onclick="rst()"><b>♻️</b>রিস্টোর</button><button onclick="wipe()"><b><i class=idel></i></b>সব মুছুন</button></div><p class="note">ব্যাকআপ কপি করে নিরাপদ জায়গায় রেখে দিন। "সব মুছুন" চাপলে সব তথ্য চলে যাবে।</p>`,'home');setFilt()}
-function classFeeV(){shell('মাসিক ফি (শ্রেণী অনুযায়ী)',`<div class="row"><div class="info"><b>সাধারণ (ডিফল্ট) ফি</b><small>যে শ্রেণীর নিজস্ব ফি সেট করা নেই, তাদের জন্য প্রযোজ্য</small></div><b>${tk(MF)}</b><button aria-label="পরিবর্তন" onclick="setDefaultFee()">✏️</button></div>`+
- classes.map(c=>`<div class="row"><div class="info"><b>${c}</b><small>বর্তমান ফি: ${tk(classFee[c]!=null&&classFee[c]!==''?classFee[c]:MF)}${classFee[c]!=null&&classFee[c]!==''?'':' (সাধারণ)'}</small></div><button aria-label="পরিবর্তন" onclick="setClassFee('${esc(c)}')">✏️</button></div>`).join(''),'set')}
-function setDefaultFee(){form('সাধারণ (ডিফল্ট) মাসিক ফি',[['n','পরিমাণ (৳)','type=number']],{n:MF},o=>{MF=+o.n||MF;save('mm_mf',MF);draw()})}
-function setClassFee(c){form('মাসিক ফি — '+c,[['n','পরিমাণ (৳) — খালি রাখলে সাধারণ ফি প্রযোজ্য হবে','type=number']],{n:classFee[c]!=null?classFee[c]:''},o=>{if(o.n===''){delete classFee[c]}else{classFee[c]=+o.n||0}save('mm_classfee',classFee);draw()})}
+function classFeeV(){shell('মাসিক ফি (শ্রেণী অনুযায়ী)',`<div class="row"><div class="info"><b>আগের মাসের বকেয়া হিসাবে ধরুন</b><small>চালু করলে ছাত্রের ভর্তির মাস (না থাকলে প্রথম ফি-র মাস) থেকে যেসব মাসের ফি বাকি, সব বকেয়ায় যোগ হবে। আগে ছাত্রের ভর্তির মাস ঠিক করে নিন।</small></div>${tglHTML(!!feeCarry,'setCarry()')}</div><div class="row"><div class="info"><b>সাধারণ (ডিফল্ট) ফি</b><small>যে শ্রেণীর নিজস্ব ফি সেট করা নেই, তাদের জন্য প্রযোজ্য</small></div><b>${tk(MF)}</b><button aria-label="পরিবর্তন" onclick="setDefaultFee()">✏️</button></div>`+
+ classes.map(c=>`<div class="row"><div class="info"><b>${c}</b><small>বর্তমান ফি: ${tk(classFee[c]!=null&&classFee[c]!==''?classFee[c]:MF)}${classFee[c]!=null&&classFee[c]!==''?'':' (সাধারণ)'}</small></div><button aria-label="পরিবর্তন" onclick="setClassFee('${esc(c)}')">✏️</button></div>`).join('')+feeHistHTML(),'set')}
+function feeHistHTML(){const L=[];feeLog.d.forEach(e=>L.push(['সাধারণ ফি',e]));Object.keys(feeLog.c).forEach(c=>feeLog.c[c].forEach(e=>L.push([c,e])));if(!L.length)return '';L.sort((a,b)=>a[1].f<b[1].f?1:a[1].f>b[1].f?-1:0);return '<h3>ফি পরিবর্তনের ইতিহাস</h3>'+L.slice(0,30).map(x=>{const e=x[1];return '<div class="link"><span><small>'+monLabel(e.f)+' থেকে কার্যকর</small>'+xe0(x[0])+': '+(_num(e.o)!=null?tk(e.o):'সাধারণ')+' → '+(_num(e.v)!=null?tk(e.v):'সাধারণ')+'</span></div>'}).join('')}
+function setDefaultFee(){form('সাধারণ (ডিফল্ট) মাসিক ফি',[['n','পরিমাণ (৳)','type=number'],['from','কোন মাস থেকে কার্যকর (আগের মাসের হিসাব বদলাবে না)','month']],{n:MF,from:M0},async o=>{const nv=+o.n||MF;if(nv!==MF){if(!await window.feeLogAdd({t:'d',f:o.from||M0,o:MF,v:nv}))return}MF=nv;save('mm_mf',MF);draw()})}
+function setClassFee(c){form('মাসিক ফি — '+c,[['n','পরিমাণ (৳) — খালি রাখলে সাধারণ ফি প্রযোজ্য হবে','type=number'],['from','কোন মাস থেকে কার্যকর (আগের মাসের হিসাব বদলাবে না)','month']],{n:classFee[c]!=null?classFee[c]:'',from:M0},async o=>{const old=_num(classFee[c]),nv=o.n===''?null:(+o.n||0);if(nv!==old){if(!await window.feeLogAdd({t:'c',k:c,f:o.from||M0,o:old,v:nv}))return}if(nv==null){delete classFee[c]}else{classFee[c]=nv}save('mm_classfee',classFee);draw()})}
 function bk(){const o={};Object.keys(localStorage).filter(k=>k.startsWith('mm_')).forEach(k=>o[k]=localStorage.getItem(k));const j=JSON.stringify(o);try{navigator.clipboard.writeText(j).then(()=>alert('ব্যাকআপ কপি হয়েছে'),()=>prompt('কপি করুন',j))}catch(e){prompt('কপি করুন',j)}}
 async function rst(){const j=prompt('ব্যাকআপ পেস্ট করুন');if(!j)return;let o;try{o=JSON.parse(j)}catch(e){alert('ব্যাকআপটি সঠিক নয়');return}if(!await mmConfirm('রিস্টোর করলে বর্তমান সব তথ্য মুছে গিয়ে ব্যাকআপের তথ্য বসে যাবে। আপনি কি নিশ্চিত?'))return;Object.keys(o).forEach(k=>{if(k.startsWith('mm_'))localStorage.setItem(k,o[k])});location.reload()}
 async function wipe(){if(await mmConfirm('সব তথ্য মুছে যাবে। নিশ্চিত?')){Object.keys(localStorage).filter(k=>k.startsWith('mm_')).forEach(k=>localStorage.removeItem(k));location.reload()}}
@@ -746,7 +764,7 @@ function cattV(){const list=students.filter(s=>s.c===selClass),n=k=>list.filter(
 <script>
 function feePick(){const list=students.filter(s=>s.c===selClass);
  shell('বেতন আদায় — ছাত্র নির্বাচন',`<p class="note" style="text-align:left;margin:0 0 8px">ক্লাস বেছে নিন, তারপর ছাত্র নির্বাচন করুন</p><div style="display:flex;gap:8px;overflow-x:auto;padding-bottom:4px;margin-bottom:12px">${classes.map(c=>`<button class="chip" style="min-width:auto;white-space:nowrap;${c===selClass?'background:var(--g);color:#fff':'background:var(--card);border:1px solid var(--line);color:var(--ink)'}" onclick="selClass='${esc(c)}';save('mm_selc',selClass);draw()">${c} (${bn(students.filter(s=>s.c===c).length)})</button>`).join('')}</div>`+
- (list.length?list.map(s=>R_(avHTML(s.photo,'','s'),s.n,'রোল '+bn(s.r)+' • বকেয়া '+tk(dueOf(s.id)),`<button class="tile" style="background:var(--g);padding:8px 14px" onclick='payF({sid:"${s.id}",a:${dueOf(s.id)>0?dueOf(s.id):feeOf(s.id)},t:"মাসিক ফি"})'>নির্বাচন</button>`)).join(''):'<p class="note">এই ক্লাসে কোনো ছাত্র নেই।</p>'),'fees')}
+ (list.length?list.map(s=>R_(avHTML(s.photo,'','s'),s.n,'রোল '+bn(s.r)+' • বকেয়া '+tk(totDue(s.id)),`<button class="tile" style="background:var(--g);padding:8px 14px" onclick='payF({sid:"${s.id}",${feeBtn(s.id)},t:"মাসিক ফি"})'>নির্বাচন</button>`)).join(''):'<p class="note">এই ক্লাসে কোনো ছাত্র নেই।</p>'),'fees')}
 function homeV(){const s=stu_(cur),hl=getHWToday(s.c,T0);shell('নামাজ ও হোমওয়ার্ক',`<div class="hello"><div class="av">${avHTML(s.photo,s.n[0],'s')}</div><div><b>${s.n}</b><br><small style="color:var(--mute)">ID: ${s.id} | রোল: ${bn(s.r)}</small></div></div>
  <div class="link" style="display:block"><small>আজকের বাড়ির কাজ (${s.c||'—'})</small>${hl.length?hl.map(x=>`<div style="margin-top:8px"><b>${x.sj}</b><p style="margin-top:2px">${x.e.t}</p>${x.e.v&&!hwvExpired(T0)?hwvPlayBtn(s.c,T0,x.sj,x.e.v):''}<small style="color:var(--mute)">দিয়েছেন: ${x.e.by}</small></div>`).join(''):'<p style="margin-top:6px">আজ এখনো শিক্ষক বাড়ির কাজ দেননি।</p>'}</div>`+homeBlock(s),'child')}
 </script>
@@ -806,7 +824,7 @@ function dayList(rec,pfx,id){return Object.keys(rec).filter(d=>d.indexOf(pfx)===
 function dayRows(l){return l.map(x=>R_('📅',dd(x.d),'',`<span class="chip ${x.v}">${ATL[x.v]}</span>`)).join('')||'<p class="note">এই মাসে এখনো হাজিরা নেওয়া হয়নি।</p>'}
 function monRows(arr){return arr.map(x=>`<div class="row" style="display:block"><b>${monLabel(x.m)}</b><div style="display:flex;justify-content:space-between;margin-top:4px"><span>উপস্থিত: ${bn(x.p)}</span><span>অনুপস্থিত: ${bn(x.a)}</span><span>দেরি: ${bn(x.l)}</span></div></div>`).join('')||'<p class="note">এই বছরে এখনো কোনো রেকর্ড নেই।</p>'}
 function stCount(rec,id,pfx){let p=0,a=0,l=0;Object.keys(rec).filter(d=>d.indexOf(pfx)===0).forEach(d=>{const v=rec[d][id];if(v==='Present')p++;else if(v==='Absent')a++;else if(v==='Late')l++});return{p,a,l}}
-function feeMonths(id){const mo={};fp.filter(p=>p.sid===id&&p.t==='মাসিক ফি').forEach(p=>{mo[p.m]=(mo[p.m]||0)+ +p.a});return mo}
+function feeMonths(id){const mo={};fp.filter(p=>p.sid===id&&isMF(p.t)).forEach(p=>{mo[p.m]=(mo[p.m]||0)+ +p.a});return mo}
 function rows2(l){return l.map(s=>`<div class="row" style="cursor:pointer" onclick="cur='${s.id}';tab='shist';draw()"><div class="av">${avHTML(s.photo,s.n[0],'s')}</div><div class="info"><b>${s.n}</b><small>ID: ${s.id} | রোল: ${bn(s.r)} | ${s.c||'—'}</small></div>›</div>`).join('')||'<p class="note">কোনো শিক্ষার্থী পাওয়া যায়নি।</p>'}
 function srepBody(){if(rq){const ql=rq.toLowerCase();return rows2(students.filter(s=>(s.n+' '+s.id).toLowerCase().indexOf(ql)>-1))}
  return `<div class="stats" style="grid-template-columns:1fr"><div class="stat"><b>${bn(students.length)}</b><small>মোট শিক্ষার্থী (প্রতিষ্ঠান)</small></div></div><h3>শ্রেণী অনুযায়ী দেখুন</h3>`+(classes.map(c=>`<button class="link" onclick="rcls='${esc(c)}';tab='chist';draw()"><span>${c}<small>${bn(students.filter(s=>s.c===c).length)} জন শিক্ষার্থী</small></span>›</button>`).join('')||'<p class="note">কোনো শ্রেণী নেই।</p>')}
@@ -833,7 +851,7 @@ function calNew(mo,r){const p=mo.split('-').map(Number),g=calGrid(p[0],p[1]),wd=
  for(let d=1;d<=g.days;d++){const v=r.st[d]||'',c=C[v];cells+=`<div style="text-align:center"><div style="width:34px;height:34px;margin:0 auto;border-radius:50%;background:${c[0]};color:${c[1]};display:flex;align-items:center;justify-content:center;font-weight:600;font-size:13px;${v?'':'opacity:.5'}">${bn(d)}</div><div style="font-size:10px;height:14px;color:${c[1]}">${c[2]}</div></div>`}
  const lg=(c,t)=>`<span style="display:inline-flex;align-items:center;gap:4px"><i style="width:10px;height:10px;border-radius:50%;background:${c};display:inline-block"></i>${t}</span>`;
  return `<div style="display:grid;grid-template-columns:repeat(7,1fr);gap:4px;margin-bottom:6px">${wd.map(w=>`<div style="text-align:center;font-size:11px;color:var(--mute)">${w}</div>`).join('')}</div><div style="display:grid;grid-template-columns:repeat(7,1fr);gap:6px 4px">${cells}</div><div style="display:flex;flex-wrap:wrap;gap:10px;justify-content:center;margin-top:12px;font-size:12px;color:var(--mute)">${lg('var(--okt)','✓ উপস্থিত')}${lg('var(--not)','✕ অনুপস্থিত')}${lg('var(--latet)','দেরি')}${lg('#8a5fc9','ছুটি')}</div>`}
-function feeInfo(s,mo){const pays=fp.filter(p=>p.sid===s.id&&p.t==='মাসিক ফি'&&p.m===mo).sort((a,b)=>a.d<b.d?-1:1),paid=pays.reduce((a,p)=>a+(+p.a||0),0),total=feeOf(s.id);return{pays,paid,total,due:Math.max(0,total-paid)}}
+function feeInfo(s,mo){const pays=fp.filter(p=>p.sid===s.id&&isMF(p.t)&&p.m===mo).sort((a,b)=>a.d<b.d?-1:1),paid=pays.reduce((a,p)=>a+(+p.a||0),0),total=feeAtS(s,mo);return{pays,paid,total,due:Math.max(0,total-paid)}}
 function feeKind(s,mo){if(mo>M0)return '';const f=feeInfo(s,mo);return f.total>0&&f.paid>=f.total?'paid':f.paid>0?'part':f.total>0?'due':''}
 function shist(){const s=students.find(x=>x.id===cur);if(!s){tab='srep';return draw()}
  const r=attMonth(s,repMon),p=repMon.split('-'),feeOK=canAny.apply(null,PR_FEES),fy=p[0];
@@ -850,7 +868,7 @@ function rowsM(list){const feeOK=canAny.apply(null,PR_FEES);let np=0,nd=0;
  const body=list.map(s=>{const r=attMonth(s,repMon);let b='';if(feeOK){const k=feeKind(s,repMon);if(k==='paid')np++;else if(k==='due'||k==='part')nd++;b=k==='paid'?'<span style="color:var(--okt)">৳ ✓ পরিশোধিত</span>':k==='part'?'<span style="color:var(--latet)">৳ আংশিক</span>':k==='due'?'<span style="color:var(--not)">৳ বকেয়া</span>':'<span style="color:var(--mute)">৳ —</span>'}
   return `<div class="row" style="display:block;cursor:pointer" onclick="cur='${s.id}';repFM='';tab='shist';draw()"><div style="display:flex;justify-content:space-between;gap:8px"><b>${s.n}</b><small style="color:var(--mute)">রোল ${bn(s.r)} ›</small></div><div style="display:flex;gap:12px;flex-wrap:wrap;font-size:13px;margin-top:4px"><span style="color:var(--okt)">✓ ${bn(r.p)}</span><span style="color:var(--not)">✕ ${bn(r.a)}</span><span style="color:var(--latet)">দেরি ${bn(r.l)}</span>${b}</div></div>`}).join('')||'<p class="note">কোনো শিক্ষার্থী পাওয়া যায়নি।</p>';
  return (feeOK&&list.length?`<div class="stats" style="grid-template-columns:1fr 1fr"><div class="stat"><b>${bn(np)}</b><small>বেতন পরিশোধ</small></div><div class="stat"><b>${bn(nd)}</b><small>বকেয়া/আংশিক</small></div></div>`:'')+body}
-function chist(){const list=students.filter(s=>s.c===rcls),agM={p:0,a:0,l:0},agY={p:0,a:0,l:0};
+function chist(){const list=students.filter(s=>classAt(s,repMon)===rcls),agM={p:0,a:0,l:0},agY={p:0,a:0,l:0};
  list.forEach(s=>{const m=stCount(at,s.id,M0);agM.p+=m.p;agM.a+=m.a;agM.l+=m.l});const ym=classMonths(list,repYear);
  shell(rcls+' — শ্রেণী ইতিহাস',`<div class="stats" style="grid-template-columns:1fr"><div class="stat"><b>${bn(list.length)}</b><small>মোট শিক্ষার্থী</small></div></div>
  <h3>উপস্থিতি — এই মাস (সমষ্টি)</h3><div class="stats"><div class="stat"><b>${bn(agM.p)}</b><small>উপস্থিত</small></div><div class="stat"><b>${bn(agM.a)}</b><small>অনুপস্থিত</small></div><div class="stat"><b>${bn(agM.l)}</b><small>দেরি</small></div></div>
@@ -1042,10 +1060,10 @@ window.expV=function(){const A=role==='admin';shell('ব্যয়',`<div clas
 window.delSal=async function(id){if(!hasPerm('sal_del'))return deny();if(!await mmConfirm('আপনি কি এই Salary Record-টি Delete করতে চান?'))return;exDel.add(id);ex=ex.filter(e=>e.id!==id);save('mm_e',ex);draw()};
 /* ফি রিপোর্ট: আদায় / বকেয়ার বিস্তারিত তালিকা (বর্তমান ডাটা থেকে) */
 const _fv=finV;window.finV=function(){_fv();document.querySelectorAll('#app main .link').forEach(el=>{const x=el.textContent.trim(),m=x.indexOf('ফি আদায়')===0?'paid':x.indexOf('বকেয়া (')===0?'due':'';if(m){el.style.cursor='pointer';el.onclick=()=>{frMode=m;frCls='';frQ='';tab='frep';draw()}}})};
-function frRows(){const q=frQ.toLowerCase();let l=frMode==='paid'?fp.filter(p=>p.m===M0).map(p=>{const s=students.find(x=>x.id===p.sid)||{};return{n:p.sn||s.n||'—',id:p.sid,r:s.r,c:p.c||s.c||'',a:+p.a||0,d:p.d}}):students.filter(s=>dueOf(s.id)>0).map(s=>({n:s.n,id:s.id,r:s.r,c:s.c||'',f:feeOf(s.id),due:dueOf(s.id),a:feeOf(s.id)-dueOf(s.id)}));
+function frRows(){const q=frQ.toLowerCase();let l=frMode==='paid'?fp.filter(p=>p.m===M0).map(p=>{const s=students.find(x=>x.id===p.sid)||{};return{n:p.sn||s.n||'—',id:p.sid,r:s.r,c:p.c||s.c||'',a:+p.a||0,d:p.d}}):students.filter(s=>totDue(s.id)>0).map(s=>({n:s.n,id:s.id,r:s.r,c:s.c||'',f:feeOf(s.id),due:totDue(s.id),a:feeOf(s.id)-dueOf(s.id),n2:dueMonthsOf(s.id).length}));
  return l.filter(x=>(!frCls||x.c===frCls)&&(!q||(x.n+' '+x.id+' '+x.r).toLowerCase().includes(q)))}
 function frList(){const l=frRows(),P=frMode==='paid';return `<div class="stats" style="grid-template-columns:1fr 1fr"><div class="stat"><b>${bn(l.length)}</b><small>${P?'শিক্ষার্থী':'বকেয়া শিক্ষার্থী'}</small></div><div class="stat"><b>${tk(l.reduce((a,x)=>a+(P?x.a:x.due),0))}</b><small>${P?'মোট ফি আদায়':'মোট বকেয়া'}</small></div></div>`+
- (l.map(x=>R_(avHTML(x.photo,'','s'),xe0(x.n),'ID: '+xe0(x.id)+' | রোল: '+bn(x.r==null?'-':x.r)+' | ক্লাস: '+xe0(x.c||'—')+'<br>'+(P?'পেমেন্ট: '+dd(x.d):'মোট ফি '+tk(x.f)+' • পরিশোধ '+tk(x.a)),P?`<b>${tk(x.a)}</b>`:`<b style="color:var(--not)">${tk(x.due)}</b>`)).join('')||'<p class="note">কোনো তথ্য পাওয়া যায়নি।</p>')}
+ (l.map(x=>R_(avHTML(x.photo,'','s'),xe0(x.n),'ID: '+xe0(x.id)+' | রোল: '+bn(x.r==null?'-':x.r)+' | ক্লাস: '+xe0(x.c||'—')+'<br>'+(P?'পেমেন্ট: '+dd(x.d):'মোট ফি '+tk(x.f)+' • পরিশোধ '+tk(x.a)+(x.n2>1?' • '+bn(x.n2)+' মাসের বকেয়া':'')),P?`<b>${tk(x.a)}</b>`:`<b style="color:var(--not)">${tk(x.due)}</b>`)).join('')||'<p class="note">কোনো তথ্য পাওয়া যায়নি।</p>')}
 window.frUp=function(){const e=document.getElementById('frl');if(e)e.innerHTML=frList()};
 function frV(){shell(frMode==='paid'?'ফি আদায় তালিকা':'বকেয়া তালিকা',`<select class="search" onchange="frCls=this.value;frUp()"><option value="">সব ক্লাস</option>${classes.map(c=>`<option value="${esc(c)}" ${c===frCls?'selected':''}>${xe0(c)}</option>`).join('')}</select><input class="search" placeholder="নাম, আইডি বা রোল খুঁজুন..." value="${esc(frQ)}" oninput="frQ=this.value;frUp()"><div id="frl">${frList()}</div>`,'fin')}
 window.tselfV=function(){const t=teachers.find(x=>x.id===myTeacher)||{};
@@ -1367,7 +1385,7 @@ const strip=o=>{const c=clean(o);['pw','s','sd'].forEach(k=>delete c[k]);if(c.ph
 const fromDB=(col,d)=>{const c=Object.assign({},d);if(col==='teachers')c.perm=Object.keys(d.perm||{});return c};
 const toDB=(col,c)=>{const x=Object.assign({},c);if(col==='teachers'){const m={};(x.perm||[]).forEach(k=>m[k]=true);if(Object.keys(m).length)x.perm=m;else delete x.perm}return x};
 const ready={S:0,T:0,A:0},last={students:{},teachers:{}},snap={students:[],teachers:[]};
-let unsub=[],tAll=0,tAtt=0,tFee=0,tEx=0,tpAll=0,migBusy=0,tpOk=0,needSetup=false,busy=Promise.resolve();
+let unsub=[],tAll=0,tAtt=0,tFee=0,tEx=0,tpAll=0,migBusy=0,tpOk=0,tStu=0,tAtS=0,needSetup=false,busy=Promise.resolve();
 function restore(col){if(col==='students')students=snap.students.map(x=>Object.assign({},x));else teachers=snap.teachers.map(x=>Object.assign({},x));applyS();if(ready.S&&ready.T&&ready.A&&role)draw()}
 const denied=e=>/permission/i.test(e.message||'')?'এই কাজের অনুমতি আপনার নেই':(e.message||e.code);
 /* অ্যাকাউন্ট তৈরি (দ্বিতীয় অ্যাপ দিয়ে, যাতে অ্যাডমিন লগআউট না হয়) */
@@ -1543,20 +1561,22 @@ function listen(){try{localStorage.removeItem(LKK)}catch(e){}queueMicrotask(list
  if(role==='admin'||role==='teacher')unsub.push(onValue(R('attendance/lateMin/'+T0),sn=>{lm=sn.val()||{};if(tab==='catt')draw()},e=>console.error(e)));
  if(role==='guardian'){on(R('students/'+myChild),one('students',1));teachers=[];ready.T=1;
   on(q('attendance/byStudent/'+myChild),sn=>{const v=sn.val()||{};at={};Object.keys(v).forEach(d=>{at[d]={};at[d][myChild]=CODE[v[d]]||'Present'});ready.A=1;applyS();go()})}
- else{on(R('students'),one('students',0));on(query(R('attendance/students'),orderByKey(),startAt(WIN)),onAt)}
+ else if(role==='admin'){on(R('students'),one('students',0));on(query(R('attendance/students'),orderByKey(),startAt(WIN)),onAt)}
  if(role==='admin'){on(R('teachers'),one('teachers',0));on(query(R('attendance/teachers'),orderByKey(),startAt(WIN)),onTat);on(R('teacherPerms'),setTP);setTimeout(()=>window.migratePerms(),5000)}
- function setTP(sn){const v=sn.val()||{};Object.keys(v).forEach(t=>{if(v[t]&&v[t].v2)tperm[t]=Object.keys(v[t]).filter(k=>PKEYS.has(k));else delete tperm[t]});Object.keys(tperm).forEach(t=>{if(!(t in v))delete tperm[t]});tpOk=1;if(role==='admin')window.migratePerms();redraw()}
+ function setTP(sn){const v=sn.val()||{};Object.keys(v).forEach(t=>{tgf[t]=v[t]?Object.keys(v[t]).filter(k=>/^g\d+$/.test(k)):[];if(v[t]&&v[t].v2)tperm[t]=Object.keys(v[t]).filter(k=>PKEYS.has(k));else delete tperm[t]});Object.keys(tperm).forEach(t=>{if(!(t in v))delete tperm[t]});tpOk=1;if(role==='admin')window.migratePerms();redraw()}
  const applyTPerm=()=>{if(role!=='teacher')return;
   if(!tAll&&canAny.apply(null,PR_TREAD)){tAll=1;on(R('teachers'),one('teachers',0))}
   if(!tAtt&&canAny.apply(null,PR_TATT)){tAtt=1;on(query(R('attendance/teachers'),orderByKey(),startAt(WIN)),onTat)}
   if(!tFee&&canAny.apply(null,PR_FEES)){tFee=1;on(R('fees'),onFees)}
   if(!tEx&&canAny.apply(null,PR_EXP)){tEx=1;on(R('expenses'),onEx)}
-  if(!tpAll&&hasPerm('adm_perm')){tpAll=1;on(R('teacherPerms'),setTP)}};
+  if(!tpAll&&hasPerm('adm_perm')){tpAll=1;on(R('teacherPerms'),setTP)}
+  if(tpOk&&!tStu){tStu=1;if(canAny.apply(null,PS))unsub.push(onValue(R('students'),one('students',0),e=>{console.error(e);if(!ready.S){students=[];ready.S=1;go()}}));else{students=[];ready.S=1;go()}}
+  if(tpOk&&!tAtS){tAtS=1;if(canAny.apply(null,PA))unsub.push(onValue(query(R('attendance/students'),orderByKey(),startAt(WIN)),onAt,e=>{console.error(e);if(!ready.A){at={};ready.A=1;go()}}));else{at={};ready.A=1;go()}}};
  if(role==='teacher'){on(R('teachers/'+myTeacher),sn=>{if(!tAll)one('teachers',1)(sn);applyTPerm()});
   on(R('teacherPerms/'+myTeacher),sn=>{const v=sn.val();if(v&&v.v2)tperm[myTeacher]=Object.keys(v).filter(k=>PKEYS.has(k));else delete tperm[myTeacher];tpOk=1;applyTPerm();redraw()})}
  on(R('config/classes'),sn=>{const l=sn.val()&&sn.val().list;if(l){classes=Array.isArray(l)?l.slice():Object.keys(l).sort((a,b)=>a-b).map(k=>l[k]);students.forEach(s=>{if(s.c&&!classes.includes(s.c))classes.push(s.c)});if(ready.S&&ready.T&&ready.A&&role)draw()}})}
 let lm={};
-function cleanup(){lm={};unsub.forEach(f=>f());unsub=[];tAll=0;tAtt=0;tEx=0;tpAll=0;tpOk=0;tperm={};ready.S=0;ready.T=0;ready.A=0;last.students={};last.teachers={};at={};tat={};Object.keys(atHist).forEach(k=>delete atHist[k]);Object.keys(tatHist).forEach(k=>delete tatHist[k]);HIST.done.clear();students=[];teachers=[];fp=[];nlist=[];nlogL=[];nunread=0;nraw={};ngrp={};tFee=0;feeKnown.clear();ncfg=mergeCfg(null);ex=[];rs={};notices=[];hw={};hwAssign={};exKnown=new Set();nKnown=new Set();rsKnown={};hwKnown={};hwLogKnown={};rtn={};Object.keys(hwByClass).forEach(k=>delete hwByClass[k]);hwAtt.clear();rtnAtt.clear();role='';myChild='';myTeacher=''}
+function cleanup(){lm={};unsub.forEach(f=>f());unsub=[];tAll=0;tAtt=0;tEx=0;tpAll=0;tpOk=0;tStu=0;tAtS=0;tperm={};ready.S=0;ready.T=0;ready.A=0;last.students={};last.teachers={};at={};tat={};Object.keys(atHist).forEach(k=>delete atHist[k]);Object.keys(tatHist).forEach(k=>delete tatHist[k]);HIST.done.clear();students=[];teachers=[];fp=[];nlist=[];nlogL=[];nunread=0;nraw={};ngrp={};tFee=0;feeKnown.clear();ncfg=mergeCfg(null);ex=[];rs={};notices=[];hw={};hwAssign={};exKnown=new Set();nKnown=new Set();rsKnown={};hwKnown={};hwLogKnown={};rtn={};Object.keys(hwByClass).forEach(k=>delete hwByClass[k]);hwAtt.clear();rtnAtt.clear();role='';myChild='';myTeacher=''}
 /* লগইন */
 window.pwGo=async function(r){const idv=document.getElementById('pwid').value,pw=document.getElementById('pwin').value,er=document.getElementById('pwerr');
  const bad=c=>{hideLd();er.textContent='ভুল তথ্য, আবার চেষ্টা করুন'+(c?' ['+c+']':'');document.getElementById('pwin').value=''};
@@ -1839,7 +1859,7 @@ window.annForm=function(){const T=role==='teacher',mc=T?window.tClasses(myTeache
 function listen2(){const er=e=>console.error(e),on=(r,f)=>unsub.push(onValue(r,f,er)),qN=p=>query(R(p),orderByChild('ts'),limitToLast(60));
  const nrebuild=window.nrebuild=()=>{const v=nraw;nlist=Object.keys(v).map(k=>Object.assign({id:k},v[k])).filter(n=>n.ts>=nCut()).sort((a,b)=>b.ts-a.ts);if(role==='guardian'){if(nSeen){nlist.forEach(n=>{if(!nSeen.has(n.id)&&!n.read)sysAlert(n)})}nSeen=new Set(nlist.map(n=>n.id))}nunread=nlist.filter(n=>!n.read).length;redraw()};const onNList=sn=>{nraw=sn.val()||{};nrebuild()};
  const onCfg=sn=>{ncfg=mergeCfg(sn.val());if(tab==='nset'||tab==='sset'||tab==='bell')redraw();try{bellPush()}catch(e){}};
- on(R('config/fees'),sn=>{const v=sn.val();if(v){if(v.MF!=null)MF=v.MF;if(v.classFee)classFee=v.classFee;redraw()}});
+ on(R('config/fees'),sn=>{const v=sn.val();if(v){if(v.MF!=null)MF=v.MF;if(v.classFee)classFee=v.classFee;feeCarry=v.carry?1:0;feeLog={d:[],c:{}};Object.values(v.log||{}).sort((a,b)=>a.f<b.f?-1:a.f>b.f?1:(a.ts||0)-(b.ts||0)).forEach(e=>{if(e.t==='d')feeLog.d.push(e);else if(e.t==='c'&&e.k!=null)(feeLog.c[e.k]=feeLog.c[e.k]||[]).push(e)});redraw()}});
  setTimeout(()=>{window.expireOld();window.hhExpire()},2500);
  if(role==='guardian'){on(R('feesByStudent/'+myChild),onFees);on(qN('notifications/guardian/'+myChild),onNList);nSeen=null}
  if(role==='admin'||role==='teacher')on(query(R('notifGroups'),orderByChild('meta/ts'),limitToLast(100)),sn=>{ngrp=sn.val()||{};if(tab==='nlog')redraw()});
@@ -1958,11 +1978,14 @@ function listen3(){const er=e=>console.error(e),on=(r,f)=>unsub.push(onValue(r,f
 window.hhListen=function(from,cb){const u=onValue(query(R('homeLog'),orderByKey(),startAt(from)),sn=>cb(sn.val()||{}),e=>{console.error(e);cb({})});unsub.push(function(){u();window.hhKey=''})};
 /* অনুমতি সংরক্ষণ: teacherPerms/{শিক্ষকID} = {v2:true, কী:true,...} — teachers রেকর্ড থেকে আলাদা, তাই শিক্ষক নিজের অনুমতি বদলাতে পারেন না */
 const PKEYS=new Set(PERMS.map(x=>x.k)),PGRP={"g1": ["adm_tpw", "tch_add"], "g2": ["adm_gpw", "grd_add", "grd_pw", "stu_add"], "g3": ["adm_tpw", "tch_del"], "g4": ["adm_gpw", "grd_del", "grd_pw", "stu_del"], "g5": ["adm_gpw", "adm_tpw", "grd_add", "grd_pw", "stu_add", "tch_add"], "g6": ["adm_gpw", "adm_tpw", "grd_del", "grd_pw", "stu_del", "tch_del"], "g7": ["adm_gpw", "adm_tpw", "grd_pw"], "g8": ["cls_add", "cls_del", "cls_edit"], "g9": ["set_notif", "set_toggle"], "g10": ["sub_add", "sub_del", "sub_edit"], "g11": ["adm_gpw", "grd_pw"], "g12": ["adm_perm", "adm_tpw", "msg_tch", "rep_sal", "rep_tch", "sal_pay", "sal_view", "tatt_take", "tatt_view", "tch_add", "tch_del", "tch_edit", "tch_view"], "g13": ["att_edit", "att_take"], "g14": ["rep_tch", "tatt_take", "tatt_view"], "g15": ["due_view", "fee_collect", "fee_del", "fee_edit", "fee_view", "inc_add", "inc_del", "inc_edit", "inc_view", "rep_due", "rep_fee", "rep_fin"], "g16": ["msg_grd", "notif_send"], "g17": ["att_notif", "fee_collect", "msg_grd", "msg_tch", "notif_send"], "g18": ["msg_tch", "notif_send"], "g19": ["msg_grd", "msg_tch", "notif_send", "tatt_take"], "g20": ["att_notif", "fee_collect", "msg_grd", "msg_tch", "notif_send", "tatt_take"], "g21": ["exp_add", "exp_del", "exp_edit", "exp_view", "rep_fin", "rep_sal", "sal_del", "sal_pay", "sal_view"], "g22": ["hw_view", "ph_hist", "pry_view", "rep_hw", "rep_pry"], "g23": ["hw_view", "ph_hist", "pry_view"], "g24": ["rtn_add", "rtn_del", "rtn_edit"], "g25": ["msg_grd", "msg_tch", "notif_send"]};
+PGRP.g26=['stu_view','stu_add','stu_edit','stu_del','stu_bio','grd_view','grd_add','grd_edit','grd_del','grd_pw','adm_gpw','att_take','att_edit','att_hist','att_rep','att_notif','pry_view','pry_edit','ph_hist','fee_view','fee_collect','fee_edit','fee_del','due_view','rep_stu','rep_att','rep_fee','rep_due','rep_fin','rep_pry','rep_hw','cls_view','cls_add','cls_edit','cls_del','msg_grd','notif_send'];
+PGRP.g27=['att_take','att_edit','att_hist','att_rep','rep_att','rep_stu','rep_fin'];
+const PS=PGRP.g26,PA=PGRP.g27,tgf={};
 /* Rules ছোট রাখতে: গ্রুপ-ফ্ল্যাগ (g1..) = ওই গ্রুপের যেকোনো একটি অনুমতি থাকলে true */
 const permObj=a=>{const o={v2:true},v=[];(a||[]).forEach(k=>{if(PKEYS.has(k)){o[k]=true;v.push(k)}});Object.keys(PGRP).forEach(g=>{if(PGRP[g].some(k=>v.indexOf(k)>=0))o[g]=true});return o};
 window.savePerm=async function(id,arr){if(!hasPerm('adm_perm'))return false;try{if(arr==null){await set(R('teacherPerms/'+id),null);delete tperm[id]}else{const o=permObj(arr);await set(R('teacherPerms/'+id),o);tperm[id]=Object.keys(o).filter(k=>PKEYS.has(k))}redraw();return true}catch(e){alert('অনুমতি সংরক্ষণ হয়নি: '+denied(e));return false}};
 /* বিদ্যমান শিক্ষকদের পুরনো ৪টি অনুমতি (+আগের ডিফল্ট ক্ষমতা) নতুন অনুমতিতে স্বয়ংক্রিয় মাইগ্রেট (শুধু অ্যাডমিন, একবার) */
-window.migratePerms=async function(){if(role!=='admin'||!ready.T||!tpOk||migBusy)return;const U={};teachers.forEach(t=>{if(!tperm[t.id]){U['teacherPerms/'+t.id]=permObj(effPerm(t.id))}});if(!Object.keys(U).length)return;migBusy=1;try{await upd(U)}catch(e){console.warn('migratePerms',e)}migBusy=0};
+window.migratePerms=async function(){if(role!=='admin'||!ready.T||!tpOk||migBusy)return;const U={};teachers.forEach(t=>{if(!tperm[t.id]){U['teacherPerms/'+t.id]=permObj(effPerm(t.id))}else{const want=permObj(tperm[t.id]),have=tgf[t.id]||[];Object.keys(want).forEach(k=>{if(/^g\d+$/.test(k)&&have.indexOf(k)<0)U['teacherPerms/'+t.id+'/'+k]=true})}});if(!Object.keys(U).length)return;migBusy=1;try{await upd(U)}catch(e){console.warn('migratePerms',e)}migBusy=0};
 /* প্রতিটি কাজের অনুমতি-গার্ড (সার্ভারে Rules দ্বারাও বাধ্যতামূলক) */
 (function(){const G={addS:'stu_add',editS:'stu_edit',delS:'stu_del',addT:'tch_add',editT:'tch_edit',delT:'tch_del',paySal:'sal_pay',payF:'fee_collect',addE:'exp_add',addN:'not_add',delN:'not_del',clsAdd:'cls_add',clsEdit:'cls_edit',clsDel:'cls_del',subjAdd:'sub_add',subjImport:'sub_add',subjEdit:'sub_edit',subjDel:'sub_del',rtnEdit:function(i){return i<0?'rtn_add':'rtn_edit'},rtnDel:'rtn_del',rtnApply:'rtn_edit',setClassFee:'fee_edit',setDefaultFee:'fee_edit',ntgl:'set_toggle',finalizeTeachers:'tatt_take',tcyc:'tatt_take',saveHW:'hw_edit',msgS:'msg_grd'};
  Object.keys(G).forEach(n=>{const f=window[n];if(typeof f!=='function')return;window[n]=function(){const g=typeof G[n]==='function'?G[n].apply(null,arguments):G[n];if(!hasPerm(g)){deny();return}return f.apply(this,arguments)}});
@@ -2004,10 +2027,12 @@ if(typeof _ycH==='function')window.yearChips=function(){let h=_ycH.apply(this,ar
  if((tab==='chist'||tab==='thist')&&!HISTY.has(repYear))h+='<button class="chip" style="min-width:auto;width:100%;margin:6px 0;background:var(--card);border:1px solid var(--line);color:var(--ink)" onclick="histYear()">📥 '+bn(repYear)+' সালের সব মাসের তথ্য আনুন</button><p class="note" style="text-align:left;margin:0 0 6px">নিচের তালিকায় এখন শুধু আনা মাসগুলো দেখাচ্ছে। পুরো সালের হিসাব দেখতে উপরের বোতাম চাপুন।</p>';
  return h};
 window.histYear=function(){HISTY.add(repYear);draw()};
+window.feeLogAdd=async function(e){if(!hasPerm('fee_edit')){deny();return false}try{await set(R('config/fees/log/'+rid('L')),clean(Object.assign({ts:Date.now()},e)));return true}catch(x){alert('ফি-র ইতিহাস সংরক্ষণ হয়নি: '+denied(x));return false}};
+window.setCarry=function(){if(!hasPerm('fee_edit')){deny();return}const v=feeCarry?0:1;set(R('config/fees/carry'),v).catch(e=>alert('সংরক্ষণ হয়নি: '+denied(e)))};
 window.fbBackup=async function(){
  if(role!=='admin')return;
  if(!await mmConfirm('Firebase-এর সব ডেটা (ছাত্রের ছবিসহ) ডাউনলোড করে ফাইলে সেভ হবে। কিছু ইন্টারনেট ডেটা খরচ হবে। চালিয়ে যাবেন?'))return;
- const P=['config','students','teachers','teacherPerms','attendance/students','attendance/teachers','attendance/lateMin','fees','feeLock','expenses','results','notices','homework','homeLog','routine','routineIdx','contacts/teachers','notifGroups','tqr','attQr/cfg'],data={},skip=[];
+ const CL=(typeof classes!=='undefined'?classes:[]).filter(c=>c&&!/[.#$\/\[\]]/.test(c)),P=['config/setup','config/profile','config/classes','config/notif','config/fees','config/subjects','students','teachers','teacherPerms','attendance/students','attendance/teachers','attendance/lateMin','fees','feeLock','expenses','results','notices','homeLog','routineIdx','contacts/teachers','notifGroups','tqr','attQr/cfg'].concat(CL.map(c=>'homework/'+c),CL.map(c=>'routine/'+c)),data={},skip=[];
  showLd();
  try{
   for(const p of P){try{data[p]=(await get(R(p))).val()}catch(e){skip.push(p)}}
@@ -2019,10 +2044,10 @@ window.fbBackup=async function(){
     const FS=(C.Plugins&&C.Plugins.Filesystem)||C.registerPlugin('Filesystem'),SH=(C.Plugins&&C.Plugins.Share)||C.registerPlugin('Share');
     const w=await FS.writeFile({path:name,data:json,directory:'CACHE',encoding:'utf8'});
     await SH.share({title:name,url:w.uri,dialogTitle:'ব্যাকআপ সংরক্ষণ করুন'});
-    alert('ব্যাকআপ তৈরি হয়েছে। খোলা উইন্ডো থেকে Drive বা Files বেছে সেভ করুন।'+(skip.length?'\nপড়া যায়নি: '+skip.join(', '):''));return}
+    alert('ব্যাকআপ তৈরি হয়েছে। খোলা উইন্ডো থেকে Drive বা Files বেছে সেভ করুন।'+(skip.length?'\nবাদ পড়েছে: '+skip.join(', '):''));return}
   }catch(e){const m=String((e&&(e.message||e.name))||e);if(/cancel|abort|dismiss/i.test(m))return}
   const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([json],{type:'application/json'}));a.download=name;document.body.appendChild(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove()},4000);
-  alert('ব্যাকআপ ডাউনলোড হয়েছে।'+(skip.length?'\nপড়া যায়নি: '+skip.join(', '):''))
+  alert('ব্যাকআপ ডাউনলোড হয়েছে।'+(skip.length?'\nবাদ পড়েছে: '+skip.join(', '):''))
  }catch(e){hideLd();alert('ব্যাকআপ তৈরি হয়নি: '+(e.code||e.message))}};
 window.fbHasLock=async k=>{try{return (await get(R('feeLock/'+k))).exists()}catch(e){return false}};
 window.lockOld=async function(){if(role!=='admin')return;try{const ex=(await get(R('feeLock'))).val()||{},U={},seen={};
@@ -3441,8 +3466,8 @@ go()})();
   if(profile&&+profile.lat&&+profile.lng){o.lat=+profile.lat;o.lng=+profile.lng}
   var lg=profile&&profile.logo;if(lg&&String(lg).length<90000&&/^data:image\//.test(lg))o.logo=lg;
   try{
-   if(role==='admin'){var dl=students.filter(function(s){return dueOf(s.id)>0});o.admin={total:students.length,present:students.filter(function(s){return s.s==='Present'}).length,collected:sum(fp.filter(function(e){return e.m===M0})),dueN:dl.length,dueAmt:dl.reduce(function(a,s){return a+dueOf(s.id)},0)}}
-   else if(role==='guardian'){var st=students.find(function(x){return x.id===myChild})||students[0];if(st){var am=attMonth(st,M0);o.guardian={child:st.n,present:am.p,due:dueOf(st.id)}}}
+   if(role==='admin'){var dl=students.filter(function(s){return totDue(s.id)>0});o.admin={total:students.length,present:students.filter(function(s){return s.s==='Present'}).length,collected:sum(fp.filter(function(e){return e.m===M0})),dueN:dl.length,dueAmt:dl.reduce(function(a,s){return a+totDue(s.id)},0)}}
+   else if(role==='guardian'){var st=students.find(function(x){return x.id===myChild})||students[0];if(st){var am=attMonth(st,M0);o.guardian={child:st.n,present:am.p,due:totDue(st.id)}}}
   }catch(e){}
   return o};
  window.wgSync=function(force){var p=P();if(!p)return;try{if(!role)return;seen=role;var d=JSON.stringify(wgBuild()),n=Date.now();if(!force&&d===last&&n-lastT<900000)return;last=d;lastT=n;var o=JSON.parse(d);o.ts=n;p.update({data:JSON.stringify(o)})}catch(e){}};
@@ -3470,6 +3495,60 @@ go()})();
  /* লগআউট হলে উইজেটের তথ্য মুছে ফেলা (গোপনীয়তা) — ২.৫ সেকেন্ড পরপর দেখা হয় */
  setInterval(function(){try{var p=P();if(p&&!role&&seen){seen='';last='';p.clear();try{if(p.bellClear)p.bellClear().catch(function(){})}catch(e2){}window.__bellLast=''}}catch(e){}takePending()},2500);
  document.addEventListener('visibilitychange',function(){if(document.hidden)wgSync(true);else{takePending();if(wst.known)wgRefresh(function(){wgRows()})}});
+})();
+</script>
+<script>
+/* ===== শ্রেণি উত্তরণ + শিক্ষাবর্ষ (জানুয়ারি বা আরবি) ===== */
+(function(){
+ var D=86400000,HMN=['মুহাররম','সফর','রবিউল আউয়াল','রবিউল আখির','জমাদিউল আউয়াল','জমাদিউল আখির','রজব','শাবান','রমজান','শাওয়াল','জিলকদ','জিলহজ'];
+ var p2=function(n){return (n<10?'0':'')+n},_ay={k:'',v:null};
+ function todayMs(){var n=T0.split('-');return Date.UTC(+n[0],+n[1]-1,+n[2])}
+ function ayInfo(){var on=profile&&profile.ay?1:0,hm=profile&&profile.ahm!=null?+profile.ahm:9,k=T0+'|'+on+'|'+hm;if(_ay.k===k)return _ay.v;
+  var t=todayMs(),r=null,n=T0.split('-');
+  if(!on)r={label:'G'+n[0],start:Date.UTC(+n[0],0,1),ym:n[0]+'-01',name:bn(n[0])+' সাল'};
+  else if(window.mmHjDate){for(var i=0;i<=400&&!r;i++){var ms=t-i*D,h=window.mmHjDate(ms);if(h&&h.d===1&&h.m===hm){var dt=new Date(ms);r={label:'H'+h.y,start:ms,ym:dt.getUTCFullYear()+'-'+p2(dt.getUTCMonth()+1),name:bn(h.y)+' হিজরি'}}}}
+  _ay={k:k,v:r};return r}
+ window.promoBanner=function(){try{
+  if(role!=='admin'||!students.length)return '';
+  var a=ayInfo();if(!a)return '';var d0=(todayMs()-a.start)/D;if(d0<0||d0>45)return '';
+  if(profile&&profile.promoY===a.label)return '';
+  return '<div style="background:var(--card);border:1px solid var(--g);border-radius:16px;padding:12px;margin:12px 0"><b>🎓 নতুন শিক্ষাবর্ষ ('+a.name+') শুরু হয়েছে</b><p style="margin:6px 0 10px;color:var(--mute);font-size:13px">ছাত্রদের পরের শ্রেণিতে তুলতে চাইলে শ্রেণি উত্তরণ করুন। আগে সেটিংস থেকে সম্পূর্ণ ব্যাকআপ নিয়ে রাখা ভালো।</p><div style="display:flex;gap:8px"><button class="tile" style="background:var(--g);flex:1;padding:10px" onclick="tab=\'promo\';draw()">শ্রেণি উত্তরণ করুন</button><button class="tile" style="background:#5b6b7d;flex:1;padding:10px" onclick="promoLater()">পরে</button></div></div>'}catch(e){return ''}};
+ var _nb=window.ndbHTML;window.ndbHTML=function(){return promoBanner()+(_nb?_nb():'')};
+ window.promoLater=function(){var a=ayInfo();if(!a)return;profile=Object.assign({},profile,{promoY:a.label});save('mm_profile',profile);draw()};
+ /* সেটিংস */
+ window.ayTog=function(){if(role!=='admin')return;var on=profile.ay?0:1;profile=Object.assign({},profile,{ay:on,ahm:profile.ahm!=null?profile.ahm:9});save('mm_profile',profile);draw()};
+ window.ayMonth=function(){if(role!=='admin')return;form('শিক্ষাবর্ষ শুরুর হিজরি মাস',[['n','হিজরি মাস (সাধারণত শাওয়াল)','select:'+HMN.join(',')]],{n:HMN[profile.ahm!=null?profile.ahm:9]},function(o){var i=HMN.indexOf(o.n);if(i<0)return;profile=Object.assign({},profile,{ahm:i});save('mm_profile',profile);draw()})};
+ var _sv=window.setV;
+ window.setV=function(){_sv.apply(this,arguments);var m=document.querySelector('#app main');if(!m)return;var h='',a=null;
+  if(role==='admin'||hasPerm('stu_edit'))h+='<button class="link" onclick="tab=\'promo\';draw()"><span><small>শ্রেণি উত্তরণ</small>নতুন শিক্ষাবর্ষে ছাত্রদের পরের শ্রেণিতে তুলুন</span>›</button>';
+  if(role==='admin'){a=ayInfo();h+='<div class="row"><div class="info"><b>আরবি (হিজরি) শিক্ষাবর্ষ</b><small>বন্ধ থাকলে জানুয়ারি থেকে নতুন শিক্ষাবর্ষ। চালু করলে বেছে নেওয়া হিজরি মাস থেকে।'+(a?' এখনকার শিক্ষাবর্ষ: '+a.name:'')+'</small></div>'+tglHTML(!!profile.ay,'ayTog()')+'</div>';
+   if(profile.ay)h+='<button class="link" onclick="ayMonth()"><span><small>শিক্ষাবর্ষ শুরুর মাস</small>'+HMN[profile.ahm!=null?profile.ahm:9]+'</span>›</button>'}
+  m.insertAdjacentHTML('afterbegin',h)};
+ /* শ্রেণি উত্তরণ পাতা */
+ var PM={map:null,keep:{},eff:''};
+ function promoInit(){if(PM.map)return;PM.map={};classes.forEach(function(c,i){PM.map[c]=i<classes.length-1?classes[i+1]:''});var a=ayInfo(),d0=a?(todayMs()-a.start)/D:-1;PM.eff=(a&&d0>=0&&d0<=60)?a.ym:M0;PM.keep={}}
+ window.promoEff=function(v){PM.eff=v};
+ window.promoMap=function(ci,v){PM.map[classes[ci]]=v===''?'':classes[+v]};
+ window.promoKeep=function(id,k){if(k)PM.keep[id]=1;else delete PM.keep[id]};
+ window.promoV=function(){promoInit();
+  var by={};students.forEach(function(s){(by[s.c]=by[s.c]||[]).push(s)});
+  var body='<p class="note" style="text-align:left;margin:0 0 8px">প্রতিটি শ্রেণির ছাত্ররা কোন শ্রেণিতে যাবে বেছে নিন। যাদের তুলবেন না তাদের টিক তুলে দিন। আগের মাসের ফি ও হাজিরার হিসাব বদলাবে না। <b>আগে সেটিংস থেকে সম্পূর্ণ ব্যাকআপ নিন।</b></p><label style="display:block;font-size:13px;color:var(--mute)">নতুন শ্রেণি কার্যকর হবে যে মাস থেকে<select class="search" style="margin:4px 0 8px" onchange="promoEff(this.value)">'+monthOptions().map(function(k){return '<option value="'+k+'"'+(k===PM.eff?' selected':'')+'>'+monLabel(k)+'</option>'}).join('')+'</select></label>';
+  classes.forEach(function(c,ci){var L=(by[c]||[]).slice().sort(rollCmp);if(!L.length)return;
+   body+='<div class="link" style="display:block"><b>'+xe0(c)+'</b> <small style="display:inline;color:var(--mute)">— '+bn(L.length)+' জন</small><select class="search" style="margin:8px 0 6px" onchange="promoMap('+ci+',this.value)"><option value="">— পরিবর্তন নেই (এই শ্রেণিতেই থাকবে) —</option>'+classes.map(function(t,ti){return ti===ci?'':'<option value="'+ti+'"'+(PM.map[c]===t?' selected':'')+'>'+xe0(t)+'</option>'}).join('')+'</select><details><summary style="cursor:pointer;color:var(--g)">ছাত্র বাছাই</summary>'+L.map(function(s){return '<label style="display:flex;align-items:center;gap:10px;padding:6px 0;font-size:14px"><input type="checkbox" '+(PM.keep[s.id]?'':'checked')+' onchange="promoKeep(\''+esc(s.id)+'\',!this.checked)" style="width:18px;height:18px;accent-color:var(--g)"> রোল '+bn(s.r)+' — '+xe0(s.n)+'</label>'}).join('')+'</details></div>'});
+  body+='<button class="tile" style="background:var(--g);width:100%;padding:14px;margin-top:10px" onclick="promoRun()">শ্রেণি উত্তরণ করুন</button>';
+  shell('শ্রেণি উত্তরণ',body,'set')};
+ window.promoRun=async function(){
+  if(!(role==='admin'||hasPerm('stu_edit'))){deny();return}
+  promoInit();var eff=PM.eff;if(!eff){alert('কোন মাস থেকে কার্যকর হবে তা বাছুন');return}
+  var mv=[],cnt={};students.forEach(function(s){var t=PM.map[s.c];if(t&&t!==s.c&&!PM.keep[s.id]){mv.push([s,t]);var k=s.c+' → '+t;cnt[k]=(cnt[k]||0)+1}});
+  if(!mv.length){alert('কোনো ছাত্র সরানোর জন্য নির্বাচিত নেই');return}
+  var sm=Object.keys(cnt).map(function(k){return k+': '+bn(cnt[k])+' জন'}).join('\n');
+  if(!await mmConfirm(bn(mv.length)+' জন ছাত্রকে নতুন শ্রেণিতে তোলা হবে ('+monLabel(eff)+' থেকে কার্যকর)।\n\n'+sm+'\n\nচালিয়ে যাবেন?'))return;
+  mv.forEach(function(m){var s=m[0];s.ch=(s.ch?s.ch+';':'')+eff+'|'+encodeURIComponent(s.c);s.c=m[1]});
+  var a=ayInfo();if(a){profile=Object.assign({},profile,{promoY:a.label});save('mm_profile',profile)}
+  PM.map=null;stuCls='';save('mm_s',students);
+  alert('শ্রেণি উত্তরণ সম্পন্ন হয়েছে।');tab='set';draw()};
+ var _dp=window.draw;window.draw=function(){if(tab==='promo'){if(role==='admin'||hasPerm('stu_edit'))return promoV();tab='home'}return _dp.apply(this,arguments)};
 })();
 </script>
 <script type="text/plain" id="qp-src">
@@ -3717,7 +3796,7 @@ go()})();
         .preview-question-item { margin-bottom: 10px; font-size: 13px; line-height: 1.4; }
         
         .q-row { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 5px; }
-        .q-content { flex-grow: 1; padding-right: 10px; }
+        .q-content { flex-grow: 1; padding-right: 10px; white-space: pre-wrap; }
         .q-marks { width: 30px; text-align: right; font-weight: bold; }
 
         .preview-sub-questions { padding-left: 50px; margin-top: 5px; }
@@ -3878,8 +3957,10 @@ go()})();
         .btn-pass { width: 100%; margin: 0 0 10px; padding: 7px 10px; font: inherit; font-size: 13px; font-weight: bold; color: #92610f; background: #fdf3df; border: 1px dashed #d9a72e; border-radius: 10px; cursor: pointer; }
         .btn-pass:active { background: #f8e6bd; }
         .passage-card .q-badge { background: #fdf3df; color: #92610f; }
-        .preview-passage { font-size: var(--qfs, 13px); line-height: 1.45; margin-bottom: 8px; }
+        .preview-passage { font-size: var(--qfs, 13px); line-height: 1.45; margin-bottom: 8px; white-space: pre-wrap; }
         .preview-passage.rtl { text-align: right; }
+        .a4-paper.fake-bold b, .a4-paper.fake-bold strong, .a4-paper.fake-bold h1, .a4-paper.fake-bold .paper-header p, .a4-paper.fake-bold .paper-info-row, .a4-paper.fake-bold .paper-instruction, .a4-paper.fake-bold .q-marks, .a4-paper.fake-bold [style*="font-weight"] { font-synthesis-weight: none; text-shadow: 0.03em 0 0 currentColor, -0.03em 0 0 currentColor; }
+        .fake-bold-ed [contenteditable] b, .fake-bold-ed [contenteditable] strong { font-synthesis-weight: none; text-shadow: 0.03em 0 0 currentColor, -0.03em 0 0 currentColor; }
     </style>
 </head>
 <body>
@@ -4139,10 +4220,26 @@ go()})();
 
     function changeArFont() { changeFont(); }
 
+    /* ফন্টে আসল বোল্ড থাকলে সেটাই চলে; না থাকলে (লোড হওয়া ফন্ট-তালিকা দেখে) নকল বোল্ড */
+    function needsFakeBold() {
+        const fam = document.getElementById('fontSelector').value.split(',')[0].replace(/['"\s]/g, '');
+        if (!['Kalpurush', 'SolaimanLipi', 'TiroBangla'].includes(fam)) return false;
+        try {
+            return !Array.from(document.fonts).some(f => String(f.family).replace(/['"\s]/g, '') === fam && /bold|[6-9]00/.test(String(f.weight)));
+        } catch (e) { return false; }
+    }
+
+    function refreshBold() {
+        const nb = needsFakeBold();
+        document.body.classList.toggle('fake-bold-ed', nb);
+        document.querySelectorAll('.a4-paper').forEach(p => p.classList.toggle('fake-bold', nb));
+    }
+
     function changeFont() {
         const selectedFont = paperStack();
         const arFont = document.getElementById('arFontSelector').value;
         document.querySelectorAll('.a4-paper').forEach(p => { p.style.fontFamily = selectedFont; p.style.setProperty('--ar-font', arFont); });
+        refreshBold();
         document.documentElement.style.setProperty('--ar-font', arFont);
         document.body.style.fontFamily = selectedFont;
         if (previewVisible()) {
@@ -4316,7 +4413,7 @@ go()})();
                     <div class="rich-text-tools">
                         <button type="button" onmousedown="event.preventDefault()" onclick="formatText('bold')"><b>B</b></button>
                         <button type="button" onmousedown="event.preventDefault()" onclick="formatText('italic')"><i>I</i></button>
-                        <button type="button" onmousedown="event.preventDefault()" onclick="formatText('underline')"><u>U</u></button><button type="button" class="btn-ar" onmousedown="event.preventDefault()" onclick="toggleArabic()" title="সিলেক্ট করা লেখা আরবি ফন্টে">ع</button>
+                        <button type="button" onmousedown="event.preventDefault()" onclick="formatText('underline')"><u>U</u></button><button type="button" class="btn-ar" onmousedown="event.preventDefault()" onclick="toggleArabic()" title="সিলেক্ট করা লেখা আরবি ফন্টে">ع</button><button type="button" onmousedown="event.preventDefault()" onclick="alignText('justifyLeft')" aria-label="বামে" title="বামে"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><path d="M2 3h12M2 6.5h8M2 10h12M2 13.5h8"/></svg></button><button type="button" onmousedown="event.preventDefault()" onclick="alignText('justifyCenter')" aria-label="মাঝখানে" title="মাঝখানে"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><path d="M2 3h12M4 6.5h8M2 10h12M4 13.5h8"/></svg></button><button type="button" onmousedown="event.preventDefault()" onclick="alignText('justifyRight')" aria-label="ডানে" title="ডানে"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><path d="M2 3h12M6 6.5h8M2 10h12M6 13.5h8"/></svg></button>
                         <span class="fs-box"><button type="button" onmousedown="event.preventDefault()" onclick="stepFont(this,-1)" aria-label="ছোট করুন">−</button><input type="text" class="fs-input" inputmode="numeric" value="১৩" onfocus="this.select()" onchange="setFontFromInput(this)" aria-label="লেখার সাইজ"><button type="button" onmousedown="event.preventDefault()" onclick="stepFont(this,1)" aria-label="বড় করুন">+</button></span>
                     </div>
                     
@@ -4344,7 +4441,7 @@ go()})();
                 <div class="rich-text-tools sub-tools">
                     <button type="button" onmousedown="event.preventDefault()" onclick="formatText('bold')"><b>B</b></button>
                     <button type="button" onmousedown="event.preventDefault()" onclick="formatText('italic')"><i>I</i></button>
-                    <button type="button" onmousedown="event.preventDefault()" onclick="formatText('underline')"><u>U</u></button><button type="button" class="btn-ar" onmousedown="event.preventDefault()" onclick="toggleArabic()" title="সিলেক্ট করা লেখা আরবি ফন্টে">ع</button>
+                    <button type="button" onmousedown="event.preventDefault()" onclick="formatText('underline')"><u>U</u></button><button type="button" class="btn-ar" onmousedown="event.preventDefault()" onclick="toggleArabic()" title="সিলেক্ট করা লেখা আরবি ফন্টে">ع</button><button type="button" onmousedown="event.preventDefault()" onclick="alignText('justifyLeft')" aria-label="বামে" title="বামে"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><path d="M2 3h12M2 6.5h8M2 10h12M2 13.5h8"/></svg></button><button type="button" onmousedown="event.preventDefault()" onclick="alignText('justifyCenter')" aria-label="মাঝখানে" title="মাঝখানে"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><path d="M2 3h12M4 6.5h8M2 10h12M4 13.5h8"/></svg></button><button type="button" onmousedown="event.preventDefault()" onclick="alignText('justifyRight')" aria-label="ডানে" title="ডানে"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><path d="M2 3h12M6 6.5h8M2 10h12M6 13.5h8"/></svg></button>
                         <span class="fs-box"><button type="button" onmousedown="event.preventDefault()" onclick="stepFont(this,-1)" aria-label="ছোট করুন">−</button><input type="text" class="fs-input" inputmode="numeric" value="১৩" onfocus="this.select()" onchange="setFontFromInput(this)" aria-label="লেখার সাইজ"><button type="button" onmousedown="event.preventDefault()" onclick="stepFont(this,1)" aria-label="বড় করুন">+</button></span>
                 </div>
                 <div id="sub-container-${questionCount}"></div>
@@ -4399,7 +4496,7 @@ go()})();
                 <div class="rich-text-tools">
                     <button type="button" onmousedown="event.preventDefault()" onclick="formatText('bold')"><b>B</b></button>
                     <button type="button" onmousedown="event.preventDefault()" onclick="formatText('italic')"><i>I</i></button>
-                    <button type="button" onmousedown="event.preventDefault()" onclick="formatText('underline')"><u>U</u></button><button type="button" class="btn-ar" onmousedown="event.preventDefault()" onclick="toggleArabic()" title="সিলেক্ট করা লেখা আরবি ফন্টে">ع</button>
+                    <button type="button" onmousedown="event.preventDefault()" onclick="formatText('underline')"><u>U</u></button><button type="button" class="btn-ar" onmousedown="event.preventDefault()" onclick="toggleArabic()" title="সিলেক্ট করা লেখা আরবি ফন্টে">ع</button><button type="button" onmousedown="event.preventDefault()" onclick="alignText('justifyLeft')" aria-label="বামে" title="বামে"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><path d="M2 3h12M2 6.5h8M2 10h12M2 13.5h8"/></svg></button><button type="button" onmousedown="event.preventDefault()" onclick="alignText('justifyCenter')" aria-label="মাঝখানে" title="মাঝখানে"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><path d="M2 3h12M4 6.5h8M2 10h12M4 13.5h8"/></svg></button><button type="button" onmousedown="event.preventDefault()" onclick="alignText('justifyRight')" aria-label="ডানে" title="ডানে"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><path d="M2 3h12M6 6.5h8M2 10h12M6 13.5h8"/></svg></button>
                     <span class="fs-box"><button type="button" onmousedown="event.preventDefault()" onclick="stepFont(this,-1)" aria-label="ছোট করুন">−</button><input type="text" class="fs-input" inputmode="numeric" value="১৩" onfocus="this.select()" onchange="setFontFromInput(this)" aria-label="লেখার সাইজ"><button type="button" onmousedown="event.preventDefault()" onclick="stepFont(this,1)" aria-label="বড় করুন">+</button></span>
                 </div>
                 <div class="form-control q-text-input" contenteditable="true" data-ph="যেমন: [Read the text and answer the questions no 1, 2, 3 and 4:] I am Sabiha..." style="min-height: 90px; outline: none; background: #fff; padding: 10px; border: 1px solid var(--border-color); border-radius: 8px;"></div>
@@ -4554,6 +4651,11 @@ go()})();
         document.execCommand(command, false, null);
     }
 
+    function alignText(cmd) {
+        document.execCommand(cmd, false, null);
+        scheduleSave();
+    }
+
     function numSuffix() {
         const el = document.getElementById('numStyle');
         return el && el.value === '.' ? '.' : '।';
@@ -4663,8 +4765,8 @@ go()})();
     }
 
     /* প্রিভিউয়ে সাইজ: কাগজ ছোট করে ধরানো হলে (--qfs) লেখাও সমানুপাতে ছোট হয় */
-    function sizedHTML(el) {
-        let html = fixLead(el.innerHTML);
+    function sizedHTML(el, raw) {
+        let html = raw ? el.innerHTML : fixLead(el.innerHTML);
         const f = el.style.fontSize;
         if (f && /px$/.test(f)) html = `<span style="font-size:${parseFloat(f)}px">${html}</span>`;
         return html.replace(/font-size:\s*([\d.]+)px/g, (m, v) => `font-size:calc(${v} * var(--qfs, 13px) / 13)`);
@@ -4875,7 +4977,7 @@ go()})();
         const isEmpty = n => n.nodeName === 'BR' || (n.nodeType === 3 && !n.nodeValue.replace(/[\u200b\u00a0]/g, '').trim());
         while (t.firstChild && isEmpty(t.firstChild)) t.removeChild(t.firstChild);
         const f = t.firstChild;
-        if (f && f.nodeType === 1 && /^(DIV|P)$/.test(f.nodeName)) {
+        if (f && f.nodeType === 1 && /^(DIV|P)$/.test(f.nodeName) && !f.style.textAlign) {
             const sp = document.createElement('span');
             while (f.firstChild) sp.appendChild(f.firstChild);
             f.replaceWith(sp);
@@ -4947,7 +5049,7 @@ go()})();
                 const pe = card.querySelector('.q-text-input');
                 if (plain(pe) !== '') {
                     const pr = card.dataset.rtl === '1';
-                    questionsHTML += `<div class="preview-passage${pr ? ' rtl' : ''}"${pr ? ' dir="rtl"' : ''}>${sizedHTML(pe)}</div>`;
+                    questionsHTML += `<div class="preview-passage${pr ? ' rtl' : ''}"${pr ? ' dir="rtl"' : ''}>${sizedHTML(pe, true)}</div>`;
                 }
                 return;
             }
@@ -5713,6 +5815,8 @@ go()})();
         const restored = restoreDraft();
         if (!restored) addNewQuestion();
         changeFont();
+        document.querySelectorAll('link[rel="stylesheet"]').forEach(l => l.addEventListener('load', refreshBold));
+        if (document.fonts && document.fonts.ready) document.fonts.ready.then(refreshBold);
         const hasContent = FIELD_IDS.some(id => document.getElementById(id).value.trim() !== '') ||
             Array.from(document.querySelectorAll('.q-text-input')).some(el => plain(el) !== '');
         if (restored && hasContent) goStep2();

@@ -2336,7 +2336,7 @@ window.hwVoiceDel=async function(c,d,sj){await upd({['hwVoice/'+c+'/'+d+'/'+sjk(
 })();
 </script>
 <script>
-/* প্রশ্নপত্র (শুধু অ্যাডমিন): আলাদা ফাইলের টুলটি ভেতরে চলে; অন্য ট্যাবে গিয়ে ফিরলেও লেখা থাকে; লগআউট করলে সব মুছে যায়।
+/* প্রশ্নপত্র (অ্যাডমিন ও সব শিক্ষক): আলাদা ফাইলের টুলটি ভেতরে চলে; অন্য ট্যাবে গিয়ে ফিরলেও লেখা থাকে; লগআউট করলে সব মুছে যায়।
    এই ব্লক স্ক্রল-স্ট্যাকের আগে বসেছে, যাতে ব্যাক করলে হোমের স্ক্রল-অবস্থান অন্য পেজের মতোই ফেরে। */
 (function(){
  var host=null;
@@ -2357,16 +2357,16 @@ window.hwVoiceDel=async function(c,d,sj){await upd({['hwVoice/'+c+'/'+d+'/'+sjk(
   host.style.top=Math.max(0,tb)+'px';host.style.height=Math.max(0,nt-tb)+'px'}
  function sync(){
   hookLogin();
-  var on=(tab==='qpaper'&&role==='admin'&&document.querySelector('#app .nav'));
+  var on=(tab==='qpaper'&&(role==='admin'||role==='teacher')&&document.querySelector('#app .nav'));
   if(on){if(!host)mk();place();host.style.display='block';host.style.visibility='visible';host.style.pointerEvents='auto'}
   else if(host){host.style.visibility='hidden';host.style.pointerEvents='none';if(document.querySelector('#app .login, .lgp'))destroy()}}
  var _hl=homeList;
- window.homeList=function(){var t=_hl.apply(this,arguments);if(role==='admin')t.push(['📄','Question Paper','প্রশ্নপত্র','#b45309','qpaper']);return t};
- try{NAVG.admin.forEach(function(g){if(g[0].indexOf('একাডেমিক')>-1&&g[1].indexOf('qpaper')<0)g[1].push('qpaper')})}catch(e){}
+ window.homeList=function(){var t=_hl.apply(this,arguments);if(role==='admin'||role==='teacher')t.push(['📄','Question Paper','প্রশ্নপত্র','#b45309','qpaper']);return t};
+ try{[NAVG.admin,NAVG.teacher].forEach(function(L){L.forEach(function(g){if(g[0].indexOf('একাডেমিক')>-1&&g[1].indexOf('qpaper')<0)g[1].push('qpaper')})})}catch(e){}
  var _d=window.draw;
  window.draw=function(){
   if(tab==='qpaper'){
-   if(role==='admin'){shell('প্রশ্নপত্র','<div style="min-height:50vh"></div>','home');sync();return}
+   if(role==='admin'||role==='teacher'){shell('প্রশ্নপত্র','<div style="min-height:50vh"></div>','home');sync();return}
    tab='home'}
   var r=_d.apply(this,arguments);sync();return r};
  /* অ্যাপের তথ্য প্রশ্নপত্রকে দেওয়া: মাদ্রাসার নাম, লোগো, জামাত ও বিষয় */
@@ -3959,8 +3959,8 @@ go()})();
         .passage-card .q-badge { background: #fdf3df; color: #92610f; }
         .preview-passage { font-size: var(--qfs, 13px); line-height: 1.45; margin-bottom: 8px; white-space: pre-wrap; }
         .preview-passage.rtl { text-align: right; }
-        .a4-paper.fake-bold b, .a4-paper.fake-bold strong, .a4-paper.fake-bold h1, .a4-paper.fake-bold .paper-header p, .a4-paper.fake-bold .paper-info-row, .a4-paper.fake-bold .paper-instruction, .a4-paper.fake-bold .q-marks, .a4-paper.fake-bold [style*="font-weight"] { font-synthesis-weight: none; text-shadow: 0.03em 0 0 currentColor, -0.03em 0 0 currentColor; }
-        .fake-bold-ed [contenteditable] b, .fake-bold-ed [contenteditable] strong { font-synthesis-weight: none; text-shadow: 0.03em 0 0 currentColor, -0.03em 0 0 currentColor; }
+        .a4-paper.fake-bold b, .a4-paper.fake-bold strong, .a4-paper.fake-bold h1, .a4-paper.fake-bold .paper-header p, .a4-paper.fake-bold .paper-info-row, .a4-paper.fake-bold .paper-instruction, .a4-paper.fake-bold .q-marks, .a4-paper.fake-bold [style*="font-weight"] { font-synthesis-weight: none; text-shadow: 0.045em 0 0 currentColor, -0.045em 0 0 currentColor; }
+        .fake-bold-ed [contenteditable] b, .fake-bold-ed [contenteditable] strong, .fake-bold-ed [contenteditable] [style*="font-weight"] { font-synthesis-weight: none; text-shadow: 0.045em 0 0 currentColor, -0.045em 0 0 currentColor; }
     </style>
 </head>
 <body>
@@ -4220,17 +4220,43 @@ go()})();
 
     function changeArFont() { changeFont(); }
 
-    /* ফন্টে আসল বোল্ড থাকলে সেটাই চলে; না থাকলে (লোড হওয়া ফন্ট-তালিকা দেখে) নকল বোল্ড */
-    function needsFakeBold() {
-        const fam = document.getElementById('fontSelector').value.split(',')[0].replace(/['"\s]/g, '');
-        if (!['Kalpurush', 'SolaimanLipi', 'TiroBangla'].includes(fam)) return false;
+    /* বোল্ড আসলে দেখা যায় কি না ক্যানভাসে এঁকে মাপা হয় (সাধারণ বনাম বোল্ডের কালো পিক্সেল)। দেখা না গেলে নকল বোল্ড (ছায়া) চালু হয় */
+    const boldCache = {};
+    async function measureNoBold() {
+        const stack = paperStack();
         try {
-            return !Array.from(document.fonts).some(f => String(f.family).replace(/['"\s]/g, '') === fam && /bold|[6-9]00/.test(String(f.weight)));
-        } catch (e) { return false; }
+            await Promise.all([
+                document.fonts.load('40px ' + stack, 'আমি বাংলায়'),
+                document.fonts.load('bold 40px ' + stack, 'আমি বাংলায়')
+            ]);
+        } catch (e) {}
+        const dark = w => {
+            const c = document.createElement('canvas');
+            c.width = 1000; c.height = 90;
+            const x = c.getContext('2d');
+            x.fillStyle = '#fff'; x.fillRect(0, 0, c.width, c.height);
+            x.fillStyle = '#000';
+            x.textBaseline = 'top';
+            x.font = w + ' 40px ' + stack;
+            x.fillText('আমি বাংলায় গান গাই ইদগাম কাকে বলে বর্ণনা কর', 10, 14);
+            const d = x.getImageData(0, 0, c.width, c.height).data;
+            let n = 0;
+            for (let i = 0; i < d.length; i += 4) { if (d[i] < 128) n++; }
+            return n;
+        };
+        const nrm = dark('normal'), bld = dark('bold');
+        return nrm > 0 && bld < nrm * 1.04;
     }
 
-    function refreshBold() {
-        const nb = needsFakeBold();
+    async function refreshBold(force) {
+        const key = paperStack();
+        if (force === true || (force && force.target) || (force && force.size !== undefined)) { delete boldCache[key]; }
+        let nb = boldCache[key];
+        if (nb === undefined) {
+            try { nb = await measureNoBold(); } catch (e) { nb = false; }
+            if (document.fonts && document.fonts.status === 'loaded') boldCache[key] = nb;
+        }
+        if (paperStack() !== key) return;
         document.body.classList.toggle('fake-bold-ed', nb);
         document.querySelectorAll('.a4-paper').forEach(p => p.classList.toggle('fake-bold', nb));
     }
@@ -4255,6 +4281,7 @@ go()})();
         let link = document.createElement('link');
         link.href = 'https://fonts.googleapis.com/css2?family=' + encodeURIComponent(fontName).replace(/%20/g, '+') + '&display=swap';
         link.rel = 'stylesheet';
+        link.addEventListener('load', () => refreshBold(true));
         document.head.appendChild(link);
 
         const select = document.getElementById('fontSelector');
@@ -4647,11 +4674,24 @@ go()})();
         return row;
     }
 
+    function restoreSel() {
+        const sel = window.getSelection();
+        const inside = sel && sel.rangeCount && lastSel.el && lastSel.el.contains(sel.anchorNode);
+        if (!inside && lastSel.el && lastSel.range) {
+            lastSel.el.focus();
+            sel.removeAllRanges();
+            sel.addRange(lastSel.range);
+        }
+    }
+
     function formatText(command) {
+        restoreSel();
         document.execCommand(command, false, null);
+        scheduleSave();
     }
 
     function alignText(cmd) {
+        restoreSel();
         document.execCommand(cmd, false, null);
         scheduleSave();
     }

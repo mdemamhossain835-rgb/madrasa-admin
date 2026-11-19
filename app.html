@@ -3960,6 +3960,23 @@ go()})();
         .preview-passage { font-size: var(--qfs, 13px); line-height: 1.45; margin-bottom: 8px; white-space: pre-wrap; }
         .preview-passage.rtl { text-align: right; }
         .a4-paper.fake-bold b, .a4-paper.fake-bold strong, .a4-paper.fake-bold h1, .a4-paper.fake-bold .paper-header p, .a4-paper.fake-bold .paper-info-row, .a4-paper.fake-bold .paper-instruction, .a4-paper.fake-bold .q-marks, .a4-paper.fake-bold [style*="font-weight"] { font-synthesis-weight: none; text-shadow: 0.045em 0 0 currentColor, -0.045em 0 0 currentColor; }
+        .mcq-card { border-left-color: #7c3aed; }
+        .mcq-card .q-badge { background: #efe7fd; color: #5b21b6; }
+        .mcq-opt-row { display: flex; gap: 8px; align-items: center; margin-bottom: 8px; }
+        .mcq-opt-lab { min-width: 42px; text-align: center; font-weight: bold; color: var(--primary-color); }
+        .mcq-opt-input { flex: 1; min-width: 0; min-height: 38px; padding: 8px 10px; font-size: 13px; outline: none; background: #fff; word-break: break-word; }
+        .mcq-box { margin-top: 12px; background: #f6f2fe; border: 1px solid #d9ccf6; border-radius: 10px; padding: 10px; }
+        .mcq-head { display: flex; justify-content: space-between; align-items: center; gap: 8px; margin-bottom: 8px; font-weight: bold; font-size: 13px; color: #5b21b6; flex-wrap: wrap; }
+        .mcq-lay { display: flex; align-items: center; gap: 8px; margin-top: 6px; font-size: 13px; font-weight: bold; color: #5b21b6; }
+        .mcq-lay select { flex: 1; padding: 8px; border-radius: 8px; border: 1px solid var(--border-color); font: inherit; font-size: 13px; }
+        .mcq-opts { display: grid; gap: 2px 14px; padding-left: 34px; margin-top: 3px; }
+        .mcq-L1 { grid-template-columns: 1fr; }
+        .mcq-L2 { grid-template-columns: 1fr 1fr; }
+        .mcq-L4 { grid-template-columns: repeat(4, auto); justify-content: space-between; }
+        .mcq-o { display: flex; gap: 4px; align-items: flex-start; }
+        .mcq-ol { flex: none; font-weight: bold; }
+        .mcq-ot { white-space: pre-wrap; min-width: 0; }
+        .preview-question-item.rtl .mcq-opts { padding-left: 0; padding-right: 34px; }
         .fake-bold-ed [contenteditable] b, .fake-bold-ed [contenteditable] strong, .fake-bold-ed [contenteditable] [style*="font-weight"] { font-synthesis-weight: none; text-shadow: 0.045em 0 0 currentColor, -0.045em 0 0 currentColor; }
     </style>
 </head>
@@ -4076,6 +4093,20 @@ go()})();
             </select>
         </div>
         <div class="tool-item">
+            <label>MCQ অপশনের চিহ্ন:</label>
+            <select id="mcqStyle" class="form-control" onchange="changeMcqStyle()">
+                <option value="bn.">ক. খ. গ. ঘ.</option>
+                <option value="bn)">ক) খ) গ) ঘ)</option>
+                <option value="bn()">(ক) (খ) (গ) (ঘ)</option>
+                <option value="en.">a. b. c. d.</option>
+                <option value="en)">a) b) c) d)</option>
+                <option value="en()">(a) (b) (c) (d)</option>
+                <option value="ar.">أ. ب. ج. د.</option>
+                <option value="ar)">أ) ب) ج) د)</option>
+                <option value="ar()">(أ) (ب) (ج) (د)</option>
+            </select>
+        </div>
+        <div class="tool-item">
             <label>কাটার দাগ:</label>
             <label style="display:flex; align-items:center; gap:8px; font-size:15px; color:var(--text-color); font-weight:bold; margin:0;"><input type="checkbox" id="cutLine" checked onchange="toggleCutLine()" style="width:20px; height:20px; accent-color:var(--primary-color);"> মাঝখানে কাটার দাগ দিন</label>
         </div>
@@ -4145,6 +4176,7 @@ go()})();
 
     <div class="add-bar">
         <button class="btn-add" onclick="addNewQuestion()">+ প্রশ্ন</button>
+        <button class="btn-add" style="background:#7c3aed" onclick="addMcq()">+ MCQ</button>
         <button class="btn-add" style="background:#b7791f" onclick="addPassage()">+ অনুচ্ছেদ</button>
         <button class="btn-add" style="background:#2563eb" onclick="addPageBreak()">+ নতুন পাতা</button>
     </div>
@@ -4479,6 +4511,152 @@ go()})();
         return questionCount;
     }
 
+    /* ---------- বহুনির্বাচনি প্রশ্ন (MCQ) ---------- */
+    const MCQ_SETS = {
+        bn: ['ক', 'খ', 'গ', 'ঘ', 'ঙ', 'চ', 'ছ', 'জ'],
+        en: ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'],
+        ar: ['أ', 'ب', 'ج', 'د', 'هـ', 'و', 'ز', 'ح']
+    };
+
+    function mcqStyle() {
+        const el = document.getElementById('mcqStyle');
+        return el ? el.value : 'bn.';
+    }
+
+    function mcqLab(i) {
+        const st = mcqStyle(), set = st.slice(0, 2), f = st.slice(2);
+        const ch = (MCQ_SETS[set] || MCQ_SETS.bn)[i] || String(i + 1);
+        return f === '()' ? '(' + ch + ')' : ch + f;
+    }
+
+    function relabelOpts(card) {
+        card.querySelectorAll('.mcq-opt-row').forEach((r, i) => { r.querySelector('.mcq-opt-lab').textContent = mcqLab(i); });
+    }
+
+    function changeMcqStyle() {
+        document.querySelectorAll('.mcq-card').forEach(relabelOpts);
+        if (previewVisible()) generatePreview(true);
+        scheduleSave();
+    }
+
+    function rtToolsHTML() {
+        const ic = d => '<svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><path d="' + d + '"/></svg>';
+        const nb = 'onmousedown="event.preventDefault()"';
+        return '<button type="button" ' + nb + ' onclick="formatText(\'bold\')"><b>B</b></button>' +
+            '<button type="button" ' + nb + ' onclick="formatText(\'italic\')"><i>I</i></button>' +
+            '<button type="button" ' + nb + ' onclick="formatText(\'underline\')"><u>U</u></button>' +
+            '<button type="button" class="btn-ar" ' + nb + ' onclick="toggleArabic()" title="সিলেক্ট করা লেখা আরবি ফন্টে">ع</button>' +
+            '<button type="button" ' + nb + ' onclick="alignText(\'justifyLeft\')" aria-label="বামে" title="বামে">' + ic('M2 3h12M2 6.5h8M2 10h12M2 13.5h8') + '</button>' +
+            '<button type="button" ' + nb + ' onclick="alignText(\'justifyCenter\')" aria-label="মাঝখানে" title="মাঝখানে">' + ic('M2 3h12M4 6.5h8M2 10h12M4 13.5h8') + '</button>' +
+            '<button type="button" ' + nb + ' onclick="alignText(\'justifyRight\')" aria-label="ডানে" title="ডানে">' + ic('M2 3h12M6 6.5h8M2 10h12M6 13.5h8') + '</button>' +
+            '<span class="fs-box"><button type="button" ' + nb + ' onclick="stepFont(this,-1)" aria-label="ছোট করুন">−</button><input type="text" class="fs-input" inputmode="numeric" value="১৩" onfocus="this.select()" onchange="setFontFromInput(this)" aria-label="লেখার সাইজ"><button type="button" ' + nb + ' onclick="stepFont(this,1)" aria-label="বড় করুন">+</button></span>';
+    }
+
+    function mcqAddOpt(id, html, fs) {
+        const box = document.getElementById('mcq-opts-' + id);
+        if (!box) return null;
+        if (box.children.length >= 8) { alert('সর্বোচ্চ ৮টি অপশন দেওয়া যায়।'); return null; }
+        const row = document.createElement('div');
+        row.className = 'mcq-opt-row';
+        row.innerHTML = '<span class="mcq-opt-lab"></span>' +
+            '<div class="form-control mcq-opt-input" contenteditable="true" data-ph="অপশন লিখুন..."></div>' +
+            '<span class="btn-remove-sub" onclick="mcqRemoveOpt(this)" aria-label="মুছুন"><i class="idel"></i></span>';
+        box.appendChild(row);
+        const ed = row.querySelector('.mcq-opt-input');
+        if (html) ed.innerHTML = html;
+        if (fs) ed.style.fontSize = fs;
+        const card = document.getElementById('q-card-' + id);
+        if (card && card.dataset.rtl === '1') applyRtlTo(ed, true);
+        relabelOpts(card);
+        scheduleSave();
+        return row;
+    }
+
+    function mcqRemoveOpt(btn) {
+        const card = btn.closest('.question-card');
+        const row = btn.closest('.mcq-opt-row');
+        if (card.querySelectorAll('.mcq-opt-row').length <= 2) { alert('কমপক্ষে ২টি অপশন থাকতে হবে।'); return; }
+        row.remove();
+        relabelOpts(card);
+        scheduleSave();
+    }
+
+    function addMcqAfter(id) {
+        const card = document.getElementById('q-card-' + id);
+        if (!card) return;
+        const nid = addMcq(card.nextElementSibling);
+        const ncard = document.getElementById('q-card-' + nid);
+        ncard.querySelector('.mcq-layout').value = card.querySelector('.mcq-layout').value;
+        if (card.dataset.rtl === '1') {
+            ncard.querySelector('.q-rtl').checked = true;
+            ncard.dataset.rtl = '1';
+            ncard.querySelectorAll('.q-text-input, .mcq-opt-input').forEach(e => applyRtlTo(e, true));
+        }
+    }
+
+    function addMcq(beforeCard, opts) {
+        questionCount++;
+        const id = questionCount;
+        const card = document.createElement('div');
+        card.className = 'question-card mcq-card';
+        card.id = 'q-card-' + id;
+        card.dataset.type = 'mcq';
+        const qLabel = bn(document.querySelectorAll('.question-card:not(.passage-card)').length + 1);
+        card.dataset.auto = qLabel + numSuffix();
+        card.innerHTML = `
+            <div class="card-header">
+                <span class="q-badge">প্রশ্ন ${qLabel} (MCQ)</span>
+                <div class="card-actions">
+                    <button type="button" class="btn-move" onclick="moveCard(${id},-1)" aria-label="উপরে নিন">↑</button>
+                    <button type="button" class="btn-move" onclick="moveCard(${id},1)" aria-label="নিচে নিন">↓</button>
+                    <button class="btn-delete-icon" onclick="deleteQuestion(${id})" title="ডিলিট করুন"><i class="idel"></i></button>
+                </div>
+            </div>
+            <button type="button" class="btn-pass" onclick="addPassageAbove(${id})">＋ এই প্রশ্নের ওপরে অনুচ্ছেদ যোগ করুন</button>
+            <div class="q-body">
+                <div class="q-text-group">
+                    <div class="q-label-row">
+                        <label style="font-weight:bold; font-size:15px; color:var(--primary-color);">দাগ নং:</label>
+                        <input type="text" class="q-label-input" value="${card.dataset.auto}" placeholder="যেমন: ১।">
+                        <label class="rtl-toggle"><input type="checkbox" class="q-rtl" onchange="toggleRtl(this)"> ডান থেকে বাম (আরবি)</label>
+                    </div>
+                    <label style="font-weight:bold; font-size:15px; color:var(--primary-color);">প্রশ্ন লিখুন</label>
+                    <div class="rich-text-tools">${rtToolsHTML()}</div>
+                    <div class="form-control q-text-input" contenteditable="true" style="min-height: 60px; outline: none; background: #fff; padding: 10px; border: 1px solid var(--border-color); border-radius: 8px;"></div>
+                </div>
+                <div class="mcq-box" style="width:100%">
+                    <div class="mcq-head"><span>অপশন সমূহ</span><span class="btn-add-sub" onclick="mcqAddOpt(${id})">+ অপশন</span></div>
+                    <div id="mcq-opts-${id}"></div>
+                    <div class="mcq-lay"><span>সাজানো:</span>
+                        <select class="mcq-layout" onchange="scheduleSave()">
+                            <option value="2">২ কলামে (২×২)</option>
+                            <option value="1">প্রতি লাইনে একটি</option>
+                            <option value="4">এক লাইনে চারটি</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="q-footer">
+                    <div class="q-marks-group">
+                        <label style="font-weight:bold; font-size:15px; color:var(--primary-color);">নম্বর</label>
+                        <div class="form-control q-marks-input" contenteditable="true" style="background: #fff; padding: 10px; border: 1px solid var(--border-color); border-radius: 8px;"></div>
+                    </div>
+                </div>
+            </div>
+            <button type="button" class="btn-pass" style="margin:12px 0 0;color:#5b21b6;background:#f6f2fe;border-color:#b9a3ee" onclick="addMcqAfter(${id})">＋ এর পরে আরেকটি MCQ যোগ করুন</button>`;
+        const cont = document.getElementById('questionsContainer');
+        if (beforeCard && beforeCard.parentNode === cont) cont.insertBefore(card, beforeCard);
+        else cont.appendChild(card);
+        const list = (opts && opts.length) ? opts : [{}, {}, {}, {}];
+        list.forEach(o => mcqAddOpt(id, o.html, o.fs));
+        if (!restoring) {
+            card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            const ed = card.querySelector('.q-text-input');
+            setTimeout(() => { try { ed.focus(); } catch (e) {} }, 350);
+        }
+        scheduleSave();
+        return id;
+    }
+
     function addPassageTop() {
         addPassage(document.querySelector('#questionsContainer > .question-card'));
     }
@@ -4715,7 +4893,7 @@ go()})();
     function renumberQuestions() {
         document.querySelectorAll('.question-card:not(.passage-card)').forEach((card, i) => {
             const lab = bn(i + 1);
-            card.querySelector('.q-badge').textContent = 'প্রশ্ন ' + lab;
+            card.querySelector('.q-badge').textContent = 'প্রশ্ন ' + lab + (card.dataset.type === 'mcq' ? ' (MCQ)' : '');
             const inp = card.querySelector('.q-label-input');
             if (inp.value === card.dataset.auto) inp.value = lab + numSuffix();
             card.dataset.auto = lab + numSuffix();
@@ -4821,7 +4999,7 @@ go()})();
     function toggleRtl(cb) {
         const card = cb.closest('.question-card');
         card.dataset.rtl = cb.checked ? '1' : '';
-        card.querySelectorAll('.q-text-input, .sub-text-input').forEach(e => applyRtlTo(e, cb.checked));
+        card.querySelectorAll('.q-text-input, .sub-text-input, .mcq-opt-input').forEach(e => applyRtlTo(e, cb.checked));
         scheduleSave();
     }
 
@@ -5091,6 +5269,29 @@ go()})();
                     const pr = card.dataset.rtl === '1';
                     questionsHTML += `<div class="preview-passage${pr ? ' rtl' : ''}"${pr ? ' dir="rtl"' : ''}>${sizedHTML(pe, true)}</div>`;
                 }
+                return;
+            }
+            if (card.dataset.type === 'mcq') {
+                const mLabel = esc(card.querySelector('.q-label-input').value);
+                const mTextEl = card.querySelector('.q-text-input');
+                const mText = plain(mTextEl) !== '' ? sizedHTML(mTextEl) : 'প্রশ্ন লেখা হয়নি';
+                const mMarks = sizedHTML(card.querySelector('.q-marks-input'));
+                const lay = card.querySelector('.mcq-layout').value;
+                const mRtl = card.dataset.rtl === '1';
+                let oh = '', k = 0;
+                card.querySelectorAll('.mcq-opt-input').forEach(ed => {
+                    if (plain(ed) === '') return;
+                    oh += '<div class="mcq-o"><span class="mcq-ol">' + esc(mcqLab(k)) + '</span><span class="mcq-ot">' + sizedHTML(ed) + '</span></div>';
+                    k++;
+                });
+                questionsHTML += `
+                <div class="preview-question-item mcq${mRtl ? ' rtl' : ''}"${mRtl ? ' dir="rtl"' : ''}>
+                    <div class="q-row">
+                        <div class="q-content"><span style="font-weight:bold; margin-right: 5px;">${mLabel}</span> ${mText}</div>
+                        <div class="q-marks">${mMarks}</div>
+                    </div>
+                    <div class="mcq-opts mcq-L${lay}">${oh}</div>
+                </div>`;
                 return;
             }
             const qLabelText = esc(card.querySelector('.q-label-input').value);
@@ -5579,6 +5780,7 @@ go()})();
             arFont: document.getElementById('arFontSelector').value,
             numStyle: document.getElementById('numStyle').value,
             hdrLang: document.getElementById('hdrLang').value,
+            mcqStyle: mcqStyle(),
             savedId: currentSavedId,
             extras: readExtras(),
             fonts: customFonts.slice(),
@@ -5594,6 +5796,21 @@ go()})();
                 return;
             }
             if (card.dataset.type === 'break') { d.questions.push({ type: 'break' }); return; }
+            if (card.dataset.type === 'mcq') {
+                d.questions.push({
+                    type: 'mcq',
+                    label: card.querySelector('.q-label-input').value,
+                    auto: card.dataset.auto,
+                    html: card.querySelector('.q-text-input').innerHTML,
+                    marks: card.querySelector('.q-marks-input').innerHTML,
+                    fs: card.querySelector('.q-text-input').style.fontSize,
+                    marksFs: card.querySelector('.q-marks-input').style.fontSize,
+                    rtl: card.dataset.rtl === '1',
+                    layout: card.querySelector('.mcq-layout').value,
+                    opts: Array.from(card.querySelectorAll('.mcq-opt-input')).map(e => ({ html: e.innerHTML, fs: e.style.fontSize }))
+                });
+                return;
+            }
             const tc = card.querySelector('.table-container-area');
             const idRe = new RegExp('tbl-' + id + '(?!\\d)', 'g');
             d.questions.push({
@@ -5630,6 +5847,8 @@ go()})();
             (d.fonts || []).forEach(n => { registerFont(n); customFonts.push(n); });
 
             currentSavedId = d.savedId || '';
+            const msEl = document.getElementById('mcqStyle');
+            if (d.mcqStyle && Array.from(msEl.options).some(o => o.value === d.mcqStyle)) msEl.value = d.mcqStyle;
             if (d.hdrLang === 'en' || d.hdrLang === 'bn') { document.getElementById('hdrLang').value = d.hdrLang; syncHdrLangUI(); }
             const ns = document.getElementById('numStyle');
             if (d.numStyle === '.' || d.numStyle === '।') ns.value = d.numStyle;
@@ -5655,6 +5874,23 @@ go()})();
             questionCount = 0;
             d.questions.forEach(q => {
                 if (q.type === 'break') { addPageBreak(); return; }
+                if (q.type === 'mcq') {
+                    const mid = addMcq(null, q.opts);
+                    const mc = document.getElementById('q-card-' + mid);
+                    if (q.label !== q.auto) mc.querySelector('.q-label-input').value = q.label;
+                    if (q.auto && q.label !== q.auto) mc.dataset.auto = q.auto;
+                    mc.querySelector('.q-text-input').innerHTML = q.html || '';
+                    mc.querySelector('.q-marks-input').innerHTML = q.marks || '';
+                    mc.querySelector('.q-text-input').style.fontSize = q.fs || '';
+                    mc.querySelector('.q-marks-input').style.fontSize = q.marksFs || '';
+                    if (q.layout) mc.querySelector('.mcq-layout').value = q.layout;
+                    if (q.rtl) {
+                        mc.querySelector('.q-rtl').checked = true;
+                        mc.dataset.rtl = '1';
+                        mc.querySelectorAll('.q-text-input, .mcq-opt-input').forEach(e => applyRtlTo(e, true));
+                    }
+                    return;
+                }
                 if (q.type === 'passage') {
                     const pid = addPassage();
                     const pc = document.getElementById('q-card-' + pid);

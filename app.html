@@ -3969,6 +3969,24 @@ go()})();
         .mcq-head { display: flex; justify-content: space-between; align-items: center; gap: 8px; margin-bottom: 8px; font-weight: bold; font-size: 13px; color: #5b21b6; flex-wrap: wrap; }
         .mcq-lay { display: flex; align-items: center; gap: 8px; margin-top: 6px; font-size: 13px; font-weight: bold; color: #5b21b6; }
         .mcq-lay select { flex: 1; padding: 8px; border-radius: 8px; border: 1px solid var(--border-color); font: inherit; font-size: 13px; }
+        .mcq-items { display: flex; flex-direction: column; gap: 10px; }
+        .mcq-item { background: #fff; border: 1px solid #d9ccf6; border-radius: 10px; padding: 8px; }
+        .mcq-item-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
+        .mcq-item-lab { font-weight: bold; color: #5b21b6; font-size: 13px; }
+        .mcq-item-lab.dim { opacity: .7; }
+        .mcq-item-acts { display: flex; gap: 6px; align-items: center; }
+        .mcq-item-text { min-height: 44px; padding: 8px 10px; font-size: 13px; outline: none; background: #fff; word-break: break-word; }
+        .mcq-item-foot { display: flex; justify-content: space-between; align-items: center; gap: 8px; margin-top: 6px; flex-wrap: wrap; }
+        .mcq-opt-box { margin-top: 8px; }
+        .mcq-nst { display: flex; align-items: center; gap: 6px; font-size: 13px; }
+        .mcq-nst select { padding: 6px; border-radius: 8px; border: 1px solid var(--border-color); font: inherit; font-size: 13px; }
+        .mcq-blk { margin-top: 4px; padding-left: 18px; }
+        .mcq-it { display: flex; gap: 5px; align-items: flex-start; }
+        .mcq-il { flex: none; font-weight: bold; }
+        .mcq-itt { white-space: pre-wrap; min-width: 0; }
+        .mcq-blk .mcq-opts { padding-left: 22px; }
+        .preview-question-item.rtl .mcq-blk { padding-left: 0; padding-right: 18px; }
+        .preview-question-item.rtl .mcq-blk .mcq-opts { padding-left: 0; padding-right: 22px; }
         .mcq-opts { display: grid; gap: 2px 14px; padding-left: 34px; margin-top: 3px; }
         .mcq-L1 { grid-template-columns: 1fr; }
         .mcq-L2 { grid-template-columns: 1fr 1fr; }
@@ -4511,7 +4529,7 @@ go()})();
         return questionCount;
     }
 
-    /* ---------- বহুনির্বাচনি প্রশ্ন (MCQ) ---------- */
+    /* ---------- বহুনির্বাচনি প্রশ্ন (MCQ): একটি দাগে একাধিক MCQ ---------- */
     const MCQ_SETS = {
         bn: ['ক', 'খ', 'গ', 'ঘ', 'ঙ', 'চ', 'ছ', 'জ'],
         en: ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'],
@@ -4523,18 +4541,49 @@ go()})();
         return el ? el.value : 'bn.';
     }
 
+    /* অপশনের চিহ্ন (ক. খ. গ. ঘ.) */
     function mcqLab(i) {
         const st = mcqStyle(), set = st.slice(0, 2), f = st.slice(2);
         const ch = (MCQ_SETS[set] || MCQ_SETS.bn)[i] || String(i + 1);
         return f === '()' ? '(' + ch + ')' : ch + f;
     }
 
+    /* একই দাগের ভেতরের MCQ-গুলোর নম্বর (১. ২. ৩. / (ক) (খ) ...) */
+    function mcqItemLab(st, i) {
+        const k = MCQ_SETS.bn[i] || bn(i + 1);
+        switch (st) {
+            case 'n.': return bn(i + 1) + '.';
+            case '(n)': return '(' + bn(i + 1) + ')';
+            case 'k.': return k + '.';
+            case '(k)': return '(' + k + ')';
+            case 'e.': return (i + 1) + '.';
+            default: return '';
+        }
+    }
+
     function relabelOpts(card) {
-        card.querySelectorAll('.mcq-opt-row').forEach((r, i) => { r.querySelector('.mcq-opt-lab').textContent = mcqLab(i); });
+        card.querySelectorAll('.mcq-item').forEach(it => {
+            it.querySelectorAll('.mcq-opt-row').forEach((r, i) => { r.querySelector('.mcq-opt-lab').textContent = mcqLab(i); });
+        });
+    }
+
+    function relabelItems(card) {
+        const st = card.querySelector('.mcq-istyle').value;
+        card.querySelectorAll('.mcq-item').forEach((it, i) => {
+            const l = mcqItemLab(st, i), el = it.querySelector('.mcq-item-lab');
+            el.textContent = l || ('MCQ ' + bn(i + 1));
+            el.classList.toggle('dim', !l);
+        });
     }
 
     function changeMcqStyle() {
         document.querySelectorAll('.mcq-card').forEach(relabelOpts);
+        if (previewVisible()) generatePreview(true);
+        scheduleSave();
+    }
+
+    function mcqIStyle(sel) {
+        relabelItems(sel.closest('.question-card'));
         if (previewVisible()) generatePreview(true);
         scheduleSave();
     }
@@ -4552,9 +4601,11 @@ go()})();
             '<span class="fs-box"><button type="button" ' + nb + ' onclick="stepFont(this,-1)" aria-label="ছোট করুন">−</button><input type="text" class="fs-input" inputmode="numeric" value="১৩" onfocus="this.select()" onchange="setFontFromInput(this)" aria-label="লেখার সাইজ"><button type="button" ' + nb + ' onclick="stepFont(this,1)" aria-label="বড় করুন">+</button></span>';
     }
 
-    function mcqAddOpt(id, html, fs) {
-        const box = document.getElementById('mcq-opts-' + id);
-        if (!box) return null;
+    /* একটি MCQ-র অপশন */
+    function mcqAddOpt(ref, html, fs) {
+        const item = ref.closest('.mcq-item');
+        const card = item.closest('.question-card');
+        const box = item.querySelector('.mcq-opt-box');
         if (box.children.length >= 8) { alert('সর্বোচ্চ ৮টি অপশন দেওয়া যায়।'); return null; }
         const row = document.createElement('div');
         row.className = 'mcq-opt-row';
@@ -4565,19 +4616,77 @@ go()})();
         const ed = row.querySelector('.mcq-opt-input');
         if (html) ed.innerHTML = html;
         if (fs) ed.style.fontSize = fs;
-        const card = document.getElementById('q-card-' + id);
-        if (card && card.dataset.rtl === '1') applyRtlTo(ed, true);
+        if (card.dataset.rtl === '1') applyRtlTo(ed, true);
         relabelOpts(card);
         scheduleSave();
         return row;
     }
 
     function mcqRemoveOpt(btn) {
-        const card = btn.closest('.question-card');
-        const row = btn.closest('.mcq-opt-row');
-        if (card.querySelectorAll('.mcq-opt-row').length <= 2) { alert('কমপক্ষে ২টি অপশন থাকতে হবে।'); return; }
-        row.remove();
+        const item = btn.closest('.mcq-item');
+        const card = item.closest('.question-card');
+        if (item.querySelectorAll('.mcq-opt-row').length <= 2) { alert('কমপক্ষে ২টি অপশন থাকতে হবে।'); return; }
+        btn.closest('.mcq-opt-row').remove();
         relabelOpts(card);
+        scheduleSave();
+    }
+
+    /* একই দাগের ভেতরে একটি MCQ */
+    function mcqAddItem(ref, data) {
+        const card = (ref && typeof ref === 'object') ? ref.closest('.question-card') : document.getElementById('q-card-' + ref);
+        if (!card) return null;
+        const box = card.querySelector('.mcq-items');
+        if (box.children.length >= 30) { alert('একটি দাগে সর্বোচ্চ ৩০টি MCQ দেওয়া যায়।'); return null; }
+        const prev = box.lastElementChild;
+        const it = document.createElement('div');
+        it.className = 'mcq-item';
+        it.innerHTML =
+            '<div class="mcq-item-head"><span class="mcq-item-lab"></span><span class="mcq-item-acts">' +
+            '<button type="button" class="btn-move" onclick="mcqMoveItem(this,-1)" aria-label="উপরে নিন">↑</button>' +
+            '<button type="button" class="btn-move" onclick="mcqMoveItem(this,1)" aria-label="নিচে নিন">↓</button>' +
+            '<button type="button" class="btn-delete-icon" onclick="mcqRemoveItem(this)" title="এই MCQ মুছুন"><i class="idel"></i></button>' +
+            '</span></div>' +
+            '<div class="form-control mcq-item-text" contenteditable="true" data-ph="MCQ-র প্রশ্ন লিখুন..."></div>' +
+            '<div class="mcq-opt-box"></div>' +
+            '<div class="mcq-item-foot"><span class="btn-add-sub" onclick="mcqAddOpt(this)">+ অপশন</span>' +
+            '<span class="mcq-lay">সাজানো: <select class="mcq-layout" onchange="scheduleSave()">' +
+            '<option value="2">২ কলামে (২×২)</option><option value="1">প্রতি লাইনে একটি</option><option value="4">এক লাইনে চারটি</option>' +
+            '</select></span></div>';
+        box.appendChild(it);
+        const d = data || {};
+        const te = it.querySelector('.mcq-item-text');
+        if (d.html) te.innerHTML = d.html;
+        if (d.fs) te.style.fontSize = d.fs;
+        const lay = it.querySelector('.mcq-layout');
+        lay.value = d.layout || (prev ? prev.querySelector('.mcq-layout').value : '2');
+        if (card.dataset.rtl === '1') applyRtlTo(te, true);
+        (d.opts && d.opts.length ? d.opts : [{}, {}, {}, {}]).forEach(o => mcqAddOpt(it, o.html, o.fs));
+        const st = card.querySelector('.mcq-istyle');
+        if (!restoring && box.children.length === 2 && st.value === 'none') st.value = 'n.';
+        relabelItems(card);
+        if (!restoring && prev) {
+            it.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            setTimeout(() => { try { te.focus(); } catch (e) {} }, 300);
+        }
+        scheduleSave();
+        return it;
+    }
+
+    function mcqRemoveItem(btn) {
+        const card = btn.closest('.question-card');
+        if (card.querySelectorAll('.mcq-item').length <= 1) { alert('কমপক্ষে ১টি MCQ থাকতে হবে।'); return; }
+        btn.closest('.mcq-item').remove();
+        relabelItems(card);
+        scheduleSave();
+    }
+
+    function mcqMoveItem(btn, dir) {
+        const it = btn.closest('.mcq-item');
+        const sib = dir < 0 ? it.previousElementSibling : it.nextElementSibling;
+        if (!sib) return;
+        if (dir < 0) it.parentNode.insertBefore(it, sib);
+        else it.parentNode.insertBefore(sib, it);
+        relabelItems(it.closest('.question-card'));
         scheduleSave();
     }
 
@@ -4586,15 +4695,16 @@ go()})();
         if (!card) return;
         const nid = addMcq(card.nextElementSibling);
         const ncard = document.getElementById('q-card-' + nid);
-        ncard.querySelector('.mcq-layout').value = card.querySelector('.mcq-layout').value;
+        const lastLay = card.querySelector('.mcq-item:last-child .mcq-layout');
+        if (lastLay) ncard.querySelector('.mcq-layout').value = lastLay.value;
         if (card.dataset.rtl === '1') {
             ncard.querySelector('.q-rtl').checked = true;
             ncard.dataset.rtl = '1';
-            ncard.querySelectorAll('.q-text-input, .mcq-opt-input').forEach(e => applyRtlTo(e, true));
+            ncard.querySelectorAll('.q-text-input, .mcq-item-text, .mcq-opt-input').forEach(e => applyRtlTo(e, true));
         }
     }
 
-    function addMcq(beforeCard, opts) {
+    function addMcq(beforeCard, items, istyle) {
         questionCount++;
         const id = questionCount;
         const card = document.createElement('div');
@@ -4617,40 +4727,45 @@ go()})();
                 <div class="q-text-group">
                     <div class="q-label-row">
                         <label style="font-weight:bold; font-size:15px; color:var(--primary-color);">দাগ নং:</label>
-                        <input type="text" class="q-label-input" value="${card.dataset.auto}" placeholder="যেমন: ১।">
+                        <input type="text" class="q-label-input" value="${card.dataset.auto}" placeholder="যেমন: ১১।">
                         <label class="rtl-toggle"><input type="checkbox" class="q-rtl" onchange="toggleRtl(this)"> ডান থেকে বাম (আরবি)</label>
                     </div>
-                    <label style="font-weight:bold; font-size:15px; color:var(--primary-color);">প্রশ্ন লিখুন</label>
+                    <label style="font-weight:bold; font-size:15px; color:var(--primary-color);">শিরোনাম / নির্দেশনা <small style="font-weight:normal;color:#64748b">(ঐচ্ছিক)</small></label>
                     <div class="rich-text-tools">${rtToolsHTML()}</div>
-                    <div class="form-control q-text-input" contenteditable="true" style="min-height: 60px; outline: none; background: #fff; padding: 10px; border: 1px solid var(--border-color); border-radius: 8px;"></div>
+                    <div class="form-control q-text-input" contenteditable="true" data-ph="যেমন: সঠিক উত্তরটি বাছাই কর" style="min-height: 44px; outline: none; background: #fff; padding: 10px; border: 1px solid var(--border-color); border-radius: 8px;"></div>
                 </div>
                 <div class="mcq-box" style="width:100%">
-                    <div class="mcq-head"><span>অপশন সমূহ</span><span class="btn-add-sub" onclick="mcqAddOpt(${id})">+ অপশন</span></div>
-                    <div id="mcq-opts-${id}"></div>
-                    <div class="mcq-lay"><span>সাজানো:</span>
-                        <select class="mcq-layout" onchange="scheduleSave()">
-                            <option value="2">২ কলামে (২×২)</option>
-                            <option value="1">প্রতি লাইনে একটি</option>
-                            <option value="4">এক লাইনে চারটি</option>
-                        </select>
+                    <div class="mcq-head"><span>MCQ সমূহ (এই দাগের ভেতরে)</span>
+                        <span class="mcq-nst">নম্বর:
+                            <select class="mcq-istyle" onchange="mcqIStyle(this)">
+                                <option value="none">নম্বর ছাড়া (একটি MCQ)</option>
+                                <option value="n.">১. ২. ৩.</option>
+                                <option value="(n)">(১) (২) (৩)</option>
+                                <option value="k.">ক. খ. গ.</option>
+                                <option value="(k)">(ক) (খ) (গ)</option>
+                                <option value="e.">1. 2. 3.</option>
+                            </select>
+                        </span>
                     </div>
+                    <div class="mcq-items"></div>
+                    <button type="button" class="btn-pass" style="margin:10px 0 0;color:#5b21b6;background:#fff;border-color:#b9a3ee" onclick="mcqAddItem(${id})">＋ এই দাগে আরেকটি MCQ যোগ করুন</button>
                 </div>
                 <div class="q-footer">
                     <div class="q-marks-group">
-                        <label style="font-weight:bold; font-size:15px; color:var(--primary-color);">নম্বর</label>
+                        <label style="font-weight:bold; font-size:15px; color:var(--primary-color);">নম্বর (মোট)</label>
                         <div class="form-control q-marks-input" contenteditable="true" style="background: #fff; padding: 10px; border: 1px solid var(--border-color); border-radius: 8px;"></div>
                     </div>
                 </div>
             </div>
-            <button type="button" class="btn-pass" style="margin:12px 0 0;color:#5b21b6;background:#f6f2fe;border-color:#b9a3ee" onclick="addMcqAfter(${id})">＋ এর পরে আরেকটি MCQ যোগ করুন</button>`;
+            <button type="button" class="btn-pass" style="margin:12px 0 0;color:#5b21b6;background:#f6f2fe;border-color:#b9a3ee" onclick="addMcqAfter(${id})">＋ পরের দাগে নতুন MCQ যোগ করুন</button>`;
         const cont = document.getElementById('questionsContainer');
         if (beforeCard && beforeCard.parentNode === cont) cont.insertBefore(card, beforeCard);
         else cont.appendChild(card);
-        const list = (opts && opts.length) ? opts : [{}, {}, {}, {}];
-        list.forEach(o => mcqAddOpt(id, o.html, o.fs));
+        card.querySelector('.mcq-istyle').value = istyle || 'none';
+        (items && items.length ? items : [{}]).forEach(d => mcqAddItem(card, d));
         if (!restoring) {
             card.scrollIntoView({ behavior: 'smooth', block: 'center' });
-            const ed = card.querySelector('.q-text-input');
+            const ed = card.querySelector('.mcq-item-text');
             setTimeout(() => { try { ed.focus(); } catch (e) {} }, 350);
         }
         scheduleSave();
@@ -4999,7 +5114,7 @@ go()})();
     function toggleRtl(cb) {
         const card = cb.closest('.question-card');
         card.dataset.rtl = cb.checked ? '1' : '';
-        card.querySelectorAll('.q-text-input, .sub-text-input, .mcq-opt-input').forEach(e => applyRtlTo(e, cb.checked));
+        card.querySelectorAll('.q-text-input, .sub-text-input, .mcq-item-text, .mcq-opt-input').forEach(e => applyRtlTo(e, cb.checked));
         scheduleSave();
     }
 
@@ -5272,25 +5387,47 @@ go()})();
                 return;
             }
             if (card.dataset.type === 'mcq') {
-                const mLabel = esc(card.querySelector('.q-label-input').value);
-                const mTextEl = card.querySelector('.q-text-input');
-                const mText = plain(mTextEl) !== '' ? sizedHTML(mTextEl) : 'প্রশ্ন লেখা হয়নি';
+                const dag = esc(card.querySelector('.q-label-input').value);
+                const headEl = card.querySelector('.q-text-input');
+                const head = plain(headEl) !== '' ? sizedHTML(headEl) : '';
                 const mMarks = sizedHTML(card.querySelector('.q-marks-input'));
-                const lay = card.querySelector('.mcq-layout').value;
+                const ist = card.querySelector('.mcq-istyle').value;
                 const mRtl = card.dataset.rtl === '1';
-                let oh = '', k = 0;
-                card.querySelectorAll('.mcq-opt-input').forEach(ed => {
-                    if (plain(ed) === '') return;
-                    oh += '<div class="mcq-o"><span class="mcq-ol">' + esc(mcqLab(k)) + '</span><span class="mcq-ot">' + sizedHTML(ed) + '</span></div>';
-                    k++;
+                const its = [];
+                card.querySelectorAll('.mcq-item').forEach(it => {
+                    const te = it.querySelector('.mcq-item-text');
+                    const txt = plain(te) !== '' ? sizedHTML(te) : '';
+                    let oh = '', k = 0;
+                    it.querySelectorAll('.mcq-opt-input').forEach(ed => {
+                        if (plain(ed) === '') return;
+                        oh += '<div class="mcq-o"><span class="mcq-ol">' + esc(mcqLab(k)) + '</span><span class="mcq-ot">' + sizedHTML(ed) + '</span></div>';
+                        k++;
+                    });
+                    if (txt === '' && oh === '') return;
+                    its.push({ txt: txt, oh: oh, lay: it.querySelector('.mcq-layout').value });
                 });
+                const il = i => { const l = mcqItemLab(ist, i); return l ? '<span class="mcq-il">' + esc(l) + '</span>' : ''; };
+                const od = x => x.oh ? '<div class="mcq-opts mcq-L' + x.lay + '">' + x.oh + '</div>' : '';
+                const blk = (x, i) => '<div class="mcq-blk"><div class="mcq-it">' + il(i) + '<span class="mcq-itt">' + x.txt + '</span></div>' + od(x) + '</div>';
+                let first = '', rest = '';
+                if (head !== '') {
+                    first = head;
+                    its.forEach((x, i) => { rest += blk(x, i); });
+                } else if (its.length) {
+                    const x0 = its[0];
+                    first = (il(0) ? il(0) + ' ' : '') + x0.txt;
+                    rest = od(x0);
+                    its.slice(1).forEach((x, i) => { rest += blk(x, i + 1); });
+                } else {
+                    first = 'প্রশ্ন লেখা হয়নি';
+                }
                 questionsHTML += `
                 <div class="preview-question-item mcq${mRtl ? ' rtl' : ''}"${mRtl ? ' dir="rtl"' : ''}>
                     <div class="q-row">
-                        <div class="q-content"><span style="font-weight:bold; margin-right: 5px;">${mLabel}</span> ${mText}</div>
+                        <div class="q-content"><span style="font-weight:bold; margin-right: 5px;">${dag}</span> ${first}</div>
                         <div class="q-marks">${mMarks}</div>
                     </div>
-                    <div class="mcq-opts mcq-L${lay}">${oh}</div>
+                    ${rest}
                 </div>`;
                 return;
             }
@@ -5799,6 +5936,7 @@ go()})();
             if (card.dataset.type === 'mcq') {
                 d.questions.push({
                     type: 'mcq',
+                    v: 2,
                     label: card.querySelector('.q-label-input').value,
                     auto: card.dataset.auto,
                     html: card.querySelector('.q-text-input').innerHTML,
@@ -5806,8 +5944,13 @@ go()})();
                     fs: card.querySelector('.q-text-input').style.fontSize,
                     marksFs: card.querySelector('.q-marks-input').style.fontSize,
                     rtl: card.dataset.rtl === '1',
-                    layout: card.querySelector('.mcq-layout').value,
-                    opts: Array.from(card.querySelectorAll('.mcq-opt-input')).map(e => ({ html: e.innerHTML, fs: e.style.fontSize }))
+                    istyle: card.querySelector('.mcq-istyle').value,
+                    items: Array.from(card.querySelectorAll('.mcq-item')).map(it => ({
+                        html: it.querySelector('.mcq-item-text').innerHTML,
+                        fs: it.querySelector('.mcq-item-text').style.fontSize,
+                        layout: it.querySelector('.mcq-layout').value,
+                        opts: Array.from(it.querySelectorAll('.mcq-opt-input')).map(e => ({ html: e.innerHTML, fs: e.style.fontSize }))
+                    }))
                 });
                 return;
             }
@@ -5875,19 +6018,20 @@ go()})();
             d.questions.forEach(q => {
                 if (q.type === 'break') { addPageBreak(); return; }
                 if (q.type === 'mcq') {
-                    const mid = addMcq(null, q.opts);
+                    let items = q.items, head = q.html || '';
+                    if (!items) { items = [{ html: q.html || '', layout: q.layout, opts: q.opts }]; head = ''; }
+                    const mid = addMcq(null, items, q.istyle || 'none');
                     const mc = document.getElementById('q-card-' + mid);
                     if (q.label !== q.auto) mc.querySelector('.q-label-input').value = q.label;
                     if (q.auto && q.label !== q.auto) mc.dataset.auto = q.auto;
-                    mc.querySelector('.q-text-input').innerHTML = q.html || '';
+                    mc.querySelector('.q-text-input').innerHTML = head;
                     mc.querySelector('.q-marks-input').innerHTML = q.marks || '';
                     mc.querySelector('.q-text-input').style.fontSize = q.fs || '';
                     mc.querySelector('.q-marks-input').style.fontSize = q.marksFs || '';
-                    if (q.layout) mc.querySelector('.mcq-layout').value = q.layout;
                     if (q.rtl) {
                         mc.querySelector('.q-rtl').checked = true;
                         mc.dataset.rtl = '1';
-                        mc.querySelectorAll('.q-text-input, .mcq-opt-input').forEach(e => applyRtlTo(e, true));
+                        mc.querySelectorAll('.q-text-input, .mcq-item-text, .mcq-opt-input').forEach(e => applyRtlTo(e, true));
                     }
                     return;
                 }

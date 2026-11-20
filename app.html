@@ -411,7 +411,6 @@ let students=[
 {n:'মুহাম্মদ তানভীর',id:'STU004',r:4,s:'Present'},
 {n:'ইমরান হোসেন',id:'STU005',r:5,s:'Late'},
 {n:'আবু বকর সিদ্দিক',id:'STU006',r:6,s:'Present'}];
-const pays=[['মোঃ রাহাতুল ইসলাম','০৫ সেপ ২০২৬'],['আব্দুল্লাহ হোসাইন','০৪ সেপ ২০২৬'],['সাইকুল ইসলাম','০৩ সেপ ২০২৬']];
 const bn=n=>String(n).replace(/\d/g,d=>'০১২৩৪৫৬৭৮৯'[d]);
 const app=document.getElementById('app');
 function _ld(k,d){try{const v=localStorage.getItem(k);return v?JSON.parse(v):d}catch(e){return d}}
@@ -424,14 +423,9 @@ function login(){
  <div class="roles"><h2>স্বাগতম</h2><small>আপনার অ্যাকাউন্ট দিয়ে লগইন করুন</small>
  ${[['admin','Admin Login','প্রশাসন','#0b6b4a'],['teacher','Teacher Login','শিক্ষক','#1f6fe0'],['guardian','Guardian Login','অভিভাবক','#e8891a']].map(r=>`<button class="role" style="background:${r[3]}" onclick="go('${r[0]}')"><div>${r[1]}<span>(${r[2]})</span></div><i>›</i></button>`).join('')}
  </div></div>`}
-function go(r){role=r;tab=r==='guardian'||r==='student'?'child':'home';q='';draw()}
-function shell(title,body,back){
- const g=role==='guardian'||role==='student';
- const tabs=g?[['child','👦','আমার সন্তান'],['fees','৳','ফি'],['out','⎋','লগআউট']]:[['home','🏠','হোম'],['students','🎓','ছাত্র'],['fees','৳','ফি'],['out','⎋','লগআউট']];
- app.innerHTML=`<div class="top">${back?'<button aria-label="ফিরে যান" onclick="tab=\''+back+'\';draw()">←</button>':'<span aria-hidden="true">☰</span>'}<h1>${title}</h1><button aria-label="নোটিস">🔔</button></div><main>${body}</main>
- <nav class="nav">${tabs.map(t=>`<button class="${tab===t[0]?'on':''}" onclick="${t[0]==='out'?'login()':`tab='${t[0]}';draw()`}"><b>${t[1]}</b>${t[2]}</button>`).join('')}</nav>`}
-function draw(){
- if(tab==='home')home();else if(tab==='students')stu();else if(tab==='fees')fees();else child()}
+
+
+
 /* ===== নেভিগেশন মডেল: Home ও ☰ মেনু একই তালিকা/একই ফাংশন ব্যবহার করে ===== */
 function homeList(){
   let t=[['🎓','Student','ছাত্র ব্যবস্থাপনা','#0b6b4a','students'],['👥','Teacher','শিক্ষক ব্যবস্থাপনা','#1f6fe0','teachers'],['✅','Attendance','উপস্থিতি','#7a3fc4','catt'],['৳','Fees','ফি ও হিসাব','#e8891a','fees'],['🏅','Result','ফলাফল','#128a94','res'],['📰','Notice','নোটিস','#d6455d','notices'],['🥧','Reports','রিপোর্ট','#1f86d6','rep'],['⚙️','Settings','সেটিংস','#5b6b7d','set']];
@@ -451,7 +445,7 @@ const NAVG={
 function groupTiles(t){if(role==='teacher')t=t.filter(x=>x[4]!=='notices');const defs=NAVG[role]||[],used=new Set(),out=[];
  defs.forEach(d=>{const it=d[1].map(k=>t.find(x=>x[4]===k)).filter(Boolean);it.forEach(x=>used.add(x));if(it.length)out.push([d[0],it])});
  const rest=t.filter(x=>!used.has(x));if(rest.length)out.push(['🧩 অন্যান্য',rest]);return out}
-function tileH(x){return `<button class="tile" style="background:${x[3]}" onclick="${x[4]?`${x[4]==='bell'?"window.__bellFrom='home';":''}tab='${x[4]}';draw()`:`alert('${x[2]} পেজ পরের ধাপে তৈরি হবে')`}"><b>${x[0]}</b>${x[1]}${x[2]==='Notif'&&typeof getUnread==='function'&&getUnread()?' ('+bn(getUnread())+')':''}<span>${x[2]}</span></button>`}
+
 function secsH(g){return g.map(s=>`<div class="sec">${s[0]}</div><div class="grid">${s[1].map(tileH).join('')}</div>`).join('')}
 function navTabs(){
  if(role==='guardian')return [['child','👦','সন্তান'],['notices','📰','নোটিস'],['fees','৳','ফি'],['contact','☎️','যোগাযোগ']];
@@ -474,14 +468,11 @@ function clsCards(){return classes.map((c,i)=>{const n=students.filter(s=>s.c===
 function stuClasses(){shell('ক্লাস ব্যবস্থাপনা',`<input class="search" placeholder="ছাত্রের নাম, আইডি বা রোল খুঁজুন..." value="${q}" oninput="q=this.value;clsFilter()" aria-label="ছাত্র খুঁজুন"><div id="cl">${q?rows(students.filter(s=>(s.n+s.id+s.r).includes(q))):clsCards()}</div>`,'home',hasPerm('cls_add')?'clsAdd()':'')}
 function clsFilter(){document.getElementById('cl').innerHTML=q?rows(students.filter(s=>(s.n+s.id+s.r).includes(q))):clsCards()}
 function stuOpen(c){stuCls=c;selClass=c;q='';draw()}
-function rows(l){return l.map(s=>`<div class="row"><div class="av">${avHTML(s.photo,'','s')}</div><div class="info"><b>${s.n}</b><small>ID: ${s.id} | রোল: ${bn(s.r)} | ক্লাস: ৩ (আম)</small></div><button class="chip ${s.s}" onclick="cyc('${s.id}')">${{Present:'উপস্থিত',Absent:'অনুপস্থিত',Late:'দেরি'}[s.s]}</button></div>`).join('')||'<p class="note">কোনো ছাত্র পাওয়া যায়নি। অন্য নাম বা রোল লিখে খুঁজুন।</p>'}
+
 function rollCmp(a,b){var x=parseInt(a.r,10),y=parseInt(b.r,10),nx=isNaN(x),ny=isNaN(y);if(nx&&ny)return String(a.n).localeCompare(String(b.n));if(nx)return 1;if(ny)return -1;return (x-y)||String(a.n).localeCompare(String(b.n))}
 function stuList(){document.getElementById('sl').innerHTML=rows(students.filter(s=>(!stuCls||s.c===stuCls)&&(s.n+s.id+s.r).includes(q)).sort(stuCls?rollCmp:function(){return 0}))}
-function cyc(id){const s=students.find(x=>x.id===id),o=['Present','Absent','Late'];s.s=o[(o.indexOf(s.s)+1)%3];draw()}
-function fees(){
- shell('Fees & Accounts',`<div class="money"><div style="background:var(--no);color:var(--not)">মোট বকেয়া<b>৳ ৪৮,৫০০</b></div><div style="background:var(--ok);color:var(--okt)">আদায়<b>৳ ৮২,০০০</b></div><div style="background:var(--card);border:1px solid var(--line)">এ মাসে<b>৳ ৩৬,০০০</b></div></div>
- <div class="act">${[['➕','ফি যোগ'],['💳','পরিশোধ'],['📄','বকেয়া তালিকা'],['🧾','রসিদ'],['📈','আয়'],['📉','ব্যয়']].map(a=>`<button onclick="alert('${a[1]} পরের ধাপে তৈরি হবে')"><b>${a[0]}</b>${a[1]}</button>`).join('')}</div>
- <h3>সাম্প্রতিক পেমেন্ট</h3>${pays.map(p=>`<div class="row"><div class="av">${avLogo('s')}</div><div class="info"><b>${p[0]}</b><small>৳ ১,০০০ • ${p[1]}</small></div><span class="chip Paid">পরিশোধিত</span></div>`).join('')}`,role==='admin'||role==='teacher'?'home':'')}
+
+
 function child(){const s=stu_(myChild);
  shell('আমার সন্তান',`<div class="hello" style="cursor:pointer" onclick="cur=myChild;tab='prof';draw()"><div class="av">${avHTML(s.photo,(s.n||'?')[0],'s')}</div><div><b>${s.n}</b><br><small style="color:var(--mute)">ID: ${myChild} | রোল: ${bn(s.r)}<br>ক্লাস: ${s.c||'—'}</small></div></div>
  ${typeof ndbHTML==='function'?ndbHTML():''}
@@ -533,10 +524,10 @@ function openMenu(){closeMenu();
  d.innerHTML=`<div onclick="event.stopPropagation()" style="background:var(--card);width:80%;max-width:330px;height:100%;padding:18px;overflow:auto"><div style="margin-bottom:6px"><b>${xe0(who)}</b><br><small style="color:var(--mute)">${rl}</small></div>${h}</div>`;
  document.body.appendChild(d)}
 const xe0=t=>String(t==null?'':t).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-function draw(){({home:home,students:stu,teachers:teachV,fees:fees,notices:noteV,prof:profV,child:child}[tab]||home)()}
+
 const SF=[['n','ছাত্রের নাম'],['photo','ছবি','photo'],['r','রোল','type=number'],['c','ক্লাস'],['pw','অভিভাবকের পাসওয়ার্ড (লগইনের জন্য)','type=text placeholder=খালি রাখলে ডিফল্ট পাসওয়ার্ড চলবে'],['fee','ধার্যকৃত মাসিক বেতন (৳)','type=number placeholder=খালি রাখলে সাধারণ বেতন প্রযোজ্য হবে'],['g','অভিভাবকের নাম'],['ph','অভিভাবকের মোবাইল নম্বর','type=tel'],['ph2','বিকল্প মোবাইল নম্বর','type=tel'],['vil','গ্রাম/মহল্লা'],['po','ডাকঘর'],['upz','উপজেলা/থানা'],['dist','জেলা'],['adm','ভর্তির মাস (আগের মাসের বকেয়া গণনার শুরু)','monthopt']];
 function rows(l){return l.map(s=>`<div class="row"><div class="av">${avHTML(s.photo,s.n[0],'s')}</div><div class="info" style="cursor:pointer" onclick="stuInfo('${s.id}')"><b>${s.n}</b><small>ID: ${s.id} | রোল: ${bn(s.r)} | ${s.c||'৩ (আম)'}</small></div><button class="kb" aria-label="আরও অপশন" onclick="stuMenu('${s.id}')">⋮</button></div>`).join('')||'<p class="note">কোনো ছাত্র পাওয়া যায়নি। অন্য নাম বা রোল লিখে খুঁজুন।</p>'}
-function cyc(id){const s=students.find(x=>x.id===id),o=['Present','Absent','Late'];s.s=o[(o.indexOf(s.s)+1)%3];save('mm_s',students);draw()}
+
 function prof(id){cur=id;tab='prof';draw()}
 function profV(){const s=students.find(x=>x.id===cur);if(!s){tab='students';return draw()}
  shell('ছাত্র প্রোফাইল',`<div class="hello"><div class="av">${avHTML(s.photo,s.n[0],'s')}</div><div><b>${s.n}</b><br><small style="color:var(--mute)">ID: ${s.id} | রোল: ${bn(s.r)}</small></div></div><h3>বিস্তারিত</h3>`+
@@ -584,14 +575,14 @@ function permHTML(v){if(!hasPerm('adm_perm'))return '';const sel=v.perm||[],lk='
  PCAT.map((c,ci)=>`<div style="margin-top:14px;padding:10px 12px;border:1px solid var(--line);border-radius:12px"><div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:4px"><b>${c[0]}</b><span><a ${lk} onclick="pmAll(${ci},1)">সব নির্বাচন করুন</a><a ${lk} onclick="pmAll(${ci},0)">সব বাতিল করুন</a></span></div>${c[1].map(x=>sw(x[0],x[1],ci)).join('')}</div>`).join('')+'</div>'}
 window.pmAll=(ci,on)=>document.querySelectorAll(ci==='*'?'#md input[name^="perm_"]':'#md input[data-c="'+ci+'"]').forEach(i=>{i.checked=!!on});
 window.pmBase=()=>document.querySelectorAll('#md input[name^="perm_"]').forEach(i=>{i.checked=PBASE.indexOf(i.name.slice(5))>=0});
-function subjList(){return[...new Set(teachers.map(t=>t.sub).filter(Boolean))]}
+
 const TF=[['n','শিক্ষকের নাম'],['photo','ছবি','photo'],['pw','শিক্ষকের পাসওয়ার্ড (লগইনের জন্য)','type=text placeholder=খালি রাখলে ডিফল্ট পাসওয়ার্ড চলবে'],['sal','মাসিক বেতন (৳)','type=number'],['ph','মোবাইল নম্বর','type=tel'],['em','জিমেইল','type=email'],['edu','শিক্ষাগত যোগ্যতা (যেমন: দাওরায়ে হাদিস, অনার্স)'],['vil','গ্রাম/মহল্লা'],['po','ডাকঘর'],['upz','উপজেলা/থানা'],['dist','জেলা'],['perm','অনুমতি (রোল ও পারমিশন) — অ্যাডমিন চাইলে নিজের কিছু ক্ষমতা এই শিক্ষককে দিতে পারবেন','perms']];
 function teachV(){shell('Teacher Management',`<div class="stats" style="grid-template-columns:1fr 1fr"><div class="stat"><b>${bn(teachers.length)}</b><small>মোট শিক্ষক</small></div><div class="stat"><b>৳ ${bn(teachers.reduce((a,t)=>a+(+t.sal||0),0).toLocaleString('en-US'))}</b><small>মাসিক বেতন</small></div></div>`+
  (teachers.map(t=>`<div class="row"><div class="av">${avHTML(t.photo,t.n[0],'t')}</div><div class="info"><b>${t.n}</b><small>${window.tSummary?window.tSummary(t.id):''}<br>বেতন: ৳ ${bn(t.sal||0)}${(function(){const n=effPerm(t.id).length;return n?'<br>অনুমতি: '+bn(n)+'টি':'<br>অনুমতি: নেই'})()}</small></div>${hasPerm('sal_pay')?`<button aria-label="বেতন দিন" onclick="paySal('${t.id}')">💵</button>`:''}<button aria-label="কল করুন" onclick="callT('${t.id}')">📞</button>${hasPerm('tch_edit')?`<button aria-label="সম্পাদনা" onclick="editT('${t.id}')">✏️</button>`:''}${hasPerm('tch_del')?`<button aria-label="মুছুন" onclick="delT('${t.id}')"><i class=idel></i></button>`:''}</div>`).join('')||'<p class="note">কোনো শিক্ষক নেই।'+(hasPerm('tch_add')?' ＋ চেপে যোগ করুন।':'')+'</p>'),'home',hasPerm('tch_add')?'addT()':'')}
 function addT(){if(!hasPerm('tch_add')){deny();return}const id=nidM(teachers,'T');form('নতুন শিক্ষক',TF,{perm:PBASE.slice()},o=>{const perm=o.perm;delete o.perm;teachers.push(Object.assign({id:id,s:'Present'},o));save('mm_t',teachers);if(hasPerm('adm_perm'))window.savePerm(id,perm||[]);draw()})}
 function editT(id){if(!hasPerm('tch_edit')){deny();return}const t=teachers.find(x=>x.id===id);form('শিক্ষকের তথ্য সম্পাদনা',TF,Object.assign({},t,{perm:effPerm(id)}),o=>{const perm=o.perm;delete o.perm;Object.assign(t,o);save('mm_t',teachers);if(hasPerm('adm_perm')&&perm)window.savePerm(id,perm);draw()})}
 async function delT(id){if(!hasPerm('tch_del')){deny();return}if(await mmConfirm('এই শিক্ষককে মুছে ফেলবেন?')){teachers=teachers.filter(x=>x.id!==id);save('mm_t',teachers);if(hasPerm('adm_perm'))window.savePerm(id,null);draw()}}
-function noteV(){const A=role==='admin';shell('Notice',(role==='guardian'?gm():'')+notices.map((n,i)=>`<div class="row" style="display:block"><b>${n.t}</b><br><small style="color:var(--mute)">${n.d}</small><p style="margin-top:6px">${n.b||''}</p>${A?`<button onclick="delN(${i})" style="color:var(--not);margin-top:4px"><i class=idel></i> মুছুন</button>`:''}</div>`).join('')||'<p class="note">এখনো কোনো নোটিস নেই।</p>',role==='guardian'?'':'home',A?'addN()':'')}
+
 function addN(){form('নতুন নোটিস',[['n','শিরোনাম'],['b','বিস্তারিত']],{},o=>{notices.unshift({t:o.n,b:o.b,d:fmtDMY(new Date())});save('mm_n',notices);draw()})}
 async function delN(i){if(await mmConfirm('নোটিসটি মুছে ফেলবেন?')){notices.splice(i,1);save('mm_n',notices);draw()}}
 </script>
@@ -611,7 +602,7 @@ function msgS(sms){const s=students.find(x=>x.id===cur);
 function dial(p){if(!p){alert('ফোন নম্বর নেই। আগে সম্পাদনা করে ফোন যোগ করুন।');return}window.open('tel:'+p,'_blank')}
 function callS(){dial(students.find(x=>x.id===cur).ph)}
 function callT(id){dial(teachers.find(x=>x.id===id).ph)}
-function gm(){const l=msgs.filter(m=>m.sid===myChild);return l.length?'<h3>আপনার সন্তানের জন্য মেসেজ</h3>'+l.map(mrow).join('')+'<h3>সাধারণ নোটিস</h3>':''}
+
 </script>
 <script>
 const localDay=()=>new Date(Date.now()-new Date().getTimezoneOffset()*6e4).toISOString().slice(0,10);
@@ -654,7 +645,7 @@ function draw(){const R={home:home,students:stu,teachers:teachV,fees:fees,notice
  if(role==='teacher'&&!tabOK(tab))tab='home';
  if(role==='guardian'&&!['child','notices','fees','res','att','prof','homev','contact','notif','rtnv'].includes(tab))tab='child';
  (R[tab]||home)()}
-function cyc(id){const s=students.find(x=>x.id===id),o=['Present','Absent','Late'];s.s=o[(o.indexOf(s.s)+1)%3];at[T0][id]=s.s;save('mm_s',students);save('mm_a',at);draw()}
+
 /* ফি ও হিসাব */
 function fees(){const G=role==='guardian',ids=G?[myChild]:students.map(s=>s.id),P=fp.filter(p=>ids.includes(p.sid));
  const fm=G?feeMonths(myChild):{},pm=Object.keys(fm).sort().reverse();
@@ -665,7 +656,6 @@ function fees(){const G=role==='guardian',ids=G?[myChild]:students.map(s=>s.id),
 const FEE_T=['মাসিক ফি','ভর্তি ফি','পরীক্ষার ফি','পরিবহন ফি','ড্রেস ফি','অন্যান্য'];
 function monthOptions(){const opts=[];for(let y=2026;y<=2030;y++){for(let m=1;m<=12;m++)opts.push(y+'-'+String(m).padStart(2,'0'))}return opts}
 const payBusy=new Set(),lockKey=(sid,m)=>sid+'_'+String(m).replace('-','_');
-const monthPaid=(sid,m)=>fp.some(x=>x.sid===sid&&x.t==='মাসিক ফি'&&x.m===m);
 const collector=()=>role==='admin'?(adminInfo.n||'Admin'):((teachers.find(t=>t.id===myTeacher)||{}).n||'Teacher');
 function mkPay(s,o,m){const mx=Math.max(0,...fp.map(x=>+String(x.id).replace(/\D/g,'')||0));
  const p={id:'RCP-'+String(mx+1).padStart(4,'0'),sid:s.id,a:+o.a,t:o.t,d:T0,m:m,sn:s.n,c:s.c||'',y:m.slice(0,4),mo:m.slice(5),st:'Paid',by:collector()};
@@ -682,7 +672,7 @@ function dupPays(){const g={};fp.filter(p=>p.t==='মাসিক ফি').forEa
 function rcptV(){const D=dupPays(),dk=new Set();D.forEach(l=>l.slice(1).forEach(p=>dk.add(p.id)));
  shell('রসিদ',(D.length?`<p class="note" style="color:var(--not);text-align:left">⚠️ ${bn(D.length)}টি ছাত্র-মাসে একাধিক মাসিক ফি পাওয়া গেছে (⚠️ চিহ্নিত)। নতুন ডুপ্লিকেট আর তৈরি হবে না।</p>`:'')+(role==='admin'?`<button class="tile" style="background:#5b6b7d;width:100%;margin-bottom:10px;padding:10px" onclick="lockOld()">🔒 পুরোনো পেমেন্ট লক করুন (একবারের মাইগ্রেশন)</button>`:'')+fp.slice().reverse().map(p=>{const st=stu_(p.sid);return R_(dk.has(p.id)?'⚠️':'🧾',p.sn||st.n,p.id+' • ID: '+p.sid+' • '+(p.c||st.c||'—')+' • '+(p.m?monLabel(p.m):'')+' • '+dd(p.d)+(p.by?' • আদায়: '+p.by:''),`<b>${tk(p.a)}</b><button aria-label="রসিদ দেখুন" onclick="rc('${p.id}')">👁️</button>`)}).join('')||'<p class="note">কোনো রসিদ নেই।</p>','fees')}
 function incV(){shell('আয়',`<div class="stats" style="grid-template-columns:1fr 1fr"><div class="stat"><b>${tk(sum(fp.filter(p=>p.m===M0)))}</b><small>এ মাসের আয়</small></div><div class="stat"><b>${tk(sum(fp))}</b><small>মোট আয়</small></div></div>`+fp.slice().reverse().map(p=>R_('📈',stu_(p.sid).n,p.t+' • '+dd(p.d),`<b>${tk(p.a)}</b>`)).join(''),'fees')}
-function expV(){shell('ব্যয়',`<div class="stats" style="grid-template-columns:1fr 1fr"><div class="stat"><b>${tk(sum(ex.filter(e=>e.m===M0)))}</b><small>এ মাসের ব্যয়</small></div><div class="stat"><b>${tk(sum(ex))}</b><small>মোট ব্যয়</small></div></div>`+(ex.slice().reverse().map(e=>R_('📉',e.t,e.c+' • '+dd(e.d),`<b>${tk(e.a)}</b>`)).join('')||'<p class="note">কোনো ব্যয় নেই। ＋ চেপে যোগ করুন।</p>'),'fees','addE()')}
+
 function addE(){form('নতুন ব্যয়',[['n','খাত (যেমন: বিদ্যুৎ বিল)'],['a','পরিমাণ (৳)','type=number']],{},o=>{ex.push({t:o.n,a:+o.a||0,d:T0,m:M0,c:'খরচ'});save('mm_e',ex);draw()})}
 async function paySal(id){const t=teachers.find(x=>x.id===id);if(await mmConfirm(t.n+' — বেতন '+tk(t.sal)+' পরিশোধ করবেন?')){ex.push({t:'বেতন — '+t.n,a:+t.sal||0,d:T0,m:M0,c:'বেতন'});save('mm_e',ex);alert('বেতন ব্যয়ের খাতায় যোগ হয়েছে')}}
 /* ফলাফল */
@@ -706,7 +696,7 @@ function homeBlock(s){const e=(hw[s.id]&&hw[s.id][T0])||{p:[0,0,0,0,0],hw:0},G=r
  return `<h3>নামাজ ও হোমওয়ার্ক</h3><div class="link" style="display:block"><small>আজ বাসায় নামাজ আদায়${G?' — ট্যাপ করে দিন':' (অভিভাবকের দেওয়া তথ্য)'}</small><div style="display:flex;gap:6px;margin-top:8px">${['ফজর','যোহর','আসর','মাগরিব','এশা'].map((x,i)=>`<button class="chip ${e.p[i]?'Present':'Late'}" style="min-width:0;flex:1;padding:6px 2px" ${G?`onclick="hwPray('${s.id}',${i})"`:'disabled'}>${x}</button>`).join('')}</div></div>
  <div class="link"><span><small>আজকের হোমওয়ার্ক</small>${e.hw?'✅ সম্পন্ন হয়েছে':'❌ হয়নি'}</span>${G?`<button aria-label="বদলান" onclick="hwToggle('${s.id}')">🔁</button>`:''}</div>
  ${(!G&&hist.length)?'<h3>সাম্প্রতিক লগ</h3>'+hist.map(d=>{const h=hw[s.id][d];return `<div class="row" style="display:block"><small style="color:var(--mute)">${dd(d)}</small><div style="display:flex;justify-content:space-between;margin-top:4px"><span>নামাজ: ${bn(h.p.filter(Boolean).length)}/৫ ওয়াক্ত</span><span>হোমওয়ার্ক: ${h.hw?'হ্যাঁ':'না'}</span></div></div>`}).join(''):''}`}
-function hwPray(id,i){const e=hwEnsure(id);e.p[i]=e.p[i]?0:1;save('mm_hw',hw);draw()}
+
 function hwToggle(id){const e=hwEnsure(id);e.hw=e.hw?0:1;save('mm_hw',hw);draw()}
 /* রিপোর্ট */
 function repV(){shell('রিপোর্ট',`<div class="grid"><button class="tile" style="background:#0b6b4a" onclick="tab='srep';draw()"><b>🎓</b>ছাত্র রিপোর্ট</button><button class="tile" style="background:#1f6fe0" onclick="tab='trep';draw()"><b>👨‍🏫</b>শিক্ষক রিপোর্ট</button></div><button class="link" style="margin-top:12px" onclick="tab='fin';draw()"><span>আর্থিক ও ফলাফল সারাংশ<small>ফি, ব্যয়, ফলাফল — সবকিছু একসাথে</small></span>›</button>`,'home')}
@@ -717,35 +707,22 @@ function finV(){const ms=x=>x.filter(e=>e.m===M0),days=Object.keys(at).filter(d=
  '<h3>ফলাফল</h3>'+K('ফলাফল আছে',bn(rl.length)+' জন')+K('পাসের হার',rl.length?bn(Math.round(rl.filter(c=>!c.f).length/rl.length*100))+'%':'—')+
  '<h3>শিক্ষক</h3>'+K('মোট মাসিক বেতন',tk(sum(teachers.map(t=>({a:t.sal}))))),'rep')}
 /* সেটিংস, ব্যাকআপ */
-function setV(){shell('Settings',`${role==='admin'?'<button class="link" onclick="planV()"><span><small>প্ল্যান</small>ট্রায়াল ও মাসিক সাবস্ক্রিপশন (৳৩০০)</span>›</button>':''}<button class="link" onclick="profEdit()"><span><small>মাদ্রাসার তথ্য</small>নাম, লোগো, ঠিকানা ও প্রতিষ্ঠার তারিখ</span>›</button><button class="link" onclick="adminEdit()"><span><small>অ্যাডমিনের তথ্য</small>নাম, ছবি, ফোন ও ইমেইল</span>›</button><button class="link" onclick="adminPhoneDiag()"><span><small>সমস্যা সমাধান</small>লগইন নম্বর যাচাই ও ঠিক করুন</span>›</button><button class="link wgrow" style="display:none" onclick="wgPin()"><span><small>হোম স্ক্রিন উইজেট</small>উইজেট হোম স্ক্রিনে যোগ করুন</span>›</button>${role==='admin'||role==='teacher'?'<button class="link" onclick="window.__bellFrom=\'set\';tab=\'bell\';draw()"><span><small>ঘণ্টা</small>পিরিয়ডের ঘণ্টার সময়সূচি</span>›</button>':''}<button class="link" onclick="tab='nhub';draw()"><span><small>Notification</small>চালু/বন্ধ, টেমপ্লেট, পাঠানো ও ইতিহাস</span>›</button><button class="link" onclick="tab='classFee';draw()"><span><small>মাসিক ফি</small>ফি নির্ধারণ</span>›</button><button class="link" onclick="purgeRollKeys()"><span><small>একবারের কাজ</small>রোল নম্বর দিয়ে অভিভাবক লগইন বন্ধ করুন</span>›</button>${role==='admin'?'<button class="link" onclick="fbBackup()"><span><small>সম্পূর্ণ ব্যাকআপ</small>Firebase-এর সব ডেটা ফাইলে সেভ করুন</span>›</button>':''}<div class="act"><button onclick="bk()"><b>💾</b>ব্যাকআপ কপি</button><button onclick="rst()"><b>♻️</b>রিস্টোর</button><button onclick="wipe()"><b><i class=idel></i></b>সব মুছুন</button></div><p class="note">ব্যাকআপ কপি করে নিরাপদ জায়গায় রেখে দিন। "সব মুছুন" চাপলে সব তথ্য চলে যাবে।</p>`,'home');setFilt()}
+function setV(){shell('Settings',`${role==='admin'?'<button class="link" onclick="planV()"><span><small>প্ল্যান</small>ট্রায়াল ও মাসিক সাবস্ক্রিপশন (৳৩০০)</span>›</button>':''}<button class="link" onclick="profEdit()"><span><small>মাদ্রাসার তথ্য</small>নাম, লোগো, ঠিকানা ও প্রতিষ্ঠার তারিখ</span>›</button><button class="link" onclick="adminEdit()"><span><small>অ্যাডমিনের তথ্য</small>নাম, ছবি, ফোন ও ইমেইল</span>›</button><button class="link" onclick="adminPhoneDiag()"><span><small>সমস্যা সমাধান</small>লগইন নম্বর যাচাই ও ঠিক করুন</span>›</button><button class="link wgrow" style="display:none" onclick="wgPin()"><span><small>হোম স্ক্রিন উইজেট</small>উইজেট হোম স্ক্রিনে যোগ করুন</span>›</button>${role==='admin'||role==='teacher'?'<button class="link" onclick="window.__bellFrom=\'set\';tab=\'bell\';draw()"><span><small>ঘণ্টা</small>পিরিয়ডের ঘণ্টার সময়সূচি</span>›</button>':''}<button class="link" onclick="tab='nhub';draw()"><span><small>Notification</small>চালু/বন্ধ, টেমপ্লেট, পাঠানো ও ইতিহাস</span>›</button><button class="link" onclick="tab='classFee';draw()"><span><small>মাসিক ফি</small>ফি নির্ধারণ</span>›</button><button class="link" onclick="purgeRollKeys()"><span><small>একবারের কাজ</small>রোল নম্বর দিয়ে অভিভাবক লগইন বন্ধ করুন</span>›</button>${role==='admin'?'<button class="link" onclick="fbBackup()"><span><small>সম্পূর্ণ ব্যাকআপ</small>Firebase-এর সব ডেটা ফাইলে সেভ করুন</span>›</button>':''}`,'home');setFilt()}
 function classFeeV(){shell('মাসিক ফি (শ্রেণী অনুযায়ী)',`<div class="row"><div class="info"><b>আগের মাসের বকেয়া হিসাবে ধরুন</b><small>চালু করলে ছাত্রের ভর্তির মাস (না থাকলে প্রথম ফি-র মাস) থেকে যেসব মাসের ফি বাকি, সব বকেয়ায় যোগ হবে। আগে ছাত্রের ভর্তির মাস ঠিক করে নিন।</small></div>${tglHTML(!!feeCarry,'setCarry()')}</div><div class="row"><div class="info"><b>সাধারণ (ডিফল্ট) ফি</b><small>যে শ্রেণীর নিজস্ব ফি সেট করা নেই, তাদের জন্য প্রযোজ্য</small></div><b>${tk(MF)}</b><button aria-label="পরিবর্তন" onclick="setDefaultFee()">✏️</button></div>`+
  classes.map(c=>`<div class="row"><div class="info"><b>${c}</b><small>বর্তমান ফি: ${tk(classFee[c]!=null&&classFee[c]!==''?classFee[c]:MF)}${classFee[c]!=null&&classFee[c]!==''?'':' (সাধারণ)'}</small></div><button aria-label="পরিবর্তন" onclick="setClassFee('${esc(c)}')">✏️</button></div>`).join('')+feeHistHTML(),'set')}
 function feeHistHTML(){const L=[];feeLog.d.forEach(e=>L.push(['সাধারণ ফি',e]));Object.keys(feeLog.c).forEach(c=>feeLog.c[c].forEach(e=>L.push([c,e])));if(!L.length)return '';L.sort((a,b)=>a[1].f<b[1].f?1:a[1].f>b[1].f?-1:0);return '<h3>ফি পরিবর্তনের ইতিহাস</h3>'+L.slice(0,30).map(x=>{const e=x[1];return '<div class="link"><span><small>'+monLabel(e.f)+' থেকে কার্যকর</small>'+xe0(x[0])+': '+(_num(e.o)!=null?tk(e.o):'সাধারণ')+' → '+(_num(e.v)!=null?tk(e.v):'সাধারণ')+'</span></div>'}).join('')}
 function setDefaultFee(){form('সাধারণ (ডিফল্ট) মাসিক ফি',[['n','পরিমাণ (৳)','type=number'],['from','কোন মাস থেকে কার্যকর (আগের মাসের হিসাব বদলাবে না)','month']],{n:MF,from:M0},async o=>{const nv=+o.n||MF;if(nv!==MF){if(!await window.feeLogAdd({t:'d',f:o.from||M0,o:MF,v:nv}))return}MF=nv;save('mm_mf',MF);draw()})}
 function setClassFee(c){form('মাসিক ফি — '+c,[['n','পরিমাণ (৳) — খালি রাখলে সাধারণ ফি প্রযোজ্য হবে','type=number'],['from','কোন মাস থেকে কার্যকর (আগের মাসের হিসাব বদলাবে না)','month']],{n:classFee[c]!=null?classFee[c]:'',from:M0},async o=>{const old=_num(classFee[c]),nv=o.n===''?null:(+o.n||0);if(nv!==old){if(!await window.feeLogAdd({t:'c',k:c,f:o.from||M0,o:old,v:nv}))return}if(nv==null){delete classFee[c]}else{classFee[c]=nv}save('mm_classfee',classFee);draw()})}
-function bk(){const o={};Object.keys(localStorage).filter(k=>k.startsWith('mm_')).forEach(k=>o[k]=localStorage.getItem(k));const j=JSON.stringify(o);try{navigator.clipboard.writeText(j).then(()=>alert('ব্যাকআপ কপি হয়েছে'),()=>prompt('কপি করুন',j))}catch(e){prompt('কপি করুন',j)}}
-async function rst(){const j=prompt('ব্যাকআপ পেস্ট করুন');if(!j)return;let o;try{o=JSON.parse(j)}catch(e){alert('ব্যাকআপটি সঠিক নয়');return}if(!await mmConfirm('রিস্টোর করলে বর্তমান সব তথ্য মুছে গিয়ে ব্যাকআপের তথ্য বসে যাবে। আপনি কি নিশ্চিত?'))return;Object.keys(o).forEach(k=>{if(k.startsWith('mm_'))localStorage.setItem(k,o[k])});location.reload()}
-async function wipe(){if(await mmConfirm('সব তথ্য মুছে যাবে। নিশ্চিত?')){Object.keys(localStorage).filter(k=>k.startsWith('mm_')).forEach(k=>localStorage.removeItem(k));location.reload()}}
+
+
+
 </script>
 <script>
-let PW=load('mm_pw',{admin:'admin123',teacher:'teacher123',guardian:'guardian123'});
-const _go=go;
-function go(r){pwAsk(r)}
+function go(r){if(window.pwAsk)window.pwAsk(r);else alert('ইন্টারনেট সংযোগ ছাড়া লগইন করা যাবে না। সংযোগ দিয়ে অ্যাপ আবার খুলুন।')}
 let myChild='',myTeacher='';
-function pwAsk(r){const d=document.createElement('div');d.id='pwmd';d.style.cssText='position:fixed;inset:0;background:#0009;z-index:30;display:flex;align-items:center;justify-content:center;padding:16px';
- const cfg={admin:{t:'Admin',l:'মোবাইল নম্বর বা জিমেইল',hint:'অ্যাডমিনের সেট করা পাসওয়ার্ড দিন'},teacher:{t:'Teacher',l:'মোবাইল নম্বর বা জিমেইল',hint:'ভর্তির সময় অ্যাডমিনের দেওয়া পাসওয়ার্ড দিন'},guardian:{t:'Guardian',l:'ছাত্রের আইডি অথবা আপনার মোবাইল নম্বর',hint:'ভর্তির সময় অ্যাডমিনের দেওয়া পাসওয়ার্ড দিন'}}[r];
- d.innerHTML=`<div style="background:#fff;color:#16302a;width:100%;max-width:380px;border-radius:18px;padding:20px"><h3 style="margin:0 0 4px">${cfg.t} লগইন</h3><small style="color:#5f7570">${cfg.l} ও পাসওয়ার্ড দিন</small>
- <input id="pwid" type="text" placeholder="${cfg.l}" style="width:100%;padding:12px 14px;border-radius:12px;border:1px solid #e1e9e5;margin-top:12px;font-size:15px">
- <input id="pwin" type="password" placeholder="পাসওয়ার্ড" style="width:100%;padding:12px 14px;border-radius:12px;border:1px solid #e1e9e5;margin-top:8px;font-size:15px" onkeydown="if(event.key==='Enter')pwGo('${r}')">
- <div id="pwerr" style="color:#b42323;font-size:13px;margin-top:6px;min-height:16px"></div>
- <div style="display:flex;gap:10px;margin-top:10px"><button style="flex:1;background:#0b6b4a;color:#fff;padding:12px;border-radius:12px;font-weight:600" onclick="pwGo('${r}')">লগইন</button><button style="flex:1;background:#5b6b7d;color:#fff;padding:12px;border-radius:12px;font-weight:600" onclick="document.getElementById('pwmd').remove()">বাতিল</button></div>
- <p style="font-size:12px;color:#93aca3;margin-top:10px">${cfg.hint}</p></div>`;
- document.body.appendChild(d);setTimeout(()=>document.getElementById('pwid').focus(),50)}
-function pwGo(r){const idv=document.getElementById('pwid').value.trim(),idl=idv.toLowerCase(),v=document.getElementById('pwin').value,m=document.getElementById('pwmd'),err=()=>{document.getElementById('pwerr').textContent='ভুল তথ্য, আবার চেষ্টা করুন';document.getElementById('pwin').value=''};
- if(r==='admin'){const ok=(!adminInfo.ph&&!adminInfo.em)||(adminInfo.ph&&idv===adminInfo.ph)||(adminInfo.em&&idl===adminInfo.em.toLowerCase());if(!ok||v!==PW.admin){err();return}m.remove();role='admin';tab='home';draw();return}
- if(r==='guardian'){const st=students.find(x=>String(x.r)===idv||x.id.toLowerCase()===idl||(x.ph&&x.ph===idv));if(!st||v!==(st.pw||PW.guardian)){err();return}myChild=st.id;m.remove();role='guardian';tab='child';draw();return}
- if(r==='teacher'){const t=teachers.find(x=>(x.ph&&x.ph===idv)||(x.em&&x.em.toLowerCase()===idl));if(!t||v!==(t.pw||PW.teacher)){err();return}myTeacher=t.id;m.remove();role='teacher';tab='home';draw();return}}
-function pwEdit(){form('পাসওয়ার্ড পরিবর্তন',[['n','Admin পাসওয়ার্ড'],['t','Teacher পাসওয়ার্ড'],['g','Guardian পাসওয়ার্ড']],{n:PW.admin,t:PW.teacher,g:PW.guardian},o=>{if(!o.n||!o.t||!o.g){alert('তিনটি পাসওয়ার্ডই লিখুন');return}PW={admin:o.n,teacher:o.t,guardian:o.g};save('mm_pw',PW);alert('পাসওয়ার্ড পরিবর্তন হয়েছে');draw()})}
+
+
+
 </script>
 <script>
 let classes=load('mm_cls',[...new Set(students.map(s=>s.c).filter(Boolean))].length?[...new Set(students.map(s=>s.c).filter(Boolean))]:['৩ (আম)']);
@@ -789,13 +766,10 @@ function adminEdit(){form('অ্যাডমিনের তথ্য',[['photo
   else if(r==='repaired')alert('এই নম্বরটি লগইন-তালিকায় ছিল না, এখন যোগ করা হয়েছে। এই নম্বর দিয়ে লগইন করা যাবে।')}catch(e){alert('নম্বর বদলানো যায়নি: '+(e.message||e)+'\nআগের নম্বরই থাকছে।');o.ph=oldPh}}
  if(o.pw&&window.changeOwnPw)window.changeOwnPw(o.pw);adminInfo={n:o.n||'Admin',ph:o.ph,em:o.em};adminPic=o.photo;save('mm_admininfo',adminInfo);save('mm_adminpic',adminPic);draw()})}
 function aprof(){shell('অ্যাডমিন প্রোফাইল',`<div class="hello"><div class="av">${avHTML(adminPic,'অ','a')}</div><div><b>${adminInfo.n||'Admin'}</b><br><small style="color:var(--mute)">প্রশাসক</small></div></div>`+K('ফোন',adminInfo.ph||'—')+K('ইমেইল',adminInfo.em||'—')+`<button class="tile" style="background:var(--g);width:100%;margin-top:10px;padding:12px" onclick="adminEdit()">✏️ তথ্য ও ছবি সম্পাদনা</button>`,'home')}
-function picEdit(){cl();
- const d=document.createElement('div');d.id='md';d.style.cssText='position:fixed;inset:0;background:#0009;z-index:20;display:flex;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:16px';
- d.innerHTML=`<div style="background:var(--card);width:100%;max-width:380px;border-radius:18px;padding:20px;text-align:center;margin:auto"><h3 style="margin:0 0 10px">অ্যাডমিনের প্রোফাইল ছবি</h3><div id="apv" class="av" style="width:88px;height:88px;margin:0 auto;font-size:32px">${adminPic?`<img src="${adminPic}" style="width:100%;height:100%;object-fit:cover;border-radius:50%">`:avLogo('a')}</div><input type="file" accept="image/*" style="display:block;margin:14px auto" onchange="phSel(this,'aph','apv')"><input type="hidden" id="aph" value="${adminPic}"><button type="button" onclick="document.getElementById(\'aph\').value=\'\';document.getElementById(\'apv\').innerHTML=avLogo(\'a\');var f=document.querySelector(\'#md input[type=file]\');if(f)f.value=\'\'" style="display:block;margin:2px auto 0;padding:7px 16px;border-radius:10px;border:1px solid var(--line);background:var(--card);color:#d64545;font:inherit;font-size:13px;cursor:pointer"><i class=idel></i> ছবি মুছুন</button><div style="display:flex;gap:10px;margin-top:10px"><button class="tile" style="background:var(--g);flex:1;padding:12px" onclick="adminPic=document.getElementById(\'aph\').value;save(\'mm_adminpic\',adminPic);cl();draw()">সংরক্ষণ করুন</button><button class="tile" style="background:#5b6b7d;flex:1;padding:12px" onclick="cl()">বাতিল</button></div></div>`;
- document.body.appendChild(d)}
+
 </script>
 <script>
-function tcyc(id){const t=teachers.find(x=>x.id===id),o=['Present','Absent','Late'];t.s=o[(o.indexOf(t.s)+1)%3];tat[T0][id]=t.s;save('mm_t',teachers);save('mm_tat',tat);draw()}
+
 function tattV(){const n=k=>teachers.filter(t=>t.s===k).length,L={Present:'উপস্থিত',Absent:'অনুপস্থিত',Late:'দেরি'};
  shell('শিক্ষক হাজিরা',`<p class="note" style="text-align:left;margin:0 0 8px">${dd(T0)}</p><div class="stats"><div class="stat"><b>${bn(n('Present'))}</b><small>উপস্থিত</small></div><div class="stat"><b>${bn(n('Absent'))}</b><small>অনুপস্থিত</small></div><div class="stat"><b>${bn(n('Late'))}</b><small>দেরি</small></div></div>`+
  (teachers.map(t=>`<div class="row"><div class="av">${avHTML(t.photo,t.n[0],'t')}</div><div class="info"><b>${t.n}</b><small>${t.id}</small></div><button class="chip ${t.s}" onclick="tcyc('${t.id}')">${L[t.s]}</button></div>`).join('')||'<p class="note">কোনো শিক্ষক নেই।</p>')+(typeof tfinBtn==='function'?tfinBtn():''),'catt')}
@@ -820,8 +794,8 @@ function scalV(){const s=students.find(x=>x.id===cur);if(!s){tab='srep';return d
  shell(s.n+' — মাসিক হাজিরা',`<p class="note" style="text-align:left;margin:0 0 8px">${monLabel(M0)}</p>`+calHTML(at,s.id,p[0],p[1]),'shist')}
 function tcalV(){const t=teachers.find(x=>x.id===curT);if(!t){tab='trep';return draw()}const p=M0.split('-').map(Number);
  shell(t.n+' — মাসিক হাজিরা',`<p class="note" style="text-align:left;margin:0 0 8px">${monLabel(M0)}</p>`+calHTML(tat,t.id,p[0],p[1]),'thist')}
-function dayList(rec,pfx,id){return Object.keys(rec).filter(d=>d.indexOf(pfx)===0&&rec[d][id]).sort().reverse().map(d=>({d:d,v:rec[d][id]}))}
-function dayRows(l){return l.map(x=>R_('📅',dd(x.d),'',`<span class="chip ${x.v}">${ATL[x.v]}</span>`)).join('')||'<p class="note">এই মাসে এখনো হাজিরা নেওয়া হয়নি।</p>'}
+
+
 function monRows(arr){return arr.map(x=>`<div class="row" style="display:block"><b>${monLabel(x.m)}</b><div style="display:flex;justify-content:space-between;margin-top:4px"><span>উপস্থিত: ${bn(x.p)}</span><span>অনুপস্থিত: ${bn(x.a)}</span><span>দেরি: ${bn(x.l)}</span></div></div>`).join('')||'<p class="note">এই বছরে এখনো কোনো রেকর্ড নেই।</p>'}
 function stCount(rec,id,pfx){let p=0,a=0,l=0;Object.keys(rec).filter(d=>d.indexOf(pfx)===0).forEach(d=>{const v=rec[d][id];if(v==='Present')p++;else if(v==='Absent')a++;else if(v==='Late')l++});return{p,a,l}}
 function feeMonths(id){const mo={};fp.filter(p=>p.sid===id&&isMF(p.t)).forEach(p=>{mo[p.m]=(mo[p.m]||0)+ +p.a});return mo}
@@ -970,9 +944,7 @@ async function saveHW(cls){if(window.__hwSaving)return;const v=document.getEleme
  else if(keepV)e.v=cu.v;
  if(ready)window.hwvDiscard(true);
  setHW(cls,hwDate,hwSubj,e);alert('সংরক্ষণ হয়েছে');draw()}
-function contactV(){shell('মাদ্রাসায় যোগাযোগ',`<div class="hello"><div class="av">${profile.logo?`<img src="${profile.logo}" style="width:100%;height:100%;object-fit:contain;border-radius:50%">`:xe0(Array.from(String(profile.name||'M').trim()||'M')[0])}</div><div><b>${profile.name||'Madrasa Management'}</b><br><small style="color:var(--mute)">${profile.addr||'ঠিকানা যোগ করা হয়নি'}</small></div></div>
- <div class="act" style="grid-template-columns:1fr 1fr"><button onclick="dial('${profile.ph||''}')"><b>📞</b>কল করুন</button><button onclick="if('${profile.ph||''}')window.open('sms:${profile.ph||''}','_blank');else alert('যোগাযোগ নম্বর নেই')"><b>💬</b>SMS পাঠান</button></div>
- ${!profile.ph?'<p class="note">মাদ্রাসার যোগাযোগ নম্বর এখনো যোগ করা হয়নি।</p>':''}`,'child')}
+
 </script>
 <script>
 /* ===== নামাজ ও হোমওয়ার্ক: অভিভাবক Submit + অ্যাডমিন/শিক্ষক ইতিহাস + শিক্ষক যোগাযোগ ===== */
@@ -1019,7 +991,6 @@ window.hhExpire=async function(){const f=hhFrom();try{
  if(role==='admin'||role==='teacher'){const v=(await get(query(R('homeLog'),orderByKey(),endAt(dayAdd(f,-1))))).val()||{},U={};Object.keys(v).forEach(d=>{U['homeLog/'+d]=null});if(Object.keys(U).length)await upd(U)}
  else if(role==='guardian'&&myChild){const U={};for(let i=1;i<=7;i++)U['homeLog/'+dayAdd(f,-i)+'/'+myChild]=null;await upd(U)}
 }catch(e){console.warn('hhExpire',e)}};
-const _home=home;window.home=function(){_home()};
 const _dr=draw;window.draw=function(){if(tab==='hhist'){if(role==='admin'||(role==='teacher'&&hasPerm('ph_hist')))return hhV();tab=role==='guardian'?'child':'home'}_dr()};
 /* অভিভাবক: সব শিক্ষকের নম্বরে যোগাযোগ */
 window.contactV=function(){const T=(window.contactT||[]).filter(t=>t.ph);window.contactTF=T;
@@ -1393,18 +1364,7 @@ async function acct(email,pw){const c=await createUserWithEmailAndPassword(auth2
 async function freeKeys(ids){const ks=[];for(const [v,free] of ids){const k=key(v);if(!k||ks.includes(k))continue;if(free&&(await get(R('loginIndex/'+k))).exists())continue;ks.push(k)}return ks}
 const mapOwner=async k=>{try{const sn=await get(R('loginMap/'+k));return sn.exists()&&typeof sn.val()==='string'?sn.val():null}catch(e){return null}};
 async function xChk(list,strict){for(const [v,lbl] of list){const k=key(v);if(!k)continue;const ow=await mapOwner(k);if(ow&&ow!==MID)throw new Error('এই '+lbl+' ('+v+') অন্য মাদ্রাসায় ব্যবহৃত হচ্ছে, তাই ব্যবহার করা যাবে না');if(strict&&(await get(R('loginIndex/'+k))).exists())throw new Error('এই '+lbl+' ('+v+') এই মাদ্রাসায় আগে থেকেই ব্যবহৃত হচ্ছে')}}
-window.adminLoginCheck=async function(ph){
- const L=[],kn=key(ph);
- try{const em=auth.currentUser&&auth.currentUser.email;L.push('লগইন ইমেইল: '+(em||'পাওয়া যায়নি'));
-  L.push('নম্বর (চাবি): '+(kn||'খালি'));L.push('মাদ্রাসা আইডি: '+MID);
-  if(!kn)return L.concat(['ফল: নম্বর নেই, শুধু ইমেইল দিয়ে লগইন চলবে']);
-  const own=await mapOwner(kn);L.push('loginMap: '+(own===MID?'এই মাদ্রাসা ✓':own?'অন্য মাদ্রাসা ('+own+') ✗':'নেই ✗'));
-  const ix=await get(R('loginIndex/'+kn));
-  if(ix.exists()){const v=ix.val();L.push('loginIndex: আছে (ভূমিকা '+v.role+', ইমেইল '+(String(v.email).toLowerCase()===String(em).toLowerCase()?'মেলে ✓':'মেলে না ✗')+')');
-   L.push(own===MID&&v.role==='admin'&&String(v.email).toLowerCase()===String(em).toLowerCase()?'ফল: এই নম্বর দিয়ে লগইন চলবে ✓':'ফল: লগইন চলবে না ✗')}
-  else{L.push('loginIndex: নেই ✗');L.push('ফল: লগইন চলবে না ✗')}
- }catch(e){L.push('যাচাই করতে ত্রুটি: '+(e.code||'')+' '+(e.message||e))}
- return L};
+
 window.adminPhoneChange=async function(oldPh,newPh){
  const kn=key(newPh),cand=[key(oldPh)];try{if(profile&&profile.ph)cand.push(key(profile.ph))}catch(e){}
  if(kn&&!/^[0-9]{10,14}$/.test(kn))throw new Error('সঠিক মোবাইল নম্বর দিন (১০-১৪ অঙ্ক)');
@@ -1661,7 +1621,7 @@ const paint=()=>{if(booting)return;let lk='';try{lk=localStorage.getItem(LKK)||'
 /* লগআউটে ও অ্যাপ চালুর সময় ফোনে থাকা পুরোনো ব্যক্তিগত ডেটা (ছাত্র, শিক্ষক, ফি, মেসেজ, পুরোনো পাসওয়ার্ড) মোছা। মাদ্রাসার সেটিংস, থিম, ভাষা ও অ্যাডমিনের নিজের তথ্য থাকে। */
 const LSK=['mm_s','mm_t','mm_a','mm_tat','mm_n','mm_m','mm_f','mm_e','mm_r','mm_hw','mm_hwa','mm_pw'];
 function purgeStore(){try{LSK.forEach(k=>localStorage.removeItem(k))}catch(e){}try{msgs=[]}catch(e){}}
-function purgeMem(){try{DBT.cache={};DBT.ts={};DBT.busy={};DBT.open=0;DBT.d=''}catch(e){}try{TQ.rep=null;TQ.me=null;TQ.ov={};TQ.ovT={}}catch(e){}}
+function purgeMem(){try{DBT.cache={};DBT.ts={};DBT.busy={};DBT.open=0;DBT.d=''}catch(e){}try{TQ.rep=null;TQ.me=null;TQ.ov={};TQ.ovT={};TQ.cfg=undefined;TQ.tok='';TQ.rd='';TQ.mapChk=0;TQ.meT=0}catch(e){}}
 purgeStore();
 window.login=function(){cleanup();purgeStore();purgeMem();if(auth.currentUser)signOut(auth);paint()};
 window.setupAdmin=function(){form('প্রথম অ্যাডমিন অ্যাকাউন্ট',[['n','নাম'],['em','জিমেইল','type=email'],['ph','মোবাইল নম্বর','type=tel'],['pw','পাসওয়ার্ড (কমপক্ষে ৬ অক্ষর)','type=password']],{},async o=>{
@@ -2070,8 +2030,8 @@ document.addEventListener('visibilitychange',()=>{if(!document.hidden&&localDay(
 
 /* ===== শিক্ষক QR হাজিরা (Admin সেটিংস + শিক্ষক স্ক্যান + রিপোর্ট) ===== */
 const TQ={cfg:undefined,tok:'',loc:null,me:null,rd:'',rep:null};
-window.__tqrDay=async function(d){return (await get(R('tqr/'+d))).val()||{}};
-window.__tq=TQ;
+window.__tqrDay=async function(d){if(role==='admin'&&!TQ.mapChk){TQ.mapChk=1;TQ.ensureMap()}return (await get(R('tqr/'+d))).val()||{}};
+window.__tq=TQ;TQ.today=()=>new Date(Date.now()+(TQ.so||0)+360*6e4).toISOString().slice(0,10);
 const tqP=n=>String(n).padStart(2,'0');
 const tqT=ms=>ms?new Date(ms).toLocaleTimeString('bn-BD',{hour:'numeric',minute:'2-digit'}):'—';
 const tqHM=ms=>{const d=new Date(ms);return tqP(d.getHours())+':'+tqP(d.getMinutes())};
@@ -2087,7 +2047,7 @@ const tqGeo=()=>new Promise(r=>{if(!navigator.geolocation)return r({ok:0,err:'un
 const tqQRtext=()=>'MMQ1|'+MID+'|'+(TQ.cfg&&TQ.cfg.qid)+'|'+TQ.tok;
 const tqDN=dk=>{const a=dk.split('-');return Date.UTC(+a[0],+a[1]-1,+a[2])/864e5};
 const tqMap=()=>{const o={},b=new Date();for(let i=-5;i<=800;i++){const d=new Date(b.getTime()+i*864e5-b.getTimezoneOffset()*6e4),k=d.toISOString().slice(0,10);o[k]=tqDN(k)}return o};
-TQ.ensureMap=async function(){try{const k=new Date(Date.now()+60*864e5-new Date().getTimezoneOffset()*6e4).toISOString().slice(0,10),s=await get(R('attQr/dayMap/'+k));if(!s.exists())await update(R('attQr'),{dayMap:tqMap()})}catch(e){}};
+TQ.ensureMap=async function(){if(role!=='admin')return;try{const k=new Date(Date.now()+60*864e5-new Date().getTimezoneOffset()*6e4).toISOString().slice(0,10),s=await get(R('attQr/dayMap/'+k));if(!s.exists()&&(await get(R('attQr/cfg/qid'))).exists())await update(R('attQr'),{dayMap:tqMap()})}catch(e){}};
 
 /* ---------- Admin: QR সেটিংস (প্রিন্টযোগ্য স্থায়ী QR) ---------- */
 TQ.html=function(){const c=TQ.cfg;
@@ -2115,33 +2075,43 @@ TQ.create=async function(){try{const tok=tqTok();await update(R('attQr'),{cfg:{a
 TQ.toggle=async function(){const on=!(TQ.cfg&&TQ.cfg.active);try{await update(R('attQr/cfg'),{active:on});TQ.cfg.active=on;TQ.draw()}catch(e){alert('হয়নি: '+(e.code||e.message))}};
 TQ.regen=async function(){if(!await mmConfirm('নতুন QR তৈরি করলে আগের প্রিন্ট করা সব QR বাতিল হবে। নিশ্চিত?'))return;try{const q=tqTok(),k=tqTok();await update(R('attQr'),{'cfg/qid':q,'sec/tok':k});TQ.cfg.qid=q;TQ.tok=k;TQ.draw()}catch(e){alert('হয়নি: '+(e.code||e.message))}};
 TQ.print=function(){if(!TQ.tok)return;cl();const d=document.createElement('div');d.id='qprint';d.style.cssText='position:fixed;inset:0;background:#fff;color:#000;z-index:70;overflow:auto;text-align:center;padding:16px;box-sizing:border-box';
- d.innerHTML='<style>@media print{body>*:not(#qprint){display:none!important}#qprint{position:static!important}.noprint{display:none!important}}</style><h1 style="margin:10px 0 4px;font-size:26px">'+xe(profile.name||'')+'</h1><h2 style="margin:0 0 12px;font-size:20px">শিক্ষক হাজিরা QR</h2><div style="display:inline-block;width:min(80vw,420px)">'+mmQR.svg(tqQRtext(),420).replace('width="420" height="420"','style="width:100%;height:auto"')+'</div><p style="font-size:18px;margin:10px 0">অ্যাপ থেকে "শিক্ষক হাজিরা" খুলে এই QR স্ক্যান করুন।<br>প্রথম স্ক্যান = আগমন, দ্বিতীয় স্ক্যান = প্রস্থান।</p><div class="noprint" style="display:flex;gap:10px;justify-content:center;margin-top:14px"><button class="tile" style="background:var(--g);padding:12px 26px;width:auto" onclick="window.print()">প্রিন্ট</button><button class="tile" style="background:#5b6b7d;padding:12px 26px;width:auto" onclick="document.getElementById(\'qprint\').remove()">বন্ধ করুন</button></div>';
+ d.innerHTML='<style>@media print{body>*:not(#qprint){display:none!important}#qprint{position:static!important}.noprint{display:none!important}}</style><h1 style="margin:10px 0 4px;font-size:26px">'+xe(profile.name||'')+'</h1><h2 style="margin:0 0 12px;font-size:20px">শিক্ষক হাজিরা QR</h2><div style="display:inline-block;width:min(80vw,420px)">'+mmQR.svg(tqQRtext(),420).replace('width="420" height="420"','style="width:100%;height:auto"')+'</div><p style="font-size:18px;margin:10px 0">অ্যাপ থেকে "শিক্ষক হাজিরা" খুলে এই QR স্ক্যান করুন।<br>প্রথম স্ক্যান = আগমন, দ্বিতীয় স্ক্যান = প্রস্থান।</p><div class="noprint" style="display:flex;gap:10px;justify-content:center;margin-top:14px"><button class="tile" style="background:var(--g);padding:12px 26px;width:auto" onclick="__tq.doPrint()">প্রিন্ট</button><button class="tile" style="background:#5b6b7d;padding:12px 26px;width:auto" onclick="document.getElementById(\'qprint\').remove()">বন্ধ করুন</button></div>';
  document.body.appendChild(d)};
-TQ.download=function(){if(!TQ.tok)return;
- const svg=mmQR.svg(tqQRtext(),800),im=new Image(),W=1000,H=1250,ff=getComputedStyle(document.body).fontFamily||'sans-serif';
- im.onload=function(){const c=document.createElement('canvas');c.width=W;c.height=H;const x=c.getContext('2d');x.fillStyle='#fff';x.fillRect(0,0,W,H);x.fillStyle='#000';x.textAlign='center';
-  x.font='bold 54px '+ff;x.fillText((profile.name||'').slice(0,40),W/2,95);x.font='bold 42px '+ff;x.fillText('শিক্ষক হাজিরা QR',W/2,165);
-  x.imageSmoothingEnabled=false;x.drawImage(im,100,200,800,800);
-  x.font='34px '+ff;x.fillText('অ্যাপ থেকে "শিক্ষক হাজিরা" খুলে এই QR স্ক্যান করুন',W/2,1085);x.fillText('প্রথম স্ক্যান = আগমন, দ্বিতীয় স্ক্যান = প্রস্থান',W/2,1140);
-  c.toBlob(function(bl){if(!bl){alert('ছবি তৈরি হয়নি');return}const a=document.createElement('a');a.href=URL.createObjectURL(bl);a.download='teacher-attendance-qr.png';document.body.appendChild(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove()},1500)},'image/png')};
- im.onerror=function(){alert('ছবি তৈরি হয়নি')};im.src='data:image/svg+xml;charset=utf-8,'+encodeURIComponent(svg)};
+TQ.native=function(){try{const C=window.Capacitor;return !!(C&&C.isNativePlatform&&C.isNativePlatform())}catch(e){return false}};
+TQ.doPrint=function(){if(TQ.native()){alert('এই অ্যাপ থেকে সরাসরি প্রিন্ট হয় না। ছবি সংরক্ষণ হচ্ছে, সেটি Gallery বা Files থেকে প্রিন্ট করুন।');TQ.download();return}window.print()};
+TQ.save=async function(blob,name){
+ try{const C=window.Capacitor;if(C&&C.isPluginAvailable&&C.isPluginAvailable('Filesystem')&&C.isPluginAvailable('Share')){
+   const FS=(C.Plugins&&C.Plugins.Filesystem)||C.registerPlugin('Filesystem'),SH=(C.Plugins&&C.Plugins.Share)||C.registerPlugin('Share');
+   const b64=await new Promise((res,rej)=>{const r=new FileReader();r.onload=()=>res(String(r.result).split(',')[1]);r.onerror=()=>rej(r.error);r.readAsDataURL(blob)});
+   const w=await FS.writeFile({path:name,data:b64,directory:'CACHE'});await SH.share({title:name,url:w.uri,dialogTitle:'QR সংরক্ষণ করুন'});return true}}
+ catch(e){if(/cancel|abort|dismiss/i.test(String((e&&(e.message||e.name))||e)))return true}
+ const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=name;document.body.appendChild(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove()},4000);return true};
+TQ.download=async function(){if(!TQ.tok)return;
+ const m=mmQR.make(tqQRtext()),n=m.length,qz=4,sc=Math.max(4,Math.floor(800/(n+2*qz))),W=1000,H=1250,ff=getComputedStyle(document.body).fontFamily||'sans-serif';
+ try{await document.fonts.load('bold 40px '+ff,'শিক্ষক হাজিরা')}catch(e){}
+ const c=document.createElement('canvas');c.width=W;c.height=H;const x=c.getContext('2d');x.fillStyle='#fff';x.fillRect(0,0,W,H);
+ const sz=(n+2*qz)*sc,ox=Math.floor((W-sz)/2),oy=200;x.fillStyle='#000';
+ for(let y=0;y<n;y++)for(let i=0;i<n;i++)if(m[y][i])x.fillRect(ox+(i+qz)*sc,oy+(y+qz)*sc,sc,sc);
+ x.textAlign='center';x.font='bold 54px '+ff;x.fillText((profile.name||'').slice(0,40),W/2,95);x.font='bold 42px '+ff;x.fillText('শিক্ষক হাজিরা QR',W/2,165);
+ x.font='34px '+ff;x.fillText('অ্যাপ থেকে "শিক্ষক হাজিরা" খুলে এই QR স্ক্যান করুন',W/2,1085);x.fillText('প্রথম স্ক্যান = আগমন, দ্বিতীয় স্ক্যান = প্রস্থান',W/2,1140);
+ c.toBlob(function(bl){if(!bl){alert('ছবি তৈরি হয়নি');return}TQ.save(bl,'teacher-attendance-qr.png')},'image/png')};
 TQ.here=async function(){const r=await tqGeo();if(!r.ok){alert('অবস্থান পাওয়া যায়নি। ফোনের Location ও ব্রাউজারের অনুমতি চালু করুন।');return}document.getElementById('tqla').value=r.lat.toFixed(6);document.getElementById('tqlo').value=r.lng.toFixed(6)};
-TQ.saveCfg=async function(){const g=id=>document.getElementById(id).value.trim(),la=parseFloat(g('tqla')),lo=parseFloat(g('tqlo')),rd=parseInt(g('tqrd'),10),gr=parseInt(g('tqgr'),10),st=g('tqst').split(':');
+TQ.saveCfg=async function(){const g=id=>document.getElementById(id).value.trim().replace(/[০-৯]/g,c=>'০১২৩৪৫৬৭৮৯'.indexOf(c)).replace(/,/g,'.'),la=parseFloat(g('tqla')),lo=parseFloat(g('tqlo')),rd=parseInt(g('tqrd'),10),gr=parseInt(g('tqgr'),10),st=g('tqst').split(':');
  if(!(la>=-90&&la<=90)||!(lo>=-180&&lo<=180)){alert('সঠিক Latitude/Longitude দিন');return}
  if(!(rd>=20&&rd<=5000)){alert('দূরত্ব ২০–৫০০০ মিটারের মধ্যে দিন');return}
  if(!(gr>=0&&gr<=240)||st.length<2){alert('সময় ও ছাড় সঠিক দিন');return}
  try{const o={lat:la,lng:lo,rad:rd,start:(+st[0])*60+(+st[1]),grace:gr};await update(R('attQr/cfg'),o);Object.assign(TQ.cfg,o);alert('সংরক্ষিত হয়েছে।')}catch(e){alert('সংরক্ষণ হয়নি: '+(e.code||e.message))}};
 
 /* ---------- শিক্ষক: আমার হাজিরা + স্ক্যান ---------- */
-TQ.loadMe=async function(){if(role!=='teacher')return;const days=[],d=new Date();for(let i=0;i<30;i++){days.push(new Date(d.getTime()-i*864e5-d.getTimezoneOffset()*6e4).toISOString().slice(0,10))}
+TQ.loadMe=async function(force){if(role!=='teacher')return;if(!force&&TQ.me&&Date.now()-(TQ.meT||0)<20000)return;TQ.meT=Date.now();await tqSO();const days=[],t0=Date.now()+(TQ.so||0)+360*6e4;for(let i=0;i<30;i++){days.push(new Date(t0-i*864e5).toISOString().slice(0,10))}
  const rs=await Promise.all(days.map(k=>get(R('tqr/'+k+'/'+myTeacher)).then(s=>({k:k,v:s.val()})).catch(()=>({k:k,v:null}))));
  TQ.me=rs;if(tab==='tself')TQ.selfDraw()};
-TQ.selfDraw=function(){const m=TQ.me,t=m&&m.find(x=>x.k===localDay()),v=t&&t.v||{},i=v.in,o=v.out;
+TQ.selfDraw=function(){const m=TQ.me,t=m&&m.find(x=>x.k===TQ.today()),v=t&&t.v||{},i=v.in,o=v.out;
  let st=!i?'<span style="color:var(--mute)">এখনো হাজিরা হয়নি</span>':tqBadge(tqSt,i.st)+(o?' <span style="color:#1f9d6b">• সম্পূর্ণ</span>':'');
  const w=(i&&i.ls&&i.ls!=='inside'&&i.ls!=='manual')||(o&&o.ls&&o.ls!=='inside'&&o.ls!=='manual');
  const wm=(i&&i.ls==='outside')||(o&&o.ls==='outside')?'⚠ আপনার বর্তমান অবস্থান প্রতিষ্ঠানের নির্ধারিত এলাকার বাইরে।':'⚠ আপনার অবস্থান যাচাই করা যায়নি।';
  const row=(a,b)=>'<div style="display:flex;justify-content:space-between;padding:7px 0;border-bottom:1px solid #0001"><span style="color:var(--mute)">'+a+'</span><b>'+b+'</b></div>';
- const hist=(m||[]).filter(x=>x.v&&x.v.in&&x.k!==localDay()).map(x=>{const a=x.v.in,b=x.v.out;return '<div style="'+tqBox+';margin:6px 0;padding:10px"><div style="display:flex;justify-content:space-between"><b>'+dd(x.k)+'</b>'+tqBadge(tqSt,a.st)+'</div><small>চেক-ইন '+tqT(a.t)+' • চেক-আউট '+tqT(b&&b.t)+(a.lm?' • দেরি '+bn(a.lm)+' মি':'')+'</small><br>'+tqBadge(tqLs,a.ls||'manual')+'</div>'}).join('');
+ const hist=(m||[]).filter(x=>x.v&&x.v.in&&x.k!==TQ.today()).map(x=>{const a=x.v.in,b=x.v.out;return '<div style="'+tqBox+';margin:6px 0;padding:10px"><div style="display:flex;justify-content:space-between"><b>'+dd(x.k)+'</b>'+tqBadge(tqSt,a.st)+'</div><small>চেক-ইন '+tqT(a.t)+' • চেক-আউট '+tqT(b&&b.t)+(a.lm?' • দেরি '+bn(a.lm)+' মি':'')+'</small><br>'+tqBadge(tqLs,a.ls||'manual')+'</div>'}).join('');
  shell('শিক্ষক হাজিরা','<div style="'+tqBox+'">'+row('আজকের তারিখ',dd(Date.now()))+row('অবস্থা',st)+row('চেক-ইন (আগমন)',tqT(i&&i.t))+row('চেক-আউট (প্রস্থান)',tqT(o&&o.t))+(i&&i.lm?row('দেরি',bn(i.lm)+' মিনিট'):'')+row('অবস্থান',i?tqBadge(tqLs,(o&&o.ls)||i.ls||'manual'):'—')+(i&&i.dist!=null?row('দূরত্ব',tqDist(i.dist)):'')+
   (w?'<p style="color:#e6951f;margin:10px 0 0"><b>'+wm+'</b></p>':'')+'</div><button class="tile" style="background:var(--g);width:100%;padding:16px;font-size:17px" onclick="__tq.scan()">QR Code স্ক্যান করুন</button><h3>আগের হাজিরা</h3>'+(m?(hist||'<p class="note">আগের কোনো হাজিরা নেই।</p>'):'<p class="note">লোড হচ্ছে...</p>'),'home')};
 TQ.self=function(){if(role!=='teacher')return;TQ.selfDraw();TQ.loadMe()};
@@ -2154,11 +2124,17 @@ TQ.scan=async function(){if(role!=='teacher'||!hasPerm('att_take')){alert('এ�
  d.innerHTML='<video id="qsv" playsinline muted style="width:100%;max-width:440px;border-radius:16px;background:#111"></video><p style="color:#fff;text-align:center">প্রতিষ্ঠানের QR কোডটি ক্যামেরার সামনে ধরুন</p><button class="tile" style="background:#5b6b7d;padding:12px 30px" onclick="__tq.stop()">বাতিল</button>';
  document.body.appendChild(d);const v=document.getElementById('qsv');v.srcObject=TQ.stream;try{await v.play()}catch(e){}
  let det=null;if('BarcodeDetector' in window){try{det=new BarcodeDetector({formats:['qr_code']})}catch(e){}}
- if(!det){try{await new Promise((ok,no)=>{if(window.jsQR)return ok();const s=document.createElement('script');s.src='https://cdnjs.cloudflare.com/ajax/libs/jsQR/1.4.0/jsQR.min.js';s.onload=ok;s.onerror=no;document.head.appendChild(s)})}catch(e){TQ.stop();alert('স্ক্যানার লোড হয়নি। ইন্টারনেট দেখে আবার চেষ্টা করুন।');return}}
- const cv=document.createElement('canvas'),cx=cv.getContext('2d',{willReadFrequently:true});let done=0;
+ const loadJs=()=>new Promise((ok,no)=>{if(window.jsQR)return ok();const s=document.createElement('script');s.src='https://cdnjs.cloudflare.com/ajax/libs/jsQR/1.4.0/jsQR.min.js';s.onload=ok;s.onerror=no;document.head.appendChild(s)});
+ const jsFail=()=>{TQ.stop();alert('স্ক্যানার লোড হয়নি। ইন্টারনেট দেখে আবার চেষ্টা করুন।')};
+ if(!det){try{await loadJs()}catch(e){jsFail();return}}
+ const cv=document.createElement('canvas'),cx=cv.getContext('2d',{willReadFrequently:true});let done=0,fails=0;
  const tick=async()=>{if(done||!document.getElementById('qsv')){if(!done)TQ.stop();return}
-  try{let txt='';if(det){const r=await det.detect(v);if(r.length)txt=r[0].rawValue}else if(v.videoWidth){cv.width=v.videoWidth;cv.height=v.videoHeight;cx.drawImage(v,0,0);const im=cx.getImageData(0,0,cv.width,cv.height),q=window.jsQR(im.data,im.width,im.height);if(q)txt=q.data}
-   if(txt){done=1;TQ.stop();TQ.process(txt);return}}catch(e){}
+  let txt='';
+  try{
+   if(det){try{const r=await det.detect(v);if(r.length)txt=r[0].rawValue}catch(e){if(++fails>=3){det=null;try{await loadJs()}catch(e2){jsFail();return}}}}
+   else if(v.videoWidth&&window.jsQR){const sc=Math.min(1,800/v.videoWidth);cv.width=Math.round(v.videoWidth*sc);cv.height=Math.round(v.videoHeight*sc);cx.drawImage(v,0,0,cv.width,cv.height);const im=cx.getImageData(0,0,cv.width,cv.height),q=window.jsQR(im.data,im.width,im.height,{inversionAttempts:'dontInvert'});if(q)txt=q.data}
+  }catch(e){}
+  if(txt){done=1;TQ.stop();TQ.process(txt);return}
   setTimeout(tick,250)};tick()};
 TQ.process=async function(text){
  const bad=m=>{hideLd();alert(m)};showLd();
@@ -2168,9 +2144,8 @@ TQ.process=async function(text){
   const so=await tqSO(),cfgS=await get(R('attQr/cfg'));
   if(!cfgS.exists()||cfgS.val().active!==true)return bad('QR এখন সক্রিয় নেই। Admin-এর সাথে যোগাযোগ করুন।');
   const c=cfgS.val();if(c.qid!==p[2])return bad('এই QR বাতিল বা পুরোনো। নতুন QR স্ক্যান করুন।');
-  const dk=localDay(),tS=await get(R('tqr/'+dk+'/'+myTeacher)),cur=tS.val()||{};
+  const now=Date.now()+so,dk=new Date(now+(c.tz==null?360:c.tz)*6e4).toISOString().slice(0,10),tS=await get(R('tqr/'+dk+'/'+myTeacher)),cur=tS.val()||{};
   if(cur.in&&cur.out)return bad('আজকের শিক্ষক হাজিরা সম্পূর্ণ হয়েছে।');
-  const now=Date.now()+so;
   if(cur.in&&now-cur.in.t<300000)return bad('চেক-ইনের ৫ মিনিট পরে চেক-আউট করা যাবে।');
   const g=await TQ.loc||{ok:0},rec={t:serverTimestamp(),mid:MID,tok:p[3],qid:p[2],tn:((teachers.find(x=>x.id===myTeacher)||{}).n||'').slice(0,80)};
   if(g.ok&&c.lat!=null&&c.lng!=null){const ds=tqHav(g.lat,g.lng,c.lat,c.lng),rd=c.rad||100;rec.tla=+g.lat.toFixed(5);rec.tlo=+g.lng.toFixed(5);rec.mla=+(+c.lat).toFixed(5);rec.mlo=+(+c.lng).toFixed(5);rec.dist=Math.round(ds);rec.rad=rd;
@@ -2181,20 +2156,20 @@ TQ.process=async function(text){
   await set(R('tqr/'+dk+'/'+myTeacher+'/'+kind),rec);
   hideLd();let msg=kind==='in'?'চেক-ইন সম্পন্ন'+(rec.st==='late'?' (দেরি '+bn(rec.lm)+' মিনিট)':' (উপস্থিত)'):'চেক-আউট সম্পন্ন';
   if(rec.ls==='outside')msg+='\n⚠ আপনার বর্তমান অবস্থান প্রতিষ্ঠানের নির্ধারিত এলাকার বাইরে।';else if(rec.ls==='location_unavailable')msg+='\n⚠ আপনার অবস্থান যাচাই করা যায়নি।';
-  alert(msg);TQ.loadMe()}
- catch(e){bad((e.code==='PERMISSION_DENIED'||/permission/i.test(e.message||''))?'হাজিরা গ্রহণ করা যায়নি: QR বাতিল/নিষ্ক্রিয় হয়ে থাকতে পারে, বা আপনার অনুমতি নেই।':'সমস্যা: '+(e.code||e.message))}};
+  alert(msg);TQ.loadMe(true)}
+ catch(e){bad((e.code==='PERMISSION_DENIED'||/permission/i.test(e.message||''))?'হাজিরা গ্রহণ করা যায়নি। সম্ভাব্য কারণ:\n১) আপনার হাজিরার অনুমতি নেই\n২) মাদ্রাসার সফটওয়্যারের মেয়াদ শেষ\n৩) QR বদলানো বা বন্ধ করা হয়েছে\n৪) অ্যাডমিনকে একবার QR সেটিংস পেজ খুলতে বলুন':'সমস্যা: '+(e.code||e.message))}};
 
 /* ---------- Admin: শিক্ষক হাজিরা রিপোর্ট ---------- */
 TQ.report=async function(){if(role!=='admin')return;if(!TQ.rd)TQ.rd=localDay();if(TQ.cfg===undefined){try{const s=await get(R('attQr/cfg'));TQ.cfg=s.exists()?s.val():null}catch(e){}}TQ.repDraw();
  try{TQ.rep=(await get(R('tqr/'+TQ.rd))).val()||{}}catch(e){TQ.rep={};alert('রিপোর্ট পড়া যায়নি: '+(e.code||e.message))}
  if(tab==='tqrep')TQ.repDraw()};
-TQ.repDraw=function(){const r=TQ.rep,L=teachers||[];let cnt={p:0,l:0,n:0,o:0};
- const rows=L.map(t=>{const v=r&&r[t.id]||{},i=v.in,o=v.out;if(r){if(!i)cnt.n++;else{if(i.st==='late')cnt.l++;else if(i.st==='present')cnt.p++;if((i.ls&&i.ls!=='inside'&&i.ls!=='manual')||(o&&o.ls&&o.ls!=='inside'&&o.ls!=='manual'))cnt.o++}}
+TQ.repDraw=function(){const r=TQ.rep,L=teachers||[];let cnt={p:0,l:0,n:0,o:0,a:0};
+ const rows=L.map(t=>{const v=r&&r[t.id]||{},i=v.in,o=v.out;if(r){if(!i)cnt.n++;else{if(i.st==='late')cnt.l++;else if(i.st==='present')cnt.p++;else cnt.a++;if((i.ls&&i.ls!=='inside'&&i.ls!=='manual')||(o&&o.ls&&o.ls!=='inside'&&o.ls!=='manual'))cnt.o++}}
   return '<div style="'+tqBox+';margin:6px 0;padding:10px"><div style="display:flex;justify-content:space-between;align-items:center"><b>'+xe(t.n||t.id)+'</b>'+(i?tqBadge(tqSt,i.st):'<span style="color:var(--mute)">রেকর্ড নেই</span>')+'</div>'+
    (i?'<small>চেক-ইন '+tqT(i.t)+' • চেক-আউট '+tqT(o&&o.t)+(i.lm?' • দেরি '+bn(i.lm)+' মি':'')+'</small><br>'+tqBadge(tqLs,(o&&o.ls&&o.ls!=='inside'?o.ls:i.ls)||'manual')+(i.dist!=null?' <small>দূরত্ব: '+tqDist(i.dist)+'</small>':'')+((i.ae||(o&&o.ae))?' <small style="color:#7a5fc4">• Admin সম্পাদিত</small>':''):'')+
    '<div style="text-align:right"><button class="tile" style="background:#5b6b7d;padding:6px 14px;display:inline-block;width:auto" onclick="__tq.edit(\''+t.id+'\')">'+(i?'সম্পাদনা':'যোগ করুন')+'</button></div></div>'}).join('');
  shell('Teacher Attendance','<div style="display:flex;gap:6px;align-items:center;margin-bottom:8px"><button class="tile" style="background:#5b6b7d;padding:10px 14px;width:auto" onclick="__tq.day(-1)">‹</button><input id="tqd" type="date" value="'+TQ.rd+'" onchange="__tq.setDay(this.value)" style="flex:1;padding:10px;border-radius:10px;border:1px solid #0003;background:var(--bg);color:var(--ink)"><button class="tile" style="background:#5b6b7d;padding:10px 14px;width:auto" onclick="__tq.day(1)">›</button></div>'+
-  (r?'<div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:6px"><small>উপস্থিত: <b>'+bn(cnt.p)+'</b></small><small>দেরি: <b>'+bn(cnt.l)+'</b></small><small>রেকর্ড নেই: <b>'+bn(cnt.n)+'</b></small><small>অবস্থান সমস্যা: <b>'+bn(cnt.o)+'</b></small></div>':'')+(r?(rows||'<p class="note">কোনো শিক্ষক নেই।</p>'):'<p class="note">লোড হচ্ছে...</p>'),'home')};
+  (r?'<div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:6px"><small>উপস্থিত: <b>'+bn(cnt.p)+'</b></small><small>দেরি: <b>'+bn(cnt.l)+'</b></small><small>অনুপস্থিত/ছুটি: <b>'+bn(cnt.a)+'</b></small><small>রেকর্ড নেই: <b>'+bn(cnt.n)+'</b></small><small>অবস্থান সমস্যা: <b>'+bn(cnt.o)+'</b></small></div>':'')+(r?(rows||'<p class="note">কোনো শিক্ষক নেই।</p>'):'<p class="note">লোড হচ্ছে...</p>'),'home')};
 TQ.setDay=function(v){if(!v)return;TQ.rd=v;TQ.rep=null;TQ.report()};
 TQ.day=function(n){const d=new Date(TQ.rd+'T12:00:00');d.setDate(d.getDate()+n);TQ.setDay(d.getFullYear()+'-'+tqP(d.getMonth()+1)+'-'+tqP(d.getDate()))};
 TQ.edit=async function(tid){if(TQ.cfg===undefined){try{const s=await get(R('attQr/cfg'));TQ.cfg=s.exists()?s.val():null}catch(e){}}const v=(TQ.rep&&TQ.rep[tid])||{},i=v.in,o=v.out,t=teachers.find(x=>x.id===tid)||{};cl();
@@ -2203,7 +2178,7 @@ TQ.edit=async function(tid){if(TQ.cfg===undefined){try{const s=await get(R('attQ
  d.innerHTML='<div style="background:var(--card);color:var(--ink);width:100%;max-width:400px;border-radius:18px;padding:16px;max-height:90%;overflow:auto"><h3 style="margin:0 0 4px">'+xe(t.n||tid)+'</h3><small>'+dd(TQ.rd)+'</small><br><small>অবস্থা</small><select id="qes" '+s+'>'+Object.keys(tqSt).map(k=>'<option value="'+k+'"'+((i&&i.st)===k?' selected':'')+'>'+tqSt[k][0]+'</option>').join('')+'</select><small>চেক-ইন সময়</small><input id="qei" type="time" value="'+(i?tqHM(i.t):'')+'" oninput="__tq.recalc()" onchange="__tq.recalc()" '+s+'><small>চেক-আউট সময় (ফাঁকা = নেই)</small><input id="qeo" type="time" value="'+(o?tqHM(o.t):'')+'" '+s+'><small>দেরি (মিনিট)</small><input id="qel" type="text" inputmode="numeric" value="'+((i&&i.lm)||0)+'" '+s+'><div style="display:flex;gap:10px;margin-top:12px"><button class="tile" style="background:var(--g);flex:1;padding:12px" onclick="__tq.saveEdit(\''+tid+'\')">সংরক্ষণ</button><button class="tile" style="background:#5b6b7d;flex:1;padding:12px" onclick="cl()">বাতিল</button></div></div>';
  document.body.appendChild(d)};
 TQ.recalc=function(){const c=TQ.cfg,sl=document.getElementById('qes');if(!c||c.start==null||!sl||(sl.value!=='present'&&sl.value!=='late'))return;const v=document.getElementById('qei').value;if(!v)return;const mn=(+v.split(':')[0])*60+(+v.split(':')[1]),late=mn>c.start+(c.grace||0);sl.value=late?'late':'present';document.getElementById('qel').value=late?mn-c.start:0};
-TQ.saveEdit=async function(tid){const g=id=>document.getElementById(id).value.trim(),st=g('qes'),ti=g('qei'),to=g('qeo'),lm0=parseInt(g('qel'),10),lm=st==='present'?0:lm0;
+TQ.saveEdit=async function(tid){const g=id=>document.getElementById(id).value.trim().replace(/[০-৯]/g,c=>'০১২৩৪৫৬৭৮৯'.indexOf(c)),st=g('qes'),ti=g('qei'),to=g('qeo'),lm0=parseInt(g('qel'),10),lm=st==='present'?0:lm0;
  if(!ti){alert('চেক-ইন সময় দিন');return}if(!(lm0>=0&&lm0<=1440)){alert('দেরি ০–১৪৪০ মিনিটের মধ্যে দিন');return}
  const ms=h=>new Date(TQ.rd+'T'+h+':00').getTime(),v=(TQ.rep&&TQ.rep[tid])||{},b='tqr/'+TQ.rd+'/'+tid,u={},tn=((teachers.find(x=>x.id===tid)||{}).n||'').slice(0,80),me=auth.currentUser.uid;
  const ed=p=>{u[b+'/'+p+'/ae']=true;u[b+'/'+p+'/eb']=me;u[b+'/'+p+'/ea']=serverTimestamp()};
@@ -2213,7 +2188,7 @@ TQ.saveEdit=async function(tid){const g=id=>document.getElementById(id).value.tr
 
 /* ===== শিক্ষকের ইতিহাস ও মাসিক হাজিরা: QR হাজিরা মিশিয়ে দেখানো (শুধু Admin, দেখার জন্য) ===== */
 TQ.ov={};TQ.ovT={};
-TQ.load=async function(rs){let ch=false;for(const r of rs){const k=r[0]+'|'+r[1];if(Date.now()-(TQ.ovT[k]||0)<30000)continue;TQ.ovT[k]=Date.now();
+TQ.load=async function(rs){let ch=false;for(const r of rs){const k=r[0]+'|'+r[1];if(Date.now()-(TQ.ovT[k]||0)<120000)continue;TQ.ovT[k]=Date.now();
   try{const s=await get(query(R('tqr'),orderByKey(),startAt(r[0]),endAt(r[1]))),v=s.val()||{};
    Object.keys(TQ.ov).forEach(d=>{if(d>=r[0]&&d<=r[1])delete TQ.ov[d]});
    for(const d in v)for(const tid in v[d]){const i=v[d][tid]&&v[d][tid].in;if(!i)continue;const m={present:'Present',late:'Late',absent:'Absent'}[i.st];if(m)(TQ.ov[d]=TQ.ov[d]||{})[tid]=m}
@@ -2223,7 +2198,7 @@ TQ.mergeTat=function(b){const m={};for(const d in b)m[d]=Object.assign({},b[d]);
 TQ.wrap=function(name,ranges,tabName){const orig=window[name];if(typeof orig!=='function')return;
  window[name]=function(){if(role!=='admin')return orig.apply(this,arguments);
   const sv=tat;tat=TQ.mergeTat(sv);try{orig.apply(this,arguments)}finally{tat=sv}
-  const rs=ranges();if(rs.some(r=>Date.now()-(TQ.ovT[r[0]+'|'+r[1]]||0)>=30000))TQ.load(rs).then(ch=>{if(ch&&(tab===tabName))draw()})}};
+  const rs=ranges();if(rs.some(r=>Date.now()-(TQ.ovT[r[0]+'|'+r[1]]||0)>=120000))TQ.load(rs).then(ch=>{if(ch&&(tab===tabName))draw()})}};
 TQ.wrap('thist',()=>[[repYear+'-01-01',repYear+'-12-31'],[M0+'-01',M0+'-31']],'thist');
 TQ.wrap('tcalV',()=>[[M0+'-01',M0+'-31']],'tcal');
 
@@ -2303,6 +2278,7 @@ window.hwVoiceDel=async function(c,d,sj){await upd({['hwVoice/'+c+'/'+d+'/'+sjk(
   /* Back-এর মূল সিদ্ধান্ত: উপরের স্তর আগে বন্ধ হয় */
   function onBack(){
     if($('mmdlg')){mmDlgBack();return}
+    if($('qprint')){$('qprint').remove();return}
     if($('hmenu')){$('hmenu').remove();return}
     if($('exitdlg')){exitClose();return}
     if($('langdlg')){$('langdlg').remove();return}
@@ -3209,10 +3185,10 @@ function rsRem(data,deg){var g=rsGen(deg),res=[];for(var i=0;i<deg;i++)res[i]=0;
 function utf8(s){return Array.from(unescape(encodeURIComponent(s)),function(c){return c.charCodeAt(0)})}
 function make(text){
  var bytes=utf8(text),v=1;
- for(;v<=10;v++){if(4+8+bytes.length*8<=dataCw(v)*8)break}
+ for(;v<=10;v++){if(4+(v>=10?16:8)+bytes.length*8<=dataCw(v)*8)break}
  if(v>10)throw new Error('QR text too long');
  var bits=[];function put(val,len){for(var i=len-1;i>=0;i--)bits.push((val>>>i)&1)}
- put(4,4);put(bytes.length,8);bytes.forEach(function(b){put(b,8)});
+ put(4,4);put(bytes.length,v>=10?16:8);bytes.forEach(function(b){put(b,8)});
  var cap=dataCw(v)*8;put(0,Math.min(4,cap-bits.length));while(bits.length%8)bits.push(0);
  for(var pad=0xEC;bits.length<cap;pad^=0xEC^0x11)put(pad,8);
  var cw=[];for(var i=0;i<bits.length;i+=8){var b=0;for(var j=0;j<8;j++)b=b<<1|bits[i+j];cw.push(b)}
@@ -3298,7 +3274,7 @@ document.addEventListener('click',function(e){var b=e.target.closest&&e.target.c
 <script>
 /* ===== থিম টগল + ডিজাইন সিস্টেম হেল্পার ===== */
 window.mmThemeIcon=function(){var d=document.documentElement.getAttribute('data-theme')==='dark';return '<svg viewBox="0 0 24 24" aria-hidden="true">'+(d?'<path d="M21 12.8A9 9 0 1111.2 3a7 7 0 009.8 9.8z"/>':'<circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/>')+'</svg>'};
-window.mmLogo=function(){return '<span class="lg" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 3c-2 2-3 3.5-3 5a3 3 0 006 0c0-1.5-1-3-3-5z"/><path d="M4 21V12h16v9M3 21h18M10 21v-3a2 2 0 014 0v3"/></svg></span>'};
+
 window.mmTheme=function(){var d=document.documentElement,n=d.getAttribute('data-theme')==='dark'?'light':'dark';d.setAttribute('data-theme',n);try{localStorage.setItem('mm_theme',n)}catch(e){}
  document.querySelectorAll('.thm,#thmfix').forEach(function(b){b.innerHTML=mmThemeIcon()});
  var m=document.querySelector('meta[name=theme-color]');if(!m){m=document.createElement('meta');m.name='theme-color';document.head.appendChild(m)}m.content=n==='dark'?'#111827':'#F8FAFC'};
@@ -3372,7 +3348,7 @@ go()})();
  window.editN=function(i){var n=notices[i];if(!n||!canEd())return;form('নোটিস সম্পাদনা',[['n','শিরোনাম'],['b','বিস্তারিত']],{n:n.t,b:n.b||''},function(o){if(!o.n||!String(o.n).trim()){alert('শিরোনাম লিখুন');return}n.t=String(o.n).trim();n.b=o.b||'';n.ed=fmtDMY(new Date());save('mm_n',notices);draw()})};
  window.noteV=function(){css();var A=role==='admin',ed=canEd();
   shell('Notice',(role==='guardian'&&typeof gm==='function'?gm():'')+notices.map(function(n,i){return '<div class="row" style="display:block'+(ed?';cursor:pointer':'')+'" onclick="'+(ed?'editN(':'ndbOpen(')+i+')"><b>'+E(n.t)+'</b><br><small style="color:var(--mute)">'+E(n.d||'')+(n.ed?' • সম্পাদিত':'')+'</small><p style="margin-top:6px;white-space:pre-wrap;word-break:break-word">'+E(n.b||'')+'</p>'+(ed?'<small style="color:var(--g)">✏️ সম্পাদনা করতে চাপুন</small>':'')+(A?'<button onclick="event.stopPropagation();delN('+i+')" style="color:var(--not);margin-left:12px"><i class=idel></i> মুছুন</button>':'')+'</div>'}).join('')||'<p class="note">এখনো কোনো নোটিস নেই।</p>',role==='guardian'?'':'home',A?'addN()':'')};
- var _sh=shell;shell=function(t,b,bk,pl){var on=false;if(on&&typeof b==='string'&&b.indexOf('class="ndb"')<0){try{b=ndbHTML()+b}catch(e){}}return _sh.call(this,t,b,bk,pl)};
+ 
 })();
 </script>
 <script>
@@ -3575,7 +3551,7 @@ go()})();
             --text-color: #333;
             --bg-color: #f4f5f7;
             --border-color: #d1d5db;
-            --font-family: 'Kalpurush', 'SolaimanLipi', 'Hind Siliguri', 'Noto Sans Bengali', sans-serif; 
+            --font-family: 'SolaimanLipi', 'Kalpurush', 'Hind Siliguri', 'Noto Sans Bengali', sans-serif; 
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -4068,7 +4044,7 @@ go()})();
             <label>প্রশ্নপত্রের ফন্ট:</label>
             <select id="fontSelector" class="form-control" onchange="changeFont()">
                 <option value="'Kalpurush', 'Hind Siliguri', sans-serif">কালপুরুষ</option>
-                <option value="'SolaimanLipi', 'Hind Siliguri', sans-serif">সোলাইমানলিপি</option>
+                <option value="'SolaimanLipi', 'Hind Siliguri', sans-serif" selected>সোলাইমানলিপি</option>
                 <option value="'Hind Siliguri', sans-serif">হিন্দ শিলিগুড়ি</option>
                 <option value="'Noto Sans Bengali', sans-serif">নোটো সানস বাংলা</option>
                 <option value="'Noto Serif Bengali', serif">নোটো সেরিফ বাংলা</option>
@@ -4772,9 +4748,7 @@ go()})();
         return id;
     }
 
-    function addPassageTop() {
-        addPassage(document.querySelector('#questionsContainer > .question-card'));
-    }
+    
 
     function addPassageAbove(id) {
         addPassage(document.getElementById('q-card-' + id));
@@ -6246,6 +6220,93 @@ go()})();
 
 </body>
 </html>
+</script>
+<script>
+/* ===== প্রিমিয়াম সেটিংস পেজ (শুধু চেহারা বদলায়, কাজ অপরিবর্তিত) ===== */
+(function(){
+ if(window.__stgPrem)return;window.__stgPrem=1;
+ var st=document.createElement('style');st.id='stgCss';
+ st.textContent=[
+ '.stg-hero{display:flex;align-items:center;gap:14px;padding:16px;border-radius:22px;color:#fff;background:linear-gradient(135deg,var(--g),var(--gd));box-shadow:0 10px 24px color-mix(in srgb,var(--g) 30%,transparent)}',
+ '.stg-hero[onclick]{cursor:pointer}',
+ '.stg-logo{width:60px;height:60px;border-radius:18px;background:rgba(255,255,255,.2);display:grid;place-items:center;overflow:hidden;flex:none;font-size:26px;font-weight:700}',
+ '.stg-logo img{width:100%;height:100%;object-fit:contain;background:#fff;padding:3px;box-sizing:border-box}',
+ '.stg-ht{min-width:0;flex:1}',
+ '.stg-ht b{display:block;font-size:17px;line-height:1.3;overflow-wrap:anywhere}',
+ '.stg-ht small{display:block;opacity:.88;font-size:12.5px;margin-top:2px;overflow-wrap:anywhere}',
+ '.stg-badge{display:inline-block;margin-top:8px;padding:3px 12px;border-radius:99px;background:rgba(255,255,255,.2);font-size:12px;font-weight:600}',
+ '.stg-sec{margin-top:20px}',
+ '.stg-h{font-size:12.5px;font-weight:700;color:var(--mute);margin:0 6px 8px}',
+ '.stg-card{background:var(--card);border:1px solid var(--line);border-radius:20px;overflow:hidden;box-shadow:0 1px 2px rgba(15,23,42,.05)}',
+ '.stg-card>.link,.stg-card>.row{display:flex;align-items:center;gap:12px;width:100%;margin:0;padding:13px 14px;border:0 solid var(--line)!important;border-radius:0!important;box-shadow:none!important;background:transparent!important;text-align:left}',
+ '.stg-card>.link{color:var(--mute);font-size:22px;line-height:1}',
+ '.stg-card>.row{font-size:15px;line-height:1.4}',
+ '.stg-card>*+.link,.stg-card>*+.row,.stg-card>*+.act{border-top-width:1px!important;border-top-style:solid}',
+ '.stg-card>.link:active{background:var(--soft,var(--line))!important}',
+ '.stg-card>.link>span:not(.stg-i){flex:1;min-width:0;display:block;font-size:12.5px;line-height:1.45;color:var(--mute);overflow-wrap:anywhere}',
+ '.stg-card>.link>span:not(.stg-i)>small{display:block;font-size:15px;font-weight:700;color:var(--ink);margin-bottom:1px}',
+ '.stg-card>.row .info b{font-size:15px}',
+ '.stg-i{flex:none;width:40px;height:40px;border-radius:12px;display:grid;place-items:center;background:color-mix(in srgb,var(--tc,#059669) 14%,transparent);color:var(--tc,#059669)}',
+ '.stg-i svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}',
+ '.stg-card>.act{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:0;padding:12px;border:0 solid var(--line)}',
+ '.stg-card>.act button{box-shadow:none;background:var(--bg)}',
+ '.stg-card>.act button:last-child{color:#dc2626;border-color:color-mix(in srgb,#dc2626 35%,transparent);background:color-mix(in srgb,#dc2626 8%,transparent)}',
+ '.stg-sec .note{margin:10px 6px 0;font-size:12px;color:var(--mute);text-align:left;line-height:1.6}',
+ '.stg-ver{text-align:center;font-size:12px;color:var(--mute);margin:22px 0 4px}'
+ ].join('\n');
+ document.head.appendChild(st);
+
+ var GR=[['acc','মাদ্রাসা ও অ্যাকাউন্ট','Madrasa & Account'],['aca','একাডেমিক ও ফি','Academic & Fees'],['ntf','নোটিফিকেশন ও ঘণ্টা','Notifications & Bell'],['data','ডেটা ও নিরাপত্তা','Data & Security'],['help','সহায়তা ও টুলস','Help & Tools'],['more','অন্যান্য','More']];
+ var RU=[[/planV/,'acc','card','#059669'],[/profEdit/,'acc','building','#2563EB'],[/adminEdit/,'acc','user','#7C3AED'],
+  [/tab='subj'/,'aca','book','#0891B2'],[/promo/,'aca','cap','#7C3AED'],[/ayTog|ayMonth/,'aca','cal','#0EA5E9'],[/classFee/,'aca','wallet','#EA580C'],
+  [/nhub/,'ntf','bell','#E11D48'],[/tab='bell'/,'ntf','clock','#D97706'],
+  [/fbBackup/,'data','save','#059669'],[/purgeRollKeys/,'data','lock','#64748B'],
+  [/adminPhoneDiag/,'help','sliders','#64748B'],[/wgPin/,'help','mobile','#0D9488']];
+ var isEn=function(){return !!(window.mmLangGet&&window.mmLangGet()==='en')};
+
+ function build(){
+  var m=document.querySelector('#app main');
+  if(!m||m.querySelector('.stg-hero'))return;
+  var kids=Array.prototype.slice.call(m.children),E=isEn(),S={},notes=[];
+  GR.forEach(function(g){var s=document.createElement('section');s.className='stg-sec';s.innerHTML='<div class="stg-h"></div><div class="stg-card"></div>';s.firstChild.textContent=E?g[2]:g[1];S[g[0]]=s});
+  kids.forEach(function(el){
+   if(el.tagName==='P'){notes.push(el);return}
+   var sec;
+   if(el.classList.contains('act')){sec=S.data}
+   else if(el.classList.contains('link')||el.classList.contains('row')){
+    var k=(el.getAttribute('onclick')||'')+' '+(el.classList.contains('row')?el.innerHTML:''),r=null;
+    for(var i=0;i<RU.length;i++){if(RU[i][0].test(k)){r=RU[i];break}}
+    var ic=document.createElement('span');ic.className='stg-i';ic.style.setProperty('--tc',r?r[3]:'#64748B');
+    ic.innerHTML=window.IC?window.IC(r?r[2]:'gear','stgic'):'';
+    el.insertBefore(ic,el.firstChild);
+    sec=S[r?r[1]:'more'];
+   }else sec=S.more;
+   sec.querySelector('.stg-card').appendChild(el)});
+  notes.forEach(function(p){S.data.appendChild(p)});
+
+  var P=(typeof profile!=='undefined'&&profile)||{},nm=String(P.name||'').trim()||'Madrasa Management',lg=P.logo,okL=typeof lg==='string'&&/^(data:image\/|https:)/.test(lg);
+  var h=document.createElement('div');h.className='stg-hero';
+  if(role==='admin')h.setAttribute('onclick','profEdit()');
+  h.innerHTML='<div class="stg-logo"></div><div class="stg-ht"><b></b><small></small><span class="stg-badge"></span></div>';
+  var lgEl=h.firstChild;
+  if(okL){var im=document.createElement('img');im.alt='';im.src=lg;lgEl.appendChild(im)}else lgEl.textContent=Array.from(nm)[0].toUpperCase();
+  h.querySelector('b').textContent=nm;
+  h.querySelector('small').textContent=P.addr||(E?'Settings':'সেটিংস');
+  h.querySelector('.stg-badge').textContent=role==='admin'?(E?'Admin':'এডমিন'):(E?'Teacher':'শিক্ষক');
+
+  while(m.firstChild)m.removeChild(m.firstChild);
+  m.appendChild(h);
+  GR.forEach(function(g){var s=S[g[0]];if(s.querySelector('.stg-card').children.length)m.appendChild(s)});
+  if(window.APP_BUILD){var v=document.createElement('div');v.className='stg-ver';v.textContent='সংস্করণ: '+window.APP_BUILD;m.appendChild(v)}
+ }
+
+ var prev=window.setV;
+ if(typeof prev!=='function')return;
+ window.setV=function(){prev.apply(this,arguments);try{build()}catch(e){console.error('stg',e)}};
+
+ /* ভাষা বদলালে সেটিংস পেজ নিজে নতুন ভাষায় আঁকা হবে */
+ new MutationObserver(function(){if(tab==='set'&&role&&!document.getElementById('md'))draw()}).observe(document.documentElement,{attributes:true,attributeFilter:['lang']});
+})();
 </script>
 </body>
 </html>

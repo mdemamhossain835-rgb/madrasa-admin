@@ -3967,6 +3967,8 @@ go()})();
         .mcq-L1 { grid-template-columns: 1fr; }
         .mcq-L2 { grid-template-columns: 1fr 1fr; }
         .mcq-L4 { grid-template-columns: repeat(4, auto); justify-content: space-between; }
+        .mcq-L5 { grid-template-columns: repeat(5, auto); justify-content: space-between; }
+        .mcq-L6 { grid-template-columns: repeat(6, auto); justify-content: space-between; }
         .mcq-o { display: flex; gap: 4px; align-items: flex-start; }
         .mcq-ol { flex: none; font-weight: bold; }
         .mcq-ot { white-space: pre-wrap; min-width: 0; }
@@ -4507,9 +4509,9 @@ go()})();
 
     /* ---------- বহুনির্বাচনি প্রশ্ন (MCQ): একটি দাগে একাধিক MCQ ---------- */
     const MCQ_SETS = {
-        bn: ['ক', 'খ', 'গ', 'ঘ', 'ঙ', 'চ', 'ছ', 'জ'],
-        en: ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'],
-        ar: ['أ', 'ب', 'ج', 'د', 'هـ', 'و', 'ز', 'ح']
+        bn: ['ক', 'খ', 'গ', 'ঘ', 'ঙ', 'চ', 'ছ', 'জ', 'ঝ', 'ঞ', 'ট', 'ঠ', 'ড', 'ঢ', 'ণ', 'ত', 'থ', 'দ', 'ধ', 'ন', 'প', 'ফ', 'ব', 'ভ', 'ম', 'য', 'র', 'ল', 'শ', 'ষ'],
+        en: ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z', 'aa', 'bb', 'cc', 'dd'],
+        ar: ['أ', 'ب', 'ج', 'د', 'هـ', 'و', 'ز', 'ح', 'ط', 'ي', 'ك', 'ل', 'م', 'ن', 'س', 'ع', 'ف', 'ص', 'ق', 'ر', 'ش', 'ت', 'ث', 'خ', 'ذ', 'ض', 'ظ', 'غ', 'ء', 'ة']
     };
 
     function mcqStyle() {
@@ -4582,7 +4584,7 @@ go()})();
         const item = ref.closest('.mcq-item');
         const card = item.closest('.question-card');
         const box = item.querySelector('.mcq-opt-box');
-        if (box.children.length >= 8) { alert('সর্বোচ্চ ৮টি অপশন দেওয়া যায়।'); return null; }
+        if (box.children.length >= 30) { alert('সর্বোচ্চ ৩০টি অপশন দেওয়া যায়।'); return null; }
         const row = document.createElement('div');
         row.className = 'mcq-opt-row';
         row.innerHTML = '<span class="mcq-opt-lab"></span>' +
@@ -4626,7 +4628,7 @@ go()})();
             '<div class="mcq-opt-box"></div>' +
             '<div class="mcq-item-foot"><span class="btn-add-sub" onclick="mcqAddOpt(this)">+ অপশন</span>' +
             '<span class="mcq-lay">সাজানো: <select class="mcq-layout" onchange="scheduleSave()">' +
-            '<option value="2">২ কলামে (২×২)</option><option value="1">প্রতি লাইনে একটি</option><option value="4">এক লাইনে চারটি</option>' +
+            '<option value="2">২ কলামে (২×২)</option><option value="1">প্রতি লাইনে একটি</option><option value="4">এক লাইনে চারটি</option><option value="5">এক লাইনে পাঁচটি</option><option value="6">এক লাইনে ছয়টি</option>' +
             '</select></span></div>';
         box.appendChild(it);
         const d = data || {};

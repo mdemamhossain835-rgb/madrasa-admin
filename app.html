@@ -440,8 +440,8 @@ function homeList(){
  if(role==='admin'||(role==='teacher'&&hasPerm('ph_hist')))t.push(['🕌','History','নামাজ ও হোমওয়ার্ক ইতিহাস','#0b6b4a','hhist']);
  return t}
 const NAVG={
- admin:[['📚 ছাত্র ও শিক্ষক',['students','teachers']],['📋 দৈনন্দিন কাজ',['catt','fees','tqs','tqrep']],['📖 একাডেমিক',['rtnv','hwSet','res','hhist']],['📢 যোগাযোগ',['notices']],['📊 বিশ্লেষণ ও সিস্টেম',['rep','set']]],
- teacher:[['📋 দৈনন্দিন কাজ',['catt','tself','hwSet','bell','fees']],['📚 একাডেমিক',['rtnv','students','teachers','res','subj']],['📢 যোগাযোগ',['notif','nann','nlog']],['📊 ইতিহাস ও রিপোর্ট',['hhist','rep','set']]]};
+ admin:[['📚 ছাত্র ও শিক্ষক',['students','teachers']],['📋 দৈনন্দিন কাজ',['catt','fees','payreq','tqs','tqrep']],['📖 একাডেমিক',['rtnv','hwSet','res','hhist']],['📢 যোগাযোগ',['notices']],['📊 বিশ্লেষণ ও সিস্টেম',['rep','set']]],
+ teacher:[['📋 দৈনন্দিন কাজ',['catt','tself','hwSet','bell','fees','payreq']],['📚 একাডেমিক',['rtnv','students','teachers','res','subj']],['📢 যোগাযোগ',['notif','nann','nlog']],['📊 ইতিহাস ও রিপোর্ট',['hhist','rep','set']]]};
 function groupTiles(t){if(role==='teacher')t=t.filter(x=>x[4]!=='notices');const defs=NAVG[role]||[],used=new Set(),out=[];
  defs.forEach(d=>{const it=d[1].map(k=>t.find(x=>x[4]===k)).filter(Boolean);it.forEach(x=>used.add(x));if(it.length)out.push([d[0],it])});
  const rest=t.filter(x=>!used.has(x));if(rest.length)out.push(['🧩 অন্যান্য',rest]);return out}
@@ -543,7 +543,7 @@ const PCAT=[
 ['৩. অভিভাবক ব্যবস্থাপনা',[['grd_view','অভিভাবক দেখা'],['grd_add','অভিভাবক যোগ করা'],['grd_edit','অভিভাবক Edit করা'],['grd_del','অভিভাবক Delete করা'],['grd_pw','অভিভাবকের পাসওয়ার্ড পরিবর্তন করা']]],
 ['৪. হাজিরা',[['att_take','শিক্ষার্থীর হাজিরা নেওয়া'],['att_edit','হাজিরা Edit করা'],['att_hist','হাজিরা History দেখা'],['att_rep','হাজিরা Report দেখা'],['att_notif','হাজিরার Notification পাঠানো']]],
 ['৫. নামাজ ও হোমওয়ার্ক',[['pry_view','নামাজের তথ্য দেখা'],['pry_edit','নামাজের তথ্য Edit করা'],['hw_view','হোমওয়ার্ক দেখা'],['hw_edit','হোমওয়ার্ক Edit করা'],['ph_hist','নামাজ ও হোমওয়ার্ক History দেখা']]],
-['৬. ফি ও বেতন',[['fee_view','শিক্ষার্থীর ফি দেখা'],['fee_collect','ফি আদায় করা'],['fee_edit','ফি Edit করা'],['fee_del','ভুল ফি Payment Delete করা'],['due_view','বকেয়া দেখা'],['sal_view','শিক্ষক বেতন দেখা'],['sal_pay','শিক্ষক বেতন প্রদান করা'],['sal_del','বেতন Payment Delete করা']]],
+['৬. ফি ও বেতন',[['fee_view','শিক্ষার্থীর ফি দেখা'],['fee_collect','ফি আদায় করা'],['fee_edit','ফি Edit করা'],['fee_del','ভুল ফি Payment Delete করা'],['due_view','বকেয়া দেখা'],['sal_view','শিক্ষক বেতন দেখা'],['sal_pay','শিক্ষক বেতন প্রদান করা'],['sal_del','বেতন Payment Delete করা'],['pay_approve','বিকাশ পেমেন্ট আবেদন Approve/Reject করা (ফি আদায় করার অনুমতিও দিতে হবে)']]],
 ['৭. আয়-ব্যয়',[['inc_view','আয় দেখা'],['inc_add','আয় যোগ করা'],['inc_edit','আয় Edit করা'],['inc_del','আয় Delete করা'],['exp_view','ব্যয় দেখা'],['exp_add','ব্যয় যোগ করা'],['exp_edit','ব্যয় Edit করা'],['exp_del','ব্যয় Delete করা']]],
 ['৮. রিপোর্ট',[['rep_stu','শিক্ষার্থী Report'],['rep_att','হাজিরা Report'],['rep_fee','ফি Report'],['rep_due','বকেয়া Report'],['rep_tch','শিক্ষক Report'],['rep_sal','শিক্ষক বেতন Report'],['rep_fin','আয়-ব্যয় Report'],['rep_pry','নামাজ Report'],['rep_hw','হোমওয়ার্ক Report']]],
 ['৯. ক্লাস ও একাডেমিক',[['cls_view','ক্লাস দেখা'],['cls_add','ক্লাস যোগ করা'],['cls_edit','ক্লাস Edit করা'],['cls_del','ক্লাস Delete করা'],['sub_view','Subject/বিষয় দেখা'],['sub_add','Subject যোগ করা'],['sub_edit','Subject Edit করা'],['sub_del','Subject Delete করা'],['rtn_view','Class Routine দেখা'],['rtn_add','Class Routine যোগ করা'],['rtn_edit','Class Routine Edit করা'],['rtn_del','Class Routine Delete করা']]],
@@ -707,7 +707,7 @@ function finV(){const ms=x=>x.filter(e=>e.m===M0),days=Object.keys(at).filter(d=
  '<h3>ফলাফল</h3>'+K('ফলাফল আছে',bn(rl.length)+' জন')+K('পাসের হার',rl.length?bn(Math.round(rl.filter(c=>!c.f).length/rl.length*100))+'%':'—')+
  '<h3>শিক্ষক</h3>'+K('মোট মাসিক বেতন',tk(sum(teachers.map(t=>({a:t.sal}))))),'rep')}
 /* সেটিংস, ব্যাকআপ */
-function setV(){shell('Settings',`${role==='admin'?'<button class="link" onclick="planV()"><span><small>প্ল্যান</small>ট্রায়াল ও মাসিক সাবস্ক্রিপশন (৳৩০০)</span>›</button>':''}<button class="link" onclick="profEdit()"><span><small>মাদ্রাসার তথ্য</small>নাম, লোগো, ঠিকানা ও প্রতিষ্ঠার তারিখ</span>›</button><button class="link" onclick="adminEdit()"><span><small>অ্যাডমিনের তথ্য</small>নাম, ছবি, ফোন ও ইমেইল</span>›</button><button class="link" onclick="adminPhoneDiag()"><span><small>সমস্যা সমাধান</small>লগইন নম্বর যাচাই ও ঠিক করুন</span>›</button><button class="link wgrow" style="display:none" onclick="wgPin()"><span><small>হোম স্ক্রিন উইজেট</small>উইজেট হোম স্ক্রিনে যোগ করুন</span>›</button>${role==='admin'||role==='teacher'?'<button class="link" onclick="window.__bellFrom=\'set\';tab=\'bell\';draw()"><span><small>ঘণ্টা</small>পিরিয়ডের ঘণ্টার সময়সূচি</span>›</button>':''}<button class="link" onclick="tab='nhub';draw()"><span><small>Notification</small>চালু/বন্ধ, টেমপ্লেট, পাঠানো ও ইতিহাস</span>›</button><button class="link" onclick="tab='classFee';draw()"><span><small>মাসিক ফি</small>ফি নির্ধারণ</span>›</button><button class="link" onclick="purgeRollKeys()"><span><small>একবারের কাজ</small>রোল নম্বর দিয়ে অভিভাবক লগইন বন্ধ করুন</span>›</button>${role==='admin'?'<button class="link" onclick="fbBackup()"><span><small>সম্পূর্ণ ব্যাকআপ</small>Firebase-এর সব ডেটা ফাইলে সেভ করুন</span>›</button>':''}`,'home');setFilt()}
+function setV(){shell('Settings',`${role==='admin'?'<button class="link" onclick="planV()"><span><small>প্ল্যান</small>ট্রায়াল ও মাসিক সাবস্ক্রিপশন (৳৩০০)</span>›</button>':''}<button class="link" onclick="profEdit()"><span><small>মাদ্রাসার তথ্য</small>নাম, লোগো, ঠিকানা ও প্রতিষ্ঠার তারিখ</span>›</button><button class="link" onclick="adminEdit()"><span><small>অ্যাডমিনের তথ্য</small>নাম, ছবি, ফোন ও ইমেইল</span>›</button><button class="link" onclick="adminPhoneDiag()"><span><small>সমস্যা সমাধান</small>লগইন নম্বর যাচাই ও ঠিক করুন</span>›</button><button class="link wgrow" style="display:none" onclick="wgPin()"><span><small>হোম স্ক্রিন উইজেট</small>উইজেট হোম স্ক্রিনে যোগ করুন</span>›</button>${role==='admin'||role==='teacher'?'<button class="link" onclick="window.__bellFrom=\'set\';tab=\'bell\';draw()"><span><small>ঘণ্টা</small>পিরিয়ডের ঘণ্টার সময়সূচি</span>›</button>':''}<button class="link" onclick="tab='nhub';draw()"><span><small>Notification</small>চালু/বন্ধ, টেমপ্লেট, পাঠানো ও ইতিহাস</span>›</button><button class="link" onclick="tab='classFee';draw()"><span><small>মাসিক ফি</small>ফি নির্ধারণ</span>›</button>${role==='admin'?'<button class="link" onclick="paySetGo()"><span><small>বিকাশ পেমেন্ট</small>নম্বর, QR ও অগ্রিম মাসের সীমা</span>›</button>':''}<button class="link" onclick="purgeRollKeys()"><span><small>একবারের কাজ</small>রোল নম্বর দিয়ে অভিভাবক লগইন বন্ধ করুন</span>›</button>${role==='admin'?'<button class="link" onclick="fbBackup()"><span><small>সম্পূর্ণ ব্যাকআপ</small>Firebase-এর সব ডেটা ফাইলে সেভ করুন</span>›</button>':''}`,'home');setFilt()}
 function classFeeV(){shell('মাসিক ফি (শ্রেণী অনুযায়ী)',`<div class="row"><div class="info"><b>আগের মাসের বকেয়া হিসাবে ধরুন</b><small>চালু করলে ছাত্রের ভর্তির মাস (না থাকলে প্রথম ফি-র মাস) থেকে যেসব মাসের ফি বাকি, সব বকেয়ায় যোগ হবে। আগে ছাত্রের ভর্তির মাস ঠিক করে নিন।</small></div>${tglHTML(!!feeCarry,'setCarry()')}</div><div class="row"><div class="info"><b>সাধারণ (ডিফল্ট) ফি</b><small>যে শ্রেণীর নিজস্ব ফি সেট করা নেই, তাদের জন্য প্রযোজ্য</small></div><b>${tk(MF)}</b><button aria-label="পরিবর্তন" onclick="setDefaultFee()">✏️</button></div>`+
  classes.map(c=>`<div class="row"><div class="info"><b>${c}</b><small>বর্তমান ফি: ${tk(classFee[c]!=null&&classFee[c]!==''?classFee[c]:MF)}${classFee[c]!=null&&classFee[c]!==''?'':' (সাধারণ)'}</small></div><button aria-label="পরিবর্তন" onclick="setClassFee('${esc(c)}')">✏️</button></div>`).join('')+feeHistHTML(),'set')}
 function feeHistHTML(){const L=[];feeLog.d.forEach(e=>L.push(['সাধারণ ফি',e]));Object.keys(feeLog.c).forEach(c=>feeLog.c[c].forEach(e=>L.push([c,e])));if(!L.length)return '';L.sort((a,b)=>a[1].f<b[1].f?1:a[1].f>b[1].f?-1:0);return '<h3>ফি পরিবর্তনের ইতিহাস</h3>'+L.slice(0,30).map(x=>{const e=x[1];return '<div class="link"><span><small>'+monLabel(e.f)+' থেকে কার্যকর</small>'+xe0(x[0])+': '+(_num(e.o)!=null?tk(e.o):'সাধারণ')+' → '+(_num(e.v)!=null?tk(e.v):'সাধারণ')+'</span></div>'}).join('')}
@@ -2220,6 +2220,275 @@ window.hwVoiceClean=async function(){try{
  if(Object.keys(U).length)await upd(U);
  localStorage.setItem(k,day)}catch(e){console.error('hwVoiceClean',e)}};
 window.hwVoiceDel=async function(c,d,sj){await upd({['hwVoice/'+c+'/'+d+'/'+sjk(sj)]:null})};
+
+/* ===== বিকাশ পেমেন্ট: ম্যানুয়াল Send Money + অ্যাডমিন/অনুমতিপ্রাপ্ত শিক্ষকের যাচাই ও অনুমোদন =====
+   ডেটা: payCfg (সেটিংস), payReq (আবেদন), payReqByStudent (অভিভাবকের কপি), trxLock (ডুপ্লিকেট Transaction ID রোধ) */
+(function(){
+ const PAY={cfg:{},qr:undefined,qrBusy:0,mine:[],pend:null,hist:null,histT:0,histBusy:0,key:'',cfgL:0,apL:0,sel:{},amt:'',amtMan:false,trx:'',sn:'',note:'',busy:false,tabK:'pending',draft:null,qrDraft:undefined,curSum:0};
+ window.__pay=PAY;
+ const ST={pending:['অপেক্ষমাণ','Late'],approved:['অনুমোদিত','Present'],rejected:['বাতিল','Absent']};
+ const er=e=>console.error('pay',e);
+ const toEn=s=>String(s==null?'':s).replace(/[০-৯]/g,c=>'০১২৩৪৫৬৭৮৯'.indexOf(c));
+ const isApprover=()=>role==='admin'||(role==='teacher'&&hasPerm('pay_approve'));
+ const cfgOn=()=>PAY.cfg.on===true&&/^01[3-9][0-9]{8}$/.test(PAY.cfg.bk||'');
+ const pdt=ts=>ts?fmtDMY(ts)+' '+new Date(ts).toLocaleTimeString('bn-BD',{hour:'numeric',minute:'2-digit'}):'—';
+ const monsOf=r=>String(r.mo||'').split(',').filter(Boolean);
+ const monTxt=r=>monsOf(r).map(monLabel).join(', ');
+ const badge=st=>{const b=ST[st]||['—','Late'];return '<span class="chip '+b[1]+'" style="min-width:0;padding:3px 12px;font-size:12px">'+b[0]+'</span>'};
+ const okImg=u=>typeof u==='string'&&/^data:image\/(jpeg|png|webp);base64,[A-Za-z0-9+\/=]+$/.test(u);
+
+ /* ---------- ডিজাইন ---------- */
+ (function(){const c=document.createElement('style');c.id='bkpCss';c.textContent=
+ '.bkp-hero{background:linear-gradient(135deg,#E2136E,#B10F57);color:#fff;border-radius:20px;padding:16px;box-shadow:0 10px 24px rgba(226,19,110,.28)}'+
+ '.bkp-hero small{opacity:.92;display:block}.bkp-num{font-size:26px;font-weight:700;letter-spacing:1px;margin:4px 0}'+
+ '.bkp-hero p{margin:8px 0 0;font-size:13px;opacity:.95;white-space:pre-wrap;overflow-wrap:anywhere}'+
+ '.bkp-cp{background:rgba(255,255,255,.22);color:#fff;border-radius:99px;padding:6px 14px;font-size:13px;font-weight:600;margin-top:6px}'+
+ '.bkp-st{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:12px 14px;margin-top:12px;font-size:13px;line-height:1.7;color:var(--mute)}'+
+ '.bkp-mo{display:flex;align-items:center;gap:12px;padding:12px;border:1px solid var(--line);border-radius:14px;background:var(--card);margin-bottom:8px;cursor:pointer}'+
+ '.bkp-mo.on{border-color:var(--g);box-shadow:0 0 0 2px color-mix(in srgb,var(--g) 25%,transparent)}.bkp-mo.dis{opacity:.55;cursor:default}'+
+ '.bkp-ck{width:26px;height:26px;border-radius:8px;border:2px solid var(--line);display:grid;place-items:center;flex:none;font-size:15px;font-weight:700}'+
+ '.bkp-mo.on .bkp-ck{background:var(--g);border-color:var(--g);color:#fff}'+
+ '.bkp-ban{display:flex;align-items:center;gap:12px;background:var(--card);border:1px solid #E2136E55;border-radius:16px;padding:12px;margin:12px 0}'+
+ '.bkp-bi{width:42px;height:42px;border-radius:12px;background:#E2136E22;color:#E2136E;display:grid;place-items:center;flex:none;font-size:20px}'+
+ '.bkp-ban b{display:block;font-size:14px}.bkp-ban small{display:block;color:var(--mute);font-size:12px;margin-top:2px}'+
+ '.bkp-ban button{background:#E2136E;color:#fff;border-radius:10px;padding:8px 12px;font-size:13px;font-weight:600;white-space:nowrap}'+
+ '.bkp-trx{font-size:19px;font-weight:700;letter-spacing:1px;word-break:break-all}'+
+ '.bkp-kv{display:flex;justify-content:space-between;gap:10px;padding:6px 0;border-bottom:1px solid var(--line);font-size:13.5px}.bkp-kv span:first-child{color:var(--mute)}.bkp-kv span:last-child{text-align:right;overflow-wrap:anywhere}'+
+ '.bkp-act{display:flex;gap:10px;margin-top:12px}.bkp-act button{flex:1;padding:11px;border-radius:12px;font-weight:700;color:#fff}'+
+ '.bkp-lb{display:block;font-size:13px;color:var(--mute);margin-top:10px}.bkp-lb .search{margin:4px 0 0;width:100%}';
+ document.head.appendChild(c)})();
+
+ /* ---------- ডেটা শোনা (কম পড়া: ছোট ছোট চারটি মান + আবেদনের সংক্ষিপ্ত তালিকা) ---------- */
+ function payRe(){if((tab==='paym'||tab==='payset')&&document.activeElement&&/^(INPUT|TEXTAREA)$/.test(document.activeElement.tagName))return;if(['home','child','fees','paym','payset','payreq'].indexOf(tab)>-1)redraw()}
+ function cfgListen(){if(PAY.cfgL)return;PAY.cfgL=1;['on','bk','nt','adv'].forEach(f=>unsub.push(onValue(R('payCfg/'+f),sn=>{PAY.cfg[f]=sn.val();payRe()},er)))}
+ function ensure(){
+  if(role!=='admin'&&role!=='teacher'&&role!=='guardian')return;
+  const k=role+'|'+myChild+'|'+myTeacher+'|'+MID;
+  if(PAY.key!==k){
+   PAY.key=k;PAY.cfg={};PAY.qr=undefined;PAY.qrBusy=0;PAY.mine=[];PAY.pend=null;PAY.hist=null;PAY.cfgL=0;PAY.apL=0;PAY.sel={};PAY.amt='';PAY.amtMan=false;PAY.trx='';PAY.sn='';PAY.note='';PAY.draft=null;PAY.qrDraft=undefined;PAY.tabK='pending';
+   unsub.push(()=>{PAY.key=''});
+   if(role==='guardian'&&myChild){cfgListen();unsub.push(onValue(query(R('payReqByStudent/'+myChild),limitToLast(30)),sn=>{const v=sn.val()||{};PAY.mine=Object.keys(v).map(id=>Object.assign({id:id},v[id])).sort((a,b)=>(b.ts||0)-(a.ts||0));payRe()},er))}
+  }
+  if(!PAY.apL&&isApprover()){PAY.apL=1;cfgListen();
+   unsub.push(onValue(query(R('payReq'),orderByChild('st'),startAt('pending'),endAt('pending')),sn=>{const v=sn.val()||{};PAY.pend=Object.keys(v).map(id=>Object.assign({id:id},v[id])).sort((a,b)=>(a.ts||0)-(b.ts||0));payRe()},er))}
+ }
+ function loadQr(){if(PAY.qr!==undefined||PAY.qrBusy)return;PAY.qrBusy=1;get(R('payCfg/qr')).then(sn=>{PAY.qr=sn.val()||'';PAY.qrBusy=0;payRe()}).catch(()=>{PAY.qr='';PAY.qrBusy=0})}
+
+ /* ---------- মাসের তালিকা (বকেয়া + অগ্রিম) ---------- */
+ function months(s){
+  const adv=Math.max(0,Math.min(24,PAY.cfg.adv==null?12:(+PAY.cfg.adv||0)));
+  const dm=dueMonthsOf(s.id);let start=dm.length?dm[0].m:M0;if(start>M0)start=M0;
+  const end=mAdd(M0,adv),pend=new Set(),out=[];
+  PAY.mine.filter(x=>x.st==='pending').forEach(x=>monsOf(x).forEach(m=>pend.add(m)));
+  for(let mo=start,i=0;mo<=end&&i<48;mo=mAdd(mo,1),i++){const f=feeInfo(s,mo);if(f.total<=0)continue;out.push({m:mo,due:f.due,total:f.total,paid:f.paid,pend:pend.has(mo),adv:mo>M0})}
+  return out}
+
+ /* ---------- অভিভাবক: পেমেন্ট পেজ ---------- */
+ function mineCard(r){
+  return '<div class="row" style="display:block"><div style="display:flex;justify-content:space-between;align-items:center;gap:8px"><b>'+tk(r.a)+'</b>'+badge(r.st)+'</div>'+
+   '<small style="display:block;color:var(--mute);margin-top:4px">'+xe(monTxt(r))+'</small>'+
+   '<small style="display:block;color:var(--mute)">Transaction ID: '+xe(r.trx)+' • '+pdt(r.ts)+'</small>'+
+   (r.st==='approved'?'<small style="display:block;color:var(--okt);margin-top:2px">অনুমোদন: '+xe(r.ab||'')+' • '+pdt(r.at)+'</small>':'')+
+   (r.st==='rejected'?'<small style="display:block;color:var(--not);margin-top:2px">বাতিল'+(r.rs?': '+xe(r.rs):'')+'</small>':'')+'</div>'}
+ function guardianV(){
+  const s=students.find(x=>x.id===myChild);
+  if(!s){shell('বিকাশে বেতন পরিশোধ','<p class="note">ছাত্রের তথ্য লোড হচ্ছে...</p>','fees');return}
+  const on=cfgOn();let h='';
+  if(!on)h+='<div class="row" style="display:block"><b>বিকাশ পেমেন্ট এখন বন্ধ আছে</b><small style="display:block;color:var(--mute)">মাদ্রাসা এখনো এই সুবিধা চালু করেনি। মাদ্রাসায় যোগাযোগ করুন।</small></div>';
+  else{
+   loadQr();
+   h+='<div class="bkp-hero"><small>এই বিকাশ নম্বরে Send Money করুন</small><div class="bkp-num">'+bn(PAY.cfg.bk)+'</div><button class="bkp-cp" onclick="bkpCopy(\''+PAY.cfg.bk+'\')">নম্বর কপি করুন</button>'+(PAY.cfg.nt?'<p>'+xe(PAY.cfg.nt)+'</p>':'')+
+    (okImg(PAY.qr)?'<div style="text-align:center;margin-top:12px"><img src="'+PAY.qr+'" alt="বিকাশ QR" style="width:210px;max-width:72%;background:#fff;border-radius:14px;padding:8px"></div>':'')+'</div>'+
+    '<div class="bkp-st">১. বিকাশ অ্যাপ থেকে ওপরের নম্বরে Send Money করুন।<br>২. নিচে কোন কোন মাসের বেতন দিলেন তা বাছুন।<br>৩. Transaction ID ও টাকার পরিমাণ লিখে জমা দিন।<br>৪. মাদ্রাসা যাচাই করে অনুমোদন করলে বেতন পরিশোধিত হবে। অনুমোদনের আগে বেতন পরিশোধিত ধরা হয় না।</div>';
+   const ms=months(s),sel=ms.filter(x=>PAY.sel[x.m]&&!x.pend&&x.due>0),sum=sel.reduce((a,x)=>a+x.due,0);
+   PAY.curSum=sum;if(!PAY.amtMan)PAY.amt=sum?String(sum):'';
+   h+='<h3>মাস বাছাই করুন</h3>'+(ms.map(m=>{const ok=!m.pend&&m.due>0,onx=!!PAY.sel[m.m]&&ok;
+    return '<div class="bkp-mo'+(onx?' on':'')+(ok?'':' dis')+'"'+(ok?' onclick="bkpTog(\''+m.m+'\')"':'')+'><span class="bkp-ck">'+(onx?'✓':'')+'</span><div style="flex:1;min-width:0"><b>'+monLabel(m.m)+'</b><small style="display:block;color:var(--mute)">'+(m.pend?'আবেদন অপেক্ষমাণ':m.due<=0?'পরিশোধিত':(m.adv?'অগ্রিম':'বকেয়া')+(m.paid>0?' • আংশিক পরিশোধিত':''))+'</small></div><b>'+tk(m.due>0?m.due:m.total)+'</b></div>'}).join('')||'<p class="note">কোনো মাসের ফি নির্ধারিত নেই।</p>');
+   h+='<div class="link" style="display:block"><b>বাছাই: '+bn(sel.length)+' মাস • মোট '+tk(sum)+'</b></div>'+
+    '<label class="bkp-lb">টাকার পরিমাণ (৳) — প্রয়োজনে নিজে লিখুন<input class="search" id="bkpA" inputmode="numeric" value="'+xe(PAY.amt)+'" oninput="bkpIn(\'amt\',this)"></label><small id="bkpH" style="display:block;color:var(--mute);margin-top:4px"></small>'+
+    '<label class="bkp-lb">Transaction ID (বিকাশের মেসেজ থেকে)<input class="search" id="bkpT" autocapitalize="characters" autocomplete="off" placeholder="যেমন: 8N7A6D5EE3" value="'+xe(PAY.trx)+'" oninput="bkpIn(\'trx\',this)"></label>'+
+    '<label class="bkp-lb">যে বিকাশ নম্বর থেকে টাকা পাঠিয়েছেন<input class="search" id="bkpS" type="tel" inputmode="numeric" placeholder="01XXXXXXXXX" value="'+xe(PAY.sn)+'" oninput="bkpIn(\'sn\',this)"></label>'+
+    '<label class="bkp-lb">নোট (ঐচ্ছিক)<input class="search" id="bkpN" maxlength="300" value="'+xe(PAY.note)+'" oninput="bkpIn(\'note\',this)"></label>'+
+    '<button class="tile" style="background:#E2136E;width:100%;margin-top:14px;padding:14px;font-size:16px" onclick="bkpSend()">পেমেন্ট আবেদন জমা দিন</button>';
+  }
+  h+='<h3>আমার পেমেন্ট আবেদনসমূহ</h3>'+(PAY.mine.map(mineCard).join('')||'<p class="note">এখনো কোনো আবেদন নেই।</p>');
+  shell('বিকাশে বেতন পরিশোধ',h,'fees');
+  setTimeout(bkpHint,0)}
+ window.bkpHint=function(){const e=document.getElementById('bkpH');if(!e)return;const a=Math.round(+toEn(PAY.amt)||0),s=PAY.curSum||0;
+  e.style.color=a>s&&s>0?'var(--not)':'var(--mute)';e.textContent=!s?'আগে মাস বাছুন':a>s?'টাকা বাছাই করা মাসগুলোর মোট ('+tk(s)+') এর বেশি হতে পারবে না':a>0&&a<s?'কম টাকা দিলে আংশিক পরিশোধ হিসেবে যাবে':''};
+ window.bkpTog=function(m){PAY.sel[m]=!PAY.sel[m];PAY.amtMan=false;draw()};
+ window.bkpIn=function(k,el){PAY[k]=el.value;if(k==='amt'){PAY.amtMan=true;bkpHint()}};
+ window.bkpCopy=function(t){try{navigator.clipboard.writeText(String(t)).then(()=>alert('কপি হয়েছে'),()=>prompt('কপি করুন',t))}catch(e){prompt('কপি করুন',t)}};
+ window.bkpGo=function(){PAY.sel={};PAY.amt='';PAY.amtMan=false;tab='paym';draw()};
+ window.bkpSend=async function(){
+  if(PAY.busy)return;
+  ['bkpA:amt','bkpT:trx','bkpS:sn','bkpN:note'].forEach(p=>{const a=p.split(':'),e=document.getElementById(a[0]);if(e)PAY[a[1]]=e.value});
+  const s=students.find(x=>x.id===myChild);if(!s)return;
+  if(!cfgOn()){alert('মাদ্রাসা এখনো বিকাশ পেমেন্ট চালু করেনি');return}
+  const ms=Object.keys(PAY.sel).filter(m=>PAY.sel[m]).sort();if(!ms.length){alert('কমপক্ষে একটি মাস বাছুন');return}
+  const info=months(s).filter(x=>ms.indexOf(x.m)>-1);
+  if(info.length!==ms.length||info.some(x=>x.pend||x.due<=0)){alert('কিছু মাস আর বাছাইযোগ্য নয় (আগেই পরিশোধ বা আবেদন করা)। তালিকা দেখে আবার বাছুন');PAY.sel={};draw();return}
+  const sum=info.reduce((a,x)=>a+x.due,0),a=Math.round(+toEn(PAY.amt)||0);
+  if(!(a>0)){alert('টাকার পরিমাণ লিখুন');return}
+  if(a>sum){alert('টাকা বাছাই করা মাসগুলোর মোট ফি ('+tk(sum)+') এর বেশি হতে পারবে না');return}
+  const trx=toEn(PAY.trx).trim().toUpperCase().replace(/\s+/g,'');
+  if(!/^[A-Z0-9]{6,20}$/.test(trx)){alert('Transaction ID সঠিক নয় (৬–২০ অক্ষর, শুধু ইংরেজি অক্ষর ও সংখ্যা)');return}
+  const sn=toEn(PAY.sn).replace(/[\s-]/g,'').replace(/^\+?88/,'');
+  if(!/^01[3-9][0-9]{8}$/.test(sn)){alert('যে বিকাশ নম্বর থেকে টাকা পাঠিয়েছেন সেটি সঠিকভাবে লিখুন (১১ সংখ্যা)');return}
+  if(PAY.mine.filter(x=>x.st==='pending').length>=3){alert('আপনার ৩টি আবেদন অপেক্ষমাণ আছে। অনুমোদনের পরে নতুন আবেদন করুন');return}
+  PAY.busy=true;showLd();
+  try{
+   if((await tmo(get(R('trxLock/'+trx)),20000,'Transaction ID যাচাই')).exists()){hideLd();PAY.busy=false;alert('এই Transaction ID আগেই ব্যবহার করা হয়েছে');return}
+   const id='P'+Date.now().toString(36)+Math.random().toString(36).slice(2,5),
+    rec={sid:s.id,mo:ms.join(','),a:a,trx:trx,sn:sn,bn:PAY.cfg.bk,nm:String(s.n||'').slice(0,200),c:String(s.c||'').slice(0,200),st:'pending',ts:serverTimestamp()},
+    nt=String(PAY.note||'').trim().slice(0,300);
+   if(nt)rec.nt=nt;
+   const U={};U['payReq/'+id]=rec;U['payReqByStudent/'+s.id+'/'+id]=rec;U['trxLock/'+trx]=id;
+   await tmo(upd(U),30000,'আবেদন জমা');
+   PAY.sel={};PAY.amt='';PAY.amtMan=false;PAY.trx='';PAY.sn='';PAY.note='';PAY.busy=false;hideLd();
+   alert('আবেদন জমা হয়েছে। মাদ্রাসা যাচাই করে অনুমোদন করলে বেতন পরিশোধিত হবে।');draw()
+  }catch(e){hideLd();PAY.busy=false;alert('আবেদন জমা হয়নি: '+(/permission/i.test(e.message||'')?'তথ্য মেলেনি, অথবা এই Transaction ID আগেই ব্যবহার হয়েছে, অথবা মাদ্রাসা বিকাশ নম্বর বদলেছে। পেজ নতুন করে খুলে আবার চেষ্টা করুন।':denied(e)))}};
+
+ /* ---------- অ্যাডমিন: পেমেন্ট সেটিংস ---------- */
+ function resizeQr(file,cb){const rd=new FileReader();rd.onload=()=>{const im=new Image();im.onload=()=>{let max=360,q=.85,url='';
+  for(let i=0;i<5;i++){const sc=Math.min(1,max/Math.max(im.width,im.height)),c=document.createElement('canvas');c.width=Math.max(1,Math.round(im.width*sc));c.height=Math.max(1,Math.round(im.height*sc));const x=c.getContext('2d');x.fillStyle='#fff';x.fillRect(0,0,c.width,c.height);x.drawImage(im,0,0,c.width,c.height);url=c.toDataURL('image/jpeg',q);if(url.length<=58000)break;max=Math.round(max*.8);q=Math.max(.5,q-.08)}
+  cb(url.length<=58000?url:'')};im.onerror=()=>cb('');im.src=rd.result};rd.onerror=()=>cb('');rd.readAsDataURL(file)}
+ function setV2(){
+  if(!PAY.draft)PAY.draft={};
+  if(PAY.qr===undefined)loadQr();
+  const dr=PAY.draft,d={bk:dr.bk!==undefined?dr.bk:(PAY.cfg.bk||''),nt:dr.nt!==undefined?dr.nt:(PAY.cfg.nt||''),adv:dr.adv!==undefined?dr.adv:(PAY.cfg.adv==null?12:PAY.cfg.adv)},qr=PAY.qrDraft!==undefined?PAY.qrDraft:PAY.qr,on=PAY.cfg.on===true;
+  shell('বিকাশ পেমেন্ট সেটিংস',
+   '<div class="row"><div class="info"><b>বিকাশে বেতন গ্রহণ</b><small>চালু থাকলে অভিভাবক বিকাশে পেমেন্ট আবেদন জমা দিতে পারবেন</small></div>'+tglHTML(on,'bkpTgl()')+'</div>'+
+   '<label class="bkp-lb">মাদ্রাসার বিকাশ নম্বর (১১ সংখ্যা)<input class="search" id="bkpBk" type="tel" inputmode="numeric" placeholder="01XXXXXXXXX" value="'+xe(d.bk)+'" oninput="bkpDr(\'bk\',this)"></label>'+
+   '<label class="bkp-lb">অভিভাবকের জন্য নির্দেশনা (ঐচ্ছিক)<textarea class="search" id="bkpNt" style="min-height:80px" maxlength="500" oninput="bkpDr(\'nt\',this)">'+xe(d.nt)+'</textarea></label>'+
+   '<label class="bkp-lb">সর্বোচ্চ কত মাস অগ্রিম নেওয়া যাবে (০–২৪)<input class="search" id="bkpAdv" type="text" inputmode="numeric" value="'+xe(d.adv)+'" oninput="bkpDr(\'adv\',this)"></label>'+
+   '<h3>বিকাশ QR Code (ঐচ্ছিক)</h3><div style="text-align:center">'+(okImg(qr)?'<img src="'+qr+'" alt="QR" style="width:200px;max-width:70%;border-radius:14px;border:1px solid var(--line);background:#fff;padding:6px">':'<p class="note">কোনো QR দেওয়া হয়নি।</p>')+
+   '<input type="file" accept="image/*" style="display:block;margin:10px auto" onchange="bkpQr(this)"><button type="button" class="chip Absent" style="min-width:0" onclick="bkpQrClr()"><i class=idel></i> QR মুছুন</button></div>'+
+   '<button class="tile" style="background:#E2136E;width:100%;margin-top:14px;padding:13px" onclick="bkpSave()">সংরক্ষণ করুন</button>'+
+   '<p class="note" style="text-align:left">মনে রাখবেন: অ্যাপ Transaction ID নিজে যাচাই করতে পারে না। আবেদন এলে নিজের বিকাশ অ্যাপে বা SMS-এ টাকা এসেছে কি না মিলিয়ে তবেই অনুমোদন করুন। একই Transaction ID দ্বিতীয়বার নেওয়া যায় না।</p>','set')}
+ window.paySetGo=function(){PAY.draft=null;PAY.qrDraft=undefined;PAY.qr=undefined;PAY.qrBusy=0;tab='payset';draw()};
+ window.bkpDr=function(k,el){if(PAY.draft)PAY.draft[k]=el.value};
+ window.bkpQr=function(inp){const f=inp.files&&inp.files[0];if(!f)return;resizeQr(f,u=>{if(!u){alert('ছবি ছোট করা যায়নি। অন্য ছবি বেছে নিন');return}PAY.qrDraft=u;draw()})};
+ window.bkpQrClr=function(){PAY.qrDraft='';draw()};
+ window.bkpTgl=async function(){if(role!=='admin')return;const on=PAY.cfg.on===true;
+  if(!on&&!/^01[3-9][0-9]{8}$/.test(PAY.cfg.bk||'')){alert('আগে বিকাশ নম্বর সংরক্ষণ করুন');return}
+  try{await set(R('payCfg/on'),!on)}catch(e){alert('সংরক্ষণ হয়নি: '+denied(e))}};
+ window.bkpSave=async function(){if(role!=='admin'){deny();return}
+  const dr=PAY.draft||{},d={bk:dr.bk!==undefined?dr.bk:(PAY.cfg.bk||''),nt:dr.nt!==undefined?dr.nt:(PAY.cfg.nt||''),adv:dr.adv!==undefined?dr.adv:(PAY.cfg.adv==null?12:PAY.cfg.adv)},bk=toEn(d.bk).replace(/[\s-]/g,'').replace(/^\+?88/,''),adv=parseInt(toEn(d.adv),10);
+  if(bk!==''&&!/^01[3-9][0-9]{8}$/.test(bk)){alert('বিকাশ নম্বর সঠিক নয় (১১ সংখ্যা, যেমন 01712345678)');return}
+  if(!(adv>=0&&adv<=24)){alert('অগ্রিম মাস ০ থেকে ২৪ এর মধ্যে দিন');return}
+  if(PAY.cfg.on===true&&bk===''){alert('বিকাশ নম্বর খালি রাখা যাবে না। আগে বিকাশে বেতন গ্রহণ বন্ধ করুন');return}
+  const U={'payCfg/bk':bk,'payCfg/nt':String(d.nt||'').trim().slice(0,500),'payCfg/adv':adv};
+  if(PAY.qrDraft!==undefined)U['payCfg/qr']=PAY.qrDraft===''?null:PAY.qrDraft;
+  try{await upd(U);if(PAY.qrDraft!==undefined){PAY.qr=PAY.qrDraft;PAY.qrDraft=undefined}PAY.draft=null;alert('সংরক্ষণ হয়েছে');draw()}catch(e){alert('সংরক্ষণ হয়নি: '+denied(e))}};
+
+ /* ---------- অনুমোদনকারী: আবেদন তালিকা, Approve ও Reject ---------- */
+ const find=id=>(PAY.pend||[]).concat(PAY.hist||[]).find(x=>x.id===id);
+ function reqCard(r,pend){
+  const kv=(a,b)=>'<div class="bkp-kv"><span>'+a+'</span><span>'+b+'</span></div>';
+  return '<div class="row" style="display:block"><div style="display:flex;justify-content:space-between;align-items:center;gap:8px"><b>'+xe(r.nm||r.sid)+'</b>'+badge(r.st)+'</div>'+
+   '<small style="display:block;color:var(--mute)">'+xe(r.c||'')+' • ID: '+xe(r.sid)+'</small>'+
+   '<div style="margin:8px 0;padding:10px;border-radius:12px;background:var(--bg)"><small style="color:var(--mute)">Transaction ID</small><div class="bkp-trx">'+xe(r.trx)+'</div></div>'+
+   kv('পরিমাণ','<b>'+tk(r.a)+'</b>')+kv('মাস',xe(monTxt(r)))+kv('প্রেরকের নম্বর',xe(r.sn||'—'))+kv('মাদ্রাসার নম্বর',xe(r.bn||'—'))+kv('জমার সময়',pdt(r.ts))+(r.nt?kv('নোট',xe(r.nt)):'')+
+   (r.st!=='pending'?kv(r.st==='approved'?'অনুমোদন করেছেন':'বাতিল করেছেন',xe(r.ab||'—')+' • '+pdt(r.at))+(r.st==='approved'&&r.ap?kv('বণ্টন',xe(r.ap)):'')+(r.rs?kv('কারণ',xe(r.rs)):''):'')+
+   (pend?'<div class="bkp-act"><button style="background:var(--g)" onclick="bkpApprove(\''+r.id+'\')">অনুমোদন</button><button style="background:#dc2626" onclick="bkpReject(\''+r.id+'\')">বাতিল</button></div>':'')+
+   (!pend&&r.st==='rejected'&&role==='admin'?'<div style="text-align:right;margin-top:6px"><button class="chip Absent" style="min-width:0" onclick="bkpDel(\''+r.id+'\')"><i class=idel></i> মুছুন</button></div>':'')+'</div>'}
+ function reqV(){
+  const k=PAY.tabK,pn=PAY.pend?PAY.pend.length:0;
+  const chip=(x,t)=>'<button class="chip" style="min-width:auto;white-space:nowrap;'+chipS(k===x)+'" onclick="bkpTab(\''+x+'\')">'+t+'</button>';
+  let body;
+  if(k==='pending')body=PAY.pend===null?'<p class="note">লোড হচ্ছে...</p>':(PAY.pend.map(r=>reqCard(r,true)).join('')||'<p class="note">কোনো আবেদন অপেক্ষমাণ নেই।</p>');
+  else{if(!PAY.hist||Date.now()-PAY.histT>60000)histLoad();
+   body=PAY.hist===null?'<p class="note">লোড হচ্ছে...</p>':(PAY.hist.filter(x=>x.st===k).map(r=>reqCard(r,false)).join('')||'<p class="note">কোনো রেকর্ড নেই।</p>')+'<p class="note">শেষ ৮০টি আবেদনের মধ্যে দেখানো হচ্ছে।</p>'}
+  shell('বিকাশ পেমেন্ট আবেদন','<div style="display:flex;gap:8px;overflow-x:auto;padding-bottom:4px;margin-bottom:10px">'+chip('pending','অপেক্ষমাণ ('+bn(pn)+')')+chip('approved','অনুমোদিত')+chip('rejected','বাতিল')+'</div>'+
+   '<p class="note" style="text-align:left;margin-top:0">Transaction ID, পরিমাণ ও প্রেরকের নম্বর আপনার বিকাশ অ্যাপ বা SMS-এর সঙ্গে মিলিয়ে তবেই অনুমোদন করুন।</p>'+body,'home')}
+ async function histLoad(force){if(PAY.histBusy)return;PAY.histBusy=1;
+  try{const v=(await get(query(R('payReq'),orderByChild('ts'),limitToLast(80)))).val()||{};PAY.hist=Object.keys(v).map(id=>Object.assign({id:id},v[id])).sort((a,b)=>(b.ts||0)-(a.ts||0));PAY.histT=Date.now()}
+  catch(e){PAY.hist=[];PAY.histT=Date.now();alert('ইতিহাস আনা যায়নি: '+denied(e))}
+  PAY.histBusy=0;if(tab==='payreq')redraw()}
+ window.bkpTab=function(k){PAY.tabK=k;if(k!=='pending')PAY.histT=0;draw()};
+
+ function modal(h){cl();const d=document.createElement('div');d.id='md';d.style.cssText='position:fixed;inset:0;background:#0009;z-index:20;display:flex;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:16px';
+  d.innerHTML='<div style="background:var(--card);color:var(--ink);width:100%;max-width:440px;border-radius:18px;padding:18px;margin:auto">'+h+'</div>';document.body.appendChild(d)}
+ let AP=null;
+ window.bkpApprove=function(id){
+  const r=find(id);if(!r)return;
+  if(role==='teacher'&&!hasPerm('fee_collect')){alert('অনুমোদনের জন্য আপনার ফি আদায়ের অনুমতিও থাকতে হবে। অ্যাডমিনকে বলুন');return}
+  const s=students.find(x=>x.id===r.sid);
+  if(!s){alert('ছাত্রের তথ্য পাওয়া যায়নি (ছাত্র মুছে ফেলা বা তথ্য লোড হয়নি)। আবেদন বাতিল করুন বা পরে চেষ্টা করুন');return}
+  let rem=r.a;const rows=monsOf(r).sort().map(m=>{const f=feeInfo(s,m),al=Math.min(rem,Math.max(0,f.due));rem-=al;return{m:m,due:f.due,paid:f.paid,al:al}});
+  AP={id:id,r:r,s:s,rows:rows};
+  modal('<h3 style="margin:0 0 8px">অনুমোদন — '+xe(s.n)+'</h3>'+
+   '<div class="link"><span><small>Transaction ID</small><b class="bkp-trx">'+xe(r.trx)+'</b></span></div><div class="link"><span><small>প্রাপ্ত টাকা (আবেদন অনুযায়ী)</small>'+tk(r.a)+'</span></div>'+
+   '<small style="color:var(--mute)">কোন মাসে কত টাকা বসবে (পুরোনো মাস থেকে ভাগ করা হয়েছে, দরকারে বদলান):</small>'+
+   rows.map((x,i)=>'<div style="display:flex;align-items:center;gap:8px;margin-top:8px"><span style="flex:1;min-width:0"><b>'+monLabel(x.m)+'</b><small style="display:block;color:var(--mute)">'+(x.due>0?'বাকি '+tk(x.due):'আগেই পরিশোধিত')+'</small></span><input class="search" id="bkaI'+i+'" inputmode="numeric" style="width:110px;margin:0" value="'+x.al+'" '+(x.due>0?'':'disabled')+' oninput="bkpSum()"></div>').join('')+
+   '<div id="bkaS" style="margin-top:12px;font-size:14px"></div>'+
+   '<div class="bkp-act"><button style="background:var(--g)" onclick="bkpApproveGo()">অনুমোদন করুন</button><button style="background:#5b6b7d" onclick="cl()">বন্ধ</button></div>');
+  bkpSum()};
+ function apVals(){return AP.rows.map((x,i)=>{const e=document.getElementById('bkaI'+i);return Math.round(+toEn(e?e.value:0)||0)})}
+ window.bkpSum=function(){if(!AP)return;const v=apVals(),t=v.reduce((a,x)=>a+x,0),e=document.getElementById('bkaS');if(!e)return;
+  e.style.color=t===AP.r.a?'var(--okt)':'var(--not)';e.textContent='মোট '+tk(t)+' / আবেদন '+tk(AP.r.a)+(t===AP.r.a?' ✓':t<AP.r.a?' — '+tk(AP.r.a-t)+' কম':' — '+tk(t-AP.r.a)+' বেশি')};
+ window.bkpApproveGo=async function(){
+  if(!AP||PAY.busy)return;const v=apVals(),r=AP.r,s=AP.s;
+  for(let i=0;i<v.length;i++){if(v[i]<0||v[i]>AP.rows[i].due){alert(monLabel(AP.rows[i].m)+' মাসে সর্বোচ্চ '+tk(AP.rows[i].due)+' বসানো যাবে');return}}
+  const t=v.reduce((a,x)=>a+x,0);
+  if(t!==r.a){alert('মাসগুলোর যোগফল আবেদনের টাকা ('+tk(r.a)+') এর সমান হতে হবে। মাসের বকেয়ার চেয়ে টাকা বেশি হলে আবেদন বাতিল করে কারণ লিখুন');return}
+  if(!await mmConfirm(tk(r.a)+' — '+(s.n||'')+' এর পেমেন্ট অনুমোদন করবেন? Transaction ID '+r.trx+' আপনার বিকাশে মিলিয়ে নিয়েছেন তো?'))return;
+  PAY.busy=true;showLd();
+  try{
+   let mx=Math.max(0,...fp.map(x=>+String(x.id).replace(/\D/g,'')||0));const U={},recs=[],sm=[];
+   AP.rows.forEach((x,i)=>{if(v[i]<=0)return;mx++;const id='RCP-'+String(mx).padStart(4,'0'),first=feeInfo(s,x.m).paid===0;
+    const p={id:id,sid:s.id,a:v[i],t:first?MFT:MFP,d:T0,m:x.m,sn:s.n,c:s.c||'',y:x.m.slice(0,4),mo:x.m.slice(5),st:'Paid',by:String(collector()).slice(0,60)+' (বিকাশ)',pr:AP.id};
+    const c=clean(p);U['fees/'+id]=c;U['feesByStudent/'+s.id+'/'+id]=c;if(first)U['feeLock/'+lockKey(s.id,x.m)]=id;recs.push(p);sm.push(monLabel(x.m)+': '+tk(v[i]))});
+   if(!recs.length){hideLd();PAY.busy=false;alert('কোনো মাসে টাকা বসানো হয়নি');return}
+   const dec={st:'approved',au:auth.currentUser.uid,ab:String(collector()).slice(0,80),at:serverTimestamp(),f0:recs[0].id,ap:sm.join('; ').slice(0,600)};
+   Object.keys(dec).forEach(k=>{U['payReq/'+AP.id+'/'+k]=dec[k];U['payReqByStudent/'+s.id+'/'+AP.id+'/'+k]=dec[k]});
+   await tmo(upd(U),40000,'অনুমোদন সংরক্ষণ');
+   recs.forEach(p=>notifyFee(p).catch(()=>{}));
+   PAY.busy=false;hideLd();cl();AP=null;PAY.histT=0;alert('অনুমোদন সম্পন্ন। '+bn(recs.length)+'টি মাসের বেতন পরিশোধিত হয়েছে।');draw()
+  }catch(e){PAY.busy=false;hideLd();alert('অনুমোদন হয়নি: '+(/permission/i.test(e.message||'')?'কোনো মাস আগেই পরিশোধ হয়ে থাকতে পারে, আবেদন আগেই নিষ্পত্তি হয়েছে, অথবা আপনার অনুমতি নেই (ফি আদায়ের অনুমতিও লাগে)। পেজ নতুন করে খুলে দেখুন।':denied(e)))}};
+ window.bkpReject=function(id){const r=find(id);if(!r)return;AP={id:id,r:r,rows:[]};
+  modal('<h3 style="margin:0 0 8px">আবেদন বাতিল</h3><div class="link"><span><small>Transaction ID</small><b class="bkp-trx">'+xe(r.trx)+'</b></span></div><label class="bkp-lb">বাতিলের কারণ (অভিভাবক দেখতে পাবেন)<textarea class="search" id="bkrR" style="min-height:80px" maxlength="300" placeholder="যেমন: এই ID-তে টাকা পাওয়া যায়নি"></textarea></label><div class="bkp-act"><button style="background:#dc2626" onclick="bkpRejectGo()">বাতিল করুন</button><button style="background:#5b6b7d" onclick="cl()">ফিরে যান</button></div>')};
+ window.bkpRejectGo=async function(){
+  if(!AP||PAY.busy)return;const r=AP.r,e=document.getElementById('bkrR'),rs=String(e?e.value:'').trim().slice(0,300);
+  if(!rs){alert('বাতিলের কারণ লিখুন, যাতে অভিভাবক বুঝতে পারেন');return}
+  PAY.busy=true;showLd();
+  try{const U={},dec={st:'rejected',au:auth.currentUser.uid,ab:String(collector()).slice(0,80),at:serverTimestamp(),rs:rs};
+   Object.keys(dec).forEach(k=>{U['payReq/'+AP.id+'/'+k]=dec[k];U['payReqByStudent/'+r.sid+'/'+AP.id+'/'+k]=dec[k]});U['trxLock/'+r.trx]=null;
+   await tmo(upd(U),30000,'বাতিল সংরক্ষণ');
+   try{const s=students.find(x=>x.id===r.sid);if(s&&s.uid&&role==='admin')await deliver('message','guardian',s,{},'payrej-'+AP.id,{title:'বিকাশ পেমেন্ট আবেদন বাতিল',msg:tk(r.a)+' ('+monTxt(r)+') এর আবেদন বাতিল করা হয়েছে। কারণ: '+rs})}catch(x){}
+   PAY.busy=false;hideLd();cl();AP=null;PAY.histT=0;alert('আবেদন বাতিল করা হয়েছে');draw()
+  }catch(x){PAY.busy=false;hideLd();alert('বাতিল হয়নি: '+(/permission/i.test(x.message||'')?'আবেদন আগেই নিষ্পত্তি হয়েছে বা আপনার অনুমতি নেই। পেজ নতুন করে খুলে দেখুন।':denied(x)))}};
+ window.bkpDel=async function(id){const r=find(id);if(!r||role!=='admin')return;if(!await mmConfirm('এই বাতিল আবেদনের রেকর্ড মুছে ফেলবেন?'))return;
+  try{const U={};U['payReq/'+id]=null;U['payReqByStudent/'+r.sid+'/'+id]=null;await upd(U);PAY.histT=0;draw()}catch(e){alert('মোছা যায়নি: '+denied(e))}};
+
+ /* ---------- বিদ্যমান পেজে সংযোগ (পুরোনো কোড অপরিবর্তিত, শুধু মোড়ক) ---------- */
+ TABN.payreq=['pay_approve'];TABN.payset=['__admin'];
+ const _draw=window.draw;
+ window.draw=function(){
+  try{ensure()}catch(e){console.error(e)}
+  if(tab==='paym'){if(role==='guardian')return guardianV();tab='home'}
+  if(tab==='payset'){if(role==='admin')return setV2();tab='home'}
+  if(tab==='payreq'){if(isApprover())return reqV();tab='home'}
+  return _draw.apply(this,arguments)};
+ const _hl=window.homeList;
+ window.homeList=function(){const t=_hl.apply(this,arguments);if(isApprover())t.push(['💳','bKash','বিকাশ পেমেন্ট আবেদন','#E2136E','payreq']);return t};
+ const _nd=window.ndbHTML;
+ window.ndbHTML=function(){let b='';
+  try{
+   if(isApprover()&&PAY.pend&&PAY.pend.length)b='<div class="bkp-ban"><div class="bkp-bi">💳</div><div style="flex:1;min-width:0"><b>বিকাশ পেমেন্ট আবেদন</b><small>'+bn(PAY.pend.length)+'টি আবেদন যাচাইয়ের অপেক্ষায়</small></div><button onclick="tab=\'payreq\';draw()">দেখুন</button></div>';
+   else if(role==='guardian'&&cfgOn()){const pn=PAY.mine.filter(x=>x.st==='pending').length,last=PAY.mine.find(x=>x.st!=='pending'&&Date.now()-(x.at||0)<14*864e5);
+    b='<div class="bkp-ban"><div class="bkp-bi">💳</div><div style="flex:1;min-width:0"><b>বিকাশে বেতন পরিশোধ</b><small>'+(pn?bn(pn)+'টি আবেদন যাচাইয়ের অপেক্ষায়':last?'সর্বশেষ আবেদন '+(last.st==='approved'?'অনুমোদিত হয়েছে':'বাতিল হয়েছে'):'বাড়িতে বসেই মাসিক বেতন দিন')+'</small></div><button onclick="bkpGo()">পরিশোধ করুন</button></div>'}
+  }catch(e){}
+  return b+(_nd?_nd():'')};
+ const _fees=window.fees;
+ window.fees=function(){_fees.apply(this,arguments);
+  try{const m=document.querySelector('#app main');if(!m)return;
+   if(role==='guardian'&&cfgOn())m.insertAdjacentHTML('afterbegin','<button class="link" style="border:1px solid #E2136E66" onclick="bkpGo()"><span><small>বিকাশে বেতন পরিশোধ</small>মাস বাছাই করে Send Money-র তথ্য জমা দিন</span>›</button>');
+   else if(isApprover())m.insertAdjacentHTML('afterbegin','<button class="link" style="border:1px solid #E2136E66" onclick="tab=\'payreq\';draw()"><span><small>বিকাশ পেমেন্ট আবেদন'+(PAY.pend&&PAY.pend.length?' ('+bn(PAY.pend.length)+' অপেক্ষমাণ)':'')+'</small>যাচাই করে অনুমোদন বা বাতিল করুন</span>›</button>')
+  }catch(e){}};
+})();
+
 </script>
 <script>
 /* ===== Android Back Button / History হ্যান্ডলিং =====
@@ -3966,6 +4235,7 @@ go()})();
         .mcq-opts { display: grid; gap: 2px 14px; padding-left: 34px; margin-top: 3px; }
         .mcq-L1 { grid-template-columns: 1fr; }
         .mcq-L2 { grid-template-columns: 1fr 1fr; }
+        .mcq-L3 { grid-template-columns: repeat(3, auto); justify-content: space-between; }
         .mcq-L4 { grid-template-columns: repeat(4, auto); justify-content: space-between; }
         .mcq-L5 { grid-template-columns: repeat(5, auto); justify-content: space-between; }
         .mcq-L6 { grid-template-columns: repeat(6, auto); justify-content: space-between; }
@@ -4628,7 +4898,7 @@ go()})();
             '<div class="mcq-opt-box"></div>' +
             '<div class="mcq-item-foot"><span class="btn-add-sub" onclick="mcqAddOpt(this)">+ অপশন</span>' +
             '<span class="mcq-lay">সাজানো: <select class="mcq-layout" onchange="scheduleSave()">' +
-            '<option value="2">২ কলামে (২×২)</option><option value="1">প্রতি লাইনে একটি</option><option value="4">এক লাইনে চারটি</option><option value="5">এক লাইনে পাঁচটি</option><option value="6">এক লাইনে ছয়টি</option>' +
+            '<option value="2">২ কলামে (২×২)</option><option value="1">প্রতি লাইনে একটি</option><option value="3">এক লাইনে তিনটি</option><option value="4">এক লাইনে চারটি</option><option value="5">এক লাইনে পাঁচটি</option><option value="6">এক লাইনে ছয়টি</option>' +
             '</select></span></div>';
         box.appendChild(it);
         const d = data || {};
@@ -6263,7 +6533,7 @@ go()})();
   [/tab='subj'/,'aca','book','#0891B2'],[/promo/,'aca','cap','#7C3AED'],[/ayTog|ayMonth/,'aca','cal','#0EA5E9'],[/classFee/,'aca','wallet','#EA580C'],
   [/nhub/,'ntf','bell','#E11D48'],[/tab='bell'/,'ntf','clock','#D97706'],
   [/fbBackup/,'data','save','#059669'],[/purgeRollKeys/,'data','lock','#64748B'],
-  [/adminPhoneDiag/,'help','sliders','#64748B'],[/wgPin/,'help','mobile','#0D9488']];
+  [/paySetGo/,'aca','wallet','#E2136E'],[/adminPhoneDiag/,'help','sliders','#64748B'],[/wgPin/,'help','mobile','#0D9488']];
  var isEn=function(){return !!(window.mmLangGet&&window.mmLangGet()==='en')};
 
  function build(){

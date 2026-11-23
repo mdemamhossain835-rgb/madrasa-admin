@@ -707,7 +707,7 @@ function finV(){const ms=x=>x.filter(e=>e.m===M0),days=Object.keys(at).filter(d=
  '<h3>ফলাফল</h3>'+K('ফলাফল আছে',bn(rl.length)+' জন')+K('পাসের হার',rl.length?bn(Math.round(rl.filter(c=>!c.f).length/rl.length*100))+'%':'—')+
  '<h3>শিক্ষক</h3>'+K('মোট মাসিক বেতন',tk(sum(teachers.map(t=>({a:t.sal}))))),'rep')}
 /* সেটিংস, ব্যাকআপ */
-function setV(){shell('Settings',`${role==='admin'?'<button class="link" onclick="planV()"><span><small>প্ল্যান</small>ট্রায়াল ও মাসিক সাবস্ক্রিপশন (৳৩০০)</span>›</button>':''}<button class="link" onclick="profEdit()"><span><small>মাদ্রাসার তথ্য</small>নাম, লোগো, ঠিকানা ও প্রতিষ্ঠার তারিখ</span>›</button><button class="link" onclick="adminEdit()"><span><small>অ্যাডমিনের তথ্য</small>নাম, ছবি, ফোন ও ইমেইল</span>›</button><button class="link" onclick="adminPhoneDiag()"><span><small>সমস্যা সমাধান</small>লগইন নম্বর যাচাই ও ঠিক করুন</span>›</button><button class="link wgrow" style="display:none" onclick="wgPin()"><span><small>হোম স্ক্রিন উইজেট</small>উইজেট হোম স্ক্রিনে যোগ করুন</span>›</button>${role==='admin'||role==='teacher'?'<button class="link" onclick="window.__bellFrom=\'set\';tab=\'bell\';draw()"><span><small>ঘণ্টা</small>পিরিয়ডের ঘণ্টার সময়সূচি</span>›</button>':''}<button class="link" onclick="tab='nhub';draw()"><span><small>Notification</small>চালু/বন্ধ, টেমপ্লেট, পাঠানো ও ইতিহাস</span>›</button><button class="link" onclick="tab='classFee';draw()"><span><small>মাসিক ফি</small>ফি নির্ধারণ</span>›</button>${role==='admin'?'<button class="link" onclick="paySetGo()"><span><small>বিকাশ পেমেন্ট</small>নম্বর, QR ও অগ্রিম মাসের সীমা</span>›</button>':''}<button class="link" onclick="purgeRollKeys()"><span><small>একবারের কাজ</small>রোল নম্বর দিয়ে অভিভাবক লগইন বন্ধ করুন</span>›</button>${role==='admin'?'<button class="link" onclick="fbBackup()"><span><small>সম্পূর্ণ ব্যাকআপ</small>Firebase-এর সব ডেটা ফাইলে সেভ করুন</span>›</button>':''}`,'home');setFilt()}
+function setV(){shell('Settings',`${role==='admin'?'<button class="link" onclick="planV()"><span><small>প্ল্যান</small>ট্রায়াল ও মাসিক সাবস্ক্রিপশন (৳৩০০)</span>›</button>':''}<button class="link" onclick="profEdit()"><span><small>মাদ্রাসার তথ্য</small>নাম, লোগো, ঠিকানা ও প্রতিষ্ঠার তারিখ</span>›</button><button class="link" onclick="adminEdit()"><span><small>অ্যাডমিনের তথ্য</small>নাম, ছবি, ফোন ও ইমেইল</span>›</button><button class="link wgrow" style="display:none" onclick="wgPin()"><span><small>হোম স্ক্রিন উইজেট</small>উইজেট হোম স্ক্রিনে যোগ করুন</span>›</button>${role==='admin'||role==='teacher'?'<button class="link" onclick="window.__bellFrom=\'set\';tab=\'bell\';draw()"><span><small>ঘণ্টা</small>পিরিয়ডের ঘণ্টার সময়সূচি</span>›</button>':''}<button class="link" onclick="tab='nhub';draw()"><span><small>Notification</small>চালু/বন্ধ, টেমপ্লেট, পাঠানো ও ইতিহাস</span>›</button><button class="link" onclick="tab='classFee';draw()"><span><small>মাসিক ফি</small>ফি নির্ধারণ</span>›</button>${role==='admin'?'<button class="link" onclick="paySetGo()"><span><small>বিকাশ পেমেন্ট</small>নম্বর, QR ও অগ্রিম মাসের সীমা</span>›</button>':''}${role==='admin'?'<button class="link" onclick="fbBackup()"><span><small>সম্পূর্ণ ব্যাকআপ</small>Firebase-এর সব ডেটা ফাইলে সেভ করুন</span>›</button>':''}`,'home');setFilt()}
 function classFeeV(){shell('মাসিক ফি (শ্রেণী অনুযায়ী)',`<div class="row"><div class="info"><b>আগের মাসের বকেয়া হিসাবে ধরুন</b><small>চালু করলে ছাত্রের ভর্তির মাস (না থাকলে প্রথম ফি-র মাস) থেকে যেসব মাসের ফি বাকি, সব বকেয়ায় যোগ হবে। আগে ছাত্রের ভর্তির মাস ঠিক করে নিন।</small></div>${tglHTML(!!feeCarry,'setCarry()')}</div><div class="row"><div class="info"><b>সাধারণ (ডিফল্ট) ফি</b><small>যে শ্রেণীর নিজস্ব ফি সেট করা নেই, তাদের জন্য প্রযোজ্য</small></div><b>${tk(MF)}</b><button aria-label="পরিবর্তন" onclick="setDefaultFee()">✏️</button></div>`+
  classes.map(c=>`<div class="row"><div class="info"><b>${c}</b><small>বর্তমান ফি: ${tk(classFee[c]!=null&&classFee[c]!==''?classFee[c]:MF)}${classFee[c]!=null&&classFee[c]!==''?'':' (সাধারণ)'}</small></div><button aria-label="পরিবর্তন" onclick="setClassFee('${esc(c)}')">✏️</button></div>`).join('')+feeHistHTML(),'set')}
 function feeHistHTML(){const L=[];feeLog.d.forEach(e=>L.push(['সাধারণ ফি',e]));Object.keys(feeLog.c).forEach(c=>feeLog.c[c].forEach(e=>L.push([c,e])));if(!L.length)return '';L.sort((a,b)=>a[1].f<b[1].f?1:a[1].f>b[1].f?-1:0);return '<h3>ফি পরিবর্তনের ইতিহাস</h3>'+L.slice(0,30).map(x=>{const e=x[1];return '<div class="link"><span><small>'+monLabel(e.f)+' থেকে কার্যকর</small>'+xe0(x[0])+': '+(_num(e.o)!=null?tk(e.o):'সাধারণ')+' → '+(_num(e.v)!=null?tk(e.v):'সাধারণ')+'</span></div>'}).join('')}
@@ -1389,26 +1389,7 @@ window.adminPhoneChange=async function(oldPh,newPh){
  if(kn!==key(oldPh)||stale)return 'changed';
  return missing?'repaired':'ok'};
 
-window.adminPhoneDiag=async function(){
- const L=['সংস্করণ: final7'],ok=t=>L.push('✔ '+t),no=t=>L.push('✘ '+t);
- const er=e=>((e&&e.code)?e.code+' ':'')+((e&&e.message)||e);
- try{
-  const u=auth.currentUser;
-  if(!u){no('এই মুহূর্তে লগইন নেই (auth.currentUser নেই)');alert(L.join('\n'));return}
-  ok('লগইন ইমেইল: '+u.email);
-  const ph=String((adminInfo&&adminInfo.ph)||'').trim();L.push('ফোনের ঘরের নম্বর: '+(ph||'খালি'));
-  try{const us=(await get(ref(db,'users/'+u.uid))).val();us?ok('users রেকর্ড: role='+us.role+', mid='+(us.mid===MID?'ঠিক':us.mid)):no('users রেকর্ড নেই')}catch(e){no('users পড়া যায়নি: '+er(e))}
-  try{const lc=(await get(ref(db,'licenses/'+MID))).val();if(lc){const n=Date.now();ok('লাইসেন্স: ট্রায়াল '+(lc.trialEnd>n?'চলছে':'শেষ')+', সাবস্ক্রিপশন '+(lc.subEnd>n?'চালু':'নেই/শেষ')+(lc.suspended?' (স্থগিত!)':''))}else L.push('… লাইসেন্স রেকর্ড পাওয়া যায়নি')}catch(e){L.push('… লাইসেন্স পড়া যায়নি: '+er(e))}
-  const kn=key(ph);
-  if(!kn){no('ফোনের ঘরে নম্বর নেই');alert(L.join('\n'));return}
-  const mo=await mapOwner(kn);L.push('আগে: loginMap['+kn+'] = '+(mo===MID?'এই মাদ্রাসা':mo||'নেই'));
-  const ix=await get(R('loginIndex/'+kn));L.push('আগে: loginIndex['+kn+'] = '+(ix.exists()?'আছে':'নেই'));
-  try{const r=await window.adminPhoneChange(ph,ph);ok('মেরামত চালানো হয়েছে ('+r+')')}catch(e){no('মেরামত ব্যর্থ: '+er(e))}
-  const mo2=await mapOwner(kn),ix2=await get(R('loginIndex/'+kn));
-  L.push('পরে: loginMap = '+(mo2===MID?'এই মাদ্রাসা':mo2||'নেই')+' | loginIndex = '+(ix2.exists()?'আছে':'নেই'));
-  if(mo2===MID&&ix2.exists())ok('এখন এই নম্বর দিয়ে লগইন করা যাবে। লগআউট করে চেষ্টা করুন।');else no('এখনো লগইন-এন্ট্রি বসেনি, উপরের ত্রুটিটা আমাকে পাঠান')
- }catch(e){no('ত্রুটি: '+er(e))}
- alert(L.join('\n'))};
+
 async function sibDup(pe,selfKey,pw){if(!pe||!pw)return false;const em=[];if(pe.kids)Object.keys(pe.kids).forEach(k=>{if(k!==selfKey)em.push(pe.kids[k])});else if(pe.email&&!selfKey)em.push(pe.email);
  for(const e of em.slice(0,8)){try{await signInWithEmailAndPassword(auth2,e,pw);try{await signOut(auth2)}catch(x){}return true}catch(x){}}return false}
 async function relink(U,k,o,em,rl){const sk=key(o.id);if(rl!=='guardian'){U['loginIndex/'+k]={email:em,role:rl};return}
@@ -1955,10 +1936,7 @@ onValue(R('config/profile'),sn=>{if(sn.val()){const oh=profile&&profile.hjOff;pr
 /* ===== persistent login: অ্যাপ খুললে আগের সেশন ফিরিয়ে আনে ===== */
 window.changeOwnPw=async pw=>{if(pw.length<6){alert('পাসওয়ার্ড কমপক্ষে ৬ অক্ষরের হতে হবে');return}const u=auth.currentUser;if(!u||role!=='admin'){alert('শুধু অ্যাডমিন');return}
  try{await updatePassword(u,pw);alert('আপনার পাসওয়ার্ড সফলভাবে পরিবর্তন হয়েছে।')}catch(e){alert(e.code==='auth/requires-recent-login'?'নিরাপত্তার জন্য একবার লগআউট করে নতুন করে লগইন করুন, তারপর সঙ্গে সঙ্গে পাসওয়ার্ড বদলান।':'পাসওয়ার্ড পরিবর্তন হয়নি: '+(e.code||e.message))}};
-window.purgeRollKeys=async function(){if(role!=='admin')return;const U={};
- students.forEach(s=>{const r=key(String(s.r==null?'':s.r)),keep=[key(s.id),key(s.ph)];if(!r||keep.includes(r)||!(s.lk||[]).includes(r))return;U['loginIndex/'+r]=null;U['students/'+s.id+'/lk']=s.lk.filter(k=>k!==r)});
- const n=Object.keys(U).length/2;if(!n){alert('রোল দিয়ে লগইনের কোনো এন্ট্রি নেই।');return}
- try{await upd(U);alert(bn(n)+'টি রোল-লগইন এন্ট্রি মুছে ফেলা হয়েছে।')}catch(e){alert('হয়নি: '+denied(e))}};
+
 const WINM=WIN.slice(0,7),FROMM=FROM.slice(0,7),p2h=n=>String(n).padStart(2,'0');
 async function histLoad(kind,mo){
  const key=kind+mo;if(HIST.done.has(key)||HIST.busy[key]||Date.now()-(HIST.fail[key]||0)<60000)return false;
@@ -4208,7 +4186,8 @@ go()})();
         .mcq-card { border-left-color: #7c3aed; }
         .mcq-card .q-badge { background: #efe7fd; color: #5b21b6; }
         .mcq-opt-row { display: flex; gap: 8px; align-items: center; margin-bottom: 8px; }
-        .mcq-opt-lab { min-width: 42px; text-align: center; font-weight: bold; color: var(--primary-color); }
+        .mcq-opt-lab { flex: none; width: 54px; min-height: 38px; padding: 6px 4px; text-align: center; font: inherit; font-size: 15px; font-weight: bold; color: var(--primary-color); background: #fff; border: 1px dashed #b9a3ee; border-radius: 10px; outline: none; }
+        .mcq-opt-lab:focus { border-style: solid; border-color: var(--primary-color); box-shadow: 0 0 0 3px rgba(36,99,77,.15); }
         .mcq-opt-input { flex: 1; min-width: 0; min-height: 38px; padding: 8px 10px; font-size: 13px; outline: none; background: #fff; word-break: break-word; }
         .mcq-box { margin-top: 12px; background: #f6f2fe; border: 1px solid #d9ccf6; border-radius: 10px; padding: 10px; }
         .mcq-head { display: flex; justify-content: space-between; align-items: center; gap: 8px; margin-bottom: 8px; font-weight: bold; font-size: 13px; color: #5b21b6; flex-wrap: wrap; }
@@ -4811,7 +4790,7 @@ go()})();
 
     function relabelOpts(card) {
         card.querySelectorAll('.mcq-item').forEach(it => {
-            it.querySelectorAll('.mcq-opt-row').forEach((r, i) => { r.querySelector('.mcq-opt-lab').textContent = mcqLab(i); });
+            it.querySelectorAll('.mcq-opt-row').forEach((r, i) => { const l = r.querySelector('.mcq-opt-lab'); if (l.dataset.custom !== '1') l.value = mcqLab(i); });
         });
     }
 
@@ -4850,20 +4829,28 @@ go()})();
     }
 
     /* একটি MCQ-র অপশন */
-    function mcqAddOpt(ref, html, fs) {
+    function mcqLabEdit(inp) {
+        const row = inp.closest('.mcq-opt-row');
+        const i = Array.from(row.parentNode.children).indexOf(row);
+        inp.dataset.custom = inp.value === mcqLab(i) ? '' : '1';
+        scheduleSave();
+    }
+
+    function mcqAddOpt(ref, html, fs, lab) {
         const item = ref.closest('.mcq-item');
         const card = item.closest('.question-card');
         const box = item.querySelector('.mcq-opt-box');
         if (box.children.length >= 30) { alert('সর্বোচ্চ ৩০টি অপশন দেওয়া যায়।'); return null; }
         const row = document.createElement('div');
         row.className = 'mcq-opt-row';
-        row.innerHTML = '<span class="mcq-opt-lab"></span>' +
+        row.innerHTML = '<input type="text" class="mcq-opt-lab" maxlength="8" autocomplete="off" aria-label="অপশনের চিহ্ন (নিজে লিখে বদলানো যায়)" onfocus="this.select()" oninput="mcqLabEdit(this)">' +
             '<div class="form-control mcq-opt-input" contenteditable="true" data-ph="অপশন লিখুন..."></div>' +
             '<span class="btn-remove-sub" onclick="mcqRemoveOpt(this)" aria-label="মুছুন"><i class="idel"></i></span>';
         box.appendChild(row);
         const ed = row.querySelector('.mcq-opt-input');
         if (html) ed.innerHTML = html;
         if (fs) ed.style.fontSize = fs;
+        if (typeof lab === 'string') { const lb = row.querySelector('.mcq-opt-lab'); lb.value = lab; lb.dataset.custom = '1'; }
         if (card.dataset.rtl === '1') applyRtlTo(ed, true);
         relabelOpts(card);
         scheduleSave();
@@ -4908,7 +4895,7 @@ go()})();
         const lay = it.querySelector('.mcq-layout');
         lay.value = d.layout || (prev ? prev.querySelector('.mcq-layout').value : '2');
         if (card.dataset.rtl === '1') applyRtlTo(te, true);
-        (d.opts && d.opts.length ? d.opts : [{}, {}, {}, {}]).forEach(o => mcqAddOpt(it, o.html, o.fs));
+        (d.opts && d.opts.length ? d.opts : [{}, {}, {}, {}]).forEach(o => mcqAddOpt(it, o.html, o.fs, o.lab));
         const st = card.querySelector('.mcq-istyle');
         if (!restoring && box.children.length === 2 && st.value === 'none') st.value = 'n.';
         relabelItems(card);
@@ -5644,9 +5631,10 @@ go()})();
                     const te = it.querySelector('.mcq-item-text');
                     const txt = plain(te) !== '' ? sizedHTML(te) : '';
                     let oh = '', k = 0;
-                    it.querySelectorAll('.mcq-opt-input').forEach(ed => {
+                    it.querySelectorAll('.mcq-opt-row').forEach(row => {
+                        const ed = row.querySelector('.mcq-opt-input'), lb = row.querySelector('.mcq-opt-lab');
                         if (plain(ed) === '') return;
-                        oh += '<div class="mcq-o"><span class="mcq-ol">' + esc(mcqLab(k)) + '</span><span class="mcq-ot">' + sizedHTML(ed) + '</span></div>';
+                        oh += '<div class="mcq-o"><span class="mcq-ol">' + esc(lb.dataset.custom === '1' ? lb.value : mcqLab(k)) + '</span><span class="mcq-ot">' + sizedHTML(ed) + '</span></div>';
                         k++;
                     });
                     if (txt === '' && oh === '') return;
@@ -6195,7 +6183,7 @@ go()})();
                         html: it.querySelector('.mcq-item-text').innerHTML,
                         fs: it.querySelector('.mcq-item-text').style.fontSize,
                         layout: it.querySelector('.mcq-layout').value,
-                        opts: Array.from(it.querySelectorAll('.mcq-opt-input')).map(e => ({ html: e.innerHTML, fs: e.style.fontSize }))
+                        opts: Array.from(it.querySelectorAll('.mcq-opt-row')).map(r => { const e = r.querySelector('.mcq-opt-input'), l = r.querySelector('.mcq-opt-lab'), o = { html: e.innerHTML, fs: e.style.fontSize }; if (l.dataset.custom === '1') o.lab = l.value; return o; })
                     }))
                 });
                 return;
@@ -6528,12 +6516,13 @@ go()})();
  ].join('\n');
  document.head.appendChild(st);
 
- var GR=[['acc','মাদ্রাসা ও অ্যাকাউন্ট','Madrasa & Account'],['aca','একাডেমিক ও ফি','Academic & Fees'],['ntf','নোটিফিকেশন ও ঘণ্টা','Notifications & Bell'],['data','ডেটা ও নিরাপত্তা','Data & Security'],['help','সহায়তা ও টুলস','Help & Tools'],['more','অন্যান্য','More']];
- var RU=[[/planV/,'acc','card','#059669'],[/profEdit/,'acc','building','#2563EB'],[/adminEdit/,'acc','user','#7C3AED'],
-  [/tab='subj'/,'aca','book','#0891B2'],[/promo/,'aca','cap','#7C3AED'],[/ayTog|ayMonth/,'aca','cal','#0EA5E9'],[/classFee/,'aca','wallet','#EA580C'],
+ var GR=[['acc','মাদ্রাসা ও অ্যাকাউন্ট','Madrasa & Account'],['aca','একাডেমিক','Academic'],['fee','ফি ও পেমেন্ট','Fees & Payment'],['ntf','নোটিফিকেশন ও ঘণ্টা','Notifications & Bell'],['data','ডেটা ও টুলস','Data & Tools'],['more','অন্যান্য','More']];
+ /* তালিকার ক্রমই প্রতিটি গ্রুপের ভেতরের সাজানোর ক্রম */
+ var RU=[[/profEdit/,'acc','building','#2563EB'],[/adminEdit/,'acc','user','#7C3AED'],[/planV/,'acc','card','#059669'],
+  [/tab='subj'/,'aca','book','#0891B2'],[/promo/,'aca','cap','#7C3AED'],[/ayTog/,'aca','cal','#0EA5E9'],[/ayMonth/,'aca','cal','#0EA5E9'],
+  [/classFee/,'fee','wallet','#EA580C'],[/paySetGo/,'fee','wallet','#E2136E'],
   [/nhub/,'ntf','bell','#E11D48'],[/tab='bell'/,'ntf','clock','#D97706'],
-  [/fbBackup/,'data','save','#059669'],[/purgeRollKeys/,'data','lock','#64748B'],
-  [/paySetGo/,'aca','wallet','#E2136E'],[/adminPhoneDiag/,'help','sliders','#64748B'],[/wgPin/,'help','mobile','#0D9488']];
+  [/fbBackup/,'data','save','#059669'],[/wgPin/,'data','mobile','#0D9488']];
  var isEn=function(){return !!(window.mmLangGet&&window.mmLangGet()==='en')};
 
  function build(){
@@ -6541,19 +6530,21 @@ go()})();
   if(!m||m.querySelector('.stg-hero'))return;
   var kids=Array.prototype.slice.call(m.children),E=isEn(),S={},notes=[];
   GR.forEach(function(g){var s=document.createElement('section');s.className='stg-sec';s.innerHTML='<div class="stg-h"></div><div class="stg-card"></div>';s.firstChild.textContent=E?g[2]:g[1];S[g[0]]=s});
+  var seq=0,bucket={};
   kids.forEach(function(el){
    if(el.tagName==='P'){notes.push(el);return}
-   var sec;
-   if(el.classList.contains('act')){sec=S.data}
+   var gk='more',oi=999;
+   if(el.classList.contains('act')){gk='data'}
    else if(el.classList.contains('link')||el.classList.contains('row')){
     var k=(el.getAttribute('onclick')||'')+' '+(el.classList.contains('row')?el.innerHTML:''),r=null;
-    for(var i=0;i<RU.length;i++){if(RU[i][0].test(k)){r=RU[i];break}}
+    for(var i=0;i<RU.length;i++){if(RU[i][0].test(k)){r=RU[i];oi=i;break}}
     var ic=document.createElement('span');ic.className='stg-i';ic.style.setProperty('--tc',r?r[3]:'#64748B');
     ic.innerHTML=window.IC?window.IC(r?r[2]:'gear','stgic'):'';
     el.insertBefore(ic,el.firstChild);
-    sec=S[r?r[1]:'more'];
-   }else sec=S.more;
-   sec.querySelector('.stg-card').appendChild(el)});
+    gk=r?r[1]:'more';
+   }
+   (bucket[gk]=bucket[gk]||[]).push({el:el,o:oi,n:seq++})});
+  Object.keys(bucket).forEach(function(g){bucket[g].sort(function(x,y){return x.o-y.o||x.n-y.n}).forEach(function(x){S[g].querySelector('.stg-card').appendChild(x.el)})});
   notes.forEach(function(p){S.data.appendChild(p)});
 
   var P=(typeof profile!=='undefined'&&profile)||{},nm=String(P.name||'').trim()||'Madrasa Management',lg=P.logo,okL=typeof lg==='string'&&/^(data:image\/|https:)/.test(lg);

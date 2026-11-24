@@ -4229,6 +4229,51 @@ go()})();
         .mcq-ot { white-space: pre-wrap; min-width: 0; }
         .preview-question-item.rtl .mcq-opts { padding-left: 0; padding-right: 34px; }
         .fake-bold-ed [contenteditable] b, .fake-bold-ed [contenteditable] strong, .fake-bold-ed [contenteditable] [style*="font-weight"] { font-synthesis-weight: none; text-shadow: 0.045em 0 0 currentColor, -0.045em 0 0 currentColor; }
+            /* ===== টুলবার পপ-আপ ও ড্র্যাগ হ্যান্ডেল ===== */
+        .tb-pop { position: fixed; z-index: 120; display: flex; gap: 6px; padding: 6px; background: #fff; border: 1px solid var(--border-color); border-radius: 12px; box-shadow: 0 8px 24px rgba(0,0,0,.25); }
+        .tb-pop button { min-width: 40px; height: 40px; padding: 0 10px; font: inherit; font-size: 16px; color: var(--text-color); background: #f9f9f9; border: 1px solid var(--border-color); border-radius: 10px; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; }
+        .tb-pop button.on { background: var(--primary-light); border-color: var(--primary-color); color: var(--primary-color); }
+        .tb-pop button:active { background: #ddd; }
+        .rich-text-tools .tb-trg { padding: 0 8px; }
+        .hdr-l { display: flex; align-items: center; gap: 8px; min-width: 0; }
+        .drag-handle { flex: none; width: 36px; height: 34px; display: inline-flex; align-items: center; justify-content: center; border: 1px solid var(--border-color); border-radius: 10px; background: #fff; color: var(--primary-color); cursor: grab; touch-action: none; user-select: none; -webkit-user-select: none; -webkit-touch-callout: none; }
+        .drag-handle:active { background: var(--primary-light); }
+        .drag-ph { margin-bottom: 12px; border: 2px dashed var(--primary-color); border-radius: 14px; background: var(--primary-light); box-sizing: border-box; }
+        .question-card.dragging { box-shadow: 0 12px 30px rgba(0,0,0,.3); opacity: .96; }
+        .dragging-body, .dragging-body * { user-select: none; -webkit-user-select: none; }
+            /* ===== ধাপ ২: দাগ+নম্বর, যোগ বাটন, কোল্যাপস, শিট ===== */
+        .q-label-row { flex-wrap: wrap; row-gap: 8px; }
+        .lr-g { display: flex; align-items: center; gap: 6px; flex: none; }
+        .lr-g > label { font-weight: bold; font-size: 13px; color: var(--primary-color); white-space: nowrap; margin: 0; }
+        .q-label-row .q-marks-group { flex: 1 1 130px; min-width: 0; }
+        .q-label-row .q-marks-group label { white-space: nowrap; }
+        .q-label-row .q-marks-input { flex: 1 1 0; width: auto; min-width: 48px; }
+        .q-label-row .rtl-toggle { flex: 1 1 100%; margin-left: 0; }
+        .add-q-btn { display: block; width: 100%; margin-top: 12px; padding: 18px 12px; font: inherit; font-size: 17px; font-weight: bold; text-align: center; color: var(--primary-color); background: var(--primary-light); border: 1.5px dashed var(--primary-color); border-radius: 12px; cursor: pointer; }
+        .add-q-btn:active { background: #d6ebe3; }
+        .qm-ov.sheet { align-items: flex-end; padding: 0; }
+        .qm-ov.sheet .qm-card { max-width: 520px; border-radius: 20px 20px 0 0; padding: 16px 16px calc(16px + env(safe-area-inset-bottom, 0px)); }
+        .am-item { display: flex; align-items: center; gap: 12px; width: 100%; text-align: left; padding: 12px; margin-bottom: 8px; font: inherit; color: var(--text-color); background: #fff; border: 1px solid #e3e9e6; border-radius: 14px; cursor: pointer; }
+        .am-item:active { background: var(--primary-light); }
+        .am-item b { display: block; font-size: 15px; }
+        .am-item small { display: block; color: #64748b; font-size: 12px; margin-top: 2px; }
+        .am-dot { flex: none; width: 12px; height: 12px; border-radius: 50%; }
+        .hdr-l { flex: 1; }
+        .hdr-t { display: flex; flex-direction: column; min-width: 0; }
+        .hdr-r1 { display: flex; align-items: center; min-width: 0; }
+        .hdr-r1 .q-badge { flex: none; white-space: nowrap; }
+        .q-sum { display: none; margin-left: 4px; font-size: 13px; font-weight: bold; color: #334155; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-width: 0; }
+        .q-pv { display: none; font-size: 12px; color: #64748b; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-top: 2px; }
+        .btn-collapse { flex: none; width: 32px; height: 32px; padding: 0; display: inline-flex; align-items: center; justify-content: center; border: 1px solid var(--border-color); border-radius: 50%; background: #fff; color: var(--primary-color); cursor: pointer; }
+        .btn-collapse svg { transition: transform .15s; }
+        .question-card.collapsed .btn-collapse svg { transform: rotate(180deg); }
+        .question-card.collapsed { padding: 8px 12px; margin-bottom: 8px; cursor: pointer; }
+        .question-card.collapsed > *:not(.card-header) { display: none !important; }
+        .question-card.collapsed .card-header { margin-bottom: 0; }
+        .question-card.collapsed .q-sum, .question-card.collapsed .q-pv { display: block; }
+        .mcq-item-l { display: flex; align-items: center; gap: 8px; }
+        .mcq-item .drag-handle { width: 32px; height: 30px; }
+        .mcq-item.dragging { box-shadow: 0 12px 30px rgba(0,0,0,.3); opacity: .96; }
     </style>
 </head>
 <body>
@@ -4425,12 +4470,7 @@ go()})();
 
     <div id="questionsContainer"></div>
 
-    <div class="add-bar">
-        <button class="btn-add" onclick="addNewQuestion()">+ প্রশ্ন</button>
-        <button class="btn-add" style="background:#7c3aed" onclick="addMcq()">+ MCQ</button>
-        <button class="btn-add" style="background:#b7791f" onclick="addPassage()">+ অনুচ্ছেদ</button>
-        <button class="btn-add" style="background:#2563eb" onclick="addPageBreak()">+ নতুন পাতা</button>
-    </div>
+    <button type="button" class="add-q-btn" onclick="openAddMenu()">+ প্রশ্ন</button>
 
     <button class="btn-save" onclick="generatePreview()">
         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 16 16">
@@ -4702,42 +4742,32 @@ go()})();
 
         card.innerHTML = `
             <div class="card-header">
-                <span class="q-badge">প্রশ্ন ${qLabel}</span>
+                <span class="hdr-l"><span class="drag-handle" aria-label="ধরে টেনে সরান" title="ধরে টেনে সরান"><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><circle cx="9" cy="6" r="1.8"/><circle cx="15" cy="6" r="1.8"/><circle cx="9" cy="12" r="1.8"/><circle cx="15" cy="12" r="1.8"/><circle cx="9" cy="18" r="1.8"/><circle cx="15" cy="18" r="1.8"/></svg></span><button type="button" class="btn-collapse" aria-label="গুটিয়ে নিন / খুলুন" aria-expanded="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 15l6-6 6 6"/></svg></button><span class="hdr-t"><span class="hdr-r1"><span class="q-badge">প্রশ্ন ${qLabel}</span><span class="q-sum"></span></span><span class="q-pv"></span></span></span>
                 <div class="card-actions">
-                    <button type="button" class="btn-move" onclick="moveCard(${questionCount},-1)" aria-label="উপরে নিন">↑</button>
-                    <button type="button" class="btn-move" onclick="moveCard(${questionCount},1)" aria-label="নিচে নিন">↓</button>
                     <button class="btn-delete-icon" onclick="deleteQuestion(${questionCount})" title="ডিলিট করুন"><i class="idel"></i></button>
                 </div>
             </div>
             
-            <button type="button" class="btn-pass" onclick="addPassageAbove(${questionCount})">＋ এই প্রশ্নের ওপরে অনুচ্ছেদ যোগ করুন</button>
             <div class="q-body">
                 <div class="q-text-group">
                     <div class="q-label-row">
-                        <label style="font-weight:bold; font-size:15px; color:var(--primary-color);">দাগ নং:</label>
-                        <input type="text" class="q-label-input" value="${qLabel}${numSuffix()}" placeholder="যেমন: ১।">
+                        <div class="lr-g"><label style="font-weight:bold; font-size:15px; color:var(--primary-color);">দাগ নং:</label>
+                        <input type="text" class="q-label-input" value="${qLabel}${numSuffix()}" placeholder="যেমন: ১।"></div>
+                        <div class="q-marks-group">
+                        <label style="font-weight:bold; font-size:15px; color:var(--primary-color);">নম্বর</label>
+                        <div class="form-control q-marks-input" contenteditable="true" style="background: #fff; padding: 10px; border: 1px solid var(--border-color); border-radius: 8px;"></div>
+                    </div>
                         <label class="rtl-toggle"><input type="checkbox" class="q-rtl" onchange="toggleRtl(this)"> ডান থেকে বাম (আরবি)</label>
                     </div>
                     
                     <label style="font-weight:bold; font-size:15px; color:var(--primary-color);">প্রশ্ন লিখুন</label>
-                    <div class="rich-text-tools">
-                        <button type="button" onmousedown="event.preventDefault()" onclick="formatText('bold')"><b>B</b></button>
-                        <button type="button" onmousedown="event.preventDefault()" onclick="formatText('italic')"><i>I</i></button>
-                        <button type="button" onmousedown="event.preventDefault()" onclick="formatText('underline')"><u>U</u></button><button type="button" class="btn-ar" onmousedown="event.preventDefault()" onclick="toggleArabic()" title="সিলেক্ট করা লেখা আরবি ফন্টে">ع</button><button type="button" onmousedown="event.preventDefault()" onclick="alignText('justifyLeft')" aria-label="বামে" title="বামে"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><path d="M2 3h12M2 6.5h8M2 10h12M2 13.5h8"/></svg></button><button type="button" onmousedown="event.preventDefault()" onclick="alignText('justifyCenter')" aria-label="মাঝখানে" title="মাঝখানে"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><path d="M2 3h12M4 6.5h8M2 10h12M4 13.5h8"/></svg></button><button type="button" onmousedown="event.preventDefault()" onclick="alignText('justifyRight')" aria-label="ডানে" title="ডানে"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><path d="M2 3h12M6 6.5h8M2 10h12M6 13.5h8"/></svg></button>
-                        <span class="fs-box"><button type="button" onmousedown="event.preventDefault()" onclick="stepFont(this,-1)" aria-label="ছোট করুন">−</button><input type="text" class="fs-input" inputmode="numeric" value="১৩" onfocus="this.select()" onchange="setFontFromInput(this)" aria-label="লেখার সাইজ"><button type="button" onmousedown="event.preventDefault()" onclick="stepFont(this,1)" aria-label="বড় করুন">+</button></span>
-                    </div>
+                    <div class="rich-text-tools">${rtToolsHTML()}</div>
                     
                     <div class="form-control q-text-input" contenteditable="true" style="min-height: 60px; outline: none; background: #fff; padding: 10px; border: 1px solid var(--border-color); border-radius: 8px;"></div>
                 </div>
                 
                 <div id="table-container-${questionCount}" class="table-container-area"></div>
 
-                <div class="q-footer">
-                    <div class="q-marks-group">
-                        <label style="font-weight:bold; font-size:15px; color:var(--primary-color);">নম্বর</label>
-                        <div class="form-control q-marks-input" contenteditable="true" style="background: #fff; padding: 10px; border: 1px solid var(--border-color); border-radius: 8px;"></div>
-                    </div>
-                </div>
             </div>
             
             <div class="sub-questions-section">
@@ -4748,12 +4778,7 @@ go()})();
                         <span class="btn-add-sub" onclick="addSubQuestion(${questionCount})">+ উপ-প্রশ্ন</span>
                     </div>
                 </div>
-                <div class="rich-text-tools sub-tools">
-                    <button type="button" onmousedown="event.preventDefault()" onclick="formatText('bold')"><b>B</b></button>
-                    <button type="button" onmousedown="event.preventDefault()" onclick="formatText('italic')"><i>I</i></button>
-                    <button type="button" onmousedown="event.preventDefault()" onclick="formatText('underline')"><u>U</u></button><button type="button" class="btn-ar" onmousedown="event.preventDefault()" onclick="toggleArabic()" title="সিলেক্ট করা লেখা আরবি ফন্টে">ع</button><button type="button" onmousedown="event.preventDefault()" onclick="alignText('justifyLeft')" aria-label="বামে" title="বামে"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><path d="M2 3h12M2 6.5h8M2 10h12M2 13.5h8"/></svg></button><button type="button" onmousedown="event.preventDefault()" onclick="alignText('justifyCenter')" aria-label="মাঝখানে" title="মাঝখানে"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><path d="M2 3h12M4 6.5h8M2 10h12M4 13.5h8"/></svg></button><button type="button" onmousedown="event.preventDefault()" onclick="alignText('justifyRight')" aria-label="ডানে" title="ডানে"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><path d="M2 3h12M6 6.5h8M2 10h12M6 13.5h8"/></svg></button>
-                        <span class="fs-box"><button type="button" onmousedown="event.preventDefault()" onclick="stepFont(this,-1)" aria-label="ছোট করুন">−</button><input type="text" class="fs-input" inputmode="numeric" value="১৩" onfocus="this.select()" onchange="setFontFromInput(this)" aria-label="লেখার সাইজ"><button type="button" onmousedown="event.preventDefault()" onclick="stepFont(this,1)" aria-label="বড় করুন">+</button></span>
-                </div>
+                <div class="rich-text-tools sub-tools">${rtToolsHTML()}</div>
                 <div id="sub-container-${questionCount}"></div>
             </div>
         `;
@@ -4822,15 +4847,11 @@ go()})();
     }
 
     function rtToolsHTML() {
-        const ic = d => '<svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><path d="' + d + '"/></svg>';
         const nb = 'onmousedown="event.preventDefault()"';
-        return '<button type="button" ' + nb + ' onclick="formatText(\'bold\')"><b>B</b></button>' +
-            '<button type="button" ' + nb + ' onclick="formatText(\'italic\')"><i>I</i></button>' +
-            '<button type="button" ' + nb + ' onclick="formatText(\'underline\')"><u>U</u></button>' +
+        const fmtIc = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6.5 15 12 4l5.5 11M8.6 11h6.8"/><path d="M5 20h14"/></svg>';
+        return '<button type="button" class="tb-trg tb-fmt" ' + nb + ' onclick="togglePop(this,\'fmt\')" aria-label="লেখার ফরম্যাট (বোল্ড, ইটালিক, আন্ডারলাইন)" title="ফরম্যাট">' + fmtIc + '</button>' +
             '<button type="button" class="btn-ar" ' + nb + ' onclick="toggleArabic()" title="সিলেক্ট করা লেখা আরবি ফন্টে">ع</button>' +
-            '<button type="button" ' + nb + ' onclick="alignText(\'justifyLeft\')" aria-label="বামে" title="বামে">' + ic('M2 3h12M2 6.5h8M2 10h12M2 13.5h8') + '</button>' +
-            '<button type="button" ' + nb + ' onclick="alignText(\'justifyCenter\')" aria-label="মাঝখানে" title="মাঝখানে">' + ic('M2 3h12M4 6.5h8M2 10h12M4 13.5h8') + '</button>' +
-            '<button type="button" ' + nb + ' onclick="alignText(\'justifyRight\')" aria-label="ডানে" title="ডানে">' + ic('M2 3h12M6 6.5h8M2 10h12M6 13.5h8') + '</button>' +
+            '<button type="button" class="tb-trg tb-al" data-cur="justifyLeft" ' + nb + ' onclick="togglePop(this,\'align\')" aria-label="অ্যালাইনমেন্ট" title="অ্যালাইনমেন্ট">' + alIcon('justifyLeft') + '</button>' +
             '<span class="fs-box"><button type="button" ' + nb + ' onclick="stepFont(this,-1)" aria-label="ছোট করুন">−</button><input type="text" class="fs-input" inputmode="numeric" value="১৩" onfocus="this.select()" onchange="setFontFromInput(this)" aria-label="লেখার সাইজ"><button type="button" ' + nb + ' onclick="stepFont(this,1)" aria-label="বড় করুন">+</button></span>';
     }
 
@@ -4882,9 +4903,7 @@ go()})();
         const it = document.createElement('div');
         it.className = 'mcq-item';
         it.innerHTML =
-            '<div class="mcq-item-head"><span class="mcq-item-lab"></span><span class="mcq-item-acts">' +
-            '<button type="button" class="btn-move" onclick="mcqMoveItem(this,-1)" aria-label="উপরে নিন">↑</button>' +
-            '<button type="button" class="btn-move" onclick="mcqMoveItem(this,1)" aria-label="নিচে নিন">↓</button>' +
+            '<div class="mcq-item-head"><span class="mcq-item-l"><span class="drag-handle" aria-label="ধরে টেনে সরান" title="ধরে টেনে সরান"><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><circle cx="9" cy="6" r="1.8"/><circle cx="15" cy="6" r="1.8"/><circle cx="9" cy="12" r="1.8"/><circle cx="15" cy="12" r="1.8"/><circle cx="9" cy="18" r="1.8"/><circle cx="15" cy="18" r="1.8"/></svg></span><span class="mcq-item-lab"></span></span><span class="mcq-item-acts">' +
             '<button type="button" class="btn-delete-icon" onclick="mcqRemoveItem(this)" title="এই MCQ মুছুন"><i class="idel"></i></button>' +
             '</span></div>' +
             '<div class="form-control mcq-item-text" contenteditable="true" data-ph="MCQ-র প্রশ্ন লিখুন..."></div>' +
@@ -4913,10 +4932,18 @@ go()})();
         return it;
     }
 
-    function mcqRemoveItem(btn) {
+    async function mcqRemoveItem(btn) {
         const card = btn.closest('.question-card');
         if (card.querySelectorAll('.mcq-item').length <= 1) { alert('কমপক্ষে ১টি MCQ থাকতে হবে।'); return; }
-        btn.closest('.mcq-item').remove();
+        const it = btn.closest('.mcq-item');
+        const te = it.querySelector('.mcq-item-text');
+        const filled = plain(te) !== '' || Array.from(it.querySelectorAll('.mcq-opt-input')).some(e => plain(e) !== '');
+        if (filled) {
+            const lab = (it.querySelector('.mcq-item-lab').textContent || '').trim() || 'MCQ';
+            if (!await askDelete(lab + ' (এই MCQ)', plain(te).replace(/\s+/g, ' ').slice(0, 60))) return;
+        }
+        if (!it.isConnected) return;
+        it.remove();
         relabelItems(card);
         scheduleSave();
     }
@@ -4956,19 +4983,20 @@ go()})();
         card.dataset.auto = qLabel + numSuffix();
         card.innerHTML = `
             <div class="card-header">
-                <span class="q-badge">প্রশ্ন ${qLabel} (MCQ)</span>
+                <span class="hdr-l"><span class="drag-handle" aria-label="ধরে টেনে সরান" title="ধরে টেনে সরান"><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><circle cx="9" cy="6" r="1.8"/><circle cx="15" cy="6" r="1.8"/><circle cx="9" cy="12" r="1.8"/><circle cx="15" cy="12" r="1.8"/><circle cx="9" cy="18" r="1.8"/><circle cx="15" cy="18" r="1.8"/></svg></span><button type="button" class="btn-collapse" aria-label="গুটিয়ে নিন / খুলুন" aria-expanded="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 15l6-6 6 6"/></svg></button><span class="hdr-t"><span class="hdr-r1"><span class="q-badge">প্রশ্ন ${qLabel} (MCQ)</span><span class="q-sum"></span></span><span class="q-pv"></span></span></span>
                 <div class="card-actions">
-                    <button type="button" class="btn-move" onclick="moveCard(${id},-1)" aria-label="উপরে নিন">↑</button>
-                    <button type="button" class="btn-move" onclick="moveCard(${id},1)" aria-label="নিচে নিন">↓</button>
                     <button class="btn-delete-icon" onclick="deleteQuestion(${id})" title="ডিলিট করুন"><i class="idel"></i></button>
                 </div>
             </div>
-            <button type="button" class="btn-pass" onclick="addPassageAbove(${id})">＋ এই প্রশ্নের ওপরে অনুচ্ছেদ যোগ করুন</button>
             <div class="q-body">
                 <div class="q-text-group">
                     <div class="q-label-row">
-                        <label style="font-weight:bold; font-size:15px; color:var(--primary-color);">দাগ নং:</label>
-                        <input type="text" class="q-label-input" value="${card.dataset.auto}" placeholder="যেমন: ১১।">
+                        <div class="lr-g"><label style="font-weight:bold; font-size:15px; color:var(--primary-color);">দাগ নং:</label>
+                        <input type="text" class="q-label-input" value="${card.dataset.auto}" placeholder="যেমন: ১১।"></div>
+                        <div class="q-marks-group">
+                        <label style="font-weight:bold; font-size:15px; color:var(--primary-color);">নম্বর (মোট)</label>
+                        <div class="form-control q-marks-input" contenteditable="true" style="background: #fff; padding: 10px; border: 1px solid var(--border-color); border-radius: 8px;"></div>
+                    </div>
                         <label class="rtl-toggle"><input type="checkbox" class="q-rtl" onchange="toggleRtl(this)"> ডান থেকে বাম (আরবি)</label>
                     </div>
                     <label style="font-weight:bold; font-size:15px; color:var(--primary-color);">শিরোনাম / নির্দেশনা <small style="font-weight:normal;color:#64748b">(ঐচ্ছিক)</small></label>
@@ -4991,12 +5019,6 @@ go()})();
                     <div class="mcq-items"></div>
                     <button type="button" class="btn-pass" style="margin:10px 0 0;color:#5b21b6;background:#fff;border-color:#b9a3ee" onclick="mcqAddItem(${id})">＋ এই দাগে আরেকটি MCQ যোগ করুন</button>
                 </div>
-                <div class="q-footer">
-                    <div class="q-marks-group">
-                        <label style="font-weight:bold; font-size:15px; color:var(--primary-color);">নম্বর (মোট)</label>
-                        <div class="form-control q-marks-input" contenteditable="true" style="background: #fff; padding: 10px; border: 1px solid var(--border-color); border-radius: 8px;"></div>
-                    </div>
-                </div>
             </div>
             <button type="button" class="btn-pass" style="margin:12px 0 0;color:#5b21b6;background:#f6f2fe;border-color:#b9a3ee" onclick="addMcqAfter(${id})">＋ পরের দাগে নতুন MCQ যোগ করুন</button>`;
         const cont = document.getElementById('questionsContainer');
@@ -5014,6 +5036,295 @@ go()})();
     }
 
     
+
+    /* ---------- টুলবার পপ-আপ: ফরম্যাট (B/I/U) ও অ্যালাইনমেন্ট ---------- */
+    const AL_ICONS = {
+        justifyLeft: 'M2 3h12M2 6.5h8M2 10h12M2 13.5h8',
+        justifyCenter: 'M2 3h12M4 6.5h8M2 10h12M4 13.5h8',
+        justifyRight: 'M2 3h12M6 6.5h8M2 10h12M6 13.5h8',
+        justifyFull: 'M2 3h12M2 6.5h12M2 10h12M2 13.5h12'
+    };
+    const AL_NAMES = { justifyLeft: 'বামে (Left)', justifyCenter: 'মাঝখানে (Center)', justifyRight: 'ডানে (Right)', justifyFull: 'দুই পাশ সমান (Justify)' };
+    let tbPopTrg = null;
+
+    function alIcon(cmd) {
+        return '<svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><path d="' + (AL_ICONS[cmd] || AL_ICONS.justifyLeft) + '"/></svg>';
+    }
+
+    function closePop() {
+        const p = document.getElementById('tbPop');
+        if (p) p.remove();
+        tbPopTrg = null;
+    }
+
+    /* বর্তমান সিলেকশন/কার্সর যে লাইনে, তার অ্যালাইনমেন্ট */
+    function curAlign() {
+        const sel = window.getSelection();
+        if (!sel || !sel.rangeCount) return 'justifyLeft';
+        let n = sel.anchorNode;
+        if (n && n.nodeType === 3) n = n.parentElement;
+        if (!n || n.nodeType !== 1) return 'justifyLeft';
+        const cs = getComputedStyle(n), ta = cs.textAlign, rtl = cs.direction === 'rtl';
+        if (ta === 'center') return 'justifyCenter';
+        if (ta === 'justify') return 'justifyFull';
+        if (ta === 'right' || (ta === 'start' && rtl) || (ta === 'end' && !rtl)) return 'justifyRight';
+        return 'justifyLeft';
+    }
+
+    function updateAlignIcons() {
+        const ed = lastSel.el;
+        if (!ed) return;
+        const card = ed.closest('.question-card');
+        if (!card) return;
+        const c = curAlign();
+        card.querySelectorAll('.tb-al').forEach(b => {
+            if (b.dataset.cur !== c) { b.dataset.cur = c; b.innerHTML = alIcon(c); }
+        });
+    }
+
+    function refreshPop() {
+        const p = document.getElementById('tbPop');
+        if (!p) return;
+        const cur = p.dataset.type === 'align' ? curAlign() : '';
+        p.querySelectorAll('button').forEach(b => {
+            let on = false;
+            if (p.dataset.type === 'align') on = b.dataset.cmd === cur;
+            else { try { on = document.queryCommandState(b.dataset.cmd); } catch (e) {} }
+            b.classList.toggle('on', !!on);
+        });
+    }
+
+    function togglePop(btn, type) {
+        if (tbPopTrg === btn) { closePop(); return; }
+        closePop();
+        const pop = document.createElement('div');
+        pop.id = 'tbPop';
+        pop.className = 'tb-pop';
+        pop.dataset.type = type;
+        pop.addEventListener('mousedown', e => e.preventDefault());
+        if (type === 'fmt') {
+            pop.innerHTML =
+                '<button type="button" data-cmd="bold" onclick="popFmt(\'bold\')" aria-label="বোল্ড" title="বোল্ড"><b>B</b></button>' +
+                '<button type="button" data-cmd="italic" onclick="popFmt(\'italic\')" aria-label="ইটালিক" title="ইটালিক"><i>I</i></button>' +
+                '<button type="button" data-cmd="underline" onclick="popFmt(\'underline\')" aria-label="আন্ডারলাইন" title="আন্ডারলাইন"><u>U</u></button>';
+        } else {
+            pop.innerHTML = Object.keys(AL_ICONS).map(c =>
+                '<button type="button" data-cmd="' + c + '" onclick="popAlign(\'' + c + '\')" aria-label="' + AL_NAMES[c] + '" title="' + AL_NAMES[c] + '">' + alIcon(c) + '</button>'
+            ).join('');
+        }
+        document.body.appendChild(pop);
+        const r = btn.getBoundingClientRect();
+        const vw = document.documentElement.clientWidth, vh = window.innerHeight;
+        const pw = pop.offsetWidth, ph = pop.offsetHeight;
+        let left = Math.min(Math.max(6, r.left), Math.max(6, vw - pw - 6));
+        let top = r.bottom + 6;
+        if (top + ph > vh - 6 && r.top - ph - 6 > 6) top = r.top - ph - 6;
+        pop.style.left = left + 'px';
+        pop.style.top = top + 'px';
+        tbPopTrg = btn;
+        refreshPop();
+    }
+
+    function popFmt(cmd) {
+        formatText(cmd);
+        refreshPop();
+    }
+
+    function popAlign(cmd) {
+        alignText(cmd);
+        closePop();
+        updateAlignIcons();
+    }
+
+    document.addEventListener('click', e => {
+        if (!e.target.closest('.tb-pop') && !e.target.closest('.tb-trg')) closePop();
+    });
+    window.addEventListener('scroll', closePop, true);
+
+    /* ---------- সাজানো: ⋮⋮ ধরে টেনে সরানো (প্রশ্ন-কার্ড ও MCQ-র ভেতরের আইটেম) ---------- */
+    (function () {
+        let D = null;
+
+        function lift() {
+            const r = D.unit.getBoundingClientRect();
+            D.ph = document.createElement('div');
+            D.ph.className = 'drag-ph';
+            D.ph.style.height = r.height + 'px';
+            if (D.item) D.ph.style.marginBottom = '0';
+            D.box.insertBefore(D.ph, D.unit);
+            D.unit.classList.add('dragging');
+            Object.assign(D.unit.style, { position: 'fixed', left: r.left + 'px', top: r.top + 'px', width: r.width + 'px', margin: '0', zIndex: '60', maxHeight: '96px', overflow: 'hidden', pointerEvents: 'none' });
+            document.body.classList.add('dragging-body');
+            D.lifted = true;
+        }
+
+        function frame() {
+            D.raf = 0;
+            if (!D || !D.lifted) return;
+            D.unit.style.top = (D.y - D.oy) + 'px';
+            const kids = Array.from(D.box.children).filter(k => k !== D.unit && k !== D.ph && k.classList.contains(D.cls));
+            let before = null;
+            for (const k of kids) {
+                const r = k.getBoundingClientRect();
+                if (D.y < r.top + r.height / 2) { before = k; break; }
+            }
+            if (before) { if (D.ph.nextElementSibling !== before) D.box.insertBefore(D.ph, before); }
+            else if (D.box.lastElementChild !== D.ph) D.box.appendChild(D.ph);
+            const vh = window.innerHeight, edge = 70;
+            let v = 0;
+            if (D.y < edge) v = -Math.ceil((edge - D.y) / 6);
+            else if (D.y > vh - edge) v = Math.ceil((D.y - (vh - edge)) / 6);
+            if (v) { window.scrollBy(0, v); D.raf = requestAnimationFrame(frame); }
+        }
+
+        function end(e) {
+            if (!D || (e && e.pointerId !== undefined && e.pointerId !== D.id)) return;
+            cancelAnimationFrame(D.raf);
+            try { D.h.releasePointerCapture(D.id); } catch (x) {}
+            const d = D;
+            D = null;
+            if (d.lifted) {
+                d.box.insertBefore(d.unit, d.ph);
+                d.ph.remove();
+                d.unit.classList.remove('dragging');
+                if (d.saved == null) d.unit.removeAttribute('style'); else d.unit.setAttribute('style', d.saved);
+                document.body.classList.remove('dragging-body');
+                if (d.item) relabelItems(d.unit.closest('.question-card')); else renumberQuestions();
+                if (previewVisible()) generatePreview(true);
+                scheduleSave();
+            }
+        }
+
+        document.addEventListener('pointerdown', e => {
+            const h = e.target.closest && e.target.closest('.drag-handle');
+            if (!h || D) return;
+            if (e.pointerType === 'mouse' && e.button !== 0) return;
+            const item = h.closest('.mcq-item');
+            const unit = item || h.closest('.question-card');
+            if (!unit) return;
+            e.preventDefault();
+            closePop();
+            const r = unit.getBoundingClientRect();
+            D = { h: h, unit: unit, item: !!item, cls: item ? 'mcq-item' : 'question-card', box: unit.parentNode, id: e.pointerId, oy: e.clientY - r.top, y: e.clientY, sy: e.clientY, saved: unit.getAttribute('style'), raf: 0, lifted: false, ph: null };
+            try { h.setPointerCapture(e.pointerId); } catch (x) {}
+        });
+        document.addEventListener('pointermove', e => {
+            if (!D || e.pointerId !== D.id) return;
+            D.y = e.clientY;
+            if (!D.lifted) {
+                if (Math.abs(D.y - D.sy) < 5) return;
+                lift();
+            }
+            e.preventDefault();
+            if (!D.raf) D.raf = requestAnimationFrame(frame);
+        }, { passive: false });
+        document.addEventListener('pointerup', end);
+        document.addEventListener('pointercancel', end);
+        document.addEventListener('contextmenu', e => { if (e.target.closest && e.target.closest('.drag-handle')) e.preventDefault(); });
+        document.addEventListener('selectstart', e => { if (D && D.lifted) e.preventDefault(); });
+    })();
+
+    /* ---------- কার্ড গুটানো / খোলা (Collapse / Expand) ---------- */
+    function cardPreview(card) {
+        const el = card.querySelector('.q-text-input');
+        let t = el ? plain(el) : '';
+        if (!t && card.dataset.type === 'mcq') { const m = card.querySelector('.mcq-item-text'); t = m ? plain(m) : ''; }
+        t = t.replace(/\s+/g, ' ');
+        return t.length > 60 ? t.slice(0, 60) + '…' : t;
+    }
+
+    function cardTitle(card) {
+        const b = card.querySelector('.q-badge');
+        let t = b ? b.textContent.trim() : 'আইটেম';
+        const di = card.querySelector('.q-label-input');
+        if (di && di.value.trim()) t += ' (দাগ নং ' + di.value.trim() + ')';
+        return t;
+    }
+
+    /* গুটানো হেডারের তথ্য: শুধু আসল দাগ নম্বর ও নম্বর; না থাকলে কিছুই দেখায় না */
+    function updateSum(card) {
+        const s = card.querySelector('.q-sum'), pv = card.querySelector('.q-pv');
+        if (!s) return;
+        const parts = [];
+        const di = card.querySelector('.q-label-input');
+        if (di) { const d = di.value.replace(/[।.\s]+$/, '').trim(); if (d) parts.push('দাগ নং ' + d); }
+        const mk = card.querySelector('.q-marks-input');
+        if (mk) { const m = plain(mk); if (m) parts.push(/^[\d০-৯.,\s]+$/.test(m) ? m + ' নম্বর' : m); }
+        s.textContent = parts.length ? ' • ' + parts.join(' • ') : '';
+        if (pv) pv.textContent = cardPreview(card);
+    }
+
+    function toggleCollapse(card) {
+        const on = !card.classList.contains('collapsed');
+        if (on) {
+            closePop();
+            const ae = document.activeElement;
+            if (ae && card.contains(ae) && ae.blur) ae.blur();
+            updateSum(card);
+        }
+        card.classList.toggle('collapsed', on);
+        const b = card.querySelector('.btn-collapse');
+        if (b) b.setAttribute('aria-expanded', on ? 'false' : 'true');
+    }
+
+    document.addEventListener('click', e => {
+        const t = e.target;
+        const card = t.closest && t.closest('.question-card');
+        if (!card) return;
+        if (t.closest('.btn-collapse')) { toggleCollapse(card); return; }
+        if (card.classList.contains('collapsed') && t.closest('.card-header') && !t.closest('.drag-handle') && !t.closest('.btn-delete-icon')) toggleCollapse(card);
+    });
+
+    /* ---------- মুছে ফেলার আগে নিশ্চিতকরণ ---------- */
+    function askDelete(title, pv) {
+        return new Promise(res => {
+            openModal('<h3 class="qm-t">মুছে ফেলবেন?</h3><p style="font-size:14px;line-height:1.6;margin:0 0 4px"><b>' + esc(title) + '</b> মুছে ফেলা হবে।' + (pv ? '<br><span style="color:#64748b">“' + esc(pv) + '”</span>' : '') + '</p><p style="font-size:13px;color:#b42323;margin:6px 0 0">এটি ফেরানো যাবে না।</p><div class="qm-b"><button type="button" class="qm-btn" id="dlNo">বাতিল</button><button type="button" class="qm-btn d" id="dlYes">মুছে ফেলুন</button></div>');
+            const m = document.getElementById('qpModal');
+            m.classList.add('sheet');
+            let done = false;
+            const fin = v => { if (done) return; done = true; closeModal(); res(v); };
+            document.getElementById('dlNo').onclick = () => fin(false);
+            document.getElementById('dlYes').onclick = () => fin(true);
+            m.addEventListener('click', e => { if (e.target === m) fin(false); });
+        });
+    }
+
+    async function removeSub(btn) {
+        const row = btn.closest('.sub-row');
+        if (!row) return;
+        const txt = plain(row.querySelector('.sub-text-input'));
+        if (txt !== '') {
+            const lab = row.querySelector('.sub-label-input').value.trim();
+            if (!await askDelete('উপ-প্রশ্ন ' + lab, txt.replace(/\s+/g, ' ').slice(0, 60))) return;
+        }
+        if (!row.isConnected) return;
+        row.remove();
+        scheduleSave();
+    }
+
+    /* ---------- "+ প্রশ্ন" বাটনের মেনু (বটম শিট) ---------- */
+    function openAddMenu() {
+        const it = (k, c, t, d) => '<button type="button" class="am-item" onclick="addMenuPick(\'' + k + '\')"><span class="am-dot" style="background:' + c + '"></span><span><b>' + t + '</b><small>' + d + '</small></span></button>';
+        openModal('<h3 class="qm-t">কী যোগ করবেন?</h3>' +
+            it('q', '#24634d', 'সাধারণ প্রশ্ন যোগ করুন', 'দাগ নম্বর, নম্বর, উপ-প্রশ্ন ও ছক সহ') +
+            it('mcq', '#7c3aed', 'MCQ যোগ করুন', 'বহুনির্বাচনি প্রশ্ন ও অপশন') +
+            it('p', '#b7791f', 'অনুচ্ছেদ যোগ করুন', 'প্রশ্ন নম্বরের আগে বসবে') +
+            it('b', '#2563eb', 'নতুন পাতা যোগ করুন', 'এরপরের প্রশ্ন আলাদা পাতায় যাবে') +
+            '<div class="qm-b"><button type="button" class="qm-btn" onclick="closeModal()">বাতিল</button></div>');
+        const m = document.getElementById('qpModal');
+        if (m) m.classList.add('sheet');
+    }
+
+    function addMenuPick(k) {
+        closeModal();
+        if (k === 'q') {
+            const id = addNewQuestion();
+            const c = document.getElementById('q-card-' + id);
+            if (c) c.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        } else if (k === 'mcq') addMcq();
+        else if (k === 'p') addPassage();
+        else addPageBreak();
+    }
 
     function addPassageAbove(id) {
         addPassage(document.getElementById('q-card-' + id));
@@ -5040,10 +5351,8 @@ go()})();
         card.dataset.type = 'passage';
         card.innerHTML = `
             <div class="card-header">
-                <span class="q-badge">অনুচ্ছেদ</span>
+                <span class="hdr-l"><span class="drag-handle" aria-label="ধরে টেনে সরান" title="ধরে টেনে সরান"><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><circle cx="9" cy="6" r="1.8"/><circle cx="15" cy="6" r="1.8"/><circle cx="9" cy="12" r="1.8"/><circle cx="15" cy="12" r="1.8"/><circle cx="9" cy="18" r="1.8"/><circle cx="15" cy="18" r="1.8"/></svg></span><button type="button" class="btn-collapse" aria-label="গুটিয়ে নিন / খুলুন" aria-expanded="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 15l6-6 6 6"/></svg></button><span class="hdr-t"><span class="hdr-r1"><span class="q-badge">অনুচ্ছেদ</span><span class="q-sum"></span></span><span class="q-pv"></span></span></span>
                 <div class="card-actions">
-                    <button type="button" class="btn-move" onclick="moveCard(${id},-1)" aria-label="উপরে নিন">↑</button>
-                    <button type="button" class="btn-move" onclick="moveCard(${id},1)" aria-label="নিচে নিন">↓</button>
                     <button class="btn-delete-icon" onclick="deleteQuestion(${id})" title="ডিলিট করুন"><i class="idel"></i></button>
                 </div>
             </div>
@@ -5052,12 +5361,7 @@ go()})();
             </div>
             <div class="q-text-group">
                 <label style="font-weight:bold; font-size:13px; color:var(--primary-color);">অনুচ্ছেদ লিখুন (প্রশ্ন নম্বরের আগে বসবে)</label>
-                <div class="rich-text-tools">
-                    <button type="button" onmousedown="event.preventDefault()" onclick="formatText('bold')"><b>B</b></button>
-                    <button type="button" onmousedown="event.preventDefault()" onclick="formatText('italic')"><i>I</i></button>
-                    <button type="button" onmousedown="event.preventDefault()" onclick="formatText('underline')"><u>U</u></button><button type="button" class="btn-ar" onmousedown="event.preventDefault()" onclick="toggleArabic()" title="সিলেক্ট করা লেখা আরবি ফন্টে">ع</button><button type="button" onmousedown="event.preventDefault()" onclick="alignText('justifyLeft')" aria-label="বামে" title="বামে"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><path d="M2 3h12M2 6.5h8M2 10h12M2 13.5h8"/></svg></button><button type="button" onmousedown="event.preventDefault()" onclick="alignText('justifyCenter')" aria-label="মাঝখানে" title="মাঝখানে"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><path d="M2 3h12M4 6.5h8M2 10h12M4 13.5h8"/></svg></button><button type="button" onmousedown="event.preventDefault()" onclick="alignText('justifyRight')" aria-label="ডানে" title="ডানে"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><path d="M2 3h12M6 6.5h8M2 10h12M6 13.5h8"/></svg></button>
-                    <span class="fs-box"><button type="button" onmousedown="event.preventDefault()" onclick="stepFont(this,-1)" aria-label="ছোট করুন">−</button><input type="text" class="fs-input" inputmode="numeric" value="১৩" onfocus="this.select()" onchange="setFontFromInput(this)" aria-label="লেখার সাইজ"><button type="button" onmousedown="event.preventDefault()" onclick="stepFont(this,1)" aria-label="বড় করুন">+</button></span>
-                </div>
+                <div class="rich-text-tools">${rtToolsHTML()}</div>
                 <div class="form-control q-text-input" contenteditable="true" data-ph="যেমন: [Read the text and answer the questions no 1, 2, 3 and 4:] I am Sabiha..." style="min-height: 90px; outline: none; background: #fff; padding: 10px; border: 1px solid var(--border-color); border-radius: 8px;"></div>
             </div>`;
         const cont = document.getElementById('questionsContainer');
@@ -5197,7 +5501,7 @@ go()})();
             <div class="sub-text">
                 <div class="form-control sub-text-input" contenteditable="true" data-ph="উপ-প্রশ্ন লিখুন..." style="background:#fff;"></div>
             </div>
-            <span class="btn-remove-sub" onclick="this.parentElement.remove(); scheduleSave();" aria-label="মুছুন"><i class="idel"></i></span>
+            <span class="btn-remove-sub" onclick="removeSub(this)" aria-label="মুছুন"><i class="idel"></i></span>
         `;
         subContainer.appendChild(row);
         const rcard = document.getElementById(`q-card-${qId}`);
@@ -5240,6 +5544,7 @@ go()})();
             if (inp.value === card.dataset.auto) inp.value = lab;
             card.dataset.auto = lab;
         });
+        document.querySelectorAll('.question-card.collapsed').forEach(updateSum);
         if (previewVisible()) generatePreview(true);
         scheduleSave();
     }
@@ -5252,11 +5557,15 @@ go()})();
             if (inp.value === card.dataset.auto) inp.value = lab + numSuffix();
             card.dataset.auto = lab + numSuffix();
         });
+        document.querySelectorAll('.question-card.collapsed').forEach(updateSum);
     }
 
-    function deleteQuestion(qId) {
+    async function deleteQuestion(qId) {
         const card = document.getElementById(`q-card-${qId}`);
-        if (card) card.remove();
+        if (!card) return;
+        const ok = await askDelete(cardTitle(card), cardPreview(card));
+        if (!ok || !card.isConnected) return;
+        card.remove();
         renumberQuestions();
         scheduleSave();
     }
@@ -5282,6 +5591,8 @@ go()})();
         lastSel = { el: ed, range: sel.getRangeAt(0).cloneRange() };
         const px = Math.round(parseFloat(getComputedStyle(node).fontSize) || 13);
         setFsInputs(card, px);
+        updateAlignIcons();
+        refreshPop();
     });
 
     function applyFontSize(card, px) {
@@ -5568,10 +5879,8 @@ go()})();
         card.dataset.type = 'break';
         card.innerHTML = `
             <div class="card-header">
-                <span class="q-badge">নতুন পাতা (উল্টাপিঠ)</span>
+                <span class="hdr-l"><span class="drag-handle" aria-label="ধরে টেনে সরান" title="ধরে টেনে সরান"><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><circle cx="9" cy="6" r="1.8"/><circle cx="15" cy="6" r="1.8"/><circle cx="9" cy="12" r="1.8"/><circle cx="15" cy="12" r="1.8"/><circle cx="9" cy="18" r="1.8"/><circle cx="15" cy="18" r="1.8"/></svg></span><button type="button" class="btn-collapse" aria-label="গুটিয়ে নিন / খুলুন" aria-expanded="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 15l6-6 6 6"/></svg></button><span class="hdr-t"><span class="hdr-r1"><span class="q-badge">নতুন পাতা (উল্টাপিঠ)</span><span class="q-sum"></span></span><span class="q-pv"></span></span></span>
                 <div class="card-actions">
-                    <button type="button" class="btn-move" onclick="moveCard(${id},-1)" aria-label="উপরে নিন">↑</button>
-                    <button type="button" class="btn-move" onclick="moveCard(${id},1)" aria-label="নিচে নিন">↓</button>
                     <button class="btn-delete-icon" onclick="deleteQuestion(${id})" title="ডিলিট করুন"><i class="idel"></i></button>
                 </div>
             </div>

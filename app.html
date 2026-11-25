@@ -422,6 +422,7 @@ function login(){
  app.innerHTML=`<div class="login"><div class="brand"><div class="ar">وَمَا تَوْفِيقِي إِلَّا بِاللَّهِ</div><h1>Madrasa Management</h1><p>${sub}</p></div>
  <div class="roles"><h2>স্বাগতম</h2><small>আপনার অ্যাকাউন্ট দিয়ে লগইন করুন</small>
  ${[['admin','Admin Login','প্রশাসন','#0b6b4a'],['teacher','Teacher Login','শিক্ষক','#1f6fe0'],['guardian','Guardian Login','অভিভাবক','#e8891a']].map(r=>`<button class="role" style="background:${r[3]}" onclick="go('${r[0]}')"><div>${r[1]}<span>(${r[2]})</span></div><i>›</i></button>`).join('')}
+ <div style="text-align:center"><div class="lgor">অথবা</div><div style="font-weight:600">একটি অ্যাকাউন্ট নেই?</div><a class="lgl" href="javascript:void(0)" onclick="if(window.lgReg)lgReg();else alert('ইন্টারনেট সংযোগ ছাড়া নিবন্ধন করা যাবে না। সংযোগ দিয়ে অ্যাপ আবার খুলুন।')" style="padding-top:2px">নিবন্ধন করুন</a></div>
  </div></div>`}
 
 
@@ -499,7 +500,7 @@ const nid=(a,p)=>p+String(Math.max(0,...a.map(x=>+x.id.slice(3)))+1).padStart(a=
 function mcode(){var m=(window.getMid&&window.getMid())||'',h=5381,i;for(i=0;i<m.length;i++)h=((h*33)^m.charCodeAt(i))>>>0;var c=h.toString(36).toUpperCase();while(c.length<4)c='0'+c;return c.slice(-4)}
 function nidM(a,k){var c=mcode(),pre=c+(k==='T'?'-T':'-'),mx=0;a.forEach(function(x){var i=String(x.id||'');if(i.indexOf(pre)===0){var n=parseInt(i.slice(pre.length),10);if(n>mx)mx=n}});return pre+String(mx+1).padStart(k==='T'?3:4,'0')}
 function form(title,f,v,h){fh=h;const d=document.createElement('div');d.id='md';d.style.cssText='position:fixed;inset:0;background:#0009;z-index:20;display:flex;align-items:flex-end;justify-content:center';
-d.innerHTML=`<div style="background:var(--card);width:100%;max-width:480px;border-radius:20px 20px 0 0;padding:18px;max-height:90vh;overflow:auto"><h3 style="margin:0 0 6px">${title}</h3>${f.map(x=>x[2]==='perms'?permHTML(v):x[2]==='monthopt'?`<label style="display:block;font-size:13px;color:var(--mute);margin-top:8px">${x[1]}<select class="search" style="margin:4px 0 0" name="${x[0]}"><option value="">— নির্ধারিত নয় —</option>${monthOptions().map(k=>`<option value="${k}" ${k===v[x[0]]?'selected':''}>${monLabel(k)}</option>`).join('')}</select></label>`:x[2]==='month'?`<label style="display:block;font-size:13px;color:var(--mute);margin-top:8px">${x[1]}<select class="search" style="margin:4px 0 0" name="${x[0]}">${monthOptions().map(k=>`<option value="${k}" ${k===v[x[0]]?'selected':''}>${monLabel(k)}</option>`).join('')}</select></label>`:x[2]==='photo'?`<div style="text-align:center;margin-top:8px"><div id="pv_${x[0]}" class="av" data-k="${(title&&String(title).indexOf('শিক্ষক')>-1?'t':title&&String(title).indexOf('অ্যাডমিন')>-1?'a':'s')}" style="width:80px;height:80px;margin:0 auto;font-size:28px">${v[x[0]]?`<img src="${v[x[0]]}" style="width:100%;height:100%;object-fit:cover;border-radius:50%">`:avLogo((title&&String(title).indexOf('শিক্ষক')>-1?'t':title&&String(title).indexOf('অ্যাডমিন')>-1?'a':'s'))}</div><label style="display:block;font-size:13px;color:var(--mute);margin-top:6px">${x[1]}<input type="file" accept="image/*" style="display:block;margin:6px auto" onchange="phSel(this,'h_${x[0]}','pv_${x[0]}')"></label><button type="button" onclick="phClr('h_${x[0]}','pv_${x[0]}')" style="display:block;margin:2px auto 0;padding:7px 16px;border-radius:10px;border:1px solid var(--line);background:var(--card);color:#d64545;font:inherit;font-size:13px;cursor:pointer"><i class=idel></i> ছবি মুছুন</button><input type="hidden" name="${x[0]}" id="h_${x[0]}" value="${esc(v[x[0]])}"></div>`:(x[0]==='c'||x[0]==='cls')?`<label style="display:block;font-size:13px;color:var(--mute);margin-top:8px">${x[1]}<select class="search" style="margin:4px 0 0" name="${x[0]}">${classes.map(c=>`<option value="${esc(c)}" ${c===v[x[0]]?'selected':''}>${c}</option>`).join('')}</select></label>`:(x[2]&&x[2].indexOf('select:')===0?`<label style="display:block;font-size:13px;color:var(--mute);margin-top:8px">${x[1]}<select class="search" style="margin:4px 0 0" name="${x[0]}">${x[2].slice(7).split(',').map(o=>`<option value="${esc(o)}" ${o===v[x[0]]?'selected':''}>${o}</option>`).join('')}</select></label>`:`<label style="display:block;font-size:13px;color:var(--mute);margin-top:8px">${x[1]}<input class="search" style="margin:4px 0 0" name="${x[0]}" value="${esc(v[x[0]])}" ${x[2]||''}></label>`)).join('')}<datalist id="subdl">${(typeof subjList==='function'?subjList():[]).map(sb=>`<option value="${esc(sb)}">`).join('')}</datalist><div style="display:flex;gap:10px;margin-top:14px"><button class="tile" style="background:var(--g);flex:1;padding:12px" onclick="sv()">সংরক্ষণ করুন</button><button class="tile" style="background:#5b6b7d;flex:1;padding:12px" onclick="cl()">বাতিল</button></div></div>`;document.body.appendChild(d)}
+d.innerHTML=`<div style="background:var(--card);width:100%;max-width:480px;border-radius:20px 20px 0 0;padding:18px;max-height:90vh;overflow:auto"><h3 style="margin:0 0 6px">${title}</h3>${f.map(x=>x[2]==='perms'?permHTML(v):x[2]==='monthopt'?`<label style="display:block;font-size:13px;color:var(--mute);margin-top:8px">${x[1]}<select class="search" style="margin:4px 0 0" name="${x[0]}"><option value="">— নির্ধারিত নয় —</option>${monthOptions().map(k=>`<option value="${k}" ${k===v[x[0]]?'selected':''}>${monLabel(k)}</option>`).join('')}</select></label>`:x[2]==='month'?`<label style="display:block;font-size:13px;color:var(--mute);margin-top:8px">${x[1]}<select class="search" style="margin:4px 0 0" name="${x[0]}">${monthOptions().map(k=>`<option value="${k}" ${k===v[x[0]]?'selected':''}>${monLabel(k)}</option>`).join('')}</select></label>`:x[2]==='photo'?`<div style="text-align:center;margin-top:8px"><div id="pv_${x[0]}" class="av" data-k="${(title&&String(title).indexOf('শিক্ষক')>-1?'t':title&&String(title).indexOf('অ্যাডমিন')>-1?'a':'s')}" style="width:80px;height:80px;margin:0 auto;font-size:28px">${v[x[0]]?`<img src="${v[x[0]]}" style="width:100%;height:100%;object-fit:cover;border-radius:50%">`:avLogo((title&&String(title).indexOf('শিক্ষক')>-1?'t':title&&String(title).indexOf('অ্যাডমিন')>-1?'a':'s'))}</div><label style="display:block;font-size:13px;color:var(--mute);margin-top:6px">${x[1]}<input type="file" accept="${x[0]==='logo'?'image/*':'image/jpeg,image/png'}" style="display:block;margin:6px auto" onchange="phSel(this,'h_${x[0]}','pv_${x[0]}')">${x[0]==='logo'?'':'<small style="display:block;text-align:center;margin-top:4px">JPG বা PNG • বড় ছবি নিজে থেকে ছোট হয়ে যাবে</small>'}</label><button type="button" onclick="phClr('h_${x[0]}','pv_${x[0]}')" style="display:block;margin:2px auto 0;padding:7px 16px;border-radius:10px;border:1px solid var(--line);background:var(--card);color:#d64545;font:inherit;font-size:13px;cursor:pointer"><i class=idel></i> ছবি মুছুন</button><input type="hidden" name="${x[0]}" id="h_${x[0]}" value="${esc(v[x[0]])}"></div>`:(x[0]==='c'||x[0]==='cls')?`<label style="display:block;font-size:13px;color:var(--mute);margin-top:8px">${x[1]}<select class="search" style="margin:4px 0 0" name="${x[0]}">${classes.map(c=>`<option value="${esc(c)}" ${c===v[x[0]]?'selected':''}>${c}</option>`).join('')}</select></label>`:(x[2]&&x[2].indexOf('select:')===0?`<label style="display:block;font-size:13px;color:var(--mute);margin-top:8px">${x[1]}<select class="search" style="margin:4px 0 0" name="${x[0]}">${x[2].slice(7).split(',').map(o=>`<option value="${esc(o)}" ${o===v[x[0]]?'selected':''}>${o}</option>`).join('')}</select></label>`:`<label style="display:block;font-size:13px;color:var(--mute);margin-top:8px">${x[1]}<input class="search" style="margin:4px 0 0" name="${x[0]}" value="${esc(v[x[0]])}" ${x[2]||''}></label>`)).join('')}<datalist id="subdl">${(typeof subjList==='function'?subjList():[]).map(sb=>`<option value="${esc(sb)}">`).join('')}</datalist><div style="display:flex;gap:10px;margin-top:14px"><button class="tile" style="background:var(--g);flex:1;padding:12px" onclick="sv()">সংরক্ষণ করুন</button><button class="tile" style="background:#5b6b7d;flex:1;padding:12px" onclick="cl()">বাতিল</button></div></div>`;document.body.appendChild(d)}
 function cl(){window.__formReq=null;const m=document.getElementById('md');if(m)m.remove()}
 function sv(){const o={};document.querySelectorAll('#md input,#md select').forEach(i=>{o[i.name]=i.type==='checkbox'?i.checked:i.value.trim()});if(!o.n){alert('নাম লিখুন');return}const rq=window.__formReq;if(rq){for(const r of rq){const v=o[r[0]]||'';if(!v&&r[1]){alert(r[1]+' অবশ্যই লিখতে হবে');return}if(v&&r[2]&&!r[2](v)){alert(r[3]);return}}}const perm=[];Object.keys(o).forEach(k=>{if(k.indexOf('perm_')===0){if(o[k])perm.push(k.slice(5));delete o[k]}});if(perm.length||document.getElementById('md').querySelector('[name^="perm_"]'))o.perm=perm;cl();fh(o)}
 function shell(title,body,back,plus){
@@ -707,7 +708,7 @@ function finV(){const ms=x=>x.filter(e=>e.m===M0),days=Object.keys(at).filter(d=
  '<h3>ফলাফল</h3>'+K('ফলাফল আছে',bn(rl.length)+' জন')+K('পাসের হার',rl.length?bn(Math.round(rl.filter(c=>!c.f).length/rl.length*100))+'%':'—')+
  '<h3>শিক্ষক</h3>'+K('মোট মাসিক বেতন',tk(sum(teachers.map(t=>({a:t.sal}))))),'rep')}
 /* সেটিংস, ব্যাকআপ */
-function setV(){shell('Settings',`${role==='admin'?'<button class="link" onclick="planV()"><span><small>প্ল্যান</small>ট্রায়াল ও মাসিক সাবস্ক্রিপশন (৳৩০০)</span>›</button>':''}<button class="link" onclick="profEdit()"><span><small>মাদ্রাসার তথ্য</small>নাম, লোগো, ঠিকানা ও প্রতিষ্ঠার তারিখ</span>›</button><button class="link" onclick="adminEdit()"><span><small>অ্যাডমিনের তথ্য</small>নাম, ছবি, ফোন ও ইমেইল</span>›</button><button class="link wgrow" style="display:none" onclick="wgPin()"><span><small>হোম স্ক্রিন উইজেট</small>উইজেট হোম স্ক্রিনে যোগ করুন</span>›</button>${role==='admin'||role==='teacher'?'<button class="link" onclick="window.__bellFrom=\'set\';tab=\'bell\';draw()"><span><small>ঘণ্টা</small>পিরিয়ডের ঘণ্টার সময়সূচি</span>›</button>':''}<button class="link" onclick="tab='nhub';draw()"><span><small>Notification</small>চালু/বন্ধ, টেমপ্লেট, পাঠানো ও ইতিহাস</span>›</button><button class="link" onclick="tab='classFee';draw()"><span><small>মাসিক ফি</small>ফি নির্ধারণ</span>›</button>${role==='admin'?'<button class="link" onclick="paySetGo()"><span><small>বিকাশ পেমেন্ট</small>নম্বর, QR ও অগ্রিম মাসের সীমা</span>›</button>':''}${role==='admin'?'<button class="link" onclick="fbBackup()"><span><small>সম্পূর্ণ ব্যাকআপ</small>Firebase-এর সব ডেটা ফাইলে সেভ করুন</span>›</button>':''}`,'home');setFilt()}
+function setV(){shell('Settings',`${role==='admin'?'<button class="link" onclick="planV()"><span><small>প্ল্যান</small>ট্রায়াল ও মাসিক সাবস্ক্রিপশন (৳৩০০)</span>›</button>':''}<button class="link" onclick="profEdit()"><span><small>মাদ্রাসার তথ্য</small>নাম, লোগো, ঠিকানা ও প্রতিষ্ঠার তারিখ</span>›</button><button class="link" onclick="adminEdit()"><span><small>অ্যাডমিনের তথ্য</small>নাম, ছবি, ফোন ও ইমেইল</span>›</button><button class="link wgrow" style="display:none" onclick="wgPin()"><span><small>হোম স্ক্রিন উইজেট</small>উইজেট হোম স্ক্রিনে যোগ করুন</span>›</button>${role==='admin'||role==='teacher'?'<button class="link" onclick="window.__bellFrom=\'set\';tab=\'bell\';draw()"><span><small>ঘণ্টা</small>পিরিয়ডের ঘণ্টার সময়সূচি</span>›</button>':''}<button class="link" onclick="tab='nhub';draw()"><span><small>Notification</small>চালু/বন্ধ, টেমপ্লেট, পাঠানো ও ইতিহাস</span>›</button><button class="link" onclick="tab='classFee';draw()"><span><small>মাসিক ফি</small>ফি নির্ধারণ</span>›</button>${role==='admin'?'<button class="link" onclick="paySetGo()"><span><small>বিকাশ পেমেন্ট</small>নম্বর, QR ও অগ্রিম মাসের সীমা</span>›</button>':''}${role==='admin'?'<button class="link" onclick="fbBackup()"><span><small>সম্পূর্ণ ব্যাকআপ</small></span>›</button>':''}`,'home');setFilt()}
 function classFeeV(){shell('মাসিক ফি (শ্রেণী অনুযায়ী)',`<div class="row"><div class="info"><b>আগের মাসের বকেয়া হিসাবে ধরুন</b><small>চালু করলে ছাত্রের ভর্তির মাস (না থাকলে প্রথম ফি-র মাস) থেকে যেসব মাসের ফি বাকি, সব বকেয়ায় যোগ হবে। আগে ছাত্রের ভর্তির মাস ঠিক করে নিন।</small></div>${tglHTML(!!feeCarry,'setCarry()')}</div><div class="row"><div class="info"><b>সাধারণ (ডিফল্ট) ফি</b><small>যে শ্রেণীর নিজস্ব ফি সেট করা নেই, তাদের জন্য প্রযোজ্য</small></div><b>${tk(MF)}</b><button aria-label="পরিবর্তন" onclick="setDefaultFee()">✏️</button></div>`+
  classes.map(c=>`<div class="row"><div class="info"><b>${c}</b><small>বর্তমান ফি: ${tk(classFee[c]!=null&&classFee[c]!==''?classFee[c]:MF)}${classFee[c]!=null&&classFee[c]!==''?'':' (সাধারণ)'}</small></div><button aria-label="পরিবর্তন" onclick="setClassFee('${esc(c)}')">✏️</button></div>`).join('')+feeHistHTML(),'set')}
 function feeHistHTML(){const L=[];feeLog.d.forEach(e=>L.push(['সাধারণ ফি',e]));Object.keys(feeLog.c).forEach(c=>feeLog.c[c].forEach(e=>L.push([c,e])));if(!L.length)return '';L.sort((a,b)=>a[1].f<b[1].f?1:a[1].f>b[1].f?-1:0);return '<h3>ফি পরিবর্তনের ইতিহাস</h3>'+L.slice(0,30).map(x=>{const e=x[1];return '<div class="link"><span><small>'+monLabel(e.f)+' থেকে কার্যকর</small>'+xe0(x[0])+': '+(_num(e.o)!=null?tk(e.o):'সাধারণ')+' → '+(_num(e.v)!=null?tk(e.v):'সাধারণ')+'</span></div>'}).join('')}
@@ -756,7 +757,23 @@ const AVL={
  p:'<rect width="56" height="56" fill="#0b6b4a"/><circle cx="28" cy="22" r="8.5" fill="#fff"/><ellipse cx="28" cy="54" rx="19" ry="16" fill="#fff"/>'};
 const avLogo=k=>'<svg class="avl" viewBox="0 0 56 56" aria-hidden="true">'+(AVL[k]||AVL.p)+'</svg>';
 const avHTML=(ph,ch,k)=>ph?`<img src="${ph}" alt="">`:avLogo(k);
-function phSel(inp,hid,prev){const f=inp.files&&inp.files[0];if(!f)return;const rd=new FileReader();rd.onload=()=>{const im=new Image();im.onload=()=>{const sc=Math.min(1,128/Math.max(im.width,im.height));const c=document.createElement('canvas');c.width=im.width*sc;c.height=im.height*sc;const cx=c.getContext('2d');cx.fillStyle='#fff';cx.fillRect(0,0,c.width,c.height);cx.drawImage(im,0,0,c.width,c.height);const url=c.toDataURL('image/jpeg',0.65);const p=document.getElementById(prev);if(p)p.innerHTML=`<img src="${url}" style="width:100%;height:100%;object-fit:cover;border-radius:50%">`;const h=document.getElementById(hid);if(h)h.value=url};im.src=rd.result};rd.readAsDataURL(f)}
+/* প্রোফাইল ছবির নিয়ম: শুধু JPG/PNG; ৫০০ KB-এর বেশি হলে আগে ছোট (compress) করা হয়; ফল সবসময় ছোট JPEG (Realtime Database-এ টেক্সট হিসেবে, Rules-এর সীমা ৬০০০০ অক্ষরের অনেক নিচে) */
+const PH_MAX_FILE=500*1024,PH_HARD=15*1024*1024,PH_DIM=128,PH_CAP=16000;
+function phSel(inp,hid,prev){const f=inp.files&&inp.files[0];if(!f)return;
+ if(hid==='h_logo')return phSelLogo(inp,hid,prev);
+ const bad=m=>{alert(m);inp.value=''},nm=String(f.name||'').toLowerCase();
+ if(!(/^image\/(jpeg|png)$/.test(f.type)||(!f.type&&/\.(jpe?g|png)$/.test(nm)))){bad('শুধু JPG, JPEG বা PNG ছবি দেওয়া যাবে');return}
+ if(f.size>PH_HARD){bad('ছবির ফাইল খুব বড়। ১৫ MB-এর ছোট ছবি দিন');return}
+ const big=f.size>PH_MAX_FILE,u0=URL.createObjectURL(f),im=new Image();
+ im.onerror=()=>{URL.revokeObjectURL(u0);bad('ছবি পড়া যায়নি। অন্য একটি ছবি বেছে নিন')};
+ im.onload=()=>{let out='';try{let dim=PH_DIM,q=.78;
+   for(let i=0;i<8;i++){const sc=Math.min(1,dim/Math.max(im.naturalWidth,im.naturalHeight)),w=Math.max(1,Math.round(im.naturalWidth*sc)),h=Math.max(1,Math.round(im.naturalHeight*sc)),c=document.createElement('canvas');c.width=w;c.height=h;const cx=c.getContext('2d');cx.fillStyle='#fff';cx.fillRect(0,0,w,h);cx.drawImage(im,0,0,w,h);out=c.toDataURL('image/jpeg',q);if(out.length<=PH_CAP)break;if(q>.5)q-=.1;else dim=Math.round(dim*.85)}}catch(e){out=''}
+  URL.revokeObjectURL(u0);
+  if(!out||out.length>PH_CAP){bad('ছবি ছোট করা যায়নি। অন্য একটি ছবি বেছে নিন');return}
+  const p=document.getElementById(prev);if(p)p.innerHTML=`<img src="${out}" style="width:100%;height:100%;object-fit:cover;border-radius:50%">`;const h=document.getElementById(hid);if(h)h.value=out;
+  if(big)alert('ছবি বড় ছিল ('+bn(Math.round(f.size/1024))+' KB), ছোট করে নেওয়া হয়েছে')};
+ im.src=u0}
+function phSelLogo(inp,hid,prev){const f=inp.files&&inp.files[0];if(!f)return;const rd=new FileReader();rd.onload=()=>{const im=new Image();im.onload=()=>{const sc=Math.min(1,128/Math.max(im.width,im.height));const c=document.createElement('canvas');c.width=im.width*sc;c.height=im.height*sc;const cx=c.getContext('2d');cx.fillStyle='#fff';cx.fillRect(0,0,c.width,c.height);cx.drawImage(im,0,0,c.width,c.height);const url=c.toDataURL('image/jpeg',0.65);const p=document.getElementById(prev);if(p)p.innerHTML=`<img src="${url}" style="width:100%;height:100%;object-fit:cover;border-radius:50%">`;const h=document.getElementById(hid);if(h)h.value=url};im.src=rd.result};rd.readAsDataURL(f)}
 function phClr(hid,prev){var h=document.getElementById(hid);if(h)h.value='';var p=document.getElementById(prev);if(p){p.innerHTML=avLogo(p.getAttribute('data-k')||'p')}var f=document.querySelector('#md input[type=file]');if(f)f.value=''}
 let adminPic=_ld('mm_adminpic','');
 let adminInfo=_ld('mm_admininfo',{n:'Admin',ph:'',em:''});
@@ -1540,14 +1557,13 @@ window.lgEye=(id,b)=>{const i=document.getElementById(id);i.type=i.type==='passw
 function lgPage(id,inner,onBack){document.querySelectorAll('.lgp#'+id).forEach(x=>x.remove());const d=document.createElement('div');d.id=id;d.className='lgp';
  const sub='শিক্ষা • শৃঙ্খলা • নৈতিকতা';
  d.innerHTML=`<div class="in">${MQ}<button class="bk" aria-label="ফিরে যান" onclick="${onBack}">←</button><div class="hd"><div class="ar">وَمَا تَوْفِيقِي إِلَّا بِاللَّهِ</div><h1>Madrasa Management</h1><div class="sb">${xe(sub)}</div></div>${inner}</div>`;document.body.appendChild(d);d.scrollTop=0;return d}
-const lgClose=id=>{const d=document.getElementById(id);if(d)d.remove()};
+const lgClose=id=>{const d=document.getElementById(id);if(d)d.remove()};window.lgClose=lgClose;
 window.pwAsk=function(r){
  const cfg={admin:{t:'Admin',l:'মোবাইল নম্বর বা জিমেইল',hint:'অ্যাডমিনের সেট করা পাসওয়ার্ড দিন'},teacher:{t:'Teacher',l:'মোবাইল নম্বর বা জিমেইল',hint:'ভর্তির সময় অ্যাডমিনের দেওয়া পাসওয়ার্ড দিন'},guardian:{t:'Guardian',l:'ছাত্রের আইডি অথবা আপনার মোবাইল নম্বর',hint:'ভর্তির সময় অ্যাডমিনের দেওয়া পাসওয়ার্ড দিন'}}[r];
  const adm=r==='admin';
  const d=lgPage('pwmd',`<div class="lgc"><h2>${cfg.t} লগইন</h2><p class="s">${cfg.l} ও পাসওয়ার্ড দিন</p>${lgF('pwid','u',cfg.l)}${lgPw('pwin','পাসওয়ার্ড',`onkeydown="if(event.key==='Enter')pwGo('${r}')"`)}<div id="pwerr" class="lger"></div>
  <a class="lgl" href="javascript:void(0)" onclick="${adm?'lgForgot()':"lgHelp(this)"}">আপনার পাসওয়ার্ড ভুলে গেছেন?</a><div class="lgnote" id="lghelp" style="display:none">পাসওয়ার্ড বদলাতে মাদ্রাসার অ্যাডমিনের সাথে যোগাযোগ করুন।</div>
  <button class="lgbt" onclick="pwGo('${r}')">${LGI.i.replace('<svg','<svg style="width:22px;height:22px;stroke:#fff;fill:none;stroke-width:2"')} লগইন</button>
- ${adm?`<div class="lgor">অথবা</div><div style="font-weight:600">একটি অ্যাকাউন্ট নেই?</div><a class="lgl" href="javascript:void(0)" onclick="lgReg()" style="padding-top:2px">নিবন্ধন করুন</a>`:''}
  <p style="font-size:13px;color:#7d8f89;margin-top:14px">${cfg.hint}</p></div>`,"lgClose('pwmd')");
  setTimeout(()=>document.getElementById('pwid').focus(),60)};
 window.lgHelp=()=>{const n=document.getElementById('lghelp');n.style.display=n.style.display==='none'?'block':'none'};
@@ -1596,7 +1612,8 @@ window.planV=async function(){const d=document.createElement('div');d.id='md';d.
 
 /* প্রথম অ্যাডমিন তৈরি (একবারই) */
 const _login=window.login;
-function addSetup(){if(!needSetup)return;const r=document.querySelector('.roles');if(r)r.insertAdjacentHTML('beforeend','<button class="role" style="background:#5b6b7d" onclick="setupAdmin()"><div>প্রথম অ্যাডমিন তৈরি করুন<span>শুধু একবার — প্রথম চালুর সময়</span></div><i>›</i></button>')}
+const SHOW_FIRST_ADMIN=false;/* প্রথম অ্যাডমিন বাটন লুকানো; আবার দেখাতে true করুন */
+function addSetup(){if(!SHOW_FIRST_ADMIN||!needSetup)return;const r=document.querySelector('.roles');if(r)r.insertAdjacentHTML('beforeend','<button class="role" style="background:#5b6b7d" onclick="setupAdmin()"><div>প্রথম অ্যাডমিন তৈরি করুন<span>শুধু একবার — প্রথম চালুর সময়</span></div><i>›</i></button>')}
 let booting=true;
 const paint=()=>{if(booting)return;let lk='';try{lk=localStorage.getItem(LKK)||''}catch(e){}if(lk){lockUI(lk);return}_login();addSetup()};
 /* লগআউটে ও অ্যাপ চালুর সময় ফোনে থাকা পুরোনো ব্যক্তিগত ডেটা (ছাত্র, শিক্ষক, ফি, মেসেজ, পুরোনো পাসওয়ার্ড) মোছা। মাদ্রাসার সেটিংস, থিম, ভাষা ও অ্যাডমিনের নিজের তথ্য থাকে। */
@@ -4274,6 +4291,27 @@ go()})();
         .mcq-item-l { display: flex; align-items: center; gap: 8px; }
         .mcq-item .drag-handle { width: 32px; height: 30px; }
         .mcq-item.dragging { box-shadow: 0 12px 30px rgba(0,0,0,.3); opacity: .96; }
+            /* ===== ধাপ ৩: হেডার, দাগ/আরবি লাইন, লেবেল+টুলবার ===== */
+        .card-actions { flex: none; gap: 5px; }
+        .card-actions .btn-collapse, .card-actions .drag-handle { width: 34px; height: 34px; }
+        .hdr-l { flex: 1 1 0; }
+        .q-label-row { gap: 6px; margin-bottom: 8px; }
+        .lr-g { gap: 4px; }
+        .lr-g > label, .q-label-row .q-marks-group label { font-size: 12.5px !important; font-weight: bold; color: var(--primary-color); white-space: nowrap; margin: 0; }
+        .q-label-row .q-label-input { width: 46px; padding: 4px 2px; font-size: 14px; }
+        .q-label-row .q-marks-group { flex: 1 1 78px; gap: 4px; }
+        .q-label-row .q-marks-input { min-width: 36px; min-height: 30px; padding: 4px 6px !important; }
+        .q-label-row .rtl-toggle { flex: 0 1 auto; margin-left: auto; font-size: 11.5px; gap: 4px; }
+        .q-label-row .rtl-toggle input { width: 15px; height: 15px; }
+        .tb-head { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 4px 8px; margin: 6px 0; }
+        .tb-head > label { font-size: 13px !important; font-weight: bold; color: var(--primary-color); margin: 0; flex: 0 1 auto; }
+        .tb-head .rich-text-tools, .sub-tools { gap: 4px; margin: 0; flex-wrap: nowrap; }
+        .tb-head .rich-text-tools { margin-left: auto; }
+        .sub-tools { justify-content: flex-end; margin-bottom: 8px; }
+        .tb-head .rich-text-tools button, .sub-tools button { min-width: 30px; height: 32px; padding: 0 5px; }
+        .tb-head .rich-text-tools .fs-box, .sub-tools .fs-box { height: 32px; }
+        .tb-head .rich-text-tools .fs-box button, .sub-tools .fs-box button { min-width: 26px; height: 32px; padding: 0; }
+        .tb-head .rich-text-tools .fs-input, .sub-tools .fs-input { width: 34px; height: 32px; }
     </style>
 </head>
 <body>
@@ -4742,8 +4780,8 @@ go()})();
 
         card.innerHTML = `
             <div class="card-header">
-                <span class="hdr-l"><span class="drag-handle" aria-label="ধরে টেনে সরান" title="ধরে টেনে সরান"><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><circle cx="9" cy="6" r="1.8"/><circle cx="15" cy="6" r="1.8"/><circle cx="9" cy="12" r="1.8"/><circle cx="15" cy="12" r="1.8"/><circle cx="9" cy="18" r="1.8"/><circle cx="15" cy="18" r="1.8"/></svg></span><button type="button" class="btn-collapse" aria-label="গুটিয়ে নিন / খুলুন" aria-expanded="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 15l6-6 6 6"/></svg></button><span class="hdr-t"><span class="hdr-r1"><span class="q-badge">প্রশ্ন ${qLabel}</span><span class="q-sum"></span></span><span class="q-pv"></span></span></span>
-                <div class="card-actions">
+                <span class="hdr-l"><span class="hdr-t"><span class="hdr-r1"><span class="q-badge">প্রশ্ন ${qLabel}</span><span class="q-sum"></span></span><span class="q-pv"></span></span></span>
+                <div class="card-actions"><button type="button" class="btn-collapse" aria-label="গুটিয়ে নিন / খুলুন" aria-expanded="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 15l6-6 6 6"/></svg></button><span class="drag-handle" aria-label="ধরে টেনে সরান" title="ধরে টেনে সরান"><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><circle cx="9" cy="6" r="1.8"/><circle cx="15" cy="6" r="1.8"/><circle cx="9" cy="12" r="1.8"/><circle cx="15" cy="12" r="1.8"/><circle cx="9" cy="18" r="1.8"/><circle cx="15" cy="18" r="1.8"/></svg></span>
                     <button class="btn-delete-icon" onclick="deleteQuestion(${questionCount})" title="ডিলিট করুন"><i class="idel"></i></button>
                 </div>
             </div>
@@ -4751,17 +4789,16 @@ go()})();
             <div class="q-body">
                 <div class="q-text-group">
                     <div class="q-label-row">
-                        <div class="lr-g"><label style="font-weight:bold; font-size:15px; color:var(--primary-color);">দাগ নং:</label>
+                        <div class="lr-g"><label style="font-weight:bold; font-size:15px; color:var(--primary-color);">দাগ:</label>
                         <input type="text" class="q-label-input" value="${qLabel}${numSuffix()}" placeholder="যেমন: ১।"></div>
                         <div class="q-marks-group">
-                        <label style="font-weight:bold; font-size:15px; color:var(--primary-color);">নম্বর</label>
+                        <label style="font-weight:bold; font-size:15px; color:var(--primary-color);">নম্বর:</label>
                         <div class="form-control q-marks-input" contenteditable="true" style="background: #fff; padding: 10px; border: 1px solid var(--border-color); border-radius: 8px;"></div>
                     </div>
                         <label class="rtl-toggle"><input type="checkbox" class="q-rtl" onchange="toggleRtl(this)"> ডান থেকে বাম (আরবি)</label>
                     </div>
                     
-                    <label style="font-weight:bold; font-size:15px; color:var(--primary-color);">প্রশ্ন লিখুন</label>
-                    <div class="rich-text-tools">${rtToolsHTML()}</div>
+                    <div class="tb-head"><label style="font-weight:bold; font-size:15px; color:var(--primary-color);">প্রশ্ন লিখুন</label><div class="rich-text-tools">${rtToolsHTML()}</div></div>
                     
                     <div class="form-control q-text-input" contenteditable="true" style="min-height: 60px; outline: none; background: #fff; padding: 10px; border: 1px solid var(--border-color); border-radius: 8px;"></div>
                 </div>
@@ -4983,24 +5020,23 @@ go()})();
         card.dataset.auto = qLabel + numSuffix();
         card.innerHTML = `
             <div class="card-header">
-                <span class="hdr-l"><span class="drag-handle" aria-label="ধরে টেনে সরান" title="ধরে টেনে সরান"><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><circle cx="9" cy="6" r="1.8"/><circle cx="15" cy="6" r="1.8"/><circle cx="9" cy="12" r="1.8"/><circle cx="15" cy="12" r="1.8"/><circle cx="9" cy="18" r="1.8"/><circle cx="15" cy="18" r="1.8"/></svg></span><button type="button" class="btn-collapse" aria-label="গুটিয়ে নিন / খুলুন" aria-expanded="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 15l6-6 6 6"/></svg></button><span class="hdr-t"><span class="hdr-r1"><span class="q-badge">প্রশ্ন ${qLabel} (MCQ)</span><span class="q-sum"></span></span><span class="q-pv"></span></span></span>
-                <div class="card-actions">
+                <span class="hdr-l"><span class="hdr-t"><span class="hdr-r1"><span class="q-badge">প্রশ্ন ${qLabel} (MCQ)</span><span class="q-sum"></span></span><span class="q-pv"></span></span></span>
+                <div class="card-actions"><button type="button" class="btn-collapse" aria-label="গুটিয়ে নিন / খুলুন" aria-expanded="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 15l6-6 6 6"/></svg></button><span class="drag-handle" aria-label="ধরে টেনে সরান" title="ধরে টেনে সরান"><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><circle cx="9" cy="6" r="1.8"/><circle cx="15" cy="6" r="1.8"/><circle cx="9" cy="12" r="1.8"/><circle cx="15" cy="12" r="1.8"/><circle cx="9" cy="18" r="1.8"/><circle cx="15" cy="18" r="1.8"/></svg></span>
                     <button class="btn-delete-icon" onclick="deleteQuestion(${id})" title="ডিলিট করুন"><i class="idel"></i></button>
                 </div>
             </div>
             <div class="q-body">
                 <div class="q-text-group">
                     <div class="q-label-row">
-                        <div class="lr-g"><label style="font-weight:bold; font-size:15px; color:var(--primary-color);">দাগ নং:</label>
+                        <div class="lr-g"><label style="font-weight:bold; font-size:15px; color:var(--primary-color);">দাগ:</label>
                         <input type="text" class="q-label-input" value="${card.dataset.auto}" placeholder="যেমন: ১১।"></div>
                         <div class="q-marks-group">
-                        <label style="font-weight:bold; font-size:15px; color:var(--primary-color);">নম্বর (মোট)</label>
+                        <label title="মোট নম্বর" style="font-weight:bold; font-size:15px; color:var(--primary-color);">নম্বর:</label>
                         <div class="form-control q-marks-input" contenteditable="true" style="background: #fff; padding: 10px; border: 1px solid var(--border-color); border-radius: 8px;"></div>
                     </div>
                         <label class="rtl-toggle"><input type="checkbox" class="q-rtl" onchange="toggleRtl(this)"> ডান থেকে বাম (আরবি)</label>
                     </div>
-                    <label style="font-weight:bold; font-size:15px; color:var(--primary-color);">শিরোনাম / নির্দেশনা <small style="font-weight:normal;color:#64748b">(ঐচ্ছিক)</small></label>
-                    <div class="rich-text-tools">${rtToolsHTML()}</div>
+                    <div class="tb-head"><label style="font-weight:bold; font-size:15px; color:var(--primary-color);">শিরোনাম / নির্দেশনা <small style="font-weight:normal;color:#64748b">(ঐচ্ছিক)</small></label><div class="rich-text-tools">${rtToolsHTML()}</div></div>
                     <div class="form-control q-text-input" contenteditable="true" data-ph="যেমন: সঠিক উত্তরটি বাছাই কর" style="min-height: 44px; outline: none; background: #fff; padding: 10px; border: 1px solid var(--border-color); border-radius: 8px;"></div>
                 </div>
                 <div class="mcq-box" style="width:100%">
@@ -5351,8 +5387,8 @@ go()})();
         card.dataset.type = 'passage';
         card.innerHTML = `
             <div class="card-header">
-                <span class="hdr-l"><span class="drag-handle" aria-label="ধরে টেনে সরান" title="ধরে টেনে সরান"><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><circle cx="9" cy="6" r="1.8"/><circle cx="15" cy="6" r="1.8"/><circle cx="9" cy="12" r="1.8"/><circle cx="15" cy="12" r="1.8"/><circle cx="9" cy="18" r="1.8"/><circle cx="15" cy="18" r="1.8"/></svg></span><button type="button" class="btn-collapse" aria-label="গুটিয়ে নিন / খুলুন" aria-expanded="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 15l6-6 6 6"/></svg></button><span class="hdr-t"><span class="hdr-r1"><span class="q-badge">অনুচ্ছেদ</span><span class="q-sum"></span></span><span class="q-pv"></span></span></span>
-                <div class="card-actions">
+                <span class="hdr-l"><span class="hdr-t"><span class="hdr-r1"><span class="q-badge">অনুচ্ছেদ</span><span class="q-sum"></span></span><span class="q-pv"></span></span></span>
+                <div class="card-actions"><button type="button" class="btn-collapse" aria-label="গুটিয়ে নিন / খুলুন" aria-expanded="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 15l6-6 6 6"/></svg></button><span class="drag-handle" aria-label="ধরে টেনে সরান" title="ধরে টেনে সরান"><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><circle cx="9" cy="6" r="1.8"/><circle cx="15" cy="6" r="1.8"/><circle cx="9" cy="12" r="1.8"/><circle cx="15" cy="12" r="1.8"/><circle cx="9" cy="18" r="1.8"/><circle cx="15" cy="18" r="1.8"/></svg></span>
                     <button class="btn-delete-icon" onclick="deleteQuestion(${id})" title="ডিলিট করুন"><i class="idel"></i></button>
                 </div>
             </div>
@@ -5360,8 +5396,7 @@ go()})();
                 <label class="rtl-toggle" style="margin-left:0"><input type="checkbox" class="q-rtl" onchange="toggleRtl(this)"> ডান থেকে বাম (আরবি)</label>
             </div>
             <div class="q-text-group">
-                <label style="font-weight:bold; font-size:13px; color:var(--primary-color);">অনুচ্ছেদ লিখুন (প্রশ্ন নম্বরের আগে বসবে)</label>
-                <div class="rich-text-tools">${rtToolsHTML()}</div>
+                <div class="tb-head"><label style="font-weight:bold; font-size:13px; color:var(--primary-color);">অনুচ্ছেদ লিখুন (প্রশ্ন নম্বরের আগে বসবে)</label><div class="rich-text-tools">${rtToolsHTML()}</div></div>
                 <div class="form-control q-text-input" contenteditable="true" data-ph="যেমন: [Read the text and answer the questions no 1, 2, 3 and 4:] I am Sabiha..." style="min-height: 90px; outline: none; background: #fff; padding: 10px; border: 1px solid var(--border-color); border-radius: 8px;"></div>
             </div>`;
         const cont = document.getElementById('questionsContainer');
@@ -5879,8 +5914,8 @@ go()})();
         card.dataset.type = 'break';
         card.innerHTML = `
             <div class="card-header">
-                <span class="hdr-l"><span class="drag-handle" aria-label="ধরে টেনে সরান" title="ধরে টেনে সরান"><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><circle cx="9" cy="6" r="1.8"/><circle cx="15" cy="6" r="1.8"/><circle cx="9" cy="12" r="1.8"/><circle cx="15" cy="12" r="1.8"/><circle cx="9" cy="18" r="1.8"/><circle cx="15" cy="18" r="1.8"/></svg></span><button type="button" class="btn-collapse" aria-label="গুটিয়ে নিন / খুলুন" aria-expanded="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 15l6-6 6 6"/></svg></button><span class="hdr-t"><span class="hdr-r1"><span class="q-badge">নতুন পাতা (উল্টাপিঠ)</span><span class="q-sum"></span></span><span class="q-pv"></span></span></span>
-                <div class="card-actions">
+                <span class="hdr-l"><span class="hdr-t"><span class="hdr-r1"><span class="q-badge">নতুন পাতা (উল্টাপিঠ)</span><span class="q-sum"></span></span><span class="q-pv"></span></span></span>
+                <div class="card-actions"><button type="button" class="btn-collapse" aria-label="গুটিয়ে নিন / খুলুন" aria-expanded="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 15l6-6 6 6"/></svg></button><span class="drag-handle" aria-label="ধরে টেনে সরান" title="ধরে টেনে সরান"><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><circle cx="9" cy="6" r="1.8"/><circle cx="15" cy="6" r="1.8"/><circle cx="9" cy="12" r="1.8"/><circle cx="15" cy="12" r="1.8"/><circle cx="9" cy="18" r="1.8"/><circle cx="15" cy="18" r="1.8"/></svg></span>
                     <button class="btn-delete-icon" onclick="deleteQuestion(${id})" title="ডিলিট করুন"><i class="idel"></i></button>
                 </div>
             </div>
